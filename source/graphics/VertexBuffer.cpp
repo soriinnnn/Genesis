@@ -32,10 +32,16 @@ VertexBuffer::VertexBuffer(const VertexBufferDesc& vDesc, const GraphicsResource
 		"CreateBuffer failed."
 	);
 
+	m_vertexListSize = vDesc.vertexListSize;
 	m_vertexSize = vDesc.vertexSize;
 }
 
 VertexBuffer::~VertexBuffer() {}
+
+unsigned int VertexBuffer::getVertexListSize() const noexcept
+{
+	return m_vertexListSize;
+}
 
 // --------------------------------------------------------------------------------
 

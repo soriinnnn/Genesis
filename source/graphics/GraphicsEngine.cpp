@@ -2,10 +2,28 @@
 #include <graphics/GraphicsDevice.h>
 #include <graphics/DeviceContext.h>
 #include <graphics/SwapChain.h>
+#include <graphics/VertexBuffer.h>
 #include <math/Vec3.h>
 
 using namespace genesis;
 using namespace std;
+
+inline constexpr char shaderSourceCode[] = R"(
+float4 VSmain(float3 pos: POSITION): SV_Position
+{
+    return float4(pos.xyz, 1);
+}
+
+float4 PSmain(): SV_Target 
+{
+    return float4(1, 0, 0, 1);
+}
+)";
+
+inline constexpr char shaderSourceName[] = "Basic";
+inline constexpr size_t shaderSourceCodeSize = size(shaderSourceCode);
+inline constexpr char vertexShaderEntryPoint[] = "VSmain";
+inline constexpr char pixelShaderEntryPoint[] = "PSmain";
 
 // --------------------------------------------------------------------------------
 
@@ -14,38 +32,22 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
     m_graphicsDevice = make_shared<GraphicsDevice>(GraphicsDeviceDesc{m_logger});
     m_deviceContext = m_graphicsDevice->createDeviceContext();
 
-    // XDDDDDDDDDDDDDDDDDDDDDDDDDD
-
-    constexpr char shaderSourceCode[] = 
-    R"(
-        float4 VSmain(float3 pos: POSITION): SV_Position
-        {
-            return float4(pos.xyz, 1);
-        }
-
-        void PSmain()
-        {
-        }
-    )";
-    constexpr char shaderSouceName[] = "Basic";
-    constexpr size_t shaderSourceCodeSize = std::size(shaderSourceCode);
-
     ShaderBinaryPtr vs = m_graphicsDevice->compileShader(
         ShaderCompileDesc{
-            shaderSouceName, 
+            shaderSourceName, 
             shaderSourceCode, 
             shaderSourceCodeSize, 
-            "VSmain", 
+            vertexShaderEntryPoint,
             ShaderType::VertexShader
         }
     );
 
     ShaderBinaryPtr ps = m_graphicsDevice->compileShader(
         ShaderCompileDesc{
-            shaderSouceName,
+            shaderSourceName,
             shaderSourceCode,
             shaderSourceCodeSize,
-            "PSmain",
+            pixelShaderEntryPoint,
             ShaderType::PixelShader
         }
     );
@@ -76,6 +78,7 @@ void GraphicsEngine::render(SwapChain& swapChain)
     context.setGraphicsPipelineState(*m_graphicsPipeline);
     context.setViewportSize(swapChain.getSize());
     context.setVertexBuffer(*m_vertexBuffer);
+    context.drawTriangleList(m_vertexBuffer->getVertexListSize(), 0);
 
     device.executeCommandList(context);
     swapChain.present();

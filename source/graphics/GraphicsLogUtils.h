@@ -26,12 +26,12 @@ namespace genesis
 			const char* errorMsg = error ? static_cast<const char*>(error->GetBufferPointer()) : nullptr;
 
 			if (FAILED(res)) {
-				if (errorMsg) {
-					GENESIS_LOG_THROW(logger, std::runtime_error, Logger::LogLevel::Error, errorMsg);
-				}
-				else {
-					GENESIS_LOG_THROW(logger, std::runtime_error, Logger::LogLevel::Error, "Shader compilation failed.");
-				}
+				GENESIS_LOG_THROW(
+					logger, 
+					std::runtime_error, 
+					Logger::LogLevel::Error, 
+					errorMsg ? errorMsg : "Shader compilation failed."
+				);
 			}
 
 			if (errorMsg) {
