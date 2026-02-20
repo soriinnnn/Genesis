@@ -10,7 +10,7 @@ namespace genesis
 		ShaderBinary(const ShaderCompileDesc& sDesc, const GraphicsResourceDesc& grDesc);
 		~ShaderBinary() override;
 
-		ShaderBinaryData getData() const noexcept;
+		BinaryData getData() const noexcept;
 		ShaderType getType() const noexcept;
 
 	private:

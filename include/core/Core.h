@@ -6,6 +6,7 @@
 namespace genesis 
 {
     class Base;
+    class Logger;
 
     class Game;
     class Display;
@@ -18,8 +19,7 @@ namespace genesis
     class ShaderBinary;
     class GraphicsPipelineState;
     class VertexBuffer;
-
-    class Logger;
+    class VertexShaderSignature;
 
     using GraphicsDevicePtr = std::shared_ptr<GraphicsDevice>;
     using DeviceContextPtr = std::shared_ptr<DeviceContext>;
@@ -27,6 +27,7 @@ namespace genesis
     using ShaderBinaryPtr = std::shared_ptr<ShaderBinary>;
     using GraphicsPipelineStatePtr = std::shared_ptr<GraphicsPipelineState>;
     using VertexBufferPtr = std::shared_ptr<VertexBuffer>;
+    using VertexShaderSignaturePtr = std::shared_ptr<VertexShaderSignature>;
 }
 
 #endif

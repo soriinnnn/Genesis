@@ -20,6 +20,7 @@ namespace genesis
         ShaderBinaryPtr compileShader(const ShaderCompileDesc& desc);
         GraphicsPipelineStatePtr createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc);
         VertexBufferPtr createVertexBuffer(const VertexBufferDesc& desc);
+        VertexShaderSignaturePtr createVertexShaderSignature(const VertexShaderSignatureDesc& desc);
 
         void executeCommandList(DeviceContext& context);
 

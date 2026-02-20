@@ -3,6 +3,8 @@
 #include <core/Core.h>
 #include <core/Common.h>
 #include <core/Base.h>
+#include <math/Vec3.h>
+#include <math/Vec4.h>
 
 namespace genesis
 {
@@ -15,6 +17,13 @@ namespace genesis
         GraphicsDevice& getGraphicsDevice() noexcept;
 
         void render(SwapChain& swapChain);
+
+    private:
+        struct Vertex
+        {
+            Vec3 position;
+            Vec4 color;
+        };
 
     private:
         GraphicsDevicePtr m_graphicsDevice;

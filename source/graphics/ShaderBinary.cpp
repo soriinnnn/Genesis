@@ -51,9 +51,9 @@ ShaderBinary::ShaderBinary(const ShaderCompileDesc& sDesc, const GraphicsResourc
 
 ShaderBinary::~ShaderBinary() {}
 
-ShaderBinaryData ShaderBinary::getData() const noexcept
+BinaryData ShaderBinary::getData() const noexcept
 {
-	return ShaderBinaryData{m_blob->GetBufferPointer(), m_blob->GetBufferSize()};
+	return BinaryData{m_blob->GetBufferPointer(), m_blob->GetBufferSize()};
 }
 
 ShaderType ShaderBinary::getType() const noexcept

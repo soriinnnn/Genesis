@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -148,11 +148,11 @@
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</MultiProcessorCompilation>
     </ClCompile>
     <ClCompile Include="demo\main.cpp" />
-    <ClCompile Include="source\window\win32\Win32Window.cpp" />
     <ClCompile Include="source\graphics\SwapChain.cpp" />
     <ClCompile Include="source\math\Vec4.cpp" />
     <ClCompile Include="source\graphics\VertexBuffer.cpp" />
     <ClCompile Include="source\math\Vec3.cpp" />
+    <ClCompile Include="source\graphics\VertexShaderSignature.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\graphics\GraphicsPipelineState.h" />
@@ -176,6 +176,7 @@
     <ClInclude Include="include\math\Vec4.h" />
     <ClInclude Include="source\graphics\VertexBuffer.h" />
     <ClInclude Include="include\math\Vec3.h" />
+    <ClInclude Include="source\graphics\VertexShaderSignature.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

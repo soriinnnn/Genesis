@@ -5,6 +5,7 @@
 #include <graphics/ShaderBinary.h>
 #include <graphics/GraphicsPipelineState.h>
 #include <graphics/VertexBuffer.h>
+#include <graphics/VertexShaderSignature.h>
 
 using namespace genesis;
 using namespace std;
@@ -77,6 +78,11 @@ GraphicsPipelineStatePtr GraphicsDevice::createGraphicsPipelineState(const Graph
 VertexBufferPtr GraphicsDevice::createVertexBuffer(const VertexBufferDesc& desc)
 {
     return make_shared<VertexBuffer>(desc, getGraphicsResourceDesc());
+}
+
+VertexShaderSignaturePtr GraphicsDevice::createVertexShaderSignature(const VertexShaderSignatureDesc& desc)
+{
+    return make_shared<VertexShaderSignature>(desc, getGraphicsResourceDesc());
 }
 
 void GraphicsDevice::executeCommandList(DeviceContext& context)

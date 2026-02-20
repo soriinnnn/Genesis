@@ -7,7 +7,7 @@ namespace genesis
 	class Display final: public Window
 	{
 	public:
-		Display(const DisplayDesc& desc);
+		explicit Display(const DisplayDesc& desc);
 		~Display() override;
 
 		SwapChain& getSwapChain() noexcept;

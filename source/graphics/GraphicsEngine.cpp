@@ -4,24 +4,11 @@
 #include <graphics/SwapChain.h>
 #include <graphics/VertexBuffer.h>
 #include <math/Vec3.h>
+#include <fstream>
 
 using namespace genesis;
 using namespace std;
 
-inline constexpr char shaderSourceCode[] = R"(
-float4 VSmain(float3 pos: POSITION): SV_Position
-{
-    return float4(pos.xyz, 1);
-}
-
-float4 PSmain(): SV_Target 
-{
-    return float4(1, 0, 0, 1);
-}
-)";
-
-inline constexpr char shaderSourceName[] = "Basic";
-inline constexpr size_t shaderSourceCodeSize = size(shaderSourceCode);
 inline constexpr char vertexShaderEntryPoint[] = "VSmain";
 inline constexpr char pixelShaderEntryPoint[] = "PSmain";
 
@@ -32,9 +19,23 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
     m_graphicsDevice = make_shared<GraphicsDevice>(GraphicsDeviceDesc{m_logger});
     m_deviceContext = m_graphicsDevice->createDeviceContext();
 
+    constexpr char shaderFilePath[] = "assets/shaders/basic.hlsl";
+    ifstream shaderStream(shaderFilePath);
+    if (!shaderStream) {
+        GENESIS_LOG_THROW_ERROR("Failed to open shader file.");
+    }
+
+    string shaderFileData{
+        istreambuf_iterator<char>(shaderStream),
+        istreambuf_iterator<char>()
+    };
+
+    const char* shaderSourceCode = shaderFileData.c_str();
+    size_t shaderSourceCodeSize = shaderFileData.length();
+
     ShaderBinaryPtr vs = m_graphicsDevice->compileShader(
         ShaderCompileDesc{
-            shaderSourceName, 
+            shaderFilePath, 
             shaderSourceCode, 
             shaderSourceCodeSize, 
             vertexShaderEntryPoint,
@@ -44,7 +45,7 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
 
     ShaderBinaryPtr ps = m_graphicsDevice->compileShader(
         ShaderCompileDesc{
-            shaderSourceName,
+            shaderFilePath,
             shaderSourceCode,
             shaderSourceCodeSize,
             pixelShaderEntryPoint,
@@ -52,14 +53,19 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
         }
     );
 
-    m_graphicsPipeline = m_graphicsDevice->createGraphicsPipelineState(GraphicsPipelineStateDesc{*vs, *ps});
+    VertexShaderSignaturePtr vsSignature = m_graphicsDevice->createVertexShaderSignature(VertexShaderSignatureDesc{vs});
+    m_graphicsPipeline = m_graphicsDevice->createGraphicsPipelineState(GraphicsPipelineStateDesc{*vsSignature, *ps});
     
-    const Vec3 vertexList[] = {
-        {-0.5f, -0.5f, 0.0f},
-        {0.0f, 0.5f, 0.0f},
-        {0.5f, -0.5f, 0.0f}
+    const Vertex vertexList[] = {
+        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+        {{-0.5f, 0.5f, 0.0f }, {0.0f, 1.0f, 0.0f, 1.0f}},
+        {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
+
+        {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
+        {{0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 1.0f, 1.0f}},
+        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}
     };
-    m_vertexBuffer = m_graphicsDevice->createVertexBuffer(VertexBufferDesc{vertexList, size(vertexList), sizeof(Vec3)});
+    m_vertexBuffer = m_graphicsDevice->createVertexBuffer(VertexBufferDesc{vertexList, size(vertexList), sizeof(Vertex)});
 }
 
 GraphicsEngine::~GraphicsEngine() {}
@@ -74,7 +80,7 @@ void GraphicsEngine::render(SwapChain& swapChain)
     auto& device = *m_graphicsDevice;
     auto& context = *m_deviceContext;
 
-    context.clearAndSetBackBuffer(swapChain, Vec4{1, 1, 1, 1});
+    context.clearAndSetBackBuffer(swapChain, Vec4{0.27f, 0.39f, 0.55f, 1.0f});
     context.setGraphicsPipelineState(*m_graphicsPipeline);
     context.setViewportSize(swapChain.getSize());
     context.setVertexBuffer(*m_vertexBuffer);

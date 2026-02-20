@@ -14,7 +14,7 @@ namespace genesis
 		int height() const noexcept;
 
 	public:
-		int m_left, m_top, m_right, m_bottom;
+		int left, top, right, bottom;
 	};
 }
 

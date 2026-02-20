@@ -74,7 +74,7 @@ namespace genesis
 		ShaderType shaderType{};
 	};
 
-	struct ShaderBinaryData
+	struct BinaryData
 	{
 		const void* data{};
 		size_t dataSize{};
@@ -82,7 +82,7 @@ namespace genesis
 
 	struct GraphicsPipelineStateDesc
 	{
-		const ShaderBinary& vertexShader;
+		const VertexShaderSignature& vertexShader;
 		const ShaderBinary& pixelShader;
 	};
 
@@ -91,6 +91,11 @@ namespace genesis
 		const void* vertexList{};
 		size_t vertexListSize{};
 		unsigned int vertexSize{};
+	};
+
+	struct VertexShaderSignatureDesc
+	{
+		const ShaderBinaryPtr& vertexShaderBinary;
 	};
 
 }

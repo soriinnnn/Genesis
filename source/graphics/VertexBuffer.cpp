@@ -32,7 +32,7 @@ VertexBuffer::VertexBuffer(const VertexBufferDesc& vDesc, const GraphicsResource
 		"CreateBuffer failed."
 	);
 
-	m_vertexListSize = vDesc.vertexListSize;
+	m_vertexListSize = static_cast<unsigned int>(vDesc.vertexListSize);
 	m_vertexSize = vDesc.vertexSize;
 }
 
@@ -49,7 +49,7 @@ D3D11_BUFFER_DESC createBufferDesc(const VertexBufferDesc& desc)
 {
 	D3D11_BUFFER_DESC buffDesc{};
 
-	buffDesc.ByteWidth = desc.vertexListSize * desc.vertexSize;
+	buffDesc.ByteWidth = static_cast<unsigned int>(desc.vertexListSize * desc.vertexSize);
 	buffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	return buffDesc;

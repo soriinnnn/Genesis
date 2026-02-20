@@ -12,8 +12,8 @@ namespace genesis
 
 		const float* toArray() const noexcept;
 
-	private:
-		float m_x, m_y, m_z, m_w;
+	public:
+		float x, y, z, w;
 	};
 }
 

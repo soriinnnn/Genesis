@@ -6,21 +6,21 @@ using namespace genesis;
 
 Vec4::Vec4() 
 {
-	m_x = 0;
-	m_y = 0;
-	m_z = 0;
-	m_w = 0;
+	this->x = 0;
+	this->y = 0;
+	this->z = 0;
+	this->w = 0;
 }
 
 Vec4::Vec4(float x, float y, float z, float w)
 {
-	m_x = x;
-	m_y = y;
-	m_z = z;
-	m_w = w;
+	this->x = x;
+	this->y = y;
+	this->z = z;
+	this->w = w;
 }
 
 const float* Vec4::toArray() const noexcept
 {
-	return &m_x;
+	return &this->x;
 }
