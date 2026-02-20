@@ -153,6 +153,7 @@
     <ClCompile Include="source\graphics\VertexBuffer.cpp" />
     <ClCompile Include="source\math\Vec3.cpp" />
     <ClCompile Include="source\graphics\VertexShaderSignature.cpp" />
+    <ClCompile Include="source\window\win32\Win32Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\graphics\GraphicsPipelineState.h" />

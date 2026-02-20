@@ -12,7 +12,7 @@ Rect::Rect()
 	this->bottom = 0;
 }
 
-Rect::Rect(int width, int height)
+Rect::Rect(uint32 width, uint32 height)
 {
 	this->left = 0;
 	this->top = 0;
@@ -20,7 +20,7 @@ Rect::Rect(int width, int height)
 	this->bottom = height;
 }
 
-Rect::Rect(int left, int top, int right, int bottom)
+Rect::Rect(uint32 left, uint32 top, uint32 right, uint32 bottom)
 {
 	this->left = left;
 	this->top = top;
@@ -28,10 +28,10 @@ Rect::Rect(int left, int top, int right, int bottom)
 	this->bottom = bottom;
 }
 
-int Rect::width() const noexcept {
+uint32 Rect::width() const noexcept {
 	return this->right - this->left;
 }
 
-int Rect::height() const noexcept {
+uint32 Rect::height() const noexcept {
 	return this->bottom - this->top;
 }

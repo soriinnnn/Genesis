@@ -12,6 +12,9 @@ namespace genesis
 
 		SwapChain& getSwapChain() noexcept;
 
+	protected:
+		void onResize() override;
+
 	private:
 		SwapChainPtr m_swapChain;
 	};

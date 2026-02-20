@@ -1,6 +1,5 @@
 #include <window/Window.h>
 #include <windows.h>
-#include <string>
 
 #define BASE_WINDOW_CLASS_NAME L"GenesisWindow"
 #define DEFAULT_WINDOW_STYLE (WS_OVERLAPPEDWINDOW | WS_SIZEBOX)
@@ -9,6 +8,7 @@ using namespace genesis;
 using namespace std;
 
 static LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+static RECT createWindowRect(UINT width, UINT height);
 static ATOM createWindowClass(LPCTSTR className, WNDPROC windowProc);
 static wstring createWindowClassName(void* instance);
 
@@ -16,13 +16,11 @@ static wstring createWindowClassName(void* instance);
 
 Window::Window(const WindowDesc& desc): Base(desc.base), m_size(desc.size)
 {
+    RECT wndRect = createWindowRect(m_size.width(), m_size.height());
     ATOM classId = createWindowClass(createWindowClassName(this).c_str(), windowProc);
     if (!classId) {
         GENESIS_LOG_THROW_ERROR("RegisterClassEx failed.");
     }
-
-    RECT windowRect = {0, 0, m_size.width(), m_size.height()};
-    AdjustWindowRect(&windowRect, DEFAULT_WINDOW_STYLE, false);
 
     m_handle = CreateWindowEx(
         0,
@@ -31,8 +29,8 @@ Window::Window(const WindowDesc& desc): Base(desc.base), m_size(desc.size)
         DEFAULT_WINDOW_STYLE,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
-        windowRect.right - windowRect.left,
-        windowRect.bottom - windowRect.top,
+        wndRect.right - wndRect.left,
+        wndRect.bottom - wndRect.top,
         nullptr,
         nullptr,
         nullptr,
@@ -42,6 +40,7 @@ Window::Window(const WindowDesc& desc): Base(desc.base), m_size(desc.size)
         GENESIS_LOG_THROW_ERROR("CreateWindowEx failed.");
     }
 
+    SetWindowLongPtr(static_cast<HWND>(m_handle), GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
     ShowWindow(static_cast<HWND>(m_handle), SW_SHOW);
 }
 
@@ -50,11 +49,38 @@ Window::~Window()
     DestroyWindow(static_cast<HWND>(m_handle));
 }
 
+void Window::resize(uint32 width, uint32 height)
+{
+    if (m_size.width() == width && m_size.height() == height) {
+        return;
+    }
+    m_size = Rect{width, height};
+
+    RECT wndRect = createWindowRect(width, height);
+    SetWindowPos(
+        static_cast<HWND>(m_handle),
+        HWND_TOPMOST,
+        0,
+        0, 
+        wndRect.right - wndRect.left,
+        wndRect.bottom - wndRect.top,
+        SWP_NOMOVE
+    );
+    onResize();
+}
+
 // --------------------------------------------------------------------------------
 
 static LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
+    Window* wnd = reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+
     switch (msg) {
+    case WM_SIZE: {
+        UINT width = LOWORD(lparam);
+        UINT height = HIWORD(lparam);
+        wnd->resize(width, height); 
+    } break;
     case WM_CLOSE:
         PostQuitMessage(0);
         break;
@@ -65,23 +91,30 @@ static LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lp
     return 0;
 }
 
+static RECT createWindowRect(UINT width, UINT height)
+{
+    RECT wndRect = {0, 0, static_cast<LONG>(width), static_cast<LONG>(height)};
+    AdjustWindowRect(&wndRect, DEFAULT_WINDOW_STYLE, false);
+
+    return wndRect;
+}
+
 static ATOM createWindowClass(LPCTSTR className, WNDPROC windowProc)
 {
-    WNDCLASSEX windowClass = {};
+    WNDCLASSEX wndClass = {};
+    wndClass.cbSize = sizeof(WNDCLASSEX);
+    wndClass.style = 0;
+    wndClass.lpfnWndProc = windowProc;
+    wndClass.cbClsExtra = 0;
+    wndClass.cbWndExtra = 0;
+    wndClass.hInstance = nullptr;
+    wndClass.hIcon = nullptr;
+    wndClass.hbrBackground = nullptr;
+    wndClass.lpszMenuName = nullptr;
+    wndClass.lpszClassName = className;
+    wndClass.hIconSm = nullptr;
 
-    windowClass.cbSize = sizeof(WNDCLASSEX);
-    windowClass.style = 0;
-    windowClass.lpfnWndProc = windowProc;
-    windowClass.cbClsExtra = 0;
-    windowClass.cbWndExtra = 0;
-    windowClass.hInstance = nullptr;
-    windowClass.hIcon = nullptr;
-    windowClass.hbrBackground = nullptr;
-    windowClass.lpszMenuName = nullptr;
-    windowClass.lpszClassName = className;
-    windowClass.hIconSm = nullptr;
-
-    return RegisterClassEx(&windowClass);
+    return RegisterClassEx(&wndClass);
 };
 
 static wstring createWindowClassName(void* instance)

@@ -12,6 +12,11 @@ namespace genesis
         Window(const WindowDesc& desc);
         virtual ~Window() override;
 
+        void resize(uint32 width, uint32 height);
+
+    protected:
+        virtual void onResize() = 0;
+
     protected:
         void* m_handle;
         Rect m_size;
