@@ -3,16 +3,15 @@
 #include <game/Display.h>
 #include <window/Window.h>
 #include <graphics/GraphicsEngine.h>
+#include <core/PlatformUtils.h>
 
 using namespace genesis;
 using namespace std;
 
-// --------------------------------------------------------------------------------
-
 Game::Game(const GameDesc& desc): Base({*make_unique<Logger>(desc.logLevel).release()}), m_ownedLogger(&m_logger)
 {
-    BaseDesc base = {m_logger};
-    WindowDesc window = {base, desc.windowSize, GENESIS_TEXT("Demo")};
+    BaseDesc base{m_logger};
+    WindowDesc window{base, desc.windowSize, GENESIS_TEXT("Demo")};
 
     m_graphicsEngine = make_unique<GraphicsEngine>(GraphicsEngineDesc{m_logger});
     m_display = make_unique<Display>(DisplayDesc{window, m_graphicsEngine->getGraphicsDevice()});

@@ -5,8 +5,6 @@
 
 using namespace genesis;
 
-// --------------------------------------------------------------------------------
-
 GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& gpDesc, const GraphicsResourceDesc& grDesc): GraphicsResource(grDesc)
 {
 	if (gpDesc.pixelShader.getType() != ShaderType::PixelShader) {

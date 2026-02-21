@@ -2,8 +2,6 @@
 
 using namespace genesis;
 
-// --------------------------------------------------------------------------------
-
 Base::Base(const BaseDesc& desc): m_logger(desc.logger) {}
 
 Base::~Base() {}

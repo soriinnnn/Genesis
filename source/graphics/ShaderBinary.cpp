@@ -5,8 +5,6 @@
 
 using namespace genesis;
 
-// --------------------------------------------------------------------------------
-
 ShaderBinary::ShaderBinary(const ShaderCompileDesc& sDesc, const GraphicsResourceDesc& grDesc): GraphicsResource(grDesc)
 {
 	if (!sDesc.shaderSourceName) {

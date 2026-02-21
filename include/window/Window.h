@@ -4,22 +4,22 @@
 #include <core/Core.h>
 #include <core/Common.h>
 
-namespace genesis 
+namespace genesis
 {
-    class Window: public Base 
+    class Window: public Base
     {
     public:
-        Window(const WindowDesc& desc);
+        explicit Window(const WindowDesc& desc);
         virtual ~Window() override;
 
-        void resize(uint32 width, uint32 height);
-
-    protected:
-        virtual void onResize() = 0;
+        virtual Rect getSize() const = 0;
+        virtual void resize(uint32 width, uint32 height) = 0;
 
     protected:
         void* m_handle;
         Rect m_size;
+
+        friend class Display;
     };
 }
 

@@ -15,7 +15,7 @@ namespace genesis
 		void setGraphicsPipelineState(const GraphicsPipelineState& graphicsPipeline);
 		void setVertexBuffer(const VertexBuffer& buffer);
 		void setViewportSize(const Rect& size);
-		void drawTriangleList(unsigned int vertexCount, unsigned int startVertexLocation);
+		void drawTriangleList(uint32 vertexCount, uint32 startVertexLocation);
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_context;

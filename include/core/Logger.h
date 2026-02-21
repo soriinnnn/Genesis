@@ -17,7 +17,7 @@ namespace genesis
 		explicit Logger(LogLevel level = LogLevel::Error);
 		~Logger();
 
-		void log(LogLevel level, const char* msg);
+		void log(LogLevel level, const char* msg) const;
 
 	protected:
 		Logger(const Logger&) = delete;

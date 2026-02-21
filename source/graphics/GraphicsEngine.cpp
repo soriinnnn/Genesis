@@ -12,8 +12,6 @@ using namespace std;
 inline constexpr char vertexShaderEntryPoint[] = "VSmain";
 inline constexpr char pixelShaderEntryPoint[] = "PSmain";
 
-// --------------------------------------------------------------------------------
-
 GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
 {
     m_graphicsDevice = make_shared<GraphicsDevice>(GraphicsDeviceDesc{m_logger});
@@ -77,8 +75,8 @@ GraphicsDevice& GraphicsEngine::getGraphicsDevice() noexcept
 
 void GraphicsEngine::render(SwapChain& swapChain)
 {
-    auto& device = *m_graphicsDevice;
-    auto& context = *m_deviceContext;
+    GraphicsDevice& device = *m_graphicsDevice;
+    DeviceContext& context = *m_deviceContext;
 
     context.clearAndSetBackBuffer(swapChain, Vec4{0.27f, 0.39f, 0.55f, 1.0f});
     context.setGraphicsPipelineState(*m_graphicsPipeline);

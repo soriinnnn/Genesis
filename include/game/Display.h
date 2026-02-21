@@ -4,7 +4,7 @@
 
 namespace genesis 
 {
-	class Display final: public Window
+	class Display final: public Base
 	{
 	public:
 		explicit Display(const DisplayDesc& desc);
@@ -12,10 +12,8 @@ namespace genesis
 
 		SwapChain& getSwapChain() noexcept;
 
-	protected:
-		void onResize() override;
-
 	private:
+		WindowPtr m_window;
 		SwapChainPtr m_swapChain;
 	};
 }

@@ -8,11 +8,9 @@ namespace genesis
 {
     class Base;
     class Logger;
-
     class Game;
     class Display;
     class Window;
-
     class GraphicsEngine;
     class GraphicsDevice;
     class DeviceContext;
@@ -22,6 +20,7 @@ namespace genesis
     class VertexBuffer;
     class VertexShaderSignature;
 
+    using WindowPtr = std::shared_ptr<Window>;
     using GraphicsDevicePtr = std::shared_ptr<GraphicsDevice>;
     using DeviceContextPtr = std::shared_ptr<DeviceContext>;
     using SwapChainPtr = std::shared_ptr<SwapChain>;

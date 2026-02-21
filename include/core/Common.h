@@ -7,12 +7,6 @@
 #define GENESIS_DEFAULT_WINDOW_WIDTH 1280
 #define GENESIS_DEFAULT_WINDOW_HEIGHT 720
 
-#if _WIN32
-#define GENESIS_TEXT(string) L##string
-#else
-#define GENESIS_TEXT(string) string
-#endif
-
 namespace genesis 
 {
 	struct BaseDesc

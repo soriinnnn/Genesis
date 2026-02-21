@@ -18,7 +18,7 @@ namespace genesis
 		ShaderBinaryPtr m_vertexShader;
 		Microsoft::WRL::ComPtr<ID3D11ShaderReflection> m_shaderReflection;
 		D3D11_INPUT_ELEMENT_DESC m_elements[D3D11_STANDARD_VERTEX_ELEMENT_COUNT];
-		unsigned int m_numElements;
+		uint32 m_numElements;
 	};
 
 }

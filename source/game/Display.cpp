@@ -1,15 +1,17 @@
 #include <game/Display.h>
 #include <graphics/GraphicsDevice.h>
-
-#include <string>
+#include <window/win32/Win32Window.h>
 
 using namespace genesis;
 
-// --------------------------------------------------------------------------------
-
-Display::Display(const DisplayDesc& desc): Window(desc.window)
+Display::Display(const DisplayDesc& desc): Base(desc.window.base)
 {
-	m_swapChain = desc.graphicsDevice.createSwapChain({m_handle, m_size});
+#ifdef _WIN32
+	m_window = std::make_shared<Win32Window>(desc.window);
+#else
+	GENESIS_LOG_THROW_ERROR("Display creation is only supported on Windows.");
+#endif
+	m_swapChain = desc.graphicsDevice.createSwapChain({m_window->m_handle, m_window->m_size});
 }
 
 Display::~Display() {}
@@ -17,10 +19,4 @@ Display::~Display() {}
 SwapChain& Display::getSwapChain() noexcept
 {
 	return *m_swapChain;
-}
-
-void Display::onResize()
-{
-	std::string str = std::string("Width: ") + std::to_string(m_size.width()) + ", Height: " + std::to_string(m_size.height()) + "\n";
-	GENESIS_LOG_INFO(str.c_str());
 }

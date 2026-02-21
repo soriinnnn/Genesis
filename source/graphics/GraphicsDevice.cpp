@@ -10,8 +10,6 @@
 using namespace genesis;
 using namespace std;
 
-// --------------------------------------------------------------------------------
-
 GraphicsDevice::GraphicsDevice(const GraphicsDeviceDesc& desc) : Base(desc.base)
 {
     D3D_FEATURE_LEVEL featureLevel;
@@ -98,6 +96,10 @@ void GraphicsDevice::executeCommandList(DeviceContext& context)
 
 GraphicsResourceDesc GraphicsDevice::getGraphicsResourceDesc() const noexcept
 {
-    BaseDesc base = {m_logger};
-    return {base, shared_from_this(), *m_d3dDevice.Get(), *m_dxgiFactory.Get()};
+    return GraphicsResourceDesc{
+        BaseDesc{m_logger},
+        shared_from_this(), 
+        *m_d3dDevice.Get(), 
+        *m_dxgiFactory.Get()
+    };
 }

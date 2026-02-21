@@ -6,8 +6,6 @@
 
 using namespace genesis;
 
-// --------------------------------------------------------------------------------
-
 DeviceContext::DeviceContext(const GraphicsResourceDesc& desc): GraphicsResource(desc)
 {
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
@@ -20,7 +18,7 @@ DeviceContext::~DeviceContext() {}
 
 void DeviceContext::clearAndSetBackBuffer(const SwapChain& swapChain, const Vec4& color)
 {
-	auto renderTarget = swapChain.m_renderTarget.Get();
+	ID3D11RenderTargetView* renderTarget = swapChain.m_renderTarget.Get();
 
 	m_context->ClearRenderTargetView(renderTarget, color.toArray());
 	m_context->OMSetRenderTargets(1, &renderTarget, nullptr);
@@ -35,9 +33,9 @@ void DeviceContext::setGraphicsPipelineState(const GraphicsPipelineState& graphi
 
 void DeviceContext::setVertexBuffer(const VertexBuffer& buffer)
 {
-	auto buff = buffer.m_buffer.Get();
-	unsigned int stride = buffer.m_vertexSize;
-	unsigned int offset = 0;
+	ID3D11Buffer* buff = buffer.m_buffer.Get();
+	uint32 stride = buffer.m_vertexSize;
+	uint32 offset = 0;
 
 	m_context->IASetVertexBuffers(0, 1, &buff, &stride, &offset);
 }
@@ -53,7 +51,7 @@ void DeviceContext::setViewportSize(const Rect& size)
 	m_context->RSSetViewports(1, &viewport);
 }
 
-void DeviceContext::drawTriangleList(unsigned int vertexCount, unsigned int startVertexLocation)
+void DeviceContext::drawTriangleList(uint32 vertexCount, uint32 startVertexLocation)
 {
 	m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_context->Draw(vertexCount, startVertexLocation);

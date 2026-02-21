@@ -10,6 +10,7 @@ namespace genesis
     public:
         explicit Game(const GameDesc& desc);
         virtual ~Game() override;
+
         virtual void run() final;
 
     private:

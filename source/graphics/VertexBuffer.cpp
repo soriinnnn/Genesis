@@ -6,8 +6,6 @@ using namespace genesis;
 D3D11_BUFFER_DESC createBufferDesc(const VertexBufferDesc& desc);
 D3D11_SUBRESOURCE_DATA createSubresourceData(const VertexBufferDesc& desc);
 
-// --------------------------------------------------------------------------------
-
 VertexBuffer::VertexBuffer(const VertexBufferDesc& vDesc, const GraphicsResourceDesc& grDesc): GraphicsResource(grDesc)
 {
 	if (!vDesc.vertexList) {
@@ -32,24 +30,24 @@ VertexBuffer::VertexBuffer(const VertexBufferDesc& vDesc, const GraphicsResource
 		"CreateBuffer failed."
 	);
 
-	m_vertexListSize = static_cast<unsigned int>(vDesc.vertexListSize);
+	m_vertexListSize = static_cast<uint32>(vDesc.vertexListSize);
 	m_vertexSize = vDesc.vertexSize;
 }
 
 VertexBuffer::~VertexBuffer() {}
 
-unsigned int VertexBuffer::getVertexListSize() const noexcept
+uint32 VertexBuffer::getVertexListSize() const noexcept
 {
 	return m_vertexListSize;
 }
 
-// --------------------------------------------------------------------------------
+/* STATIC FUNCTION DEFINITIONS */
 
 D3D11_BUFFER_DESC createBufferDesc(const VertexBufferDesc& desc) 
 {
 	D3D11_BUFFER_DESC buffDesc{};
 
-	buffDesc.ByteWidth = static_cast<unsigned int>(desc.vertexListSize * desc.vertexSize);
+	buffDesc.ByteWidth = static_cast<uint32>(desc.vertexListSize * desc.vertexSize);
 	buffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	return buffDesc;

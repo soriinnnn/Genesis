@@ -1,26 +1,20 @@
-#include <window/Window.h>
-#include <windows.h>
-
-#define BASE_WINDOW_CLASS_NAME L"GenesisWindow"
-#define DEFAULT_WINDOW_STYLE (WS_OVERLAPPEDWINDOW | WS_SIZEBOX)
+#include <window/win32/Win32Window.h>
+#include <window/win32/Win32WindowMacros.h>
 
 using namespace genesis;
 using namespace std;
 
-static LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 static RECT createWindowRect(UINT width, UINT height);
 static ATOM createWindowClass(LPCTSTR className, WNDPROC windowProc);
 static wstring createWindowClassName(void* instance);
 
-// --------------------------------------------------------------------------------
-
-Window::Window(const WindowDesc& desc): Base(desc.base), m_size(desc.size)
+Win32Window::Win32Window(const WindowDesc& desc): Window(desc)
 {
-    RECT wndRect = createWindowRect(m_size.width(), m_size.height());
-    ATOM classId = createWindowClass(createWindowClassName(this).c_str(), windowProc);
+    ATOM classId = createWindowClass(createWindowClassName(this).c_str(), wndProc);
     if (!classId) {
         GENESIS_LOG_THROW_ERROR("RegisterClassEx failed.");
     }
+    RECT wndRect = createWindowRect(m_size.width(), m_size.height());
 
     m_handle = CreateWindowEx(
         0,
@@ -44,12 +38,17 @@ Window::Window(const WindowDesc& desc): Base(desc.base), m_size(desc.size)
     ShowWindow(static_cast<HWND>(m_handle), SW_SHOW);
 }
 
-Window::~Window() 
+Win32Window::~Win32Window()
 {
     DestroyWindow(static_cast<HWND>(m_handle));
 }
 
-void Window::resize(uint32 width, uint32 height)
+Rect Win32Window::getSize() const
+{
+    return m_size;
+}
+
+void Win32Window::resize(uint32 width, uint32 height)
 {
     if (m_size.width() == width && m_size.height() == height) {
         return;
@@ -61,35 +60,39 @@ void Window::resize(uint32 width, uint32 height)
         static_cast<HWND>(m_handle),
         HWND_TOPMOST,
         0,
-        0, 
+        0,
         wndRect.right - wndRect.left,
         wndRect.bottom - wndRect.top,
         SWP_NOMOVE
     );
-    onResize();
 }
 
-// --------------------------------------------------------------------------------
-
-static LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK Win32Window::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-    Window* wnd = reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
     switch (msg) {
-    case WM_SIZE: {
+    case WM_SIZE: 
+    {
         UINT width = LOWORD(lparam);
         UINT height = HIWORD(lparam);
-        wnd->resize(width, height); 
-    } break;
+        wnd->m_size = Rect{width, height};
+    } 
+    break;
     case WM_CLOSE:
+    {
         PostQuitMessage(0);
-        break;
+    }
+    break;
     default:
         return DefWindowProc(hwnd, msg, wparam, lparam);
     }
 
     return 0;
 }
+
+
+/* STATIC FUNCTION DEFINITIONS */
 
 static RECT createWindowRect(UINT width, UINT height)
 {

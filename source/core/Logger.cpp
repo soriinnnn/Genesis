@@ -6,8 +6,6 @@ using namespace std;
 
 static const char* logLevelToString(Logger::LogLevel level);
 
-// --------------------------------------------------------------------------------
-
 Logger::Logger(LogLevel level)
 {
 	m_level = level;
@@ -16,7 +14,7 @@ Logger::Logger(LogLevel level)
 
 Logger::~Logger() {}
 
-void Logger::log(LogLevel level, const char* msg)
+void Logger::log(LogLevel level, const char* msg) const
 {
 	if (level > m_level) {
 		return;
@@ -24,7 +22,7 @@ void Logger::log(LogLevel level, const char* msg)
 	clog << "[Genesis " << logLevelToString(level) << "] " << msg << endl;
 }
 
-// --------------------------------------------------------------------------------
+/* STATIC FUNCTION DEFINITIONS */
 
 static const char* logLevelToString(Logger::LogLevel level) 
 {

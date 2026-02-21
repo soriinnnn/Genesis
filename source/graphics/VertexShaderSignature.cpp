@@ -6,8 +6,6 @@
 
 using namespace genesis;
 
-// --------------------------------------------------------------------------------
-
 VertexShaderSignature::VertexShaderSignature(const VertexShaderSignatureDesc& sDesc, const GraphicsResourceDesc& grDesc): GraphicsResource(grDesc)
 {
 	if (!sDesc.vertexShaderBinary) {
@@ -18,7 +16,7 @@ VertexShaderSignature::VertexShaderSignature(const VertexShaderSignatureDesc& sD
 	}
 	m_vertexShader = sDesc.vertexShaderBinary;
 
-	auto vertexShaderData = m_vertexShader->getData();
+	BinaryData vertexShaderData = m_vertexShader->getData();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		D3DReflect(
 			vertexShaderData.data,
@@ -36,16 +34,15 @@ VertexShaderSignature::VertexShaderSignature(const VertexShaderSignatureDesc& sD
 	
 	D3D11_SIGNATURE_PARAMETER_DESC params[D3D11_STANDARD_VERTEX_ELEMENT_COUNT]{};
 	m_numElements = shaderDesc.InputParameters;
-	for (unsigned int i = 0; i < m_numElements; i++) {
+	for (uint32 i = 0; i < m_numElements; i++) {
 		GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 			m_shaderReflection->GetInputParameterDesc(i, &params[i]),
 			"ID3D11ShaderReflection::GetInputParameterDesc failed."
 		);
 	}
 
-	for (unsigned int i = 0; i < m_numElements; i++) {
+	for (uint32 i = 0; i < m_numElements; i++) {
 		auto param = params[i];
-
 		m_elements[i] = {
 			param.SemanticName,
 			param.SemanticIndex,
@@ -58,9 +55,7 @@ VertexShaderSignature::VertexShaderSignature(const VertexShaderSignatureDesc& sD
 	}
 }
 
-VertexShaderSignature::~VertexShaderSignature()
-{
-}
+VertexShaderSignature::~VertexShaderSignature() {}
 
 BinaryData VertexShaderSignature::getShaderBinaryData() const noexcept
 {

@@ -154,8 +154,10 @@
     <ClCompile Include="source\math\Vec3.cpp" />
     <ClCompile Include="source\graphics\VertexShaderSignature.cpp" />
     <ClCompile Include="source\window\win32\Win32Window.cpp" />
+    <ClCompile Include="source\window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\core\PlatformUtils.h" />
     <ClInclude Include="source\graphics\GraphicsPipelineState.h" />
     <ClInclude Include="source\graphics\GraphicsUtils.h" />
     <ClInclude Include="source\graphics\ShaderBinary.h" />
@@ -169,6 +171,7 @@
     <ClInclude Include="source\graphics\GraphicsEngine.h" />
     <ClInclude Include="include\core\Base.h" />
     <ClInclude Include="include\core\Core.h" />
+    <ClInclude Include="source\window\win32\Win32WindowMacros.h" />
     <ClInclude Include="include\window\Window.h" />
     <ClInclude Include="include\core\Logger.h" />
     <ClInclude Include="source\graphics\GraphicsResource.h" />
@@ -178,6 +181,7 @@
     <ClInclude Include="source\graphics\VertexBuffer.h" />
     <ClInclude Include="include\math\Vec3.h" />
     <ClInclude Include="source\graphics\VertexShaderSignature.h" />
+    <ClInclude Include="source\window\win32\Win32Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

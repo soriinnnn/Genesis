@@ -5,8 +5,6 @@ using namespace genesis;
 
 static DXGI_SWAP_CHAIN_DESC createSwapChainDesc(const SwapChainDesc& desc);
 
-// --------------------------------------------------------------------------------
-
 SwapChain::SwapChain(const SwapChainDesc& scDesc, const GraphicsResourceDesc& grDesc): GraphicsResource(grDesc)
 {
 	if (scDesc.windowSize.width() <= 0 || scDesc.windowSize.height() <= 0) {
@@ -55,11 +53,10 @@ void SwapChain::updateRenderTargetView()
 	);
 }
 
-// --------------------------------------------------------------------------------
+/* STATIC FUNCTION DEFINITIONS */
 
 static DXGI_SWAP_CHAIN_DESC createSwapChainDesc(const SwapChainDesc& desc) {
 	DXGI_SWAP_CHAIN_DESC dxgiDesc{};
-
 	dxgiDesc.BufferDesc.Width = desc.windowSize.width();
 	dxgiDesc.BufferDesc.Height = desc.windowSize.height();
 	dxgiDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
