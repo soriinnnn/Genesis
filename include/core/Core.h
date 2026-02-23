@@ -1,8 +1,8 @@
 #ifndef GENESIS_CORE_H
 #define GENESIS_CORE_H
-#include <stdexcept>
 #include <cstdint>
 #include <memory>
+#include <functional>
 
 namespace genesis 
 {

@@ -1,10 +1,16 @@
 #ifndef GENESIS_VERTEX_SHADER_SIGNATURE_H
 #define GENESIS_VERTEX_SHADER_SIGNATURE_H
 #include <graphics/GraphicsResource.h>
+#include <core/Common.h>
 #include <d3dcompiler.h>
 
 namespace genesis
 {
+	struct VertexShaderSignatureDesc
+	{
+		const ShaderBinaryPtr& vertexShaderBinary;
+	};
+
 	class VertexShaderSignature final: public GraphicsResource
 	{
 	public:

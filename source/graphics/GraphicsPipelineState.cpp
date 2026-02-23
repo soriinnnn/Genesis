@@ -5,6 +5,8 @@
 
 using namespace genesis;
 
+static D3D_PRIMITIVE_TOPOLOGY getD3DPrimitiveTopology(PrimitiveTopology primitive);
+
 GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& gpDesc, const GraphicsResourceDesc& grDesc): GraphicsResource(grDesc)
 {
 	if (gpDesc.pixelShader.getType() != ShaderType::PixelShader) {
@@ -45,6 +47,30 @@ GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& gp
 		),
 		"CreatePixelShader failed."
 	);
+
+	m_primitive = getD3DPrimitiveTopology(gpDesc.primitive);
+	if (m_primitive == D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED) {
+		GENESIS_LOG_THROW_ERROR("Invalid primitive topology");
+	}
 }
 
 GraphicsPipelineState::~GraphicsPipelineState() {}
+
+/* STATIC FUNCTION DEFINITIONS */
+
+static D3D_PRIMITIVE_TOPOLOGY getD3DPrimitiveTopology(PrimitiveTopology primitive) {
+	switch (primitive) {
+	case PrimitiveTopology::Points: 
+		return D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
+	case PrimitiveTopology::Lines:
+		return D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+	case PrimitiveTopology::LinesStrip:
+		return D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP;
+	case PrimitiveTopology::Triangles:
+		return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	case PrimitiveTopology::TrianglesStrip:
+		return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+	default:
+		return D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
+	}
+}

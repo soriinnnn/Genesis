@@ -1,11 +1,17 @@
 #ifndef GENESIS_SWAP_CHAIN_H
 #define GENESIS_SWAP_CHAIN_H
-#include <core/Core.h>
-#include <core/Common.h>
 #include <graphics/GraphicsResource.h>
+#include <core/Core.h>
+#include <math/Rect.h>
 
 namespace genesis
 {
+	struct SwapChainDesc
+	{
+		void* wndHandle{};
+		Rect wndSize{};
+	};
+
 	class SwapChain final: public GraphicsResource
 	{
 	public:
@@ -13,6 +19,7 @@ namespace genesis
 		~SwapChain() override;
 
 		Rect getSize() const noexcept;
+		void resize(uint32 width, uint32 height);
 		void present(bool vsync = false);
 
 	private:

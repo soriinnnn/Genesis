@@ -52,7 +52,7 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
     );
 
     VertexShaderSignaturePtr vsSignature = m_graphicsDevice->createVertexShaderSignature(VertexShaderSignatureDesc{vs});
-    m_graphicsPipeline = m_graphicsDevice->createGraphicsPipelineState(GraphicsPipelineStateDesc{*vsSignature, *ps});
+    m_graphicsPipeline = m_graphicsDevice->createGraphicsPipelineState(GraphicsPipelineStateDesc{*vsSignature, *ps, PrimitiveTopology::Triangles});
     
     const Vertex vertexList[] = {
         {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
@@ -73,17 +73,19 @@ GraphicsDevice& GraphicsEngine::getGraphicsDevice() noexcept
     return *m_graphicsDevice;
 }
 
+void GraphicsEngine::clearPipeline()
+{
+    m_graphicsDevice->clearState();
+}
+
 void GraphicsEngine::render(SwapChain& swapChain)
 {
-    GraphicsDevice& device = *m_graphicsDevice;
-    DeviceContext& context = *m_deviceContext;
+    m_deviceContext->clearAndSetBackBuffer(swapChain, Vec4{0.27f, 0.39f, 0.55f, 1.0f});
+    m_deviceContext->setGraphicsPipelineState(*m_graphicsPipeline);
+    m_deviceContext->setViewport(swapChain.getSize());
+    m_deviceContext->setVertexBuffer(*m_vertexBuffer);
+    m_deviceContext->draw(m_vertexBuffer->getVertexListSize(), 0);
 
-    context.clearAndSetBackBuffer(swapChain, Vec4{0.27f, 0.39f, 0.55f, 1.0f});
-    context.setGraphicsPipelineState(*m_graphicsPipeline);
-    context.setViewportSize(swapChain.getSize());
-    context.setVertexBuffer(*m_vertexBuffer);
-    context.drawTriangleList(m_vertexBuffer->getVertexListSize(), 0);
-
-    device.executeCommandList(context);
+    m_graphicsDevice->executeCommandList(*m_deviceContext);
     swapChain.present();
 }

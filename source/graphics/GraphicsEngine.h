@@ -1,13 +1,17 @@
 #ifndef GENESIS_GRAPHICS_ENGINE_H
 #define GENESIS_GRAPHICS_ENGINE_H
-#include <core/Core.h>
-#include <core/Common.h>
 #include <core/Base.h>
+#include <core/Core.h>
 #include <math/Vec3.h>
 #include <math/Vec4.h>
 
 namespace genesis
 {
+    struct GraphicsEngineDesc
+    {
+        BaseDesc base;
+    };
+
     class GraphicsEngine final: public Base 
     {
     public:
@@ -16,6 +20,7 @@ namespace genesis
 
         GraphicsDevice& getGraphicsDevice() noexcept;
 
+        void clearPipeline();
         void render(SwapChain& swapChain);
 
     private:

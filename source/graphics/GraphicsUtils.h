@@ -1,6 +1,6 @@
 #ifndef GENESIS_GRAPHICS_UTILS_H
 #define GENESIS_GRAPHICS_UTILS_H
-#include <core/Common.h>
+#include <graphics/GraphicsTypes.h>
 #include <d3d11.h>
 #include <bit>
 
@@ -47,7 +47,7 @@ namespace genesis
 				return DXGI_FORMAT_UNKNOWN;
 			}
 
-			return formatTable[typeIndex][componentCount - 1];
+			return formatTable[typeIndex][componentCount-1];
 		}
 	}
 }

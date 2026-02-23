@@ -10,11 +10,13 @@ using namespace std;
 
 Game::Game(const GameDesc& desc): Base({*make_unique<Logger>(desc.logLevel).release()}), m_ownedLogger(&m_logger)
 {
-    BaseDesc base{m_logger};
-    WindowDesc window{base, desc.windowSize, GENESIS_TEXT("Demo")};
-
     m_graphicsEngine = make_unique<GraphicsEngine>(GraphicsEngineDesc{m_logger});
-    m_display = make_unique<Display>(DisplayDesc{window, m_graphicsEngine->getGraphicsDevice()});
+    m_display = make_unique<Display>(
+        DisplayDesc{
+            WindowDesc{m_logger, desc.wndSize, GENESIS_TEXT("DEMO")}, 
+            m_graphicsEngine->getGraphicsDevice()
+        }
+    );
     m_isRunning = true;
 
     GENESIS_LOG_INFO("Game initialized.");

@@ -1,5 +1,7 @@
 #include <window/win32/Win32Window.h>
-#include <window/win32/Win32WindowMacros.h>
+
+#define BASE_WINDOW_CLASS_NAME L"GenesisWindow"
+#define DEFAULT_WINDOW_STYLE (WS_OVERLAPPEDWINDOW | WS_SIZEBOX)
 
 using namespace genesis;
 using namespace std;
@@ -43,22 +45,16 @@ Win32Window::~Win32Window()
     DestroyWindow(static_cast<HWND>(m_handle));
 }
 
-Rect Win32Window::getSize() const
-{
-    return m_size;
-}
-
 void Win32Window::resize(uint32 width, uint32 height)
 {
     if (m_size.width() == width && m_size.height() == height) {
         return;
     }
-    m_size = Rect{width, height};
 
     RECT wndRect = createWindowRect(width, height);
     SetWindowPos(
         static_cast<HWND>(m_handle),
-        HWND_TOPMOST,
+        HWND_TOP,
         0,
         0,
         wndRect.right - wndRect.left,
@@ -72,25 +68,35 @@ LRESULT CALLBACK Win32Window::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
     Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
     switch (msg) {
-    case WM_SIZE: 
+    case WM_DESTROY:
     {
-        UINT width = LOWORD(lparam);
-        UINT height = HIWORD(lparam);
-        wnd->m_size = Rect{width, height};
-    } 
+        PostQuitMessage(0);
+        return 0;
+    }
     break;
     case WM_CLOSE:
     {
         PostQuitMessage(0);
+        return 0;
     }
+    break;
+    case WM_SIZE: 
+    {
+        UINT width = LOWORD(lparam);
+        UINT height = HIWORD(lparam);
+
+        wnd->m_size = Rect{width, height};
+        if (wnd->m_onResizeCallback) {
+            wnd->m_onResizeCallback(width, height);
+        }
+
+        return 0;
+    } 
     break;
     default:
         return DefWindowProc(hwnd, msg, wparam, lparam);
     }
-
-    return 0;
 }
-
 
 /* STATIC FUNCTION DEFINITIONS */
 

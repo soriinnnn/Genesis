@@ -11,8 +11,7 @@ namespace genesis
 		explicit Win32Window(const WindowDesc& desc);
 		~Win32Window() override;
 
-		Rect getSize() const;
-		void resize(uint32 width, uint32 height);
+		void resize(uint32 width, uint32 height) override;
 
 	private:
 		static LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);

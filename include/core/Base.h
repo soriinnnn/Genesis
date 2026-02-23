@@ -1,18 +1,23 @@
 #ifndef GENESIS_BASE_H
 #define GENESIS_BASE_H
-#include <core/Common.h>
+#include <core/Logger.h>
 
 namespace genesis 
 {
+    struct BaseDesc
+    {
+        Logger& logger;
+    };
+
     class Base 
     {
     public:
-        explicit Base(const BaseDesc& desc);
         virtual ~Base();
-
-        virtual Logger& getLogger() const noexcept final;
+        Logger& getLogger() const noexcept;
 
     protected:
+        explicit Base(const BaseDesc& desc);
+
         Base(const Base&) = delete;
         Base(Base&&) = delete;
         Base& operator =(const Base&) = delete;

@@ -83,6 +83,11 @@ VertexShaderSignaturePtr GraphicsDevice::createVertexShaderSignature(const Verte
     return make_shared<VertexShaderSignature>(desc, getGraphicsResourceDesc());
 }
 
+void GraphicsDevice::clearState()
+{
+    m_d3dContext->ClearState();
+}
+
 void GraphicsDevice::executeCommandList(DeviceContext& context)
 {
     Microsoft::WRL::ComPtr<ID3D11CommandList> list;
@@ -94,7 +99,7 @@ void GraphicsDevice::executeCommandList(DeviceContext& context)
     m_d3dContext->ExecuteCommandList(list.Get(), false);
 }
 
-GraphicsResourceDesc GraphicsDevice::getGraphicsResourceDesc() const noexcept
+GraphicsResourceDesc GraphicsDevice::getGraphicsResourceDesc() noexcept
 {
     return GraphicsResourceDesc{
         BaseDesc{m_logger},

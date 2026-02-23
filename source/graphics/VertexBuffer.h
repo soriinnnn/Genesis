@@ -4,6 +4,13 @@
 
 namespace genesis
 {
+	struct VertexBufferDesc
+	{
+		const void* vertexList{};
+		size_t vertexListSize{};
+		uint32 vertexSize{};
+	};
+
 	class VertexBuffer final: public GraphicsResource
 	{
 	public:
@@ -11,7 +18,6 @@ namespace genesis
 		~VertexBuffer() override;
 
 		uint32 getVertexListSize() const noexcept;
-
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> m_buffer;

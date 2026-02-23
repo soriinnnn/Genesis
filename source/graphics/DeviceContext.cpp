@@ -1,8 +1,8 @@
 #include <graphics/DeviceContext.h>
 #include <graphics/SwapChain.h>
 #include <graphics/GraphicsPipelineState.h>
-#include <graphics/GraphicsLogUtils.h>
 #include <graphics/VertexBuffer.h>
+#include <graphics/GraphicsLogUtils.h>
 
 using namespace genesis;
 
@@ -27,6 +27,7 @@ void DeviceContext::clearAndSetBackBuffer(const SwapChain& swapChain, const Vec4
 void DeviceContext::setGraphicsPipelineState(const GraphicsPipelineState& graphicsPipeline)
 {
 	m_context->IASetInputLayout(graphicsPipeline.m_inputLayout.Get());
+	m_context->IASetPrimitiveTopology(graphicsPipeline.m_primitive);
 	m_context->VSSetShader(graphicsPipeline.m_vertexShader.Get(), nullptr, 0);
 	m_context->PSSetShader(graphicsPipeline.m_pixelShader.Get(), nullptr, 0);
 }
@@ -40,7 +41,7 @@ void DeviceContext::setVertexBuffer(const VertexBuffer& buffer)
 	m_context->IASetVertexBuffers(0, 1, &buff, &stride, &offset);
 }
 
-void DeviceContext::setViewportSize(const Rect& size)
+void DeviceContext::setViewport(const Rect& size)
 {
 	D3D11_VIEWPORT viewport{};
 	viewport.Width = static_cast<float>(size.width());
@@ -51,8 +52,7 @@ void DeviceContext::setViewportSize(const Rect& size)
 	m_context->RSSetViewports(1, &viewport);
 }
 
-void DeviceContext::drawTriangleList(uint32 vertexCount, uint32 startVertexLocation)
+void DeviceContext::draw(uint32 vertexCount, uint32 startVertexLocation)
 {
-	m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_context->Draw(vertexCount, startVertexLocation);
 }

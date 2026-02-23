@@ -1,5 +1,6 @@
 #include <graphics/SwapChain.h>
 #include <graphics/GraphicsLogUtils.h>
+#include <graphics/GraphicsDevice.h>
 
 using namespace genesis;
 
@@ -7,10 +8,10 @@ static DXGI_SWAP_CHAIN_DESC createSwapChainDesc(const SwapChainDesc& desc);
 
 SwapChain::SwapChain(const SwapChainDesc& scDesc, const GraphicsResourceDesc& grDesc): GraphicsResource(grDesc)
 {
-	if (scDesc.windowSize.width() <= 0 || scDesc.windowSize.height() <= 0) {
-		GENESIS_LOG_THROW_INVALID_ARG("Window size must be greater than zero.");
+	if (scDesc.wndSize.width() == 0 || scDesc.wndSize.height() == 0) {
+		GENESIS_LOG_THROW_INVALID_ARG("Window size can't be zero.");
 	}
-	if (!scDesc.windowHandle) {
+	if (!scDesc.wndHandle) {
 		GENESIS_LOG_THROW_INVALID_ARG("Window handle is null.");
 	}
 
@@ -20,8 +21,7 @@ SwapChain::SwapChain(const SwapChainDesc& scDesc, const GraphicsResourceDesc& gr
 		"CreateSwapChain failed."
 	);
 	updateRenderTargetView();
-
-	m_size = scDesc.windowSize;
+	m_size = scDesc.wndSize;
 }
 
 SwapChain::~SwapChain() {}
@@ -29,6 +29,29 @@ SwapChain::~SwapChain() {}
 Rect SwapChain::getSize() const noexcept
 {
 	return m_size;
+}
+
+void SwapChain::resize(uint32 width, uint32 height)
+{
+	if (width == 0 || height == 0) {
+		GENESIS_LOG_WARNING("Swap chain resize: width or height is zero.");
+		return;
+	}
+	m_size = Rect{width, height};
+
+	m_graphicsDevice->clearState();
+	m_renderTarget.Reset();
+	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
+		m_swapChain->ResizeBuffers(
+			0, 
+			width, 
+			height, 
+			DXGI_FORMAT_UNKNOWN, 
+			0
+		),
+		"ResizeBuffers failed."
+	);
+	updateRenderTargetView();
 }
 
 void SwapChain::present(bool vsync)
@@ -57,13 +80,13 @@ void SwapChain::updateRenderTargetView()
 
 static DXGI_SWAP_CHAIN_DESC createSwapChainDesc(const SwapChainDesc& desc) {
 	DXGI_SWAP_CHAIN_DESC dxgiDesc{};
-	dxgiDesc.BufferDesc.Width = desc.windowSize.width();
-	dxgiDesc.BufferDesc.Height = desc.windowSize.height();
+	dxgiDesc.BufferDesc.Width = desc.wndSize.width();
+	dxgiDesc.BufferDesc.Height = desc.wndSize.height();
 	dxgiDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	dxgiDesc.SampleDesc.Count = 1;
 	dxgiDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	dxgiDesc.BufferCount = 2;
-	dxgiDesc.OutputWindow = static_cast<HWND>(desc.windowHandle);
+	dxgiDesc.OutputWindow = static_cast<HWND>(desc.wndHandle);
 	dxgiDesc.Windowed = true;
 	dxgiDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 

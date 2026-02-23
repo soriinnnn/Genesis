@@ -2,9 +2,19 @@
 #define GENESIS_GAME_H
 #include <core/Base.h>
 #include <core/Core.h>
+#include <math/Rect.h>
+
+#define GENESIS_DEFAULT_WINDOW_WIDTH 1280
+#define GENESIS_DEFAULT_WINDOW_HEIGHT 720
 
 namespace genesis 
 {
+    struct GameDesc
+    {
+        Rect wndSize{GENESIS_DEFAULT_WINDOW_WIDTH, GENESIS_DEFAULT_WINDOW_HEIGHT};
+        Logger::LogLevel logLevel = Logger::LogLevel::Error;
+    };
+
     class Game: public Base 
     {
     public:

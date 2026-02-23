@@ -1,6 +1,7 @@
 #ifndef GENESIS_DEVICE_CONTEXT_H
 #define GENESIS_DEVICE_CONTEXT_H
 #include <graphics/GraphicsResource.h>
+#include <math/Rect.h>
 #include <math/Vec4.h>
 
 namespace genesis 
@@ -14,8 +15,8 @@ namespace genesis
 		void clearAndSetBackBuffer(const SwapChain& swapChain, const Vec4& color);
 		void setGraphicsPipelineState(const GraphicsPipelineState& graphicsPipeline);
 		void setVertexBuffer(const VertexBuffer& buffer);
-		void setViewportSize(const Rect& size);
-		void drawTriangleList(uint32 vertexCount, uint32 startVertexLocation);
+		void setViewport(const Rect& size);
+		void draw(uint32 vertexCount, uint32 startVertexLocation);
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_context;
