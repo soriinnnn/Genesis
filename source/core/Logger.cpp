@@ -14,7 +14,7 @@ Logger::Logger(LogLevel level)
 
 Logger::~Logger() {}
 
-void Logger::log(LogLevel level, const char* msg) const
+void Logger::_log(LogLevel level, const char* msg) const
 {
 	if (level > m_level) {
 		return;

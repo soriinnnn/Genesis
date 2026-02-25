@@ -1,6 +1,7 @@
 #ifndef GENESIS_LOGGER_H
 #define GENESIS_LOGGER_H
 #include <core/LogUtils.h>
+#include <format>
 
 namespace genesis
 {
@@ -17,7 +18,15 @@ namespace genesis
 		explicit Logger(LogLevel level = LogLevel::Error);
 		~Logger();
 
-		void log(LogLevel level, const char* msg) const;
+		template<typename... Args>
+		void log(LogLevel level, std::format_string<Args...> format, Args&&... args) const
+		{
+			std::string msg = std::format(format, std::forward<Args>(args)...);
+			_log(level, msg.c_str());
+		}
+
+	private:
+		void _log(LogLevel level, const char* msg) const;
 
 	protected:
 		Logger(const Logger&) = delete;

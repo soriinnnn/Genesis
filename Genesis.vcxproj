@@ -110,6 +110,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\math\Mat4.cpp" />
     <ClCompile Include="source\graphics\ConstantBuffer.cpp" />
     <ClCompile Include="source\graphics\GraphicsPipelineState.cpp" />
     <ClCompile Include="source\graphics\ShaderBinary.cpp" />
@@ -158,6 +160,7 @@
     <ClCompile Include="source\window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\math\Mat4.h" />
     <ClInclude Include="source\graphics\ConstantBuffer.h" />
     <ClInclude Include="include\core\PlatformUtils.h" />
     <ClInclude Include="source\graphics\GraphicsTypes.h" />

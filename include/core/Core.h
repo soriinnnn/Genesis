@@ -9,8 +9,8 @@ namespace genesis
     class Base;
     class Logger;
     class Game;
-    class Display;
     class Window;
+    class Display;
     class GraphicsEngine;
     class GraphicsDevice;
     class DeviceContext;

@@ -3,11 +3,11 @@
 #include <core/Logger.h>
 #include <d3d11.h>
 
-#define GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(res, msg)\
+#define GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(res, msg, ...)\
 {\
 	HRESULT result = (res);\
 	if (FAILED(result)) {\
-		GENESIS_LOG_THROW_ERROR(msg);\
+		GENESIS_LOG_THROW_ERROR(msg, __VA_ARGS__);\
 	}\
 }
 
@@ -30,12 +30,13 @@ namespace genesis
 					logger, 
 					std::runtime_error, 
 					Logger::LogLevel::Error, 
-					errorMsg ? errorMsg : "Shader compilation failed."
+					"Shader compilation failed.\nDetails:\n{}",
+					errorMsg
 				);
 			}
 
 			if (errorMsg) {
-				GENESIS_LOG(logger, Logger::LogLevel::Warning, errorMsg);
+				GENESIS_LOG(logger, Logger::LogLevel::Warning, "Shader compiled with warnings.\nDetails:\n{}", errorMsg);
 			}
 		}
 	}
