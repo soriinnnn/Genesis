@@ -27,9 +27,9 @@ namespace genesis
         void onInternalUpdate();
 
     private:
-        std::unique_ptr<Logger> m_ownedLogger;
-        std::unique_ptr<GraphicsEngine> m_graphicsEngine;
-        std::unique_ptr<Display> m_display;
+        UniquePtr<Logger> m_ownedLogger;
+        UniquePtr<GraphicsEngine> m_graphicsEngine;
+        UniquePtr<Display> m_display;
         bool m_isRunning;
     };
 }

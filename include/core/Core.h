@@ -19,15 +19,7 @@ namespace genesis
     class GraphicsPipelineState;
     class VertexBuffer;
     class VertexShaderSignature;
-
-    using WindowPtr = std::shared_ptr<Window>;
-    using GraphicsDevicePtr = std::shared_ptr<GraphicsDevice>;
-    using DeviceContextPtr = std::shared_ptr<DeviceContext>;
-    using SwapChainPtr = std::shared_ptr<SwapChain>;
-    using ShaderBinaryPtr = std::shared_ptr<ShaderBinary>;
-    using GraphicsPipelineStatePtr = std::shared_ptr<GraphicsPipelineState>;
-    using VertexBufferPtr = std::shared_ptr<VertexBuffer>;
-    using VertexShaderSignaturePtr = std::shared_ptr<VertexShaderSignature>;
+    class ConstantBuffer;
 
     typedef int8_t  int8;
     typedef int16_t int16;
@@ -38,6 +30,9 @@ namespace genesis
     typedef uint16_t uint16;
     typedef uint32_t uint32;
     typedef uint64_t uint64;
+
+    template<typename T> using SharedPtr = std::shared_ptr<T>;
+    template<typename T> using UniquePtr = std::shared_ptr<T>;
 }
 
 #endif

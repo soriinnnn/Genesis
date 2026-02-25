@@ -3,14 +3,12 @@
 #include <graphics/DeviceContext.h>
 #include <graphics/SwapChain.h>
 #include <graphics/VertexBuffer.h>
+#include <graphics/ConstantBuffer.h>
 #include <math/Vec3.h>
 #include <fstream>
 
 using namespace genesis;
 using namespace std;
-
-inline constexpr char vertexShaderEntryPoint[] = "VSmain";
-inline constexpr char pixelShaderEntryPoint[] = "PSmain";
 
 GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
 {
@@ -31,27 +29,27 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
     const char* shaderSourceCode = shaderFileData.c_str();
     size_t shaderSourceCodeSize = shaderFileData.length();
 
-    ShaderBinaryPtr vs = m_graphicsDevice->compileShader(
+    SharedPtr<ShaderBinary> vs = m_graphicsDevice->compileShader(
         ShaderCompileDesc{
             shaderFilePath, 
             shaderSourceCode, 
             shaderSourceCodeSize, 
-            vertexShaderEntryPoint,
+            "VSmain",
             ShaderType::VertexShader
         }
     );
 
-    ShaderBinaryPtr ps = m_graphicsDevice->compileShader(
+    SharedPtr<ShaderBinary> ps = m_graphicsDevice->compileShader(
         ShaderCompileDesc{
             shaderFilePath,
             shaderSourceCode,
             shaderSourceCodeSize,
-            pixelShaderEntryPoint,
+            "PSmain",
             ShaderType::PixelShader
         }
     );
 
-    VertexShaderSignaturePtr vsSignature = m_graphicsDevice->createVertexShaderSignature(VertexShaderSignatureDesc{vs});
+    SharedPtr<VertexShaderSignature> vsSignature = m_graphicsDevice->createVertexShaderSignature(VertexShaderSignatureDesc{vs});
     m_graphicsPipeline = m_graphicsDevice->createGraphicsPipelineState(GraphicsPipelineStateDesc{*vsSignature, *ps, PrimitiveTopology::Triangles});
     
     const Vertex vertexList[] = {
@@ -64,6 +62,7 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
         {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}
     };
     m_vertexBuffer = m_graphicsDevice->createVertexBuffer(VertexBufferDesc{vertexList, size(vertexList), sizeof(Vertex)});
+    m_constantBuffer = m_graphicsDevice->createConstantBuffer(ConstantBufferDesc{nullptr, sizeof(ConstantData)});
 }
 
 GraphicsEngine::~GraphicsEngine() {}
@@ -78,13 +77,20 @@ void GraphicsEngine::clearPipeline()
     m_graphicsDevice->clearState();
 }
 
-void GraphicsEngine::render(SwapChain& swapChain)
+void GraphicsEngine::render(SwapChain& swapChain)   
 {
+    ConstantData data{};
+    data.scale = 1.0f;
+    m_deviceContext->updateConstantBuffer(*m_constantBuffer, &data);
+
+    // ---------------------------
+
     m_deviceContext->clearAndSetBackBuffer(swapChain, Vec4{0.27f, 0.39f, 0.55f, 1.0f});
     m_deviceContext->setGraphicsPipelineState(*m_graphicsPipeline);
     m_deviceContext->setViewport(swapChain.getSize());
     m_deviceContext->setVertexBuffer(*m_vertexBuffer);
-    m_deviceContext->draw(m_vertexBuffer->getVertexListSize(), 0);
+    m_deviceContext->setConstantBuffer(*m_constantBuffer);
+    m_deviceContext->draw(m_vertexBuffer->getVertexListSize());
 
     m_graphicsDevice->executeCommandList(*m_deviceContext);
     swapChain.present();

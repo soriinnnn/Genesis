@@ -2,9 +2,11 @@
 #include <graphics/SwapChain.h>
 #include <graphics/GraphicsPipelineState.h>
 #include <graphics/VertexBuffer.h>
+#include <graphics/ConstantBuffer.h>
 #include <graphics/GraphicsLogUtils.h>
 
 using namespace genesis;
+using namespace std;
 
 DeviceContext::DeviceContext(const GraphicsResourceDesc& desc): GraphicsResource(desc)
 {
@@ -32,15 +34,6 @@ void DeviceContext::setGraphicsPipelineState(const GraphicsPipelineState& graphi
 	m_context->PSSetShader(graphicsPipeline.m_pixelShader.Get(), nullptr, 0);
 }
 
-void DeviceContext::setVertexBuffer(const VertexBuffer& buffer)
-{
-	ID3D11Buffer* buff = buffer.m_buffer.Get();
-	uint32 stride = buffer.m_vertexSize;
-	uint32 offset = 0;
-
-	m_context->IASetVertexBuffers(0, 1, &buff, &stride, &offset);
-}
-
 void DeviceContext::setViewport(const Rect& size)
 {
 	D3D11_VIEWPORT viewport{};
@@ -50,6 +43,46 @@ void DeviceContext::setViewport(const Rect& size)
 	viewport.MaxDepth = 1.0f;
 
 	m_context->RSSetViewports(1, &viewport);
+}
+
+void DeviceContext::setVertexBuffer(const VertexBuffer& buffer)
+{
+	ID3D11Buffer* buff = buffer.m_buffer.Get();
+	uint32 stride = buffer.m_vertexSize;
+	uint32 offset = 0;
+
+	m_context->IASetVertexBuffers(0, 1, &buff, &stride, &offset);
+}
+
+void DeviceContext::setConstantBuffer(const ConstantBuffer& buffer)
+{
+	ID3D11Buffer* buff = buffer.m_buffer.Get();
+
+	m_context->VSSetConstantBuffers(0, 1, &buff);
+	m_context->PSSetConstantBuffers(0, 1, &buff);
+}
+	
+void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const void* data)
+{
+	if (!data) {
+		GENESIS_LOG_THROW_ERROR("Null data pointer passed to updateConstantBuffer.");
+	}
+
+	ID3D11Buffer* buff = buffer.m_buffer.Get();
+	D3D11_MAPPED_SUBRESOURCE mapped{};
+
+	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
+		m_context->Map(
+			buff, 
+			0,
+			D3D11_MAP_WRITE_DISCARD, 
+			0, 
+			&mapped
+		),
+		"ID3D11DeviceContext::Map failed."
+	);
+	memcpy(mapped.pData, data, buffer.m_size);
+	m_context->Unmap(buff, 0);
 }
 
 void DeviceContext::draw(uint32 vertexCount, uint32 startVertexLocation)

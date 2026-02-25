@@ -14,9 +14,11 @@ namespace genesis
 
 		void clearAndSetBackBuffer(const SwapChain& swapChain, const Vec4& color);
 		void setGraphicsPipelineState(const GraphicsPipelineState& graphicsPipeline);
-		void setVertexBuffer(const VertexBuffer& buffer);
 		void setViewport(const Rect& size);
-		void draw(uint32 vertexCount, uint32 startVertexLocation);
+		void setVertexBuffer(const VertexBuffer& buffer);
+		void setConstantBuffer(const ConstantBuffer& buffer);
+		void updateConstantBuffer(const ConstantBuffer& buffer, const void* data);
+		void draw(uint32 vertexCount, uint32 startVertexLocation = 0);
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_context;

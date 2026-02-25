@@ -27,7 +27,7 @@ void Window::onResize(std::function<void(uint32, uint32)> callback)
 	m_onResizeCallback = callback;
 }
 
-WindowPtr Window::create(const WindowDesc& desc)
+SharedPtr<Window> Window::create(const WindowDesc& desc)
 {
 #ifdef _WIN32
 	return std::make_shared<Win32Window>(desc);

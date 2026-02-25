@@ -46,7 +46,6 @@ uint32 VertexBuffer::getVertexListSize() const noexcept
 D3D11_BUFFER_DESC createBufferDesc(const VertexBufferDesc& desc) 
 {
 	D3D11_BUFFER_DESC buffDesc{};
-
 	buffDesc.ByteWidth = static_cast<uint32>(desc.vertexListSize * desc.vertexSize);
 	buffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
@@ -56,7 +55,6 @@ D3D11_BUFFER_DESC createBufferDesc(const VertexBufferDesc& desc)
 D3D11_SUBRESOURCE_DATA createSubresourceData(const VertexBufferDesc& desc) 
 {
 	D3D11_SUBRESOURCE_DATA data{};
-
 	data.pSysMem = desc.vertexList;
 
 	return data;

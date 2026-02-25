@@ -20,8 +20,8 @@ namespace genesis
 		void resize(uint32 width, uint32 height);
 
 	private:
-		WindowPtr m_window;
-		SwapChainPtr m_swapChain;
+		SharedPtr<Window> m_window;
+		SharedPtr<SwapChain> m_swapChain;
 	};
 }
 

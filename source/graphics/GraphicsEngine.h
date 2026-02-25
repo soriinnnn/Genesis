@@ -30,11 +30,17 @@ namespace genesis
             Vec4 color;
         };
 
+        struct alignas(16) ConstantData
+        {
+            float scale{};
+        };
+
     private:
-        GraphicsDevicePtr m_graphicsDevice;
-        DeviceContextPtr m_deviceContext;
-        GraphicsPipelineStatePtr m_graphicsPipeline;
-        VertexBufferPtr m_vertexBuffer;
+        SharedPtr<GraphicsDevice> m_graphicsDevice;
+        SharedPtr<DeviceContext> m_deviceContext;
+        SharedPtr<GraphicsPipelineState> m_graphicsPipeline;
+        SharedPtr<VertexBuffer> m_vertexBuffer;
+        SharedPtr<ConstantBuffer> m_constantBuffer;
     };
 }
 

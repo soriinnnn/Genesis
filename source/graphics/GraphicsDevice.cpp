@@ -53,34 +53,39 @@ GraphicsDevice::GraphicsDevice(const GraphicsDeviceDesc& desc) : Base(desc.base)
 
 GraphicsDevice::~GraphicsDevice() {}
 
-SwapChainPtr GraphicsDevice::createSwapChain(const SwapChainDesc& desc)
+SharedPtr<SwapChain> GraphicsDevice::createSwapChain(const SwapChainDesc& desc)
 {
     return make_shared<SwapChain>(desc, getGraphicsResourceDesc());
 }
 
-DeviceContextPtr GraphicsDevice::createDeviceContext()
+SharedPtr<DeviceContext> GraphicsDevice::createDeviceContext()
 {
     return make_shared<DeviceContext>(getGraphicsResourceDesc());
 }
 
-ShaderBinaryPtr GraphicsDevice::compileShader(const ShaderCompileDesc& desc)
+SharedPtr<ShaderBinary> GraphicsDevice::compileShader(const ShaderCompileDesc& desc)
 {
     return make_shared<ShaderBinary>(desc, getGraphicsResourceDesc());
 }
 
-GraphicsPipelineStatePtr GraphicsDevice::createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc)
+SharedPtr<GraphicsPipelineState> GraphicsDevice::createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc)
 {
     return make_shared<GraphicsPipelineState>(desc, getGraphicsResourceDesc());
 }
 
-VertexBufferPtr GraphicsDevice::createVertexBuffer(const VertexBufferDesc& desc)
+SharedPtr<VertexBuffer> GraphicsDevice::createVertexBuffer(const VertexBufferDesc& desc)
 {
     return make_shared<VertexBuffer>(desc, getGraphicsResourceDesc());
 }
 
-VertexShaderSignaturePtr GraphicsDevice::createVertexShaderSignature(const VertexShaderSignatureDesc& desc)
+SharedPtr<VertexShaderSignature> GraphicsDevice::createVertexShaderSignature(const VertexShaderSignatureDesc& desc)
 {
     return make_shared<VertexShaderSignature>(desc, getGraphicsResourceDesc());
+}
+
+SharedPtr<ConstantBuffer> GraphicsDevice::createConstantBuffer(const ConstantBufferDesc& desc)
+{
+    return make_shared<ConstantBuffer>(desc, getGraphicsResourceDesc());
 }
 
 void GraphicsDevice::clearState()

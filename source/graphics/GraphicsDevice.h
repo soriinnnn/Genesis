@@ -8,6 +8,7 @@
 #include <graphics/GraphicsPipelineState.h>
 #include <graphics/VertexBuffer.h>
 #include <graphics/VertexShaderSignature.h>
+#include <graphics/ConstantBuffer.h>
 #include <d3d11.h>
 #include <wrl.h>
 
@@ -24,12 +25,13 @@ namespace genesis
         explicit GraphicsDevice(const GraphicsDeviceDesc& desc);
         virtual ~GraphicsDevice() override;
 
-        SwapChainPtr createSwapChain(const SwapChainDesc& desc);
-        DeviceContextPtr createDeviceContext();
-        ShaderBinaryPtr compileShader(const ShaderCompileDesc& desc);
-        GraphicsPipelineStatePtr createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc);
-        VertexBufferPtr createVertexBuffer(const VertexBufferDesc& desc);
-        VertexShaderSignaturePtr createVertexShaderSignature(const VertexShaderSignatureDesc& desc);
+        SharedPtr<SwapChain> createSwapChain(const SwapChainDesc& desc);
+        SharedPtr<DeviceContext> createDeviceContext();
+        SharedPtr<ShaderBinary> compileShader(const ShaderCompileDesc& desc);
+        SharedPtr<GraphicsPipelineState> createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc);
+        SharedPtr<VertexBuffer> createVertexBuffer(const VertexBufferDesc& desc);
+        SharedPtr<VertexShaderSignature> createVertexShaderSignature(const VertexShaderSignatureDesc& desc);
+        SharedPtr<ConstantBuffer> createConstantBuffer(const ConstantBufferDesc& desc);
 
         void clearState();
         void executeCommandList(DeviceContext& context);
