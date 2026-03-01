@@ -14,7 +14,7 @@ void Win32InputManager::update()
 {
     ::memcpy(m_previousKeys, m_currentKeys, sizeof(uint8) * KEYBOARD_STATE_SIZE);
 	if (!::GetKeyboardState(m_currentKeys)) {
-		GENESIS_LOG_WARNING("GetKeyboardState has failed.");
+		//GENESIS_LOG_WARNING("GetKeyboardState failed.\nError code: 0x{:08x}", GetLastError());
 		return;
 	}
 

@@ -14,7 +14,7 @@ Game::Game(const GameDesc& desc)
     m_graphicsEngine = make_unique<GraphicsEngine>(GraphicsEngineDesc{*m_logger});
     m_display = make_unique<Display>(
         DisplayDesc{
-            WindowDesc{*m_logger, desc.wndSize, GENESIS_TEXT("DEMO")}, 
+            WindowDesc{*m_logger, desc.wndSize, GENESIS_TEXT("Demo")}, 
             m_graphicsEngine->getGraphicsDevice()
         }
     );
@@ -36,8 +36,8 @@ Logger& Game::getLogger() noexcept
 
 void Game::onInternalUpdate()
 {
-    auto currentTime = std::chrono::steady_clock::now();
-    std::chrono::duration<float> delta = currentTime - m_previousTime;
+    auto currentTime = chrono::steady_clock::now();
+    chrono::duration<float> delta = currentTime - m_previousTime;
     m_previousTime = currentTime;
     float deltaTime = delta.count();
 
@@ -51,5 +51,7 @@ void Game::onInternalUpdate()
         frames = 0;
         timer -= 1.0f;
     }
+
+
     m_graphicsEngine->render(m_display->getSwapChain(), deltaTime);
 }

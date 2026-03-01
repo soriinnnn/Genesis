@@ -5,9 +5,9 @@
 #include <graphics/GraphicsResource.h>
 #include <graphics/SwapChain.h>
 #include <graphics/ShaderBinary.h>
+#include <graphics/VertexShaderSignature.h>
 #include <graphics/GraphicsPipelineState.h>
 #include <graphics/VertexBuffer.h>
-#include <graphics/VertexShaderSignature.h>
 #include <graphics/ConstantBuffer.h>
 #include <graphics/IndexBuffer.h>
 #include <d3d11.h>

@@ -1,9 +1,6 @@
 #include <graphics/GraphicsEngine.h>
 #include <graphics/GraphicsDevice.h>
 #include <graphics/DeviceContext.h>
-#include <graphics/SwapChain.h>
-#include <graphics/VertexBuffer.h>
-#include <graphics/ConstantBuffer.h>
 
 #include <misc/AssetManager.h>
 

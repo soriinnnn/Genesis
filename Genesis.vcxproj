@@ -165,6 +165,8 @@
     <ClCompile Include="source\input\win32\Win32InputManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\core\utils\LogMacros.h" />
+    <ClInclude Include="include\core\utils\Macros.h" />
     <ClInclude Include="include\misc\AssetManager.h" />
     <ClInclude Include="include\input\InputKeyCodes.h" />
     <ClInclude Include="include\math\Mat4.h" />
@@ -173,15 +175,15 @@
     <ClInclude Include="source\graphics\IndexBuffer.h" />
     <ClInclude Include="source\graphics\ConstantBuffer.h" />
     <ClInclude Include="include\misc\PlatformUtils.h" />
-    <ClInclude Include="source\graphics\GraphicsTypes.h" />
+    <ClInclude Include="source\graphics\utils\GraphicsTypes.h" />
     <ClInclude Include="source\graphics\GraphicsPipelineState.h" />
-    <ClInclude Include="source\graphics\GraphicsUtils.h" />
+    <ClInclude Include="source\graphics\utils\GraphicsUtils.h" />
     <ClInclude Include="source\graphics\ShaderBinary.h" />
     <ClInclude Include="source\graphics\DeviceContext.h" />
-    <ClInclude Include="include\core\LogUtils.h" />
+    <ClInclude Include="include\core\utils\LogUtils.h" />
     <ClInclude Include="include\game\Display.h" />
     <ClInclude Include="include\math\Rect.h" />
-    <ClInclude Include="source\graphics\GraphicsLogUtils.h" />
+    <ClInclude Include="source\graphics\utils\GraphicsLogUtils.h" />
     <ClInclude Include="include\core\Common.h" />
     <ClInclude Include="include\game\Game.h" />
     <ClInclude Include="source\graphics\GraphicsEngine.h" />

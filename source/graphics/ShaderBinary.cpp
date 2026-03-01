@@ -1,6 +1,6 @@
 #include <graphics/ShaderBinary.h>
-#include <graphics/GraphicsUtils.h>
-#include <graphics/GraphicsLogUtils.h>
+#include <graphics/utils/GraphicsUtils.h>
+#include <graphics/utils/GraphicsLogUtils.h>
 #include <d3dcompiler.h>
 
 using namespace genesis;

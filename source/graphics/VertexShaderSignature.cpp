@@ -1,7 +1,7 @@
 #include <graphics/VertexShaderSignature.h>
 #include <graphics/ShaderBinary.h>
-#include <graphics/GraphicsUtils.h>
-#include <graphics/GraphicsLogUtils.h>
+#include <graphics/utils/GraphicsUtils.h>
+#include <graphics/utils/GraphicsLogUtils.h>
 #include <d3dcompiler.h>
 
 using namespace genesis;
@@ -12,7 +12,7 @@ VertexShaderSignature::VertexShaderSignature(const VertexShaderSignatureDesc& sD
 		GENESIS_LOG_THROW_INVALID_ARG("No shader binary provided.");
 	}
 	if (sDesc.vsBinary->getType() != ShaderType::VertexShader) {
-		GENESIS_LOG_THROW_INVALID_ARG("Vertex shader type is invalid.");
+		GENESIS_LOG_THROW_INVALID_ARG("Invalid vertex shader type.");
 	}
 	m_vertexShader = sDesc.vsBinary;
 

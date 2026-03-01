@@ -1,11 +1,6 @@
 #include <graphics/GraphicsDevice.h>
 #include <graphics/DeviceContext.h>
-#include <graphics/SwapChain.h>
-#include <graphics/GraphicsLogUtils.h>
-#include <graphics/ShaderBinary.h>
-#include <graphics/GraphicsPipelineState.h>
-#include <graphics/VertexBuffer.h>
-#include <graphics/VertexShaderSignature.h>
+#include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;
 using namespace std;

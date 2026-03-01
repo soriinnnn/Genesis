@@ -1,6 +1,6 @@
 #include <game/Display.h>
-#include <graphics/GraphicsDevice.h>
 #include <graphics/SwapChain.h>
+#include <graphics/GraphicsDevice.h>
 
 using namespace genesis;
 

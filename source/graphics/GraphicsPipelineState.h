@@ -1,7 +1,7 @@
 #ifndef GENESIS_GRAPHICS_PIPELINE_STATE_H
 #define GENESIS_GRAPHICS_PIPELINE_STATE_H
 #include <graphics/GraphicsResource.h>
-#include <graphics/GraphicsTypes.h>
+#include <graphics/utils/GraphicsTypes.h>
 
 namespace genesis
 {

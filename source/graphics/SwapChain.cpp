@@ -1,6 +1,6 @@
 #include <graphics/SwapChain.h>
-#include <graphics/GraphicsLogUtils.h>
 #include <graphics/GraphicsDevice.h>
+#include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;
 
@@ -8,9 +8,6 @@ static DXGI_SWAP_CHAIN_DESC createSwapChainDesc(const SwapChainDesc& desc);
 
 SwapChain::SwapChain(const SwapChainDesc& scDesc, const GraphicsResourceDesc& grDesc): GraphicsResource(grDesc)
 {
-	if (scDesc.wndSize.width() == 0 || scDesc.wndSize.height() == 0) {
-		GENESIS_LOG_THROW_INVALID_ARG("Window size can't be zero.");
-	}
 	if (!scDesc.wndHandle) {
 		GENESIS_LOG_THROW_INVALID_ARG("Window handle is null.");
 	}

@@ -1,7 +1,7 @@
 #include <graphics/GraphicsPipelineState.h>
 #include <graphics/ShaderBinary.h>
 #include <graphics/VertexShaderSignature.h>
-#include <graphics/GraphicsLogUtils.h>
+#include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;
 

@@ -1,28 +1,31 @@
 #ifndef GENESIS_CORE_H
 #define GENESIS_CORE_H
-#include <cstdint>
+#include <string>
 #include <memory>
+#include <cstdint>
 #include <functional>
 
 namespace genesis 
 {
     class Base;
     class Logger;
+
     class Game;
     class Window;
     class Display;
+    class InputManager;
+    class InputListener;
+
     class GraphicsEngine;
     class GraphicsDevice;
     class DeviceContext;
     class SwapChain;
     class ShaderBinary;
-    class GraphicsPipelineState;
     class VertexBuffer;
-    class VertexShaderSignature;
-    class ConstantBuffer;
     class IndexBuffer;
-    class InputManager;
-    class InputListener;
+    class ConstantBuffer;
+    class VertexShaderSignature;
+    class GraphicsPipelineState;
 
     typedef int8_t  int8;
     typedef int16_t int16;

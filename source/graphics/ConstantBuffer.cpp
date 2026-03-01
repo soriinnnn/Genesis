@@ -1,5 +1,5 @@
 #include <graphics/ConstantBuffer.h>
-#include <graphics/GraphicsLogUtils.h>
+#include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;
 
@@ -9,7 +9,7 @@ D3D11_SUBRESOURCE_DATA createSubresourceData(const ConstantBufferDesc& desc);
 ConstantBuffer::ConstantBuffer(const ConstantBufferDesc& cDesc, const GraphicsResourceDesc& grDesc): GraphicsResource(grDesc)
 {
 	if (!cDesc.bufferSize) {
-		GENESIS_LOG_THROW_INVALID_ARG("Buffer size must be non-zero.");
+		GENESIS_LOG_THROW_ERROR("Buffer size must be greater than zero.");
 	}
 
 	D3D11_BUFFER_DESC buffDesc = createBufferDesc(cDesc);

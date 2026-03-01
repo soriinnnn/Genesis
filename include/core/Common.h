@@ -10,11 +10,4 @@ namespace genesis
 	};
 }
 
-#define GENESIS_DISABLE_COPY_AND_MOVE(className)\
-	protected:\
-		className(const className&) = delete;\
-		className(className&&) = delete;\
-		className& operator =(const className&) = delete;\
-		className& operator =(className&&) = delete;
-
 #endif

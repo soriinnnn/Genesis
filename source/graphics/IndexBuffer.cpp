@@ -1,5 +1,5 @@
 #include <graphics/IndexBuffer.h>
-#include <graphics/GraphicsLogUtils.h>
+#include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;
 

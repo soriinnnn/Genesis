@@ -122,7 +122,7 @@
     <ClInclude Include="include\core\Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\GraphicsLogUtils.h">
+    <ClInclude Include="source\graphics\utils\GraphicsLogUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\graphics\SwapChain.h">
@@ -137,7 +137,7 @@
     <ClInclude Include="include\game\Display.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\core\LogUtils.h">
+    <ClInclude Include="include\core\utils\LogUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\graphics\DeviceContext.h">
@@ -149,7 +149,7 @@
     <ClInclude Include="source\graphics\ShaderBinary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\GraphicsUtils.h">
+    <ClInclude Include="source\graphics\utils\GraphicsUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\graphics\GraphicsPipelineState.h">
@@ -170,7 +170,7 @@
     <ClInclude Include="include\misc\PlatformUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\GraphicsTypes.h">
+    <ClInclude Include="source\graphics\utils\GraphicsTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\graphics\ConstantBuffer.h">
@@ -195,6 +195,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\input\InputKeyCodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\utils\Macros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\utils\LogMacros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

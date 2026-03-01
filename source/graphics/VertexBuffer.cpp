@@ -1,5 +1,5 @@
 #include <graphics/VertexBuffer.h>
-#include <graphics/GraphicsLogUtils.h>
+#include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;
 

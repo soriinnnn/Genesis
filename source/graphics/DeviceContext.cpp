@@ -4,7 +4,7 @@
 #include <graphics/VertexBuffer.h>
 #include <graphics/IndexBuffer.h>
 #include <graphics/ConstantBuffer.h>
-#include <graphics/GraphicsLogUtils.h>
+#include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;
 using namespace std;
@@ -73,12 +73,11 @@ void DeviceContext::setConstantBuffer(const ConstantBuffer& buffer)
 void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const void* m_data)
 {
 	if (!m_data) {
-		GENESIS_LOG_THROW_ERROR("Null data pointer passed to updateConstantBuffer.");
+		GENESIS_LOG_THROW_ERROR("Null data pointer.");
 	}
 
 	ID3D11Buffer* buff = buffer.m_buffer.Get();
 	D3D11_MAPPED_SUBRESOURCE mapped{};
-
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_context->Map(
 			buff, 

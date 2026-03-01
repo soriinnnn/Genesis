@@ -31,6 +31,6 @@ UniquePtr<InputManager> InputManager::create(const InputManagerDesc& desc)
 #ifdef _WIN32
 	return make_unique<Win32InputManager>(desc);
 #else
-#error "Input manager creation is currently only supported on Windows."
+#error "InputManager creation is currently only supported on Windows."
 #endif
 }

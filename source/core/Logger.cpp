@@ -19,7 +19,7 @@ void Logger::_log(LogLevel level, const char* msg) const
 	if (level > m_level) {
 		return;
 	}
-	clog << "[Genesis " << logLevelToString(level) << "] " << msg << endl;
+	clog << "[Genesis][" << logLevelToString(level) << "] " << msg << endl;
 }
 
 /* STATIC FUNCTION DEFINITIONS */

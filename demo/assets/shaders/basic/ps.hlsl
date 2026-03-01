@@ -4,7 +4,7 @@ struct input
     float4 color: COLOR0;
 };
 
-float4 main(input invar): SV_Target
+float4 main(input invar): SV_Target0
 {
     return invar.color;
 }
