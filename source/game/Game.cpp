@@ -21,6 +21,8 @@ Game::Game(const GameDesc& desc)
     m_inputManager = InputManager::create(InputManagerDesc{*m_logger});
     m_isRunning = true;
 
+    m_inputManager->addListener(m_graphicsEngine.get());
+
     GENESIS_LOG_INFO("Game initialized.");
 }
 
@@ -52,6 +54,6 @@ void Game::onInternalUpdate()
         timer -= 1.0f;
     }
 
-
+    m_inputManager->update();
     m_graphicsEngine->render(m_display->getSwapChain(), deltaTime);
 }

@@ -22,6 +22,9 @@ output main(input invar)
     output outvar;
     
     outvar.position = mul(float4(invar.position, 1), world);
+    outvar.position = mul(outvar.position, view);
+    outvar.position = mul(outvar.position, projection);
+    
     outvar.color = invar.color;
     
     return outvar;

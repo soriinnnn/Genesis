@@ -6,6 +6,8 @@
 #include <math/Vec4.h>
 #include <math/Mat4.h>
 
+#include <input/InputListener.h>
+
 namespace genesis
 {
     struct GraphicsEngineDesc
@@ -13,7 +15,7 @@ namespace genesis
         BaseDesc base;
     };
 
-    class GraphicsEngine final: public Base 
+    class GraphicsEngine final: public Base, public InputListener
     {
     public:
         explicit GraphicsEngine(const GraphicsEngineDesc& desc);
@@ -23,6 +25,12 @@ namespace genesis
 
         void clearPipelineState();
         void render(SwapChain& swapChain, float deltaTime);
+
+
+        // PROVA
+        void onKeyDown(Key key) override;
+        void onKeyUp(Key key) override;
+
 
     private:
         struct Vertex
@@ -34,6 +42,8 @@ namespace genesis
         struct alignas(16) ConstantData
         {
             Mat4 world;
+            Mat4 view;
+            Mat4 projection;
         };
 
     private:
@@ -46,6 +56,7 @@ namespace genesis
 
         Vec3 m_pos{}, m_rot{};
         float m_scale{};
+        float m_deltaTime{};
     };
 }
 

@@ -21,9 +21,6 @@ void Win32InputManager::update()
 	for (int i = 0; i < KEYBOARD_STATE_SIZE; i++) {
 		bool isKeyDown = (m_currentKeys[i] & 0x80);
 		bool wasKeyDown = (m_previousKeys[i] & 0x80);
-        if (isKeyDown == wasKeyDown) {
-            continue;
-        }
 
         Key key = mapWin32ToGenesis(i);
         if (key == Key::Unknown) {
@@ -35,7 +32,7 @@ void Win32InputManager::update()
 				listener->onKeyDown(key);
 			}
 		}
-		else {
+		else if (wasKeyDown) {
 			for (auto listener : m_listeners) {
 				listener->onKeyUp(key);
 			}

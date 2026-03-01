@@ -46,14 +46,14 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
     m_graphicsPipeline = m_graphicsDevice->createGraphicsPipelineState(GraphicsPipelineStateDesc{*vsSignature, *ps, PrimitiveTopology::Triangles});
     
     const Vertex vertices[] = {
-        {{-0.5f, -0.5f,  0.8f}, { 1.0f,  0.0f,  0.0f,  1.0f}},
-        {{-0.5f,  0.5f,  0.8f}, { 0.0f,  1.0f,  0.0f,  1.0f}},
-        {{ 0.5f,  0.5f,  0.8f}, { 0.0f,  0.0f,  1.0f,  1.0f}},
-        {{ 0.5f, -0.5f,  0.8f}, { 1.0f,  0.0f,  1.0f,  1.0f}},
-        {{ 0.5f, -0.5f,  0.2f}, { 1.0f,  0.0f,  0.0f,  1.0f}},
-        {{ 0.5f,  0.5f,  0.2f}, { 0.0f,  1.0f,  0.0f,  1.0f}},
-        {{-0.5f,  0.5f,  0.2f}, { 0.0f,  0.0f,  1.0f,  1.0f}},
-        {{-0.5f, -0.5f,  0.2f}, { 1.0f,  0.0f,  1.0f,  1.0f}}
+        {{-0.5f, -0.5f, -0.5f}, {1, 0, 0, 1}},
+        {{-0.5f,  0.5f, -0.5f}, {0, 1, 0, 1}},
+        {{ 0.5f,  0.5f, -0.5f}, {0, 0, 1, 1}},
+        {{ 0.5f, -0.5f, -0.5f}, {1, 0, 1, 1}},
+        {{ 0.5f, -0.5f,  0.5f}, {1, 0, 1, 1}},
+        {{ 0.5f,  0.5f,  0.5f}, {0, 0, 1, 1}},
+        {{-0.5f,  0.5f,  0.5f}, {0, 1, 0, 1}},
+        {{-0.5f, -0.5f,  0.5f}, {1, 0, 0, 1}}
     };
     m_vertexBuffer = m_graphicsDevice->createVertexBuffer(VertexBufferDesc{vertices, size(vertices), sizeof(Vertex)});
     
@@ -90,16 +90,28 @@ void GraphicsEngine::clearPipelineState()
 
 void GraphicsEngine::render(SwapChain& swapChain, float deltaTime)   
 {
-    m_rot.x += 0.005f;
-    m_rot.y += 0.005f;
-    m_rot.z += 0.005f;
+    m_deltaTime = deltaTime;
     m_scale = 1.0f;
-
-    ConstantData m_data{};
-    m_data.world = 
+    
+    Mat4 world = 
         Mat4::fromScale(Vec3{m_scale, m_scale, m_scale}) *
         Mat4::fromRotation(m_rot) *
-        Mat4::fromTranslation(m_pos);
+        Mat4::fromTranslation(Vec3{m_pos.x, m_pos.y, 0.0f});
+
+    Mat4 view = Mat4::identity();
+
+    auto size = swapChain.getSize();
+    float aspect = static_cast<float>(size.width()) / size.height();
+    auto unitsPerScreenHeight = 2.0f;
+    auto viewHeight = unitsPerScreenHeight;
+    auto viewWidth = unitsPerScreenHeight * aspect;
+    Mat4 projection = Mat4::orthographicLH(viewWidth, viewHeight, -10.0f, 10.0f);
+
+    ConstantData m_data{
+        world,
+        view,
+        projection
+    };
     m_deviceContext->updateConstantBuffer(*m_constantBuffer, &m_data);
 
     // ---------------------------
@@ -116,4 +128,26 @@ void GraphicsEngine::render(SwapChain& swapChain, float deltaTime)
 
     m_graphicsDevice->executeCommandList(*m_deviceContext);
     swapChain.present();
+}
+
+// PROVA
+
+void genesis::GraphicsEngine::onKeyDown(Key key)
+{
+    if (key == Key::W) {
+        m_rot.x += 0.707f * m_deltaTime;
+    }
+    else if (key == Key::S) {
+        m_rot.x -= 0.707f * m_deltaTime;
+    }
+    else if (key == Key::A) {
+        m_rot.y += 0.707f * m_deltaTime;
+    }
+    else if (key == Key::D) {
+        m_rot.y -= 0.707f * m_deltaTime;
+    }
+}
+
+void genesis::GraphicsEngine::onKeyUp(Key key)
+{
 }

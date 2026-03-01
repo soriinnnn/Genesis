@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\game\Camera.cpp" />
     <ClCompile Include="source\input\InputListener.cpp" />
     <ClCompile Include="source\input\InputManager.cpp" />
     <ClCompile Include="include\misc\AssetManager.cpp" />
@@ -165,6 +166,7 @@
     <ClCompile Include="source\input\win32\Win32InputManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\game\Camera.h" />
     <ClInclude Include="include\core\utils\LogMacros.h" />
     <ClInclude Include="include\core\utils\Macros.h" />
     <ClInclude Include="include\misc\AssetManager.h" />

@@ -1,10 +1,24 @@
 #include <math/Mat4.h>
+#include <cassert>
 #include <cmath>
 
 using namespace genesis;
 using namespace std;
 
 Mat4::Mat4(): m_data({}) {}
+
+Mat4 Mat4::transpose() const noexcept
+{
+	Mat4 res{};
+
+	for (int row = 0; row < 4; row++) {
+		for (int col = 0; col < 4; col++) {
+			res.m_data[col][row] = m_data[row][col];
+		}
+	}
+
+	return res;
+}
 
 Mat4 Mat4::operator*(const Mat4& rhs) const noexcept
 {
@@ -30,6 +44,34 @@ Mat4 Mat4::identity() noexcept
 	res.m_data[0][0] = 1;
 	res.m_data[1][1] = 1;
 	res.m_data[2][2] = 1;
+	res.m_data[3][3] = 1;
+
+	return res;
+}
+
+Mat4 Mat4::orthographicLH(float width, float height, float near, float far) noexcept
+{
+	Mat4 res{};
+
+	res.m_data[0][0] = 2.0f / width;
+	res.m_data[1][1] = 2.0f / height;
+	res.m_data[2][2] = 1.0f / (far - near);
+	res.m_data[3][2] = -(near / (far - near));
+	res.m_data[3][3] = 1;
+
+	return res;
+}
+
+Mat4 Mat4::orthographicOffCenterLH(float left, float right, float bottom, float top, float near, float far) noexcept
+{
+	Mat4 res{};
+
+	res.m_data[0][0] = 2.0f / (right - left);
+	res.m_data[1][1] = 2.0f / (top - bottom);
+	res.m_data[2][2] = 1.0f / (far - near);
+	res.m_data[3][0] = -(right + left) / (right - left);
+	res.m_data[3][1] = -(top + bottom) / (top - bottom);
+	res.m_data[3][2] = -(near / (far - near));
 	res.m_data[3][3] = 1;
 
 	return res;
@@ -64,7 +106,7 @@ Mat4 Mat4::fromRotation(const Vec3& rotation) noexcept
 	Mat4 rotY = Mat4::fromRotationY(rotation.y);
 	Mat4 rotZ = Mat4::fromRotationZ(rotation.z);
 
-	return rotZ * rotX * rotY;
+	return rotX * rotY * rotZ;
 }
 
 Mat4 Mat4::fromRotationX(float rotX) noexcept
