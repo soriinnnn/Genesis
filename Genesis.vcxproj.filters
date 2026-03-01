@@ -81,6 +81,21 @@
     <ClCompile Include="source\math\Mat4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\graphics\IndexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\misc\AssetManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\input\InputManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\input\InputListener.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\input\win32\Win32InputManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\core\Base.h">
@@ -152,7 +167,7 @@
     <ClInclude Include="source\window\win32\Win32Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\core\PlatformUtils.h">
+    <ClInclude Include="include\misc\PlatformUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\graphics\GraphicsTypes.h">
@@ -162,6 +177,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\math\Mat4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\graphics\IndexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\misc\AssetManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\input\InputManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\input\InputListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\input\win32\Win32InputManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\input\InputKeyCodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

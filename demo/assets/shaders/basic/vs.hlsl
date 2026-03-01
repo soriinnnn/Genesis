@@ -1,0 +1,28 @@
+struct input
+{
+    float3 position: POSITION0;
+    float4 color: COLOR0;
+};
+
+struct output
+{
+    float4 position: SV_Position;
+    float4 color: COLOR0;
+};
+
+cbuffer ConstantData : register(b0)
+{
+    row_major float4x4 world;
+    row_major float4x4 view;
+    row_major float4x4 projection;
+}
+
+output main(input invar)
+{
+    output outvar;
+    
+    outvar.position = mul(float4(invar.position, 1), world);
+    outvar.color = invar.color;
+    
+    return outvar;
+}

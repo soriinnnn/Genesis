@@ -1,5 +1,6 @@
 #ifndef GENESIS_LOGGER_H
 #define GENESIS_LOGGER_H
+#include <core/Common.h>
 #include <core/LogUtils.h>
 #include <format>
 
@@ -7,6 +8,7 @@ namespace genesis
 {
 	class Logger final
 	{
+	GENESIS_DISABLE_COPY_AND_MOVE(Logger)
 	public:
 		enum class LogLevel
 		{
@@ -27,12 +29,6 @@ namespace genesis
 
 	private:
 		void _log(LogLevel level, const char* msg) const;
-
-	protected:
-		Logger(const Logger&) = delete;
-		Logger(Logger&&) = delete;
-		Logger& operator =(const Logger&) = delete;
-		Logger& operator =(Logger&&) = delete;
 
 	private:
 		LogLevel m_level;

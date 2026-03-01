@@ -33,10 +33,6 @@ Rect SwapChain::getSize() const noexcept
 
 void SwapChain::resize(uint32 width, uint32 height)
 {
-	if (width == 0 || height == 0) {
-		GENESIS_LOG_WARNING("Swap chain resize: width or height is zero.");
-		return;
-	}
 	m_size = Rect{width, height};
 
 	m_graphicsDevice->clearState();

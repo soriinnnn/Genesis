@@ -2,6 +2,7 @@
 #include <graphics/SwapChain.h>
 #include <graphics/GraphicsPipelineState.h>
 #include <graphics/VertexBuffer.h>
+#include <graphics/IndexBuffer.h>
 #include <graphics/ConstantBuffer.h>
 #include <graphics/GraphicsLogUtils.h>
 
@@ -54,6 +55,13 @@ void DeviceContext::setVertexBuffer(const VertexBuffer& buffer)
 	m_context->IASetVertexBuffers(0, 1, &buff, &stride, &offset);
 }
 
+void DeviceContext::setIndexBuffer(const IndexBuffer& buffer)
+{
+	ID3D11Buffer* buff = buffer.m_buffer.Get();
+
+	m_context->IASetIndexBuffer(buff, buffer.m_indexFormat, 0);
+}
+
 void DeviceContext::setConstantBuffer(const ConstantBuffer& buffer)
 {
 	ID3D11Buffer* buff = buffer.m_buffer.Get();
@@ -62,9 +70,9 @@ void DeviceContext::setConstantBuffer(const ConstantBuffer& buffer)
 	m_context->PSSetConstantBuffers(0, 1, &buff);
 }
 	
-void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const void* data)
+void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const void* m_data)
 {
-	if (!data) {
+	if (!m_data) {
 		GENESIS_LOG_THROW_ERROR("Null data pointer passed to updateConstantBuffer.");
 	}
 
@@ -81,11 +89,16 @@ void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const voi
 		),
 		"ID3D11DeviceContext::Map failed."
 	);
-	memcpy(mapped.pData, data, buffer.m_size);
+	memcpy(mapped.pData, m_data, buffer.m_size);
 	m_context->Unmap(buff, 0);
 }
 
 void DeviceContext::draw(uint32 vertexCount, uint32 startVertexLocation)
 {
 	m_context->Draw(vertexCount, startVertexLocation);
+}
+
+void DeviceContext::drawIndexed(uint32 indexCount, uint32 startIndexLocation, int32 baseVertexLocation)
+{
+	m_context->DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
 }

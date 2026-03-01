@@ -134,6 +134,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\input\InputListener.cpp" />
+    <ClCompile Include="source\input\InputManager.cpp" />
+    <ClCompile Include="include\misc\AssetManager.cpp" />
+    <ClCompile Include="source\graphics\IndexBuffer.cpp" />
     <ClCompile Include="source\math\Mat4.cpp" />
     <ClCompile Include="source\graphics\ConstantBuffer.cpp" />
     <ClCompile Include="source\graphics\GraphicsPipelineState.cpp" />
@@ -158,11 +162,17 @@
     <ClCompile Include="source\graphics\VertexShaderSignature.cpp" />
     <ClCompile Include="source\window\win32\Win32Window.cpp" />
     <ClCompile Include="source\window\Window.cpp" />
+    <ClCompile Include="source\input\win32\Win32InputManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\misc\AssetManager.h" />
+    <ClInclude Include="include\input\InputKeyCodes.h" />
     <ClInclude Include="include\math\Mat4.h" />
+    <ClInclude Include="include\input\InputManager.h" />
+    <ClInclude Include="include\input\InputListener.h" />
+    <ClInclude Include="source\graphics\IndexBuffer.h" />
     <ClInclude Include="source\graphics\ConstantBuffer.h" />
-    <ClInclude Include="include\core\PlatformUtils.h" />
+    <ClInclude Include="include\misc\PlatformUtils.h" />
     <ClInclude Include="source\graphics\GraphicsTypes.h" />
     <ClInclude Include="source\graphics\GraphicsPipelineState.h" />
     <ClInclude Include="source\graphics\GraphicsUtils.h" />
@@ -187,6 +197,7 @@
     <ClInclude Include="include\math\Vec3.h" />
     <ClInclude Include="source\graphics\VertexShaderSignature.h" />
     <ClInclude Include="source\window\win32\Win32Window.h" />
+    <ClInclude Include="source\input\win32\Win32InputManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

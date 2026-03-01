@@ -19,7 +19,7 @@ VertexShaderSignature::VertexShaderSignature(const VertexShaderSignatureDesc& sD
 	BinaryData vertexShaderData = m_vertexShader->getData();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		D3DReflect(
-			vertexShaderData.data,
+			vertexShaderData.m_data,
 			vertexShaderData.dataSize,
 			IID_PPV_ARGS(&m_shaderReflection)
 		),

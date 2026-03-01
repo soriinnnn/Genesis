@@ -7,7 +7,7 @@ namespace genesis
 	struct VertexBufferDesc
 	{
 		const void* vertexList{};
-		size_t vertexListSize{};
+		uint32 vertexCount{};
 		uint32 vertexSize{};
 	};
 
@@ -17,11 +17,11 @@ namespace genesis
 		VertexBuffer(const VertexBufferDesc& vDesc, const GraphicsResourceDesc& grDesc);
 		~VertexBuffer() override;
 
-		uint32 getVertexListSize() const noexcept;
+		uint32 getVertexCount() const noexcept;
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> m_buffer;
-		uint32 m_vertexListSize;
+		uint32 m_vertexCount;
 		uint32 m_vertexSize;
 
 		friend class DeviceContext;

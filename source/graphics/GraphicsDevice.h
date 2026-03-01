@@ -9,6 +9,7 @@
 #include <graphics/VertexBuffer.h>
 #include <graphics/VertexShaderSignature.h>
 #include <graphics/ConstantBuffer.h>
+#include <graphics/IndexBuffer.h>
 #include <d3d11.h>
 #include <wrl.h>
 
@@ -32,6 +33,7 @@ namespace genesis
         SharedPtr<VertexBuffer> createVertexBuffer(const VertexBufferDesc& desc);
         SharedPtr<VertexShaderSignature> createVertexShaderSignature(const VertexShaderSignatureDesc& desc);
         SharedPtr<ConstantBuffer> createConstantBuffer(const ConstantBufferDesc& desc);
+        SharedPtr<IndexBuffer> createIndexBuffer(const IndexBufferDesc& desc);
 
         void clearState();
         void executeCommandList(DeviceContext& context);

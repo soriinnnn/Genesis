@@ -1,7 +1,8 @@
 #include <window/win32/Win32Window.h>
+#include <string>
 
 #define BASE_WINDOW_CLASS_NAME L"GenesisWindow"
-#define DEFAULT_WINDOW_STYLE (WS_OVERLAPPEDWINDOW | WS_SIZEBOX)
+#define DEFAULT_WINDOW_STYLE (WS_OVERLAPPEDWINDOW)
 
 using namespace genesis;
 using namespace std;

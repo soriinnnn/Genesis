@@ -27,11 +27,11 @@ void Window::onResize(std::function<void(uint32, uint32)> callback)
 	m_onResizeCallback = callback;
 }
 
-SharedPtr<Window> Window::create(const WindowDesc& desc)
+UniquePtr<Window> Window::create(const WindowDesc& desc)
 {
 #ifdef _WIN32
-	return std::make_shared<Win32Window>(desc);
+	return std::make_unique<Win32Window>(desc);
 #else
-	GENESIS_LOG_THROW_ERROR("Window creation is only supported on Windows.");
+#error "Window creation is currently only supported on Windows."
 #endif
 }

@@ -88,6 +88,11 @@ SharedPtr<ConstantBuffer> GraphicsDevice::createConstantBuffer(const ConstantBuf
     return make_shared<ConstantBuffer>(desc, getGraphicsResourceDesc());
 }
 
+SharedPtr<IndexBuffer> GraphicsDevice::createIndexBuffer(const IndexBufferDesc& desc)
+{
+    return make_shared<IndexBuffer>(desc, getGraphicsResourceDesc());
+}
+
 void GraphicsDevice::clearState()
 {
     m_d3dContext->ClearState();

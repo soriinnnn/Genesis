@@ -19,9 +19,9 @@ GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& gp
 
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateInputLayout(
-			static_cast<const D3D11_INPUT_ELEMENT_DESC*>(inputElements.data),
+			static_cast<const D3D11_INPUT_ELEMENT_DESC*>(inputElements.m_data),
 			static_cast<UINT>(inputElements.dataSize),
-			vertexShader.data,
+			vertexShader.m_data,
 			vertexShader.dataSize,
 			&m_inputLayout
 		),
@@ -30,7 +30,7 @@ GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& gp
 
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateVertexShader(
-			vertexShader.data,
+			vertexShader.m_data,
 			vertexShader.dataSize,
 			nullptr,
 			&m_vertexShader
@@ -40,7 +40,7 @@ GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& gp
 
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreatePixelShader(
-			pixelShader.data,
+			pixelShader.m_data,
 			pixelShader.dataSize,
 			nullptr,
 			&m_pixelShader

@@ -20,6 +20,9 @@ namespace genesis
     class VertexBuffer;
     class VertexShaderSignature;
     class ConstantBuffer;
+    class IndexBuffer;
+    class InputManager;
+    class InputListener;
 
     typedef int8_t  int8;
     typedef int16_t int16;

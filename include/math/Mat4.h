@@ -19,8 +19,8 @@ namespace genesis
 		static Mat4 fromRotationY(float rotY) noexcept;
 		static Mat4 fromRotationZ(float rotZ) noexcept;
 
-	public:
-		float data[4][4];
+	private:
+		float m_data[4][4];
 	};
 }
 

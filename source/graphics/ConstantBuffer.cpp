@@ -14,7 +14,6 @@ ConstantBuffer::ConstantBuffer(const ConstantBufferDesc& cDesc, const GraphicsRe
 
 	D3D11_BUFFER_DESC buffDesc = createBufferDesc(cDesc);
 	D3D11_SUBRESOURCE_DATA initData = createSubresourceData(cDesc);
-
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateBuffer(
 			&buffDesc, 
@@ -33,18 +32,20 @@ ConstantBuffer::~ConstantBuffer() {}
 
 D3D11_BUFFER_DESC createBufferDesc(const ConstantBufferDesc& desc) {
 	D3D11_BUFFER_DESC buffDesc{};
+
 	buffDesc.Usage = D3D11_USAGE_DYNAMIC;
 	buffDesc.ByteWidth = desc.bufferSize;
 	buffDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	buffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	buffDesc.MiscFlags = 0;
 
 	return buffDesc;
 }
 
 D3D11_SUBRESOURCE_DATA createSubresourceData(const ConstantBufferDesc& desc)
 {
-	D3D11_SUBRESOURCE_DATA data{};
-	data.pSysMem = desc.buffer;
+	D3D11_SUBRESOURCE_DATA m_data{};
+	m_data.pSysMem = desc.buffer;
 
-	return data;
+	return m_data;
 }

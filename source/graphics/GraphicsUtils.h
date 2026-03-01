@@ -10,8 +10,7 @@ namespace genesis
 	{
 		inline const char* getShaderModelTarget(ShaderType type)
 		{
-			switch (type)
-			{
+			switch (type) {
 			case ShaderType::VertexShader:
 				return "vs_5_0";
 			case ShaderType::PixelShader:

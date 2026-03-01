@@ -1,7 +1,6 @@
 #ifndef GENESIS_LOG_UTILS_H
 #define GENESIS_LOG_UTILS_H
 #include <stdexcept>
-#include <string>
 
 #define GENESIS_LOG(logger, type, msg, ...)\
 logger.log((type), msg __VA_OPT__(,) __VA_ARGS__)

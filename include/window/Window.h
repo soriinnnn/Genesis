@@ -28,7 +28,7 @@ namespace genesis
         virtual void resize(uint32 width, uint32 height) = 0;
         void onResize(std::function<void(uint32, uint32)> callback);
 
-        static SharedPtr<Window> create(const WindowDesc& desc);
+        static UniquePtr<Window> create(const WindowDesc& desc);
 
     protected:
         explicit Window(const WindowDesc& desc);

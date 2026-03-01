@@ -1,22 +1,24 @@
-#include <core/Logger.h>
 #include <game/Game.h>
 #include <game/Display.h>
 #include <window/Window.h>
 #include <graphics/GraphicsEngine.h>
-#include <core/PlatformUtils.h>
+#include <input/InputManager.h>
+#include <misc/PlatformUtils.h>
 
 using namespace genesis;
 using namespace std;
 
-Game::Game(const GameDesc& desc): Base({*make_unique<Logger>(desc.logLevel).release()}), m_ownedLogger(&m_logger)
+Game::Game(const GameDesc& desc)
 {
-    m_graphicsEngine = make_unique<GraphicsEngine>(GraphicsEngineDesc{m_logger});
+    m_logger = make_unique<Logger>(desc.logLevel);
+    m_graphicsEngine = make_unique<GraphicsEngine>(GraphicsEngineDesc{*m_logger});
     m_display = make_unique<Display>(
         DisplayDesc{
-            WindowDesc{m_logger, desc.wndSize, GENESIS_TEXT("DEMO")}, 
+            WindowDesc{*m_logger, desc.wndSize, GENESIS_TEXT("DEMO")}, 
             m_graphicsEngine->getGraphicsDevice()
         }
     );
+    m_inputManager = InputManager::create(InputManagerDesc{*m_logger});
     m_isRunning = true;
 
     GENESIS_LOG_INFO("Game initialized.");
@@ -27,7 +29,27 @@ Game::~Game()
     GENESIS_LOG_INFO("Game is shutting down...");
 }
 
+Logger& Game::getLogger() noexcept
+{
+    return *m_logger;
+}
+
 void Game::onInternalUpdate()
 {
-    m_graphicsEngine->render(m_display->getSwapChain());
+    auto currentTime = std::chrono::steady_clock::now();
+    std::chrono::duration<float> delta = currentTime - m_previousTime;
+    m_previousTime = currentTime;
+    float deltaTime = delta.count();
+
+    // FPS temporal... ---
+    static float timer = 0.0f;
+    static int frames = 0;
+    timer += deltaTime;
+    frames++;
+    if (timer >= 1.0f) {
+        GENESIS_LOG_INFO("FPS: {} - Delta: {} ms", frames, (1000.0f / frames));
+        frames = 0;
+        timer -= 1.0f;
+    }
+    m_graphicsEngine->render(m_display->getSwapChain(), deltaTime);
 }

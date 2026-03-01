@@ -11,7 +11,7 @@ VertexBuffer::VertexBuffer(const VertexBufferDesc& vDesc, const GraphicsResource
 	if (!vDesc.vertexList) {
 		GENESIS_LOG_THROW_INVALID_ARG("Vertex list is null.");
 	}
-	if (!vDesc.vertexListSize) {
+	if (!vDesc.vertexCount) {
 		GENESIS_LOG_THROW_INVALID_ARG("Vertex list size must be greater than zero.");
 	}
 	if (!vDesc.vertexSize) {
@@ -20,7 +20,6 @@ VertexBuffer::VertexBuffer(const VertexBufferDesc& vDesc, const GraphicsResource
 
 	D3D11_BUFFER_DESC buffDesc = createBufferDesc(vDesc);
 	D3D11_SUBRESOURCE_DATA initData = createSubresourceData(vDesc);
-
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateBuffer(
 			&buffDesc,
@@ -30,15 +29,15 @@ VertexBuffer::VertexBuffer(const VertexBufferDesc& vDesc, const GraphicsResource
 		"CreateBuffer failed."
 	);
 
-	m_vertexListSize = static_cast<uint32>(vDesc.vertexListSize);
+	m_vertexCount = static_cast<uint32>(vDesc.vertexCount);
 	m_vertexSize = vDesc.vertexSize;
 }
 
 VertexBuffer::~VertexBuffer() {}
 
-uint32 VertexBuffer::getVertexListSize() const noexcept
+uint32 VertexBuffer::getVertexCount() const noexcept
 {
-	return m_vertexListSize;
+	return m_vertexCount;
 }
 
 /* STATIC FUNCTION DEFINITIONS */
@@ -46,16 +45,20 @@ uint32 VertexBuffer::getVertexListSize() const noexcept
 D3D11_BUFFER_DESC createBufferDesc(const VertexBufferDesc& desc) 
 {
 	D3D11_BUFFER_DESC buffDesc{};
-	buffDesc.ByteWidth = static_cast<uint32>(desc.vertexListSize * desc.vertexSize);
+
+	buffDesc.Usage = D3D11_USAGE_DEFAULT;
+	buffDesc.ByteWidth = desc.vertexCount * desc.vertexSize;
 	buffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	buffDesc.CPUAccessFlags = 0;
+	buffDesc.MiscFlags = 0;
 
 	return buffDesc;
 }
 
 D3D11_SUBRESOURCE_DATA createSubresourceData(const VertexBufferDesc& desc) 
 {
-	D3D11_SUBRESOURCE_DATA data{};
-	data.pSysMem = desc.vertexList;
+	D3D11_SUBRESOURCE_DATA m_data{};
+	m_data.pSysMem = desc.vertexList;
 
-	return data;
+	return m_data;
 }

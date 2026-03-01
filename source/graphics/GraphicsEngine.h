@@ -4,6 +4,7 @@
 #include <core/Core.h>
 #include <math/Vec3.h>
 #include <math/Vec4.h>
+#include <math/Mat4.h>
 
 namespace genesis
 {
@@ -20,8 +21,8 @@ namespace genesis
 
         GraphicsDevice& getGraphicsDevice() noexcept;
 
-        void clearPipeline();
-        void render(SwapChain& swapChain);
+        void clearPipelineState();
+        void render(SwapChain& swapChain, float deltaTime);
 
     private:
         struct Vertex
@@ -32,7 +33,7 @@ namespace genesis
 
         struct alignas(16) ConstantData
         {
-            float scale{};
+            Mat4 world;
         };
 
     private:
@@ -40,7 +41,11 @@ namespace genesis
         SharedPtr<DeviceContext> m_deviceContext;
         SharedPtr<GraphicsPipelineState> m_graphicsPipeline;
         SharedPtr<VertexBuffer> m_vertexBuffer;
+        SharedPtr<IndexBuffer> m_indexBuffer;
         SharedPtr<ConstantBuffer> m_constantBuffer;
+
+        Vec3 m_pos{}, m_rot{};
+        float m_scale{};
     };
 }
 
