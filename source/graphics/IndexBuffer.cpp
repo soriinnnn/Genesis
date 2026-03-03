@@ -32,7 +32,7 @@ IndexBuffer::IndexBuffer(const IndexBufferDesc& iDesc, const GraphicsResourceDes
 		"CreateBuffer failed."
 	);
 
-	m_indexCount = static_cast<uint32>(iDesc.indexCount);
+	m_indexCount = iDesc.indexCount;
 }
 
 IndexBuffer::~IndexBuffer() {}

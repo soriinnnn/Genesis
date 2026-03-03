@@ -14,7 +14,7 @@ Win32Window::Win32Window(const WindowDesc& desc): Window(desc)
 {
     ATOM classId = createWindowClass(createWindowClassName(this).c_str(), wndProc);
     if (!classId) {
-        GENESIS_LOG_THROW_ERROR("RegisterClassEx failed.\nError code: 0x{:08x}", GetLastError());
+        GENESIS_LOG_THROW_ERROR("RegisterClassEx failed.\nError code: 0x{:08X}", GetLastError());
     }
     RECT wndRect = createWindowRect(m_size.width(), m_size.height());
 
@@ -33,7 +33,7 @@ Win32Window::Win32Window(const WindowDesc& desc): Window(desc)
         nullptr
     );
     if (!m_handle) {
-        GENESIS_LOG_THROW_ERROR("CreateWindowEx failed.\nError code: 0x{:08x}", GetLastError());
+        GENESIS_LOG_THROW_ERROR("CreateWindowEx failed.\nError code: 0x{:08X}", GetLastError());
     }
 
     SetWindowLongPtr(static_cast<HWND>(m_handle), GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));

@@ -29,7 +29,7 @@ VertexBuffer::VertexBuffer(const VertexBufferDesc& vDesc, const GraphicsResource
 		"CreateBuffer failed."
 	);
 
-	m_vertexCount = static_cast<uint32>(vDesc.vertexCount);
+	m_vertexCount = vDesc.vertexCount;
 	m_vertexSize = vDesc.vertexSize;
 }
 
