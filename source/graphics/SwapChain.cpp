@@ -11,6 +11,7 @@ SwapChain::SwapChain(const SwapChainDesc& scDesc, const GraphicsResourceDesc& gr
 	if (!scDesc.wndHandle) {
 		GENESIS_LOG_THROW_INVALID_ARG("Window handle is null.");
 	}
+	m_size = scDesc.wndSize;
 
 	DXGI_SWAP_CHAIN_DESC dxgiDesc = createSwapChainDesc(scDesc);
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
@@ -18,7 +19,6 @@ SwapChain::SwapChain(const SwapChainDesc& scDesc, const GraphicsResourceDesc& gr
 		"CreateSwapChain failed."
 	);
 	updateRenderTargetView();
-	m_size = scDesc.wndSize;
 }
 
 SwapChain::~SwapChain() {}
@@ -30,7 +30,7 @@ Rect SwapChain::getSize() const noexcept
 
 void SwapChain::resize(uint32 width, uint32 height)
 {
-	m_size = Rect{width, height};
+	m_size = Rect{static_cast<int32>(width), static_cast<int32>(height)};
 
 	m_graphicsDevice->clearState();
 	m_renderTarget.Reset();

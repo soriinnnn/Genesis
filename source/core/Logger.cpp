@@ -9,7 +9,7 @@ static const char* logLevelToString(Logger::LogLevel level);
 Logger::Logger(LogLevel level)
 {
 	m_level = level;
-	clog << "Logger initialized(level: " << logLevelToString(m_level) << ")." << endl;
+	clog << "[Genesis] Logger initialized (level: " << logLevelToString(m_level) << ")." << endl;
 }
 
 Logger::~Logger() {}

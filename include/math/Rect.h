@@ -8,14 +8,14 @@ namespace genesis
 	{
 	public:
 		Rect();
-		Rect(uint32 width, uint32 height);
-		Rect(uint32 left, uint32 top, uint32 right, uint32 bottom);
+		Rect(int32 width, int32 height);
+		Rect(int32 left, int32 top, int32 right, int32 bottom);
 
-		uint32 width() const noexcept;
-		uint32 height() const noexcept;
+		int32 width() const noexcept;
+		int32 height() const noexcept;
 
 	public:
-		uint32 left, top, right, bottom;
+		int32 left, top, right, bottom;
 	};
 }
 

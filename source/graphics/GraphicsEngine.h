@@ -19,7 +19,7 @@ namespace genesis
     {
     public:
         explicit GraphicsEngine(const GraphicsEngineDesc& desc);
-        virtual ~GraphicsEngine() override;
+        ~GraphicsEngine() override;
 
         GraphicsDevice& getGraphicsDevice() noexcept;
 
@@ -30,6 +30,9 @@ namespace genesis
         // PROVA
         void onKeyDown(Key key) override;
         void onKeyUp(Key key) override;
+        void onMouseMove(Point delta, Point pos) override;
+        void onMouseDown(MouseButton button, Point pos) override;
+        void onMouseUp(MouseButton button, Point pos) override;
 
 
     private:

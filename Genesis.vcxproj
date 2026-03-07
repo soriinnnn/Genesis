@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\math\Point.cpp" />
     <ClCompile Include="source\game\Camera.cpp" />
     <ClCompile Include="source\input\InputListener.cpp" />
     <ClCompile Include="source\input\InputManager.cpp" />
@@ -164,16 +165,18 @@
     <ClCompile Include="source\window\win32\Win32Window.cpp" />
     <ClCompile Include="source\window\Window.cpp" />
     <ClCompile Include="source\input\win32\Win32InputManager.cpp" />
+    <ClCompile Include="source\math\Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game\Camera.h" />
     <ClInclude Include="include\core\utils\LogMacros.h" />
     <ClInclude Include="include\core\utils\Macros.h" />
     <ClInclude Include="include\misc\AssetManager.h" />
-    <ClInclude Include="include\input\InputKeyCodes.h" />
+    <ClInclude Include="include\input\InputCodes.h" />
     <ClInclude Include="include\math\Mat4.h" />
     <ClInclude Include="include\input\InputManager.h" />
     <ClInclude Include="include\input\InputListener.h" />
+    <ClInclude Include="include\math\Point.h" />
     <ClInclude Include="source\graphics\IndexBuffer.h" />
     <ClInclude Include="source\graphics\ConstantBuffer.h" />
     <ClInclude Include="include\misc\PlatformUtils.h" />
@@ -202,6 +205,7 @@
     <ClInclude Include="source\graphics\VertexShaderSignature.h" />
     <ClInclude Include="source\window\win32\Win32Window.h" />
     <ClInclude Include="source\input\win32\Win32InputManager.h" />
+    <ClInclude Include="include\math\Vec2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

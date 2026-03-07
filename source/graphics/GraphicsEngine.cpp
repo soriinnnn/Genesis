@@ -148,6 +148,23 @@ void genesis::GraphicsEngine::onKeyDown(Key key)
     }
 }
 
-void genesis::GraphicsEngine::onKeyUp(Key key)
+void GraphicsEngine::onKeyUp(Key key)
 {
+}
+
+void GraphicsEngine::onMouseMove(Point delta, Point pos)
+{
+    //GENESIS_LOG_INFO("Delta: x={}, y={}, Pos: x={}, y={}", delta.x, delta.y, pos.x, pos.y);
+    m_rot.x += delta.x * m_deltaTime;
+    m_rot.y += delta.y * m_deltaTime;
+}
+
+void GraphicsEngine::onMouseDown(MouseButton button, Point pos)
+{
+    //GENESIS_LOG_INFO("Button down: {}, Pos: x={}, y={}", (int)button, pos.x, pos.y);
+}
+
+void GraphicsEngine::onMouseUp(MouseButton button, Point pos)
+{
+    //GENESIS_LOG_INFO("Button up: {}, Pos: x={}, y={}", (int)button, pos.x, pos.y);
 }

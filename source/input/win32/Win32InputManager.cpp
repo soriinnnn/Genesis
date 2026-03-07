@@ -1,48 +1,33 @@
-#include <input/win32/Win32InputManager.h> 
+#include <input/win32/Win32InputManager.h>
 #include <windows.h>
 
 using namespace genesis;
 
-static Key mapWin32ToGenesis(int vkCode);
-static int mapGenesisToWin32(Key key);
+static Key mapWin32ToGenesisKey(int vkCode);
+static int mapGenesisKeyToWin32(Key key);
+static MouseButton mapWin32ToGenesisMouse(int vkCode);
+static int mapGenesisMouseToWin32(MouseButton button);
 
-Win32InputManager::Win32InputManager(const InputManagerDesc& desc): InputManager(desc), m_currentKeys({}), m_previousKeys({}) {}
+Win32InputManager::Win32InputManager(const InputManagerDesc& desc): InputManager(desc), m_currentKeys({}), m_previousKeys({}) 
+{
+    m_firstFrame = true;
+}
 
 Win32InputManager::~Win32InputManager() {}
 
 void Win32InputManager::update()
 {
-    ::memcpy(m_previousKeys, m_currentKeys, sizeof(uint8) * KEYBOARD_STATE_SIZE);
-	if (!::GetKeyboardState(m_currentKeys)) {
-		//GENESIS_LOG_WARNING("GetKeyboardState failed.\nError code: 0x{:08x}", GetLastError());
-		return;
-	}
+    if (!m_window.hasFocus()) {
+        return;
+    }
 
-	for (int i = 0; i < KEYBOARD_STATE_SIZE; i++) {
-		bool isKeyDown = (m_currentKeys[i] & 0x80);
-		bool wasKeyDown = (m_previousKeys[i] & 0x80);
-
-        Key key = mapWin32ToGenesis(i);
-        if (key == Key::Unknown) {
-            continue;
-        }
-
-		if (isKeyDown) {
-			for (auto listener : m_listeners) {
-				listener->onKeyDown(key);
-			}
-		}
-		else if (wasKeyDown) {
-			for (auto listener : m_listeners) {
-				listener->onKeyUp(key);
-			}
-		}
-	}
+    updateKeyboard();
+    updateMouse();
 }
 
 bool Win32InputManager::isKeyDown(Key key) const noexcept
 {
-    int vkCode = mapGenesisToWin32(key);
+    int vkCode = mapGenesisKeyToWin32(key);
     if (vkCode == 0) {
         return false;
     }
@@ -50,9 +35,19 @@ bool Win32InputManager::isKeyDown(Key key) const noexcept
     return m_currentKeys[vkCode] & 0x80;
 }
 
+bool Win32InputManager::isKeyUp(Key key) const noexcept
+{
+    int vkCode = mapGenesisKeyToWin32(key);
+    if (vkCode == 0) {
+        return false;
+    }
+
+    return !(m_currentKeys[vkCode] & 0x80);
+}
+
 bool Win32InputManager::isKeyPressed(Key key) const noexcept
 {
-    int vkCode = mapGenesisToWin32(key);
+    int vkCode = mapGenesisKeyToWin32(key);
     if (vkCode == 0) {
         return false;
     }
@@ -62,7 +57,7 @@ bool Win32InputManager::isKeyPressed(Key key) const noexcept
 
 bool Win32InputManager::isKeyReleased(Key key) const noexcept
 {
-    int vkCode = mapGenesisToWin32(key);
+    int vkCode = mapGenesisKeyToWin32(key);
     if (vkCode == 0) {
         return false;
     }
@@ -70,9 +65,136 @@ bool Win32InputManager::isKeyReleased(Key key) const noexcept
     return !(m_currentKeys[vkCode] & 0x80) && (m_previousKeys[vkCode] & 0x80);
 }
 
+bool Win32InputManager::isMouseDown(MouseButton button) const noexcept
+{
+    int vkCode = mapGenesisMouseToWin32(button);
+    if (vkCode == 0) {
+        return false;
+    }
+
+    return m_currentKeys[vkCode] & 0x80;
+}
+
+bool Win32InputManager::isMouseUp(MouseButton button) const noexcept
+{
+    int vkCode = mapGenesisMouseToWin32(button);
+    if (vkCode == 0) {
+        return false;
+    }
+
+    return !(m_currentKeys[vkCode] & 0x80);
+}
+
+bool genesis::Win32InputManager::isMousePressed(MouseButton button) const noexcept
+{
+    int vkCode = mapGenesisMouseToWin32(button);
+    if (vkCode == 0) {
+        return false;
+    }
+
+    return (m_currentKeys[vkCode] & 0x80) && !(m_previousKeys[vkCode] & 0x80);
+}
+
+bool genesis::Win32InputManager::isMouseReleased(MouseButton button) const noexcept
+{
+    int vkCode = mapGenesisMouseToWin32(button);
+    if (vkCode == 0) {
+        return false;
+    }
+
+    return !(m_currentKeys[vkCode] & 0x80) && (m_previousKeys[vkCode] & 0x80);
+}
+
+Point genesis::Win32InputManager::getMousePosition() const noexcept
+{
+    return m_currentMousePos;
+}
+
+Point genesis::Win32InputManager::getMouseDelta() const noexcept
+{
+    return Point{m_currentMousePos.x - m_previousMousePos.x, m_currentMousePos.y - m_previousMousePos.y};
+}
+
+void Win32InputManager::updateKeyboard()
+{
+    ::memcpy(m_previousKeys, m_currentKeys, sizeof(uint8) * KEYBOARD_STATE_SIZE);
+    if (!::GetKeyboardState(m_currentKeys)) {
+        GENESIS_LOG_WARNING("GetKeyboardState failed.\nError code: 0x{:08X}", GetLastError());
+        return;
+    }
+
+    for (int i = 0; i < KEYBOARD_STATE_SIZE; i++) {
+        bool isDown = (m_currentKeys[i] & 0x80);
+        bool wasDown = (m_previousKeys[i] & 0x80);
+
+        Key key = mapWin32ToGenesisKey(i);
+        if (key == Key::Unknown) {
+            continue;
+        }
+
+        if (isDown) {
+            for (auto listener : m_listeners) {
+                listener->onKeyDown(key);
+            }
+        }
+        else if (wasDown) {
+            for (auto listener : m_listeners) {
+                listener->onKeyUp(key);
+            }
+        }
+    }
+}
+
+void Win32InputManager::updateMouse()
+{
+    POINT pos{};
+    if (!::GetCursorPos(&pos)) {
+        GENESIS_LOG_WARNING("GetCursorPos failed.\nError code: 0x{:08x}", GetLastError());
+        return;
+    }
+
+    m_currentMousePos = Point{pos.x, pos.y};
+    if (m_firstFrame) {
+        m_previousMousePos = m_currentMousePos;
+        m_firstFrame = false;
+    }
+
+    if (m_currentMousePos.x != m_previousMousePos.x || m_currentMousePos.y != m_previousMousePos.y) {
+        Point delta = getMouseDelta();
+
+        for (auto listener : m_listeners) {
+            listener->onMouseMove(delta, m_currentMousePos);
+        }
+    }
+    m_previousMousePos = m_currentMousePos;
+
+    for (int i = 1; i < static_cast<int>(MouseButton::Count); i++) {
+        MouseButton button = static_cast<MouseButton>(i);
+
+        int vkCode = mapGenesisMouseToWin32(button);
+        if (vkCode == 0) {
+            continue;
+        }
+
+        bool isDown = (m_currentKeys[vkCode] & 0x80);
+        bool wasDown = (m_previousKeys[vkCode] & 0x80);
+
+        if (isDown && !wasDown) {
+            for (auto listener : m_listeners) {
+                listener->onMouseDown(button, m_currentMousePos);
+            }
+        }
+        else if (!isDown && wasDown) {
+            for (auto listener : m_listeners) {
+                listener->onMouseUp(button, m_currentMousePos);
+            }
+        }
+    }
+}
+
 /* STATIC FUNCTION DEFINITIONS */
 
-static Key mapWin32ToGenesis(int vkCode)
+static Key mapWin32ToGenesisKey(int vkCode)
 {
 	switch (vkCode) {
     case 'A': return Key::A; 
@@ -130,7 +252,7 @@ static Key mapWin32ToGenesis(int vkCode)
 	}
 }
 
-static int mapGenesisToWin32(Key key)
+static int mapGenesisKeyToWin32(Key key)
 {
 	switch (key) {
     case Key::A: return 'A'; 
@@ -186,4 +308,28 @@ static int mapGenesisToWin32(Key key)
     case Key::Right: return VK_RIGHT;
     default: return 0;
 	}
+}
+
+static MouseButton mapWin32ToGenesisMouse(int vkCode)
+{
+    switch(vkCode) {
+    case VK_LBUTTON: return MouseButton::Left;
+    case VK_RBUTTON: return MouseButton::Right;
+    case VK_MBUTTON: return MouseButton::Middle;
+    case VK_XBUTTON1: return MouseButton::Extra1;
+    case VK_XBUTTON2: return MouseButton::Extra2;
+    default: return MouseButton::Unknown;
+    }
+}
+
+static int mapGenesisMouseToWin32(MouseButton button)
+{
+    switch (button) {
+    case MouseButton::Left: return VK_LBUTTON;
+    case MouseButton::Right: return VK_RBUTTON;
+    case MouseButton::Middle: return VK_MBUTTON;
+    case MouseButton::Extra1: return VK_XBUTTON1;
+    case MouseButton::Extra2: return VK_XBUTTON2;
+    default: return 0;
+    }
 }

@@ -99,6 +99,12 @@
     <ClCompile Include="source\game\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\math\Vec2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\math\Point.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\core\Base.h">
@@ -197,7 +203,7 @@
     <ClInclude Include="source\input\win32\Win32InputManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\input\InputKeyCodes.h">
+    <ClInclude Include="include\input\InputCodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\core\utils\Macros.h">
@@ -207,6 +213,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\game\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\math\Vec2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\math\Point.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

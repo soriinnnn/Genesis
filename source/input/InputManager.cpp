@@ -5,7 +5,7 @@
 using namespace genesis;
 using namespace std;
 
-InputManager::InputManager(const InputManagerDesc& desc): Base(desc.base) {}
+InputManager::InputManager(const InputManagerDesc& desc): Base(desc.base), m_window(desc.wnd) {}
 
 InputManager::~InputManager() {}
 

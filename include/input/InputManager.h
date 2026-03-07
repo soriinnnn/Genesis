@@ -3,7 +3,8 @@
 #include <core/Base.h>
 #include <core/Core.h>
 #include <input/InputListener.h>
-#include <input/InputKeyCodes.h>
+#include <input/InputCodes.h>
+#include <window/Window.h>
 #include <vector>
 
 namespace genesis
@@ -11,6 +12,7 @@ namespace genesis
 	struct InputManagerDesc
 	{
 		BaseDesc base;
+		Window& wnd;
 	};
 
 	class InputManager: public Base
@@ -23,8 +25,15 @@ namespace genesis
 		void removeListener(InputListener* listener);
 
 		virtual bool isKeyDown(Key key) const = 0;
+		virtual bool isKeyUp(Key key) const = 0;
 		virtual bool isKeyPressed(Key key) const = 0;
 		virtual bool isKeyReleased(Key key) const = 0;
+		virtual bool isMouseDown(MouseButton button) const = 0;
+		virtual bool isMouseUp(MouseButton button) const = 0;
+		virtual bool isMousePressed(MouseButton button) const = 0;
+		virtual bool isMouseReleased(MouseButton button) const = 0;
+		virtual Point getMousePosition() const = 0;
+		virtual Point getMouseDelta() const = 0;
 
 		static UniquePtr<InputManager> create(const InputManagerDesc& desc);
 
@@ -32,6 +41,7 @@ namespace genesis
 		explicit InputManager(const InputManagerDesc& desc);
 
 	protected:
+		Window& m_window;
 		std::vector<InputListener*> m_listeners;
 	};
 }

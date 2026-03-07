@@ -18,7 +18,7 @@ Game::Game(const GameDesc& desc)
             m_graphicsEngine->getGraphicsDevice()
         }
     );
-    m_inputManager = InputManager::create(InputManagerDesc{*m_logger});
+    m_inputManager = InputManager::create(InputManagerDesc{*m_logger, m_display->getWindow()});
     m_isRunning = true;
 
     m_inputManager->addListener(m_graphicsEngine.get());

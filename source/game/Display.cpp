@@ -16,6 +16,11 @@ Display::Display(const DisplayDesc& desc): Base(desc.window.base)
 
 Display::~Display() {}
 
+Window& Display::getWindow() noexcept
+{
+	return *m_window;
+}
+
 SwapChain& Display::getSwapChain() noexcept
 {
 	return *m_swapChain;

@@ -10,7 +10,19 @@ namespace genesis
 		Num0, Num1, Num2, Num3, Num4, Num5, Num6, Num7, Num8, Num9,
 		Escape, Space, Enter, Tab, Backspace, 
 		LeftShift, RightShift, LeftControl, RightControl, LeftAlt, RightAlt,
-		Up, Down, Left, Right
+		Up, Down, Left, Right,
+		Count
+	};
+
+	enum class MouseButton
+	{
+		Unknown,
+		Left,
+		Right,
+		Middle,
+		Extra1,
+		Extra2,
+		Count
 	};
 }
 

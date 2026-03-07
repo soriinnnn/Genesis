@@ -73,26 +73,41 @@ LRESULT CALLBACK Win32Window::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
         PostQuitMessage(0);
         return 0;
     }
-    break;
     case WM_CLOSE:
     {
         PostQuitMessage(0);
         return 0;
     }
-    break;
     case WM_SIZE: 
     {
         UINT width = LOWORD(lparam);
         UINT height = HIWORD(lparam);
 
-        wnd->m_size = Rect{width, height};
-        if (wnd->m_onResizeCallback) {
-            wnd->m_onResizeCallback(width, height);
+        wnd->m_size = Rect{static_cast<int32>(width), static_cast<int32>(height)};
+        if (wnd->m_onResize) {
+            wnd->m_onResize(width, height);
         }
 
         return 0;
-    } 
-    break;
+    }
+    case WM_SETFOCUS:
+    {
+        wnd->m_hasFocus = true;
+        if (wnd->m_onFocus) {
+            wnd->m_onFocus();
+        }
+
+        return 0;
+    }
+    case WM_KILLFOCUS:
+    {
+        wnd->m_hasFocus = false;
+        if (wnd->m_onKillFocus) {
+            wnd->m_onKillFocus();
+        }
+
+        return 0;
+    }
     default:
         return DefWindowProc(hwnd, msg, wparam, lparam);
     }
