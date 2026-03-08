@@ -22,6 +22,7 @@ Game::Game(const GameDesc& desc)
     m_isRunning = true;
 
     m_inputManager->addListener(m_graphicsEngine.get());
+    m_inputManager->setMouseVisibility(false);
 
     GENESIS_LOG_INFO("Game initialized.");
 }
@@ -55,5 +56,9 @@ void Game::onInternalUpdate()
     }
 
     m_inputManager->update();
+
+    Rect wndSize = m_display->getSize();
+    m_inputManager->setMousePosition({wndSize.width() / 2, wndSize.height() / 2});
+
     m_graphicsEngine->render(m_display->getSwapChain(), deltaTime);
 }

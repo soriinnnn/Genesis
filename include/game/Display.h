@@ -16,6 +16,8 @@ namespace genesis
 		explicit Display(const DisplayDesc& desc);
 		~Display() override;
 
+		Rect getSize() const noexcept;
+
 		Window& getWindow() noexcept;
 		SwapChain& getSwapChain() noexcept;
 		void resize(uint32 width, uint32 height);

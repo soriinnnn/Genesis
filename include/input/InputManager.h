@@ -35,6 +35,9 @@ namespace genesis
 		virtual Point getMousePosition() const = 0;
 		virtual Point getMouseDelta() const = 0;
 
+		virtual void setMousePosition(Point pos) = 0;
+		virtual void setMouseVisibility(bool visible) = 0;
+
 		static UniquePtr<InputManager> create(const InputManagerDesc& desc);
 
 	protected:

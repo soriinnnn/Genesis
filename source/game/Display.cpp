@@ -16,6 +16,11 @@ Display::Display(const DisplayDesc& desc): Base(desc.window.base)
 
 Display::~Display() {}
 
+Rect Display::getSize() const noexcept
+{
+	return m_window->getSize();
+}
+
 Window& Display::getWindow() noexcept
 {
 	return *m_window;

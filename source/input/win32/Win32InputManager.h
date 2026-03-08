@@ -25,6 +25,9 @@ namespace genesis
 		Point getMousePosition() const noexcept override;
 		Point getMouseDelta() const noexcept override;
 
+		void setMousePosition(Point pos) override;
+		void setMouseVisibility(bool visible) override;
+ 
 	private:
 		void updateKeyboard();
 		void updateMouse();
@@ -34,7 +37,8 @@ namespace genesis
 		uint8 m_previousKeys[KEYBOARD_STATE_SIZE];
 		Point m_currentMousePos;
 		Point m_previousMousePos;
-		bool m_firstFrame;
+		bool m_lostFocus;
+		bool m_mouseVisible;
 	};
 }
 

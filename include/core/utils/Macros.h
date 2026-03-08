@@ -1,5 +1,9 @@
 #ifndef GENESIS_CORE_MACROS_H
 #define GENESIS_CORE_MACROS_H
+#include <cassert>
+
+#define GENESIS_ASSERT(condition, msg)\
+assert(condition && msg)
 
 #define GENESIS_DISABLE_COPY_AND_MOVE(className)\
 	public:\

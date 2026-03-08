@@ -1,4 +1,3 @@
-
 #ifndef GENESIS_VEC4_H
 #define GENESIS_VEC4_H
 

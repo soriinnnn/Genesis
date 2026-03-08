@@ -10,7 +10,8 @@ static int mapGenesisMouseToWin32(MouseButton button);
 
 Win32InputManager::Win32InputManager(const InputManagerDesc& desc): InputManager(desc), m_currentKeys({}), m_previousKeys({}) 
 {
-    m_firstFrame = true;
+    m_lostFocus = true;
+    m_mouseVisible = true;
 }
 
 Win32InputManager::~Win32InputManager() {}
@@ -18,6 +19,12 @@ Win32InputManager::~Win32InputManager() {}
 void Win32InputManager::update()
 {
     if (!m_window.hasFocus()) {
+        if (!m_lostFocus) {
+            ShowCursor(true);
+            memset(m_currentKeys, 0, sizeof(uint8) * KEYBOARD_STATE_SIZE);
+            memset(m_previousKeys, 0, sizeof(uint8) * KEYBOARD_STATE_SIZE);
+            m_lostFocus = true;
+        }
         return;
     }
 
@@ -85,7 +92,7 @@ bool Win32InputManager::isMouseUp(MouseButton button) const noexcept
     return !(m_currentKeys[vkCode] & 0x80);
 }
 
-bool genesis::Win32InputManager::isMousePressed(MouseButton button) const noexcept
+bool Win32InputManager::isMousePressed(MouseButton button) const noexcept
 {
     int vkCode = mapGenesisMouseToWin32(button);
     if (vkCode == 0) {
@@ -95,7 +102,7 @@ bool genesis::Win32InputManager::isMousePressed(MouseButton button) const noexce
     return (m_currentKeys[vkCode] & 0x80) && !(m_previousKeys[vkCode] & 0x80);
 }
 
-bool genesis::Win32InputManager::isMouseReleased(MouseButton button) const noexcept
+bool Win32InputManager::isMouseReleased(MouseButton button) const noexcept
 {
     int vkCode = mapGenesisMouseToWin32(button);
     if (vkCode == 0) {
@@ -105,20 +112,49 @@ bool genesis::Win32InputManager::isMouseReleased(MouseButton button) const noexc
     return !(m_currentKeys[vkCode] & 0x80) && (m_previousKeys[vkCode] & 0x80);
 }
 
-Point genesis::Win32InputManager::getMousePosition() const noexcept
+Point Win32InputManager::getMousePosition() const noexcept
 {
     return m_currentMousePos;
 }
 
-Point genesis::Win32InputManager::getMouseDelta() const noexcept
+Point Win32InputManager::getMouseDelta() const noexcept
 {
     return Point{m_currentMousePos.x - m_previousMousePos.x, m_currentMousePos.y - m_previousMousePos.y};
 }
 
+void Win32InputManager::setMousePosition(Point pos)
+{
+    if (m_lostFocus) {
+        return;
+    }
+
+    POINT cursorPos{pos.x, pos.y};
+    if (!ClientToScreen(static_cast<HWND>(m_window.getHandle()), &cursorPos)) {
+        GENESIS_LOG_WARNING("ClientToScreen failed.\nError code: 0x{:08X}", GetLastError());
+        return;
+    }
+
+    if (!SetCursorPos(cursorPos.x, cursorPos.y)) {
+        GENESIS_LOG_WARNING("SetCursorPos failed.\nError code: 0x{:08X}", GetLastError());
+    }
+
+    m_currentMousePos = pos;
+}
+
+void Win32InputManager::setMouseVisibility(bool visible)
+{
+    if (m_lostFocus || m_mouseVisible == visible) {
+        return;
+    }
+
+    ShowCursor(visible);
+    m_mouseVisible = visible;
+}
+
 void Win32InputManager::updateKeyboard()
 {
-    ::memcpy(m_previousKeys, m_currentKeys, sizeof(uint8) * KEYBOARD_STATE_SIZE);
-    if (!::GetKeyboardState(m_currentKeys)) {
+    memcpy(m_previousKeys, m_currentKeys, sizeof(uint8) * KEYBOARD_STATE_SIZE);
+    if (!GetKeyboardState(m_currentKeys)) {
         GENESIS_LOG_WARNING("GetKeyboardState failed.\nError code: 0x{:08X}", GetLastError());
         return;
     }
@@ -148,15 +184,23 @@ void Win32InputManager::updateKeyboard()
 void Win32InputManager::updateMouse()
 {
     POINT pos{};
-    if (!::GetCursorPos(&pos)) {
+    if (!GetCursorPos(&pos)) {
         GENESIS_LOG_WARNING("GetCursorPos failed.\nError code: 0x{:08x}", GetLastError());
         return;
     }
 
+    if (!ScreenToClient(static_cast<HWND>(m_window.getHandle()), &pos)) {
+        GENESIS_LOG_WARNING("ScreenToClient failed.\nError code: 0x{:08x}", GetLastError());
+        return;
+    }
+
+    m_previousMousePos = m_currentMousePos;
     m_currentMousePos = Point{pos.x, pos.y};
-    if (m_firstFrame) {
+
+    if (m_lostFocus) {
+        ShowCursor(false);
         m_previousMousePos = m_currentMousePos;
-        m_firstFrame = false;
+        m_lostFocus = false;
     }
 
     if (m_currentMousePos.x != m_previousMousePos.x || m_currentMousePos.y != m_previousMousePos.y) {
@@ -166,7 +210,6 @@ void Win32InputManager::updateMouse()
             listener->onMouseMove(delta, m_currentMousePos);
         }
     }
-    m_previousMousePos = m_currentMousePos;
 
     for (int i = 1; i < static_cast<int>(MouseButton::Count); i++) {
         MouseButton button = static_cast<MouseButton>(i);
