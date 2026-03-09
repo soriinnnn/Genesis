@@ -2,14 +2,16 @@
 #define GENESIS_GRAPHICS_DEVICE_H
 #include <core/Base.h>
 #include <core/Core.h>
-#include <graphics/GraphicsResource.h>
-#include <graphics/SwapChain.h>
-#include <graphics/ShaderBinary.h>
-#include <graphics/VertexShaderSignature.h>
-#include <graphics/GraphicsPipelineState.h>
-#include <graphics/VertexBuffer.h>
-#include <graphics/ConstantBuffer.h>
-#include <graphics/IndexBuffer.h>
+#include <graphics/resources/GraphicsResource.h>
+#include <graphics/resources/DeviceContext.h>
+#include <graphics/resources/SwapChain.h>
+#include <graphics/resources/ShaderBinary.h>
+#include <graphics/resources/VertexBuffer.h>
+#include <graphics/resources/IndexBuffer.h>
+#include <graphics/resources/ConstantBuffer.h>
+#include <graphics/resources/GraphicsPipelineState.h>
+#include <graphics/resources/VertexShaderSignature.h>
+#include <graphics/resources/GraphicsTexture.h>
 #include <d3d11.h>
 #include <wrl.h>
 
@@ -34,6 +36,7 @@ namespace genesis
         SharedPtr<VertexShaderSignature> createVertexShaderSignature(const VertexShaderSignatureDesc& desc);
         SharedPtr<ConstantBuffer> createConstantBuffer(const ConstantBufferDesc& desc);
         SharedPtr<IndexBuffer> createIndexBuffer(const IndexBufferDesc& desc);
+        SharedPtr<GraphicsTexture> createGraphicsTexture(const GraphicsTextureDesc& desc);
 
         void clearState();
         void executeCommandList(DeviceContext& context);

@@ -2,6 +2,7 @@
 #define GENESIS_GRAPHICS_ENGINE_H
 #include <core/Base.h>
 #include <core/Core.h>
+#include <math/Vec2.h>
 #include <math/Vec3.h>
 #include <math/Vec4.h>
 #include <math/Mat4.h>
@@ -40,6 +41,7 @@ namespace genesis
         {
             Vec3 position;
             Vec4 color;
+            Vec2 texture;
         };
 
         struct alignas(16) ConstantData

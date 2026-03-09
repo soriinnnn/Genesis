@@ -2,10 +2,8 @@
 #define GENESIS_INPUT_MANAGER_H
 #include <core/Base.h>
 #include <core/Core.h>
+#include <display/Window.h>
 #include <input/InputListener.h>
-#include <input/InputCodes.h>
-#include <window/Window.h>
-#include <vector>
 
 namespace genesis
 {

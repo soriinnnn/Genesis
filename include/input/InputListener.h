@@ -1,5 +1,6 @@
 #ifndef GENESIS_INPUT_LISTENER_H
 #define GENESIS_INPUT_LISTENER_H
+#include <core/Core.h>
 #include <input/InputCodes.h>
 #include <math/Point.h>
 

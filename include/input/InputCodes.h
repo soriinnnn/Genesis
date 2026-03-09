@@ -1,5 +1,5 @@
-#ifndef GENESIS_INPUT_KEY_CODES_H
-#define GENESIS_INPUT_KEY_CODES_H
+#ifndef GENESIS_INPUT_CODES_H
+#define GENESIS_INPUT_CODES_H
 
 namespace genesis
 {

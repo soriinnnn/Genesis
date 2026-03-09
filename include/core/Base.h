@@ -1,8 +1,8 @@
 #ifndef GENESIS_BASE_H
 #define GENESIS_BASE_H
 #include <core/Logger.h>
+#include <core/utils/LogUtils.h>
 #include <core/utils/Macros.h>
-#include <core/utils/LogMacros.h>
 
 namespace genesis 
 {
@@ -16,7 +16,7 @@ namespace genesis
     GENESIS_DISABLE_COPY_AND_MOVE(Base)
     public:
         virtual ~Base();
-        virtual Logger& getLogger() const noexcept final;
+        Logger& getLogger() const noexcept;
         
     protected:
         explicit Base(const BaseDesc& desc);

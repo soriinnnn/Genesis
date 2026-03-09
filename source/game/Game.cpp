@@ -1,8 +1,9 @@
 #include <game/Game.h>
-#include <game/Display.h>
-#include <window/Window.h>
-#include <graphics/GraphicsEngine.h>
+#include <display/Display.h>
 #include <input/InputManager.h>
+#include <resources/ResourceManager.h>
+#include <graphics/GraphicsEngine.h>
+
 #include <misc/PlatformUtils.h>
 
 using namespace genesis;
@@ -18,11 +19,14 @@ Game::Game(const GameDesc& desc)
             m_graphicsEngine->getGraphicsDevice()
         }
     );
-    m_inputManager = InputManager::create(InputManagerDesc{*m_logger, m_display->getWindow()});
-    m_isRunning = true;
 
+    m_inputManager = InputManager::create(InputManagerDesc{*m_logger, m_display->getWindow()});
     m_inputManager->addListener(m_graphicsEngine.get());
     m_inputManager->setMouseVisibility(false);
+
+    m_resourceManager = make_unique<ResourceManager>(ResourceManagerDesc{*m_logger, m_graphicsEngine->getGraphicsDevice()});
+
+    m_isRunning = true;
 
     GENESIS_LOG_INFO("Game initialized.");
 }

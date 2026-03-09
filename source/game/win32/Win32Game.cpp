@@ -1,5 +1,4 @@
 #include <game/Game.h>
-#include <game/Display.h>
 #include <windows.h>
 
 using namespace genesis;
@@ -15,10 +14,6 @@ void Game::run()
             if (msg.message == WM_QUIT) {
                 m_isRunning = false;
                 break;
-            }
-
-            if (msg.message == WM_KEYDOWN && msg.wParam == VK_F5) {
-                m_display->resize(1024, 768);
             }
 
             TranslateMessage(&msg);

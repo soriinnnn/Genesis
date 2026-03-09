@@ -1,9 +1,14 @@
 #ifndef GENESIS_CORE_H
 #define GENESIS_CORE_H
+#include <chrono>
+#include <format>
 #include <string>
 #include <memory>
+#include <vector>
 #include <cstdint>
+#include <stdexcept>
 #include <functional>
+#include <unordered_map>
 
 namespace genesis 
 {
@@ -15,9 +20,14 @@ namespace genesis
     class Display;
     class InputManager;
     class InputListener;
+    class ResourceManager;
+    class Resource;
+    class Texture;
 
     class GraphicsEngine;
     class GraphicsDevice;
+
+    class GraphicsResource;
     class DeviceContext;
     class SwapChain;
     class ShaderBinary;
@@ -26,6 +36,7 @@ namespace genesis
     class ConstantBuffer;
     class VertexShaderSignature;
     class GraphicsPipelineState;
+    class GraphicsTexture;
 
     typedef int8_t  int8;
     typedef int16_t int16;
@@ -38,7 +49,7 @@ namespace genesis
     typedef uint64_t uint64;
 
     template<typename T> using SharedPtr = std::shared_ptr<T>;
-    template<typename T> using UniquePtr = std::shared_ptr<T>;
+    template<typename T> using UniquePtr = std::unique_ptr<T>;
 }
 
 #endif

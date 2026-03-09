@@ -1,6 +1,6 @@
 #include <graphics/GraphicsEngine.h>
 #include <graphics/GraphicsDevice.h>
-#include <graphics/DeviceContext.h>
+#include <graphics/resources/DeviceContext.h>
 
 #include <misc/AssetManager.h>
 
@@ -46,14 +46,14 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
     m_graphicsPipeline = m_graphicsDevice->createGraphicsPipelineState(GraphicsPipelineStateDesc{*vsSignature, *ps, PrimitiveTopology::Triangles});
     
     const Vertex vertices[] = {
-        {{-0.5f, -0.5f, -0.5f}, {1, 0, 0, 1}},
-        {{-0.5f,  0.5f, -0.5f}, {0, 1, 0, 1}},
-        {{ 0.5f,  0.5f, -0.5f}, {0, 0, 1, 1}},
-        {{ 0.5f, -0.5f, -0.5f}, {1, 0, 1, 1}},
-        {{ 0.5f, -0.5f,  0.5f}, {1, 0, 1, 1}},
-        {{ 0.5f,  0.5f,  0.5f}, {0, 0, 1, 1}},
-        {{-0.5f,  0.5f,  0.5f}, {0, 1, 0, 1}},
-        {{-0.5f, -0.5f,  0.5f}, {1, 0, 0, 1}}
+        {{-0.5f, -0.5f, -0.5f}, {1, 0, 0, 1}, {}},
+        {{-0.5f,  0.5f, -0.5f}, {0, 1, 0, 1}, {}},
+        {{ 0.5f,  0.5f, -0.5f}, {0, 0, 1, 1}, {}},
+        {{ 0.5f, -0.5f, -0.5f}, {1, 0, 1, 1}, {}},
+        {{ 0.5f, -0.5f,  0.5f}, {1, 0, 1, 1}, {}},
+        {{ 0.5f,  0.5f,  0.5f}, {0, 0, 1, 1}, {}},
+        {{-0.5f,  0.5f,  0.5f}, {0, 1, 0, 1}, {}},
+        {{-0.5f, -0.5f,  0.5f}, {1, 0, 0, 1}, {}}
     };
     m_vertexBuffer = m_graphicsDevice->createVertexBuffer(VertexBufferDesc{vertices, size(vertices), sizeof(Vertex)});
     

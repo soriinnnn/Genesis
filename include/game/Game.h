@@ -4,7 +4,6 @@
 #include <core/Logger.h>
 #include <core/utils/Macros.h>
 #include <math/Rect.h>
-#include <chrono>
 
 namespace genesis 
 {
@@ -21,7 +20,7 @@ namespace genesis
         explicit Game(const GameDesc& desc);
         virtual ~Game();
 
-        virtual Logger& getLogger() noexcept final;
+        Logger& getLogger() noexcept;
         virtual void run() final;
 
     private:
@@ -32,6 +31,7 @@ namespace genesis
         UniquePtr<GraphicsEngine> m_graphicsEngine;
         UniquePtr<Display> m_display;
         UniquePtr<InputManager> m_inputManager;
+        UniquePtr<ResourceManager> m_resourceManager;
         bool m_isRunning;
 
         std::chrono::steady_clock::time_point m_previousTime;

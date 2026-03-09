@@ -1,5 +1,4 @@
 #include <graphics/GraphicsDevice.h>
-#include <graphics/DeviceContext.h>
 #include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;
@@ -88,6 +87,11 @@ SharedPtr<IndexBuffer> GraphicsDevice::createIndexBuffer(const IndexBufferDesc& 
     return make_shared<IndexBuffer>(desc, getGraphicsResourceDesc());
 }
 
+SharedPtr<GraphicsTexture> GraphicsDevice::createGraphicsTexture(const GraphicsTextureDesc& desc)
+{
+    return make_shared<GraphicsTexture>(desc, getGraphicsResourceDesc());
+}
+
 void GraphicsDevice::clearState()
 {
     m_d3dContext->ClearState();
@@ -107,7 +111,7 @@ void GraphicsDevice::executeCommandList(DeviceContext& context)
 GraphicsResourceDesc GraphicsDevice::getGraphicsResourceDesc() noexcept
 {
     return GraphicsResourceDesc{
-        BaseDesc{m_logger},
+        m_logger,
         shared_from_this(), 
         *m_d3dDevice.Get(), 
         *m_dxgiFactory.Get()

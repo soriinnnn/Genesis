@@ -36,52 +36,52 @@
     <ClCompile Include="source\core\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics\SwapChain.cpp">
+    <ClCompile Include="source\graphics\resources\SwapChain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\math\Rect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\game\Display.cpp">
+    <ClCompile Include="source\display\Display.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics\GraphicsResource.cpp">
+    <ClCompile Include="source\graphics\resources\GraphicsResource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics\DeviceContext.cpp">
+    <ClCompile Include="source\graphics\resources\DeviceContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\math\Vec4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics\ShaderBinary.cpp">
+    <ClCompile Include="source\graphics\resources\ShaderBinary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics\GraphicsPipelineState.cpp">
+    <ClCompile Include="source\graphics\resources\GraphicsPipelineState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics\VertexBuffer.cpp">
+    <ClCompile Include="source\graphics\resources\VertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\math\Vec3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics\VertexShaderSignature.cpp">
+    <ClCompile Include="source\graphics\resources\VertexShaderSignature.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\window\win32\Win32Window.cpp">
+    <ClCompile Include="source\display\win32\Win32Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\window\Window.cpp">
+    <ClCompile Include="source\display\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics\ConstantBuffer.cpp">
+    <ClCompile Include="source\graphics\resources\ConstantBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\math\Mat4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics\IndexBuffer.cpp">
+    <ClCompile Include="source\graphics\resources\IndexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\misc\AssetManager.cpp">
@@ -96,13 +96,22 @@
     <ClCompile Include="source\input\win32\Win32InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\game\Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\math\Vec2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\math\Point.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\resources\ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\resources\Resource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\resources\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\graphics\resources\GraphicsTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -110,7 +119,7 @@
     <ClInclude Include="include\core\Base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\window\Window.h">
+    <ClInclude Include="include\display\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\core\Core.h">
@@ -128,52 +137,52 @@
     <ClInclude Include="include\core\Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\core\Common.h">
+    <ClInclude Include="include\core\utils\Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\graphics\utils\GraphicsLogUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\SwapChain.h">
+    <ClInclude Include="source\graphics\resources\SwapChain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\GraphicsResource.h">
+    <ClInclude Include="source\graphics\resources\GraphicsResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\math\Rect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\game\Display.h">
+    <ClInclude Include="include\display\Display.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\core\utils\LogUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\DeviceContext.h">
+    <ClInclude Include="source\graphics\resources\DeviceContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\math\Vec4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\ShaderBinary.h">
+    <ClInclude Include="source\graphics\resources\ShaderBinary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\graphics\utils\GraphicsUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\GraphicsPipelineState.h">
+    <ClInclude Include="source\graphics\resources\GraphicsPipelineState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\VertexBuffer.h">
+    <ClInclude Include="source\graphics\resources\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\math\Vec3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\VertexShaderSignature.h">
+    <ClInclude Include="source\graphics\resources\VertexShaderSignature.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\window\win32\Win32Window.h">
+    <ClInclude Include="source\display\win32\Win32Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\misc\PlatformUtils.h">
@@ -182,13 +191,13 @@
     <ClInclude Include="source\graphics\utils\GraphicsTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\ConstantBuffer.h">
+    <ClInclude Include="source\graphics\resources\ConstantBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\math\Mat4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\IndexBuffer.h">
+    <ClInclude Include="source\graphics\resources\IndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\misc\AssetManager.h">
@@ -209,17 +218,26 @@
     <ClInclude Include="include\core\utils\Macros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\core\utils\LogMacros.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\game\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\math\Vec2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\math\Point.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\resources\ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resources\Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resources\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\graphics\resources\GraphicsTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
