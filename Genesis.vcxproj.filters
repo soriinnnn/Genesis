@@ -84,9 +84,6 @@
     <ClCompile Include="source\graphics\resources\IndexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\misc\AssetManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\input\InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -114,6 +111,15 @@
     <ClCompile Include="source\graphics\resources\GraphicsTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\resources\PixelShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\resources\VertexShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\resources\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\core\Base.h">
@@ -125,10 +131,10 @@
     <ClInclude Include="include\core\Core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\GraphicsEngine.h">
+    <ClInclude Include="include\graphics\GraphicsEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\GraphicsDevice.h">
+    <ClInclude Include="include\graphics\GraphicsDevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\game\Game.h">
@@ -140,13 +146,13 @@
     <ClInclude Include="include\core\utils\Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\utils\GraphicsLogUtils.h">
+    <ClInclude Include="include\graphics\utils\GraphicsLogUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\resources\SwapChain.h">
+    <ClInclude Include="include\graphics\resources\SwapChain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\resources\GraphicsResource.h">
+    <ClInclude Include="include\graphics\resources\GraphicsResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\math\Rect.h">
@@ -158,28 +164,28 @@
     <ClInclude Include="include\core\utils\LogUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\resources\DeviceContext.h">
+    <ClInclude Include="include\graphics\resources\DeviceContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\math\Vec4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\resources\ShaderBinary.h">
+    <ClInclude Include="include\graphics\resources\ShaderBinary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\utils\GraphicsUtils.h">
+    <ClInclude Include="include\graphics\utils\GraphicsUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\resources\GraphicsPipelineState.h">
+    <ClInclude Include="include\graphics\resources\GraphicsPipelineState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\resources\VertexBuffer.h">
+    <ClInclude Include="include\graphics\resources\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\math\Vec3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\resources\VertexShaderSignature.h">
+    <ClInclude Include="include\graphics\resources\VertexShaderSignature.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\display\win32\Win32Window.h">
@@ -188,19 +194,16 @@
     <ClInclude Include="include\misc\PlatformUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\utils\GraphicsTypes.h">
+    <ClInclude Include="include\graphics\utils\GraphicsTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\resources\ConstantBuffer.h">
+    <ClInclude Include="include\graphics\resources\ConstantBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\math\Mat4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\resources\IndexBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\misc\AssetManager.h">
+    <ClInclude Include="include\graphics\resources\IndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\input\InputManager.h">
@@ -233,7 +236,19 @@
     <ClInclude Include="include\resources\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\resources\GraphicsTexture.h">
+    <ClInclude Include="include\graphics\resources\GraphicsTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resources\PixelShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resources\VertexShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resources\utils\ResourcesUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resources\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

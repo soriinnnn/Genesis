@@ -14,7 +14,7 @@ namespace genesis
 	class VertexShaderSignature final: public GraphicsResource
 	{
 	public:
-		VertexShaderSignature(const VertexShaderSignatureDesc& sDesc, const GraphicsResourceDesc& grDesc);
+		VertexShaderSignature(const VertexShaderSignatureDesc& sdesc, const GraphicsResourceDesc& gdesc);
 		~VertexShaderSignature() override;
 
 		BinaryData getShaderBinaryData() const noexcept;

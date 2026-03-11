@@ -7,15 +7,15 @@ using namespace genesis;
 
 static D3D_PRIMITIVE_TOPOLOGY getD3DPrimitiveTopology(PrimitiveTopology primitive);
 
-GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& gpDesc, const GraphicsResourceDesc& grDesc): GraphicsResource(grDesc)
+GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& pdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
-	if (gpDesc.pixelShader.getType() != ShaderType::PixelShader) {
+	if (pdesc.pixelShader.getType() != ShaderType::PixelShader) {
 		GENESIS_LOG_THROW_INVALID_ARG("Invalid pixel shader type.");
 	}
 
-	BinaryData vertexShader = gpDesc.vertexShader.getShaderBinaryData();
-	BinaryData pixelShader = gpDesc.pixelShader.getData();
-	BinaryData inputElements = gpDesc.vertexShader.getInputElementsData();
+	BinaryData vertexShader = pdesc.vertexShader.getShaderBinaryData();
+	BinaryData pixelShader = pdesc.pixelShader.getData();
+	BinaryData inputElements = pdesc.vertexShader.getInputElementsData();
 
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateInputLayout(
@@ -48,7 +48,7 @@ GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& gp
 		"CreatePixelShader failed."
 	);
 
-	m_primitive = getD3DPrimitiveTopology(gpDesc.primitive);
+	m_primitive = getD3DPrimitiveTopology(pdesc.primitive);
 	if (m_primitive == D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED) {
 		GENESIS_LOG_THROW_ERROR("Invalid primitive topology");
 	}

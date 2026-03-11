@@ -12,13 +12,16 @@ namespace genesis
 	class Texture final: public Resource
 	{
 	public:
-		Texture(const TextureDesc& tDesc, const ResourceDesc& rDesc);
+		Texture(const TextureDesc& tdesc, const ResourceDesc& rdesc);
 		~Texture() override;
+
+		GraphicsTexture& getGraphicsTexture();
 
 		void load() override;
 		void unload() override;
 
 	private:
+		GraphicsDevice& m_graphicsDevice;
 		SharedPtr<GraphicsTexture> m_graphicsTexture;
 	};
 }

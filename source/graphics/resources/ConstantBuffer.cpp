@@ -3,34 +3,34 @@
 
 using namespace genesis;
 
-D3D11_BUFFER_DESC createBufferDesc(const ConstantBufferDesc& desc);
-D3D11_SUBRESOURCE_DATA createSubresourceData(const ConstantBufferDesc& desc);
+static D3D11_BUFFER_DESC createBufferDesc(const ConstantBufferDesc& desc);
+static D3D11_SUBRESOURCE_DATA createSubresourceData(const ConstantBufferDesc& desc);
 
-ConstantBuffer::ConstantBuffer(const ConstantBufferDesc& cDesc, const GraphicsResourceDesc& grDesc): GraphicsResource(grDesc)
+ConstantBuffer::ConstantBuffer(const ConstantBufferDesc& cdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
-	if (!cDesc.bufferSize) {
+	if (!cdesc.bufferSize) {
 		GENESIS_LOG_THROW_ERROR("Buffer size must be greater than zero.");
 	}
 
-	D3D11_BUFFER_DESC buffDesc = createBufferDesc(cDesc);
-	D3D11_SUBRESOURCE_DATA initData = createSubresourceData(cDesc);
+	D3D11_BUFFER_DESC buffDesc = createBufferDesc(cdesc);
+	D3D11_SUBRESOURCE_DATA initData = createSubresourceData(cdesc);
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateBuffer(
 			&buffDesc, 
-			(cDesc.buffer) ? &initData : nullptr,
+			(cdesc.buffer) ? &initData : nullptr,
 			&m_buffer
 		),
 		"CreateBuffer failed."
 	);
 
-	m_size = cDesc.bufferSize;
+	m_size = cdesc.bufferSize;
 }
 
 ConstantBuffer::~ConstantBuffer() {}
 
 /* STATIC FUNCTION DEFINITIONS */
 
-D3D11_BUFFER_DESC createBufferDesc(const ConstantBufferDesc& desc) {
+static D3D11_BUFFER_DESC createBufferDesc(const ConstantBufferDesc& desc) {
 	D3D11_BUFFER_DESC buffDesc{};
 
 	buffDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -42,7 +42,7 @@ D3D11_BUFFER_DESC createBufferDesc(const ConstantBufferDesc& desc) {
 	return buffDesc;
 }
 
-D3D11_SUBRESOURCE_DATA createSubresourceData(const ConstantBufferDesc& desc)
+static D3D11_SUBRESOURCE_DATA createSubresourceData(const ConstantBufferDesc& desc)
 {
 	D3D11_SUBRESOURCE_DATA m_data{};
 	m_data.pSysMem = desc.buffer;

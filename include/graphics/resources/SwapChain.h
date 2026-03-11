@@ -15,7 +15,7 @@ namespace genesis
 	class SwapChain final: public GraphicsResource
 	{
 	public:
-		SwapChain(const SwapChainDesc& scDesc, const GraphicsResourceDesc& grDesc);
+		SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gdesc);
 		~SwapChain() override;
 
 		Rect getSize() const noexcept;

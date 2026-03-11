@@ -14,7 +14,7 @@ namespace genesis
 	class VertexBuffer final: public GraphicsResource
 	{
 	public:
-		VertexBuffer(const VertexBufferDesc& vDesc, const GraphicsResourceDesc& grDesc);
+		VertexBuffer(const VertexBufferDesc& vdesc, const GraphicsResourceDesc& gdesc);
 		~VertexBuffer() override;
 
 		uint32 getVertexCount() const noexcept;

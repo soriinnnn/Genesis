@@ -17,7 +17,6 @@ namespace genesis
 		~Resource() override;
 
 		const char* getPath() const noexcept;
-		bool isLoaded() const noexcept;
 
 		virtual void load() = 0;
 		virtual void unload() = 0;
@@ -27,7 +26,6 @@ namespace genesis
 
 	protected:
 		std::string m_path;
-		bool m_isLoaded;
 	};
 }
 

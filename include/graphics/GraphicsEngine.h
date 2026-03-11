@@ -23,9 +23,7 @@ namespace genesis
         ~GraphicsEngine() override;
 
         GraphicsDevice& getGraphicsDevice() noexcept;
-
-        void clearPipelineState();
-        void render(SwapChain& swapChain, float deltaTime);
+        void render(Texture& tex, SwapChain& swapChain, float deltaTime);
 
 
         // PROVA
@@ -34,6 +32,8 @@ namespace genesis
         void onMouseMove(Point delta, Point pos) override;
         void onMouseDown(MouseButton button, Point pos) override;
         void onMouseUp(MouseButton button, Point pos) override;
+
+        void setPipeline(ResourceManager& resourceManager);
 
 
     private:
@@ -52,7 +52,7 @@ namespace genesis
         };
 
     private:
-        SharedPtr<GraphicsDevice> m_graphicsDevice;
+        UniquePtr<GraphicsDevice> m_graphicsDevice;
         SharedPtr<DeviceContext> m_deviceContext;
         SharedPtr<GraphicsPipelineState> m_graphicsPipeline;
         SharedPtr<VertexBuffer> m_vertexBuffer;

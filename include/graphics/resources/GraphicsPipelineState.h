@@ -15,7 +15,7 @@ namespace genesis
 	class GraphicsPipelineState final: public GraphicsResource
 	{
 	public:
-		GraphicsPipelineState(const GraphicsPipelineStateDesc& gpDesc, const GraphicsResourceDesc& grDesc);
+		GraphicsPipelineState(const GraphicsPipelineStateDesc& pdesc, const GraphicsResourceDesc& gdesc);
 		~GraphicsPipelineState() override;
 	
 	private:

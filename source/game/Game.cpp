@@ -3,6 +3,7 @@
 #include <input/InputManager.h>
 #include <resources/ResourceManager.h>
 #include <graphics/GraphicsEngine.h>
+#include <resources/Texture.h>
 
 #include <misc/PlatformUtils.h>
 
@@ -13,20 +14,16 @@ Game::Game(const GameDesc& desc)
 {
     m_logger = make_unique<Logger>(desc.logLevel);
     m_graphicsEngine = make_unique<GraphicsEngine>(GraphicsEngineDesc{*m_logger});
-    m_display = make_unique<Display>(
-        DisplayDesc{
-            WindowDesc{*m_logger, desc.wndSize, GENESIS_TEXT("Demo")}, 
-            m_graphicsEngine->getGraphicsDevice()
-        }
-    );
-
+    m_resourceManager = make_unique<ResourceManager>(ResourceManagerDesc{*m_logger, m_graphicsEngine->getGraphicsDevice()});
+    m_display = make_unique<Display>(DisplayDesc{*m_logger, desc.wndSize, GENESIS_TEXT("Demo"), m_graphicsEngine->getGraphicsDevice()});
     m_inputManager = InputManager::create(InputManagerDesc{*m_logger, m_display->getWindow()});
+    m_isRunning = true;
+
+    m_graphicsEngine->setPipeline(*m_resourceManager);
     m_inputManager->addListener(m_graphicsEngine.get());
     m_inputManager->setMouseVisibility(false);
-
-    m_resourceManager = make_unique<ResourceManager>(ResourceManagerDesc{*m_logger, m_graphicsEngine->getGraphicsDevice()});
-
-    m_isRunning = true;
+    m_tex = m_resourceManager->createTexture("demo/assets/textures/wood.jpg");
+    m_resourceManager->unloadUnused();
 
     GENESIS_LOG_INFO("Game initialized.");
 }
@@ -64,5 +61,5 @@ void Game::onInternalUpdate()
     Rect wndSize = m_display->getSize();
     m_inputManager->setMousePosition({wndSize.width() / 2, wndSize.height() / 2});
 
-    m_graphicsEngine->render(m_display->getSwapChain(), deltaTime);
+    m_graphicsEngine->render(*m_tex, m_display->getSwapChain(), deltaTime);
 }

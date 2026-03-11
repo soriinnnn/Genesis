@@ -1,80 +1,64 @@
 #include <graphics/GraphicsEngine.h>
 #include <graphics/GraphicsDevice.h>
 #include <graphics/resources/DeviceContext.h>
+#include <resources/VertexShader.h>
+#include <resources/PixelShader.h>
+#include <resources/Texture.h>
 
-#include <misc/AssetManager.h>
+#include <resources/ResourceManager.h>
 
 using namespace genesis;
 using namespace std;
 
 GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
 {
-    m_graphicsDevice = make_shared<GraphicsDevice>(GraphicsDeviceDesc{m_logger});
+    m_graphicsDevice = make_unique<GraphicsDevice>(GraphicsDeviceDesc{m_logger});
     m_deviceContext = m_graphicsDevice->createDeviceContext();
-
-    constexpr char vertexShaderFilePath[] = "demo/assets/shaders/basic/vs.hlsl";
-    string shaderFileData = AssetManager::readFile(vertexShaderFilePath);
-    if (shaderFileData.empty()) {
-        GENESIS_LOG_THROW_ERROR("Failed to open shader file.");
-    }
-    SharedPtr<ShaderBinary> vs = m_graphicsDevice->compileShader(
-        ShaderCompileDesc{
-            vertexShaderFilePath, 
-            shaderFileData.c_str(),
-            shaderFileData.length(),
-            "main",
-            ShaderType::VertexShader
-        }
-    );
-
-    constexpr char pixelShaderFilePath[] = "demo/assets/shaders/basic/ps.hlsl";
-    shaderFileData = AssetManager::readFile(pixelShaderFilePath);
-    if (shaderFileData.empty()) {
-        GENESIS_LOG_THROW_ERROR("Failed to open shader file.");
-    }
-    SharedPtr<ShaderBinary> ps = m_graphicsDevice->compileShader(
-        ShaderCompileDesc{
-            pixelShaderFilePath,
-            shaderFileData.c_str(),
-            shaderFileData.length(),
-            "main",
-            ShaderType::PixelShader
-        }
-    );
-
-    SharedPtr<VertexShaderSignature> vsSignature = m_graphicsDevice->createVertexShaderSignature(VertexShaderSignatureDesc{vs});
-    m_graphicsPipeline = m_graphicsDevice->createGraphicsPipelineState(GraphicsPipelineStateDesc{*vsSignature, *ps, PrimitiveTopology::Triangles});
     
     const Vertex vertices[] = {
-        {{-0.5f, -0.5f, -0.5f}, {1, 0, 0, 1}, {}},
-        {{-0.5f,  0.5f, -0.5f}, {0, 1, 0, 1}, {}},
-        {{ 0.5f,  0.5f, -0.5f}, {0, 0, 1, 1}, {}},
-        {{ 0.5f, -0.5f, -0.5f}, {1, 0, 1, 1}, {}},
-        {{ 0.5f, -0.5f,  0.5f}, {1, 0, 1, 1}, {}},
-        {{ 0.5f,  0.5f,  0.5f}, {0, 0, 1, 1}, {}},
-        {{-0.5f,  0.5f,  0.5f}, {0, 1, 0, 1}, {}},
-        {{-0.5f, -0.5f,  0.5f}, {1, 0, 0, 1}, {}}
+        {{-0.5f, -0.5f, -0.5f}, {1, 0, 0, 1}, {0.0f, 1.0f}},
+        {{-0.5f,  0.5f, -0.5f}, {0, 1, 0, 1}, {0.0f, 0.0f}},
+        {{ 0.5f,  0.5f, -0.5f}, {0, 0, 1, 1}, {1.0f, 0.0f}},
+        {{ 0.5f, -0.5f, -0.5f}, {1, 0, 1, 1}, {1.0f, 1.0f}},
+        {{ 0.5f, -0.5f,  0.5f}, {1, 0, 1, 1}, {0.0f, 1.0f}},
+        {{ 0.5f,  0.5f,  0.5f}, {0, 0, 1, 1}, {0.0f, 0.0f}},
+        {{-0.5f,  0.5f,  0.5f}, {0, 1, 0, 1}, {1.0f, 0.0f}},
+        {{-0.5f, -0.5f,  0.5f}, {1, 0, 0, 1}, {1.0f, 1.0f}},
+        {{-0.5f,  0.5f, -0.5f}, {0, 1, 0, 1}, {0.0f, 1.0f}},
+        {{-0.5f,  0.5f,  0.5f}, {0, 1, 0, 1}, {0.0f, 0.0f}},
+        {{ 0.5f,  0.5f,  0.5f}, {0, 0, 1, 1}, {1.0f, 0.0f}},
+        {{ 0.5f,  0.5f, -0.5f}, {0, 0, 1, 1}, {1.0f, 1.0f}},
+        {{-0.5f, -0.5f,  0.5f}, {1, 0, 0, 1}, {0.0f, 1.0f}},
+        {{-0.5f, -0.5f, -0.5f}, {1, 0, 0, 1}, {0.0f, 0.0f}},
+        {{ 0.5f, -0.5f, -0.5f}, {1, 0, 1, 1}, {1.0f, 0.0f}},
+        {{ 0.5f, -0.5f,  0.5f}, {1, 0, 1, 1}, {1.0f, 1.0f}},
+        {{-0.5f, -0.5f,  0.5f}, {1, 0, 0, 1}, {0.0f, 1.0f}},
+        {{-0.5f,  0.5f,  0.5f}, {0, 1, 0, 1}, {0.0f, 0.0f}},
+        {{-0.5f,  0.5f, -0.5f}, {0, 1, 0, 1}, {1.0f, 0.0f}},
+        {{-0.5f, -0.5f, -0.5f}, {1, 0, 0, 1}, {1.0f, 1.0f}},
+        {{ 0.5f, -0.5f, -0.5f}, {1, 0, 1, 1}, {0.0f, 1.0f}},
+        {{ 0.5f,  0.5f, -0.5f}, {0, 0, 1, 1}, {0.0f, 0.0f}},
+        {{ 0.5f,  0.5f,  0.5f}, {0, 0, 1, 1}, {1.0f, 0.0f}},
+        {{ 0.5f, -0.5f,  0.5f}, {1, 0, 1, 1}, {1.0f, 1.0f}}
     };
     m_vertexBuffer = m_graphicsDevice->createVertexBuffer(VertexBufferDesc{vertices, size(vertices), sizeof(Vertex)});
-    
+
     const uint32 indices[] = {
-        0, 1, 2,
-        2, 3, 0,
-        4, 5, 6,
-        6, 7, 4,
-        1, 6, 5,
-        5, 2, 1,
-        7, 0, 3,
-        3, 4, 7,
-        3, 2, 5,
-        5, 4, 3,
-        7, 6, 1,
-        1, 0, 7
+         0,  1,  2, 
+         2,  3,  0,
+         4,  5,  6, 
+         6,  7,  4,
+         8,  9, 10,
+        10, 11,  8,
+        12, 13, 14,
+        14, 15, 12,
+        16, 17, 18,
+        18, 19, 16,
+        20, 21, 22,
+        22, 23, 20
     };
     m_indexBuffer = m_graphicsDevice->createIndexBuffer(IndexBufferDesc{indices, size(indices), IndexFormat::UnsignedInt32});
-
     m_constantBuffer = m_graphicsDevice->createConstantBuffer(ConstantBufferDesc{nullptr, sizeof(ConstantData)});
-
 
     m_pos = Vec3{0, 0, -2};
 }
@@ -86,12 +70,7 @@ GraphicsDevice& GraphicsEngine::getGraphicsDevice() noexcept
     return *m_graphicsDevice;
 }
 
-void GraphicsEngine::clearPipelineState()
-{
-    m_graphicsDevice->clearState();
-}
-
-void GraphicsEngine::render(SwapChain& swapChain, float deltaTime)
+void GraphicsEngine::render(Texture& tex, SwapChain& swapChain, float deltaTime)
 {
     m_deltaTime = deltaTime;
     m_scale = 1.0f;
@@ -129,7 +108,8 @@ void GraphicsEngine::render(SwapChain& swapChain, float deltaTime)
     m_deviceContext->setViewport(swapChain.getSize());
     m_deviceContext->setVertexBuffer(*m_vertexBuffer);
     m_deviceContext->setConstantBuffer(*m_constantBuffer);
-    //m_deviceContext->draw(m_vertexBuffer->getVertexCount());
+    m_deviceContext->setTexture(tex.getGraphicsTexture());
+
 
     m_deviceContext->setIndexBuffer(*m_indexBuffer);
     m_deviceContext->drawIndexed(m_indexBuffer->getIndexCount());
@@ -187,4 +167,11 @@ void GraphicsEngine::onMouseDown(MouseButton button, Point pos)
 void GraphicsEngine::onMouseUp(MouseButton button, Point pos)
 {
     //GENESIS_LOG_INFO("Button up: {}, Pos: x={}, y={}", (int)button, pos.x, pos.y);
+}
+
+void GraphicsEngine::setPipeline(ResourceManager& resourceManager) 
+{
+    SharedPtr<VertexShader> vs = resourceManager.createVertexShader("demo/assets/shaders/basic/vs.hlsl", "main");
+    SharedPtr<PixelShader> ps = resourceManager.createPixelShader("demo/assets/shaders/basic/ps.hlsl", "main");
+    m_graphicsPipeline = m_graphicsDevice->createGraphicsPipelineState(GraphicsPipelineStateDesc{vs->getVertexShaderSignature(), ps->getShaderBinary(), PrimitiveTopology::Triangles});
 }

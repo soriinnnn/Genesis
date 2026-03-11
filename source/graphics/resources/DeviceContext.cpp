@@ -4,6 +4,7 @@
 #include <graphics/resources/VertexBuffer.h>
 #include <graphics/resources/IndexBuffer.h>
 #include <graphics/resources/ConstantBuffer.h>
+#include <graphics/resources/GraphicsTexture.h>
 #include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;
@@ -90,6 +91,12 @@ void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const voi
 	);
 	memcpy(mapped.pData, m_data, buffer.m_size);
 	m_context->Unmap(buff, 0);
+}
+
+void DeviceContext::setTexture(const GraphicsTexture& texture)
+{
+	ID3D11ShaderResourceView* resourceView = texture.m_resourceView.Get();
+	m_context->PSSetShaderResources(0, 1, &resourceView);
 }
 
 void DeviceContext::draw(uint32 vertexCount, uint32 startVertexLocation)

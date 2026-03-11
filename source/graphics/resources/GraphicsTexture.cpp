@@ -6,13 +6,15 @@ using namespace genesis;
 using namespace std;
 using namespace DirectX;
 
-GraphicsTexture::GraphicsTexture(const GraphicsTextureDesc& gDesc, const GraphicsResourceDesc& grDesc): GraphicsResource(grDesc)
+static D3D11_SHADER_RESOURCE_VIEW_DESC getShaderResourceViewDesc(const ScratchImage& imageData);
+
+GraphicsTexture::GraphicsTexture(const GraphicsTextureDesc& tdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
 	ScratchImage imageData{};
 
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		LoadFromWICFile(
-			gDesc.path,
+			tdesc.path,
 			WIC_FLAGS_NONE,
 			nullptr,
 			imageData
@@ -30,6 +32,28 @@ GraphicsTexture::GraphicsTexture(const GraphicsTextureDesc& gDesc, const Graphic
 		),
 		"CreateTexture failed."
 	);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC resourceViewDesc = getShaderResourceViewDesc(imageData);
+	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
+		m_device.CreateShaderResourceView(
+			m_texture.Get(), 
+			&resourceViewDesc, 
+			&m_resourceView
+		),
+		"CreateShaderResourceView failed."
+	);
 }
 
 GraphicsTexture::~GraphicsTexture() {}
+
+static D3D11_SHADER_RESOURCE_VIEW_DESC getShaderResourceViewDesc(const ScratchImage& imageData)
+{
+	D3D11_SHADER_RESOURCE_VIEW_DESC desc{};
+
+	desc.Format = imageData.GetMetadata().format;
+	desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	desc.Texture2D.MipLevels = static_cast<UINT>(imageData.GetMetadata().mipLevels);
+	desc.Texture2D.MostDetailedMip = 0;
+
+	return desc;
+};

@@ -6,14 +6,14 @@ using namespace genesis;
 
 static DXGI_SWAP_CHAIN_DESC createSwapChainDesc(const SwapChainDesc& desc);
 
-SwapChain::SwapChain(const SwapChainDesc& scDesc, const GraphicsResourceDesc& grDesc): GraphicsResource(grDesc)
+SwapChain::SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
-	if (!scDesc.wndHandle) {
+	if (!sdesc.wndHandle) {
 		GENESIS_LOG_THROW_INVALID_ARG("Window handle is null.");
 	}
-	m_size = scDesc.wndSize;
+	m_size = sdesc.wndSize;
 
-	DXGI_SWAP_CHAIN_DESC dxgiDesc = createSwapChainDesc(scDesc);
+	DXGI_SWAP_CHAIN_DESC dxgiDesc = createSwapChainDesc(sdesc);
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_factory.CreateSwapChain(&m_device, &dxgiDesc, &m_swapChain),
 		"CreateSwapChain failed."
@@ -32,7 +32,7 @@ void SwapChain::resize(uint32 width, uint32 height)
 {
 	m_size = Rect{static_cast<int32>(width), static_cast<int32>(height)};
 
-	m_graphicsDevice->clearState();
+	m_graphicsDevice.clearState();
 	m_renderTarget.Reset();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_swapChain->ResizeBuffers(

@@ -5,18 +5,18 @@
 
 using namespace genesis;
 
-ShaderBinary::ShaderBinary(const ShaderCompileDesc& sDesc, const GraphicsResourceDesc& grDesc): GraphicsResource(grDesc)
+ShaderBinary::ShaderBinary(const ShaderCompileDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
-	if (!sDesc.shaderSourceName) {
+	if (!sdesc.shaderSourceName) {
 		GENESIS_LOG_THROW_INVALID_ARG("No shader source name provided.");
 	}
-	if (!sDesc.shaderSourceCode) {
+	if (!sdesc.shaderSourceCode) {
 		GENESIS_LOG_THROW_INVALID_ARG("No shader source code provided.");
 	}
-	if (!sDesc.shaderSourceCodeSize) {
+	if (!sdesc.shaderSourceCodeSize) {
 		GENESIS_LOG_THROW_INVALID_ARG("No shader source code size provided.");
 	}
-	if (!sDesc.shaderEntryPoint) {
+	if (!sdesc.shaderEntryPoint) {
 		GENESIS_LOG_THROW_INVALID_ARG("No shader entry point provided.");
 	}
 
@@ -29,13 +29,13 @@ ShaderBinary::ShaderBinary(const ShaderCompileDesc& sDesc, const GraphicsResourc
 
 	GENESIS_GRAPHICS_CHECK_SHADER_COMPILE(
 		D3DCompile(
-			sDesc.shaderSourceCode,
-			sDesc.shaderSourceCodeSize,
-			sDesc.shaderSourceName,
+			sdesc.shaderSourceCode,
+			sdesc.shaderSourceCodeSize,
+			sdesc.shaderSourceName,
 			nullptr,
 			nullptr,
-			sDesc.shaderEntryPoint,
-			graphicsUtils::getShaderModelTarget(sDesc.shaderType),
+			sdesc.shaderEntryPoint,
+			graphicsUtils::getShaderModelTarget(sdesc.shaderType),
 			compileFlags,
 			0,
 			&m_blob,
@@ -44,7 +44,7 @@ ShaderBinary::ShaderBinary(const ShaderCompileDesc& sDesc, const GraphicsResourc
 		errorBlob.Get()
 	);
 
-	m_type = sDesc.shaderType;
+	m_type = sdesc.shaderType;
 }
 
 ShaderBinary::~ShaderBinary() {}

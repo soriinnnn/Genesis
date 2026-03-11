@@ -20,7 +20,7 @@ namespace genesis
 	class IndexBuffer final: public GraphicsResource
 	{ 
 	public:
-		IndexBuffer(const IndexBufferDesc& iDesc, const GraphicsResourceDesc& grDesc);
+		IndexBuffer(const IndexBufferDesc& idesc, const GraphicsResourceDesc& gdesc);
 		~IndexBuffer() override;
 
 		uint32 getIndexCount() const noexcept;

@@ -23,6 +23,8 @@ namespace genesis
     class ResourceManager;
     class Resource;
     class Texture;
+    class VertexShader;
+    class PixelShader;
 
     class GraphicsEngine;
     class GraphicsDevice;

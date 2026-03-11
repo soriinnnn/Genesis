@@ -18,7 +18,7 @@ namespace genesis
 	class ShaderBinary final: public GraphicsResource
 	{
 	public:
-		ShaderBinary(const ShaderCompileDesc& sDesc, const GraphicsResourceDesc& grDesc);
+		ShaderBinary(const ShaderCompileDesc& sdesc, const GraphicsResourceDesc& gdesc);
 		~ShaderBinary() override;
 
 		BinaryData getData() const noexcept;

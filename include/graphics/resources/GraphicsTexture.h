@@ -12,11 +12,14 @@ namespace genesis
 	class GraphicsTexture final: public GraphicsResource
 	{
 	public:
-		GraphicsTexture(const GraphicsTextureDesc& gDesc, const GraphicsResourceDesc& grDesc);
+		GraphicsTexture(const GraphicsTextureDesc& tdesc, const GraphicsResourceDesc& gdesc);
 		~GraphicsTexture() override;
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Resource> m_texture;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_resourceView;
+
+		friend class DeviceContext;
 	};
 }
 

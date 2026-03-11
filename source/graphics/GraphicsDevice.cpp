@@ -4,7 +4,7 @@
 using namespace genesis;
 using namespace std;
 
-GraphicsDevice::GraphicsDevice(const GraphicsDeviceDesc& desc) : Base(desc.base)
+GraphicsDevice::GraphicsDevice(const GraphicsDeviceDesc& desc): Base(desc.base)
 {
     D3D_FEATURE_LEVEL featureLevel;
     UINT createDeviceFlags = 0;
@@ -112,7 +112,7 @@ GraphicsResourceDesc GraphicsDevice::getGraphicsResourceDesc() noexcept
 {
     return GraphicsResourceDesc{
         m_logger,
-        shared_from_this(), 
+        *this, 
         *m_d3dDevice.Get(), 
         *m_dxgiFactory.Get()
     };

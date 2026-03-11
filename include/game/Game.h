@@ -21,7 +21,7 @@ namespace genesis
         virtual ~Game();
 
         Logger& getLogger() noexcept;
-        virtual void run() final;
+        virtual void run();
 
     private:
         void onInternalUpdate();
@@ -29,12 +29,13 @@ namespace genesis
     private:
         UniquePtr<Logger> m_logger;
         UniquePtr<GraphicsEngine> m_graphicsEngine;
+        UniquePtr<ResourceManager> m_resourceManager;
         UniquePtr<Display> m_display;
         UniquePtr<InputManager> m_inputManager;
-        UniquePtr<ResourceManager> m_resourceManager;
         bool m_isRunning;
 
         std::chrono::steady_clock::time_point m_previousTime;
+        SharedPtr<Texture> m_tex;
     };
 }
 

@@ -13,7 +13,7 @@ namespace genesis
 	class ConstantBuffer final: public GraphicsResource
 	{
 	public:
-		ConstantBuffer(const ConstantBufferDesc& cDesc, const GraphicsResourceDesc& grDesc);
+		ConstantBuffer(const ConstantBufferDesc& cdesc, const GraphicsResourceDesc& gdesc);
 		~ConstantBuffer() override;
 
 	private:

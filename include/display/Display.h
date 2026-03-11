@@ -23,7 +23,7 @@ namespace genesis
 		void resize(uint32 width, uint32 height);
 
 	private:
-		SharedPtr<Window> m_window;
+		UniquePtr<Window> m_window;
 		SharedPtr<SwapChain> m_swapChain;
 	};
 }

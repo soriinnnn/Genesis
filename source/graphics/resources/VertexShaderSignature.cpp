@@ -6,15 +6,15 @@
 
 using namespace genesis;
 
-VertexShaderSignature::VertexShaderSignature(const VertexShaderSignatureDesc& sDesc, const GraphicsResourceDesc& grDesc): GraphicsResource(grDesc)
+VertexShaderSignature::VertexShaderSignature(const VertexShaderSignatureDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
-	if (!sDesc.vsBinary) {
+	if (!sdesc.vsBinary) {
 		GENESIS_LOG_THROW_INVALID_ARG("No shader binary provided.");
 	}
-	if (sDesc.vsBinary->getType() != ShaderType::VertexShader) {
+	if (sdesc.vsBinary->getType() != ShaderType::VertexShader) {
 		GENESIS_LOG_THROW_INVALID_ARG("Invalid vertex shader type.");
 	}
-	m_vertexShader = sDesc.vsBinary;
+	m_vertexShader = sdesc.vsBinary;
 
 	BinaryData vertexShaderData = m_vertexShader->getData();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
