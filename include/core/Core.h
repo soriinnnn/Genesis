@@ -1,5 +1,6 @@
 #ifndef GENESIS_CORE_H
 #define GENESIS_CORE_H
+#include <queue>
 #include <chrono>
 #include <format>
 #include <string>
@@ -22,9 +23,12 @@ namespace genesis
     class InputListener;
     class ResourceManager;
     class Resource;
-    class Texture;
     class VertexShader;
     class PixelShader;
+    class Texture;
+    class Mesh;
+    class EntityManager;
+    class Entity;
 
     class GraphicsEngine;
     class GraphicsDevice;
@@ -39,6 +43,7 @@ namespace genesis
     class VertexShaderSignature;
     class GraphicsPipelineState;
     class GraphicsTexture;
+    class DepthBuffer;
 
     typedef int8_t  int8;
     typedef int16_t int16;

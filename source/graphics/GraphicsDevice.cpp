@@ -92,6 +92,11 @@ SharedPtr<GraphicsTexture> GraphicsDevice::createGraphicsTexture(const GraphicsT
     return make_shared<GraphicsTexture>(desc, getGraphicsResourceDesc());
 }
 
+SharedPtr<DepthBuffer> GraphicsDevice::createDepthBuffer(const DepthBufferDesc& desc)
+{
+    return make_shared<DepthBuffer>(desc, getGraphicsResourceDesc());
+}
+
 void GraphicsDevice::clearState()
 {
     m_d3dContext->ClearState();

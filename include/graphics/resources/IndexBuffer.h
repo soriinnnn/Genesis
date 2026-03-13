@@ -1,15 +1,10 @@
 #ifndef GENESIS_INDEX_BUFFER_H
 #define GENESIS_INDEX_BUFFER_H
 #include <graphics/resources/GraphicsResource.h>
+#include <graphics/utils/GraphicsTypes.h>
 
 namespace genesis
 {
-	enum class IndexFormat
-	{
-		UnsignedInt16,
-		UnsignedInt32
-	};
-
 	struct IndexBufferDesc
 	{
 		const void* indexList{};

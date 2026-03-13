@@ -2,6 +2,7 @@
 #include <resources/VertexShader.h>
 #include <resources/PixelShader.h>
 #include <resources/Texture.h>
+#include <resources/Mesh.h>
 #include <core/utils/Macros.h>
 #include <filesystem>
 
@@ -14,7 +15,7 @@ ResourceManager::ResourceManager(const ResourceManagerDesc& desc): Base(desc.bas
 
 ResourceManager::~ResourceManager() {}
 
-SharedPtr<VertexShader> ResourceManager::createVertexShader(const char* path, const char* entryPoint)
+SharedPtr<VertexShader> ResourceManager::getVertexShader(const char* path, const char* entryPoint)
 {
 	string absolutePath = getAbsolutePath(path);
 	string key = absolutePath + ":" + entryPoint;
@@ -31,7 +32,7 @@ SharedPtr<VertexShader> ResourceManager::createVertexShader(const char* path, co
 	return shader;
 }
 
-SharedPtr<PixelShader> ResourceManager::createPixelShader(const char* path, const char* entryPoint)
+SharedPtr<PixelShader> ResourceManager::getPixelShader(const char* path, const char* entryPoint)
 {
 	string absolutePath = getAbsolutePath(path);
 	string key = absolutePath + ":" + entryPoint;
@@ -48,7 +49,7 @@ SharedPtr<PixelShader> ResourceManager::createPixelShader(const char* path, cons
 	return shader;
 }
 
-SharedPtr<Texture> ResourceManager::createTexture(const char* path)
+SharedPtr<Texture> ResourceManager::getTexture(const char* path)
 {
 	string absolutePath = getAbsolutePath(path);
 
@@ -62,6 +63,22 @@ SharedPtr<Texture> ResourceManager::createTexture(const char* path)
 	m_textures.emplace(absolutePath, texture);
 
 	return texture;
+}
+
+SharedPtr<Mesh> ResourceManager::getMesh(const char* path)
+{
+	string absolutePath = getAbsolutePath(path);
+
+	auto it = m_meshes.find(absolutePath);
+	if (it != m_meshes.end()) {
+		return it->second;
+	}
+
+	SharedPtr<Mesh> mesh = make_shared<Mesh>(MeshDesc{m_graphicsDevice}, getResourceDesc(absolutePath.c_str()));
+	mesh->load();
+	m_meshes.emplace(absolutePath, mesh);
+
+	return mesh;
 }
 
 void ResourceManager::unloadUnused()
@@ -80,6 +97,7 @@ void ResourceManager::unloadUnused()
 	cleanup(m_vertexShaders);
 	cleanup(m_pixelShaders);
 	cleanup(m_textures);
+	cleanup(m_meshes);
 
 	GENESIS_LOG_INFO("Unused resources unloaded successfully.");
 }

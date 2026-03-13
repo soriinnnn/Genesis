@@ -28,6 +28,7 @@ namespace genesis
 	private:
 		Microsoft::WRL::ComPtr<IDXGISwapChain> m_swapChain;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_renderTarget;
+		SharedPtr<DepthBuffer> m_depthBuffer;
 		Rect m_size;
 
 		friend class DeviceContext;

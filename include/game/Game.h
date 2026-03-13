@@ -35,7 +35,8 @@ namespace genesis
         bool m_isRunning;
 
         std::chrono::steady_clock::time_point m_previousTime;
-        SharedPtr<Texture> m_tex;
+        SharedPtr<Texture> m_texture;
+        SharedPtr<Mesh> m_mesh;
     };
 }
 

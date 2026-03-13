@@ -4,6 +4,7 @@
 #include <resources/VertexShader.h>
 #include <resources/PixelShader.h>
 #include <resources/Texture.h>
+#include <resources/Mesh.h>
 
 #include <resources/ResourceManager.h>
 
@@ -14,53 +15,9 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
 {
     m_graphicsDevice = make_unique<GraphicsDevice>(GraphicsDeviceDesc{m_logger});
     m_deviceContext = m_graphicsDevice->createDeviceContext();
-    
-    const Vertex vertices[] = {
-        {{-0.5f, -0.5f, -0.5f}, {1, 0, 0, 1}, {0.0f, 1.0f}},
-        {{-0.5f,  0.5f, -0.5f}, {0, 1, 0, 1}, {0.0f, 0.0f}},
-        {{ 0.5f,  0.5f, -0.5f}, {0, 0, 1, 1}, {1.0f, 0.0f}},
-        {{ 0.5f, -0.5f, -0.5f}, {1, 0, 1, 1}, {1.0f, 1.0f}},
-        {{ 0.5f, -0.5f,  0.5f}, {1, 0, 1, 1}, {0.0f, 1.0f}},
-        {{ 0.5f,  0.5f,  0.5f}, {0, 0, 1, 1}, {0.0f, 0.0f}},
-        {{-0.5f,  0.5f,  0.5f}, {0, 1, 0, 1}, {1.0f, 0.0f}},
-        {{-0.5f, -0.5f,  0.5f}, {1, 0, 0, 1}, {1.0f, 1.0f}},
-        {{-0.5f,  0.5f, -0.5f}, {0, 1, 0, 1}, {0.0f, 1.0f}},
-        {{-0.5f,  0.5f,  0.5f}, {0, 1, 0, 1}, {0.0f, 0.0f}},
-        {{ 0.5f,  0.5f,  0.5f}, {0, 0, 1, 1}, {1.0f, 0.0f}},
-        {{ 0.5f,  0.5f, -0.5f}, {0, 0, 1, 1}, {1.0f, 1.0f}},
-        {{-0.5f, -0.5f,  0.5f}, {1, 0, 0, 1}, {0.0f, 1.0f}},
-        {{-0.5f, -0.5f, -0.5f}, {1, 0, 0, 1}, {0.0f, 0.0f}},
-        {{ 0.5f, -0.5f, -0.5f}, {1, 0, 1, 1}, {1.0f, 0.0f}},
-        {{ 0.5f, -0.5f,  0.5f}, {1, 0, 1, 1}, {1.0f, 1.0f}},
-        {{-0.5f, -0.5f,  0.5f}, {1, 0, 0, 1}, {0.0f, 1.0f}},
-        {{-0.5f,  0.5f,  0.5f}, {0, 1, 0, 1}, {0.0f, 0.0f}},
-        {{-0.5f,  0.5f, -0.5f}, {0, 1, 0, 1}, {1.0f, 0.0f}},
-        {{-0.5f, -0.5f, -0.5f}, {1, 0, 0, 1}, {1.0f, 1.0f}},
-        {{ 0.5f, -0.5f, -0.5f}, {1, 0, 1, 1}, {0.0f, 1.0f}},
-        {{ 0.5f,  0.5f, -0.5f}, {0, 0, 1, 1}, {0.0f, 0.0f}},
-        {{ 0.5f,  0.5f,  0.5f}, {0, 0, 1, 1}, {1.0f, 0.0f}},
-        {{ 0.5f, -0.5f,  0.5f}, {1, 0, 1, 1}, {1.0f, 1.0f}}
-    };
-    m_vertexBuffer = m_graphicsDevice->createVertexBuffer(VertexBufferDesc{vertices, size(vertices), sizeof(Vertex)});
-
-    const uint32 indices[] = {
-         0,  1,  2, 
-         2,  3,  0,
-         4,  5,  6, 
-         6,  7,  4,
-         8,  9, 10,
-        10, 11,  8,
-        12, 13, 14,
-        14, 15, 12,
-        16, 17, 18,
-        18, 19, 16,
-        20, 21, 22,
-        22, 23, 20
-    };
-    m_indexBuffer = m_graphicsDevice->createIndexBuffer(IndexBufferDesc{indices, size(indices), IndexFormat::UnsignedInt32});
+  
     m_constantBuffer = m_graphicsDevice->createConstantBuffer(ConstantBufferDesc{nullptr, sizeof(ConstantData)});
-
-    m_pos = Vec3{0, 0, -2};
+    m_pos = Vec3{0, 0, -1};
 }
 
 GraphicsEngine::~GraphicsEngine() {}
@@ -70,7 +27,7 @@ GraphicsDevice& GraphicsEngine::getGraphicsDevice() noexcept
     return *m_graphicsDevice;
 }
 
-void GraphicsEngine::render(Texture& tex, SwapChain& swapChain, float deltaTime)
+void GraphicsEngine::render(Mesh& mesh, Texture& texture, SwapChain& swapChain, float deltaTime)
 {
     m_deltaTime = deltaTime;
     m_scale = 1.0f;
@@ -97,7 +54,9 @@ void GraphicsEngine::render(Texture& tex, SwapChain& swapChain, float deltaTime)
     ConstantData m_data{
         world,
         view,
-        projection
+        projection,
+        {0.4f, -0.3f, 0.8f},
+        m_pos
     };
     m_deviceContext->updateConstantBuffer(*m_constantBuffer, &m_data);
 
@@ -106,13 +65,12 @@ void GraphicsEngine::render(Texture& tex, SwapChain& swapChain, float deltaTime)
     m_deviceContext->clearAndSetBackBuffer(swapChain, Vec4{0.27f, 0.39f, 0.55f, 1.0f});
     m_deviceContext->setGraphicsPipelineState(*m_graphicsPipeline);
     m_deviceContext->setViewport(swapChain.getSize());
-    m_deviceContext->setVertexBuffer(*m_vertexBuffer);
+    
+    m_deviceContext->setVertexBuffer(mesh.getVertexBuffer());
+    m_deviceContext->setIndexBuffer(mesh.getIndexBuffer());
     m_deviceContext->setConstantBuffer(*m_constantBuffer);
-    m_deviceContext->setTexture(tex.getGraphicsTexture());
-
-
-    m_deviceContext->setIndexBuffer(*m_indexBuffer);
-    m_deviceContext->drawIndexed(m_indexBuffer->getIndexCount());
+    m_deviceContext->setTexture(texture.getGraphicsTexture());
+    m_deviceContext->drawIndexed(mesh.getIndexBuffer().getIndexCount());
 
     m_graphicsDevice->executeCommandList(*m_deviceContext);
     swapChain.present();
@@ -142,6 +100,8 @@ void genesis::GraphicsEngine::onKeyDown(Key key)
     if (key == Key::A) {
         m_pos -= right * 1.0f * m_deltaTime;
     }
+
+    //GENESIS_LOG_INFO("Pos: x={}, y={}, z={}", m_pos.x, m_pos.y, m_pos.z);
 }
 
 void GraphicsEngine::onKeyUp(Key key)
@@ -169,9 +129,9 @@ void GraphicsEngine::onMouseUp(MouseButton button, Point pos)
     //GENESIS_LOG_INFO("Button up: {}, Pos: x={}, y={}", (int)button, pos.x, pos.y);
 }
 
-void GraphicsEngine::setPipeline(ResourceManager& resourceManager) 
+void GraphicsEngine::setGraphicsPipeline(ResourceManager& resourceManager) 
 {
-    SharedPtr<VertexShader> vs = resourceManager.createVertexShader("demo/assets/shaders/basic/vs.hlsl", "main");
-    SharedPtr<PixelShader> ps = resourceManager.createPixelShader("demo/assets/shaders/basic/ps.hlsl", "main");
+    SharedPtr<VertexShader> vs = resourceManager.getVertexShader("demo/assets/shaders/basic/vs.hlsl", "main");
+    SharedPtr<PixelShader> ps = resourceManager.getPixelShader("demo/assets/shaders/basic/ps.hlsl", "main");
     m_graphicsPipeline = m_graphicsDevice->createGraphicsPipelineState(GraphicsPipelineStateDesc{vs->getVertexShaderSignature(), ps->getShaderBinary(), PrimitiveTopology::Triangles});
 }

@@ -18,9 +18,10 @@ namespace genesis
 		explicit ResourceManager(const ResourceManagerDesc& desc);
 		~ResourceManager() override;
 
-		SharedPtr<VertexShader> createVertexShader(const char* path, const char* entryPoint);
-		SharedPtr<PixelShader> createPixelShader(const char* path, const char* entryPoint);
-		SharedPtr<Texture> createTexture(const char* path);
+		SharedPtr<VertexShader> getVertexShader(const char* path, const char* entryPoint);
+		SharedPtr<PixelShader> getPixelShader(const char* path, const char* entryPoint);
+		SharedPtr<Texture> getTexture(const char* path);
+		SharedPtr<Mesh> getMesh(const char* path);
 		void unloadUnused();
 
 	private:
@@ -31,6 +32,7 @@ namespace genesis
 		std::unordered_map<std::string, SharedPtr<VertexShader>> m_vertexShaders;
 		std::unordered_map<std::string, SharedPtr<PixelShader>> m_pixelShaders;
 		std::unordered_map<std::string, SharedPtr<Texture>> m_textures;
+		std::unordered_map<std::string, SharedPtr<Mesh>> m_meshes;
 	};
 }
 

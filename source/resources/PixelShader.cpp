@@ -12,19 +12,14 @@ PixelShader::~PixelShader() {}
 
 ShaderBinary& PixelShader::getShaderBinary()
 {
-	if (!m_pixelShader) {
-		GENESIS_LOG_THROW_ERROR("Shader is not loaded.\nResource: {}", m_path);
+	if (!isLoaded()) {
+		GENESIS_LOG_THROW_ERROR("Resource is not loaded: {}", m_path);
 	}
 	return *m_pixelShader;
 }
 
-void PixelShader::load()
+void PixelShader::onLoad()
 {
-	if (m_pixelShader) {
-		GENESIS_LOG_WARNING("Shader is already loaded.\nResource: {}", m_path);
-		return;
-	}
-
 	string shaderData = resourcesUtils::readFile(m_path.c_str());
 	if (shaderData.empty()) {
 		GENESIS_LOG_THROW_ERROR("Failed to open shader file: {}", m_path);
@@ -39,7 +34,7 @@ void PixelShader::load()
 	});
 }
 
-void PixelShader::unload()
+void PixelShader::onUnload()
 {
 	m_pixelShader.reset();
 }

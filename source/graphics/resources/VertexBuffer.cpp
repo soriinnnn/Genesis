@@ -4,7 +4,7 @@
 using namespace genesis;
 
 static D3D11_BUFFER_DESC createBufferDesc(const VertexBufferDesc& desc);
-static D3D11_SUBRESOURCE_DATA createSubresourceData(const VertexBufferDesc& desc);
+static D3D11_SUBRESOURCE_DATA createSubResourceData(const VertexBufferDesc& desc);
 
 VertexBuffer::VertexBuffer(const VertexBufferDesc& vdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
@@ -19,7 +19,7 @@ VertexBuffer::VertexBuffer(const VertexBufferDesc& vdesc, const GraphicsResource
 	}
 
 	D3D11_BUFFER_DESC buffDesc = createBufferDesc(vdesc);
-	D3D11_SUBRESOURCE_DATA initData = createSubresourceData(vdesc);
+	D3D11_SUBRESOURCE_DATA initData = createSubResourceData(vdesc);
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateBuffer(
 			&buffDesc,
@@ -55,7 +55,7 @@ static D3D11_BUFFER_DESC createBufferDesc(const VertexBufferDesc& desc)
 	return buffDesc;
 }
 
-static D3D11_SUBRESOURCE_DATA createSubresourceData(const VertexBufferDesc& desc)
+static D3D11_SUBRESOURCE_DATA createSubResourceData(const VertexBufferDesc& desc)
 {
 	D3D11_SUBRESOURCE_DATA m_data{};
 	m_data.pSysMem = desc.vertexList;

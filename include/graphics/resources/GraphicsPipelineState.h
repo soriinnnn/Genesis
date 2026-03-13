@@ -10,6 +10,8 @@ namespace genesis
 		const VertexShaderSignature& vertexShader;
 		const ShaderBinary& pixelShader;
 		PrimitiveTopology primitive = PrimitiveTopology::Triangles;
+		bool depthEnable = true;
+		DepthComparison depthComparison = DepthComparison::Less;
 	};
 
 	class GraphicsPipelineState final: public GraphicsResource
@@ -22,6 +24,7 @@ namespace genesis
 		Microsoft::WRL::ComPtr<ID3D11VertexShader> m_vertexShader;
 		Microsoft::WRL::ComPtr<ID3D11PixelShader> m_pixelShader;
 		Microsoft::WRL::ComPtr<ID3D11InputLayout> m_inputLayout;
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStencilState;
 		D3D_PRIMITIVE_TOPOLOGY m_primitive;
 
 		friend class DeviceContext;

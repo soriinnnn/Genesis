@@ -17,15 +17,20 @@ namespace genesis
 		~Resource() override;
 
 		const char* getPath() const noexcept;
+		bool isLoaded() const noexcept;
 
-		virtual void load() = 0;
-		virtual void unload() = 0;
+		void load();
+		void unload();
 
 	protected:
 		explicit Resource(const ResourceDesc& desc);
 
+		virtual void onLoad() = 0;
+		virtual void onUnload() = 0;
+
 	protected:
 		std::string m_path;
+		bool m_loaded;
 	};
 }
 

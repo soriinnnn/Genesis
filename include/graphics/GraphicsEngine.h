@@ -23,7 +23,7 @@ namespace genesis
         ~GraphicsEngine() override;
 
         GraphicsDevice& getGraphicsDevice() noexcept;
-        void render(Texture& tex, SwapChain& swapChain, float deltaTime);
+        void render(Mesh& mesh, Texture& tex, SwapChain& swapChain, float deltaTime);
 
 
         // PROVA
@@ -33,30 +33,23 @@ namespace genesis
         void onMouseDown(MouseButton button, Point pos) override;
         void onMouseUp(MouseButton button, Point pos) override;
 
-        void setPipeline(ResourceManager& resourceManager);
+        void setGraphicsPipeline(ResourceManager& resourceManager);
 
 
     private:
-        struct Vertex
-        {
-            Vec3 position;
-            Vec4 color;
-            Vec2 texture;
-        };
-
         struct alignas(16) ConstantData
         {
             Mat4 world;
             Mat4 view;
             Mat4 projection;
+            Vec3 lightDirection;
+            Vec3 camPos;
         };
 
     private:
         UniquePtr<GraphicsDevice> m_graphicsDevice;
         SharedPtr<DeviceContext> m_deviceContext;
         SharedPtr<GraphicsPipelineState> m_graphicsPipeline;
-        SharedPtr<VertexBuffer> m_vertexBuffer;
-        SharedPtr<IndexBuffer> m_indexBuffer;
         SharedPtr<ConstantBuffer> m_constantBuffer;
 
         Vec3 m_pos{}, m_rot{};

@@ -17,8 +17,9 @@ namespace genesis
 
 		GraphicsTexture& getGraphicsTexture();
 
-		void load() override;
-		void unload() override;
+	private:
+		void onLoad() override;
+		void onUnload() override;
 
 	private:
 		GraphicsDevice& m_graphicsDevice;

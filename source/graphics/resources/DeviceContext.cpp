@@ -5,6 +5,7 @@
 #include <graphics/resources/IndexBuffer.h>
 #include <graphics/resources/ConstantBuffer.h>
 #include <graphics/resources/GraphicsTexture.h>
+#include <graphics/resources/DepthBuffer.h>
 #include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;
@@ -23,9 +24,11 @@ DeviceContext::~DeviceContext() {}
 void DeviceContext::clearAndSetBackBuffer(const SwapChain& swapChain, const Vec4& color)
 {
 	ID3D11RenderTargetView* renderTarget = swapChain.m_renderTarget.Get();
+	ID3D11DepthStencilView* depthView = swapChain.m_depthBuffer->m_depthView.Get();
 
 	m_context->ClearRenderTargetView(renderTarget, color.toArray());
-	m_context->OMSetRenderTargets(1, &renderTarget, nullptr);
+	m_context->ClearDepthStencilView(depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_context->OMSetRenderTargets(1, &renderTarget, depthView);
 }
 
 void DeviceContext::setGraphicsPipelineState(const GraphicsPipelineState& graphicsPipeline)
@@ -34,6 +37,7 @@ void DeviceContext::setGraphicsPipelineState(const GraphicsPipelineState& graphi
 	m_context->IASetPrimitiveTopology(graphicsPipeline.m_primitive);
 	m_context->VSSetShader(graphicsPipeline.m_vertexShader.Get(), nullptr, 0);
 	m_context->PSSetShader(graphicsPipeline.m_pixelShader.Get(), nullptr, 0);
+	m_context->OMSetDepthStencilState(graphicsPipeline.m_depthStencilState.Get(), 0);
 }
 
 void DeviceContext::setViewport(const Rect& size)

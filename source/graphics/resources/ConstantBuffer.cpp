@@ -4,7 +4,7 @@
 using namespace genesis;
 
 static D3D11_BUFFER_DESC createBufferDesc(const ConstantBufferDesc& desc);
-static D3D11_SUBRESOURCE_DATA createSubresourceData(const ConstantBufferDesc& desc);
+static D3D11_SUBRESOURCE_DATA createSubResourceData(const ConstantBufferDesc& desc);
 
 ConstantBuffer::ConstantBuffer(const ConstantBufferDesc& cdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
@@ -13,7 +13,7 @@ ConstantBuffer::ConstantBuffer(const ConstantBufferDesc& cdesc, const GraphicsRe
 	}
 
 	D3D11_BUFFER_DESC buffDesc = createBufferDesc(cdesc);
-	D3D11_SUBRESOURCE_DATA initData = createSubresourceData(cdesc);
+	D3D11_SUBRESOURCE_DATA initData = createSubResourceData(cdesc);
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateBuffer(
 			&buffDesc, 
@@ -42,7 +42,7 @@ static D3D11_BUFFER_DESC createBufferDesc(const ConstantBufferDesc& desc) {
 	return buffDesc;
 }
 
-static D3D11_SUBRESOURCE_DATA createSubresourceData(const ConstantBufferDesc& desc)
+static D3D11_SUBRESOURCE_DATA createSubResourceData(const ConstantBufferDesc& desc)
 {
 	D3D11_SUBRESOURCE_DATA m_data{};
 	m_data.pSysMem = desc.buffer;

@@ -6,7 +6,7 @@ namespace genesis
 {
 	struct MeshDesc 
 	{
-
+		GraphicsDevice& graphicsDevice;
 	};
 
 	class Mesh final: public Resource
@@ -15,12 +15,17 @@ namespace genesis
 		Mesh(const MeshDesc& mdesc, const ResourceDesc& rdesc);
 		~Mesh() override;
 
-
-		void load() override;
-		void unload() override;
+		VertexBuffer& getVertexBuffer();
+		IndexBuffer& getIndexBuffer();
 
 	private:
+		void onLoad() override;
+		void onUnload() override;
 
+	private:
+		GraphicsDevice& m_graphicsDevice;
+		SharedPtr<VertexBuffer> m_vertexBuffer;
+		SharedPtr<IndexBuffer> m_indexBuffer;
 	};
 }
 

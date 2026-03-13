@@ -1,11 +1,12 @@
 #include <game/Game.h>
 #include <display/Display.h>
 #include <input/InputManager.h>
-#include <resources/ResourceManager.h>
 #include <graphics/GraphicsEngine.h>
+#include <resources/ResourceManager.h>
 #include <resources/Texture.h>
+#include <resources/Mesh.h>
 
-#include <misc/PlatformUtils.h>
+#include <core/utils/PlatformUtils.h>
 
 using namespace genesis;
 using namespace std;
@@ -19,10 +20,11 @@ Game::Game(const GameDesc& desc)
     m_inputManager = InputManager::create(InputManagerDesc{*m_logger, m_display->getWindow()});
     m_isRunning = true;
 
-    m_graphicsEngine->setPipeline(*m_resourceManager);
+    m_graphicsEngine->setGraphicsPipeline(*m_resourceManager);
     m_inputManager->addListener(m_graphicsEngine.get());
     m_inputManager->setMouseVisibility(false);
-    m_tex = m_resourceManager->createTexture("demo/assets/textures/wood.jpg");
+    m_texture = m_resourceManager->getTexture("demo/assets/textures/asteroid.jpg");
+    m_mesh = m_resourceManager->getMesh("demo/assets/meshes/statue.obj");
     m_resourceManager->unloadUnused();
 
     GENESIS_LOG_INFO("Game initialized.");
@@ -61,5 +63,5 @@ void Game::onInternalUpdate()
     Rect wndSize = m_display->getSize();
     m_inputManager->setMousePosition({wndSize.width() / 2, wndSize.height() / 2});
 
-    m_graphicsEngine->render(*m_tex, m_display->getSwapChain(), deltaTime);
+    m_graphicsEngine->render(*m_mesh, *m_texture, m_display->getSwapChain(), deltaTime);
 }

@@ -19,6 +19,8 @@ SwapChain::SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gde
 		"CreateSwapChain failed."
 	);
 	updateRenderTargetView();
+
+	m_depthBuffer = m_graphicsDevice.createDepthBuffer({m_size});
 }
 
 SwapChain::~SwapChain() {}
@@ -31,8 +33,8 @@ Rect SwapChain::getSize() const noexcept
 void SwapChain::resize(uint32 width, uint32 height)
 {
 	m_size = Rect{static_cast<int32>(width), static_cast<int32>(height)};
-
 	m_graphicsDevice.clearState();
+
 	m_renderTarget.Reset();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_swapChain->ResizeBuffers(
@@ -45,6 +47,9 @@ void SwapChain::resize(uint32 width, uint32 height)
 		"ResizeBuffers failed."
 	);
 	updateRenderTargetView();
+
+	m_depthBuffer.reset();
+	m_depthBuffer = m_graphicsDevice.createDepthBuffer({m_size});
 }
 
 void SwapChain::present(bool vsync)

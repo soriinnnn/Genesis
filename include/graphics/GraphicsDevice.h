@@ -12,6 +12,7 @@
 #include <graphics/resources/GraphicsPipelineState.h>
 #include <graphics/resources/VertexShaderSignature.h>
 #include <graphics/resources/GraphicsTexture.h>
+#include <graphics/resources/DepthBuffer.h>
 #include <d3d11.h>
 #include <wrl.h>
 
@@ -37,6 +38,7 @@ namespace genesis
         SharedPtr<ConstantBuffer> createConstantBuffer(const ConstantBufferDesc& desc);
         SharedPtr<IndexBuffer> createIndexBuffer(const IndexBufferDesc& desc);
         SharedPtr<GraphicsTexture> createGraphicsTexture(const GraphicsTextureDesc& desc);
+        SharedPtr<DepthBuffer> createDepthBuffer(const DepthBufferDesc& desc);
 
         void clearState();
         void executeCommandList(DeviceContext& context);
