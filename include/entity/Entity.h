@@ -8,16 +8,24 @@ namespace genesis
 	struct EntityDesc
 	{
 		BaseDesc base;
+		EntityManager& entityManager;
+		EntityId id;
 	};
 
 	class Entity: public Base
 	{
 	public:
-		explicit Entity(const EntityDesc& desc);
 		virtual ~Entity() override;
 
-	private:
+		EntityId getId() const noexcept;
+		virtual void update(float deltaTime) = 0;
 
+	protected:
+		explicit Entity(const EntityDesc& desc);
+
+	private:
+		EntityManager& m_entityManager;
+		EntityId m_id;
 	};
 }
 

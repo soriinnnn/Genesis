@@ -17,37 +17,34 @@ namespace genesis
 		explicit EntityManager(const EntityManagerDesc& desc);
 		~EntityManager() override;
 
-		uint32 createEntity();
-		void destroyEntity(uint32 entityId);
-
-		template<typename T, typename... Args>
-		T& addComponent(uint32 entityId, Args&&... args)
+		template<typename T>
+		T* createEntity()
 		{
-
+			GENESIS_ASSERT((std::is_base_of<Entity, T>::value), "T must derive from Entity.");
+			return createEntity<T>(getAvailableId());
 		}
 
-		template<typename T>
-		void removeComponent(uint32 entityId)
-		{
+		void destroyEntity(EntityId id);
+		void destroyPending();
 
-		}
-
-		template<typename T>
-		T& getComponent(uint32 entityId)
-		{
-
-		}
+	private:
+		EntityId getAvailableId();
 
 		template<typename T>
-		bool hasComponent(uint32 entityId)
+		T* createEntity(EntityId id)
 		{
+			T* entity = new T(EntityDesc{m_logger, *this, id});
+			UniquePtr<T> entityPtr{entity};
 
+			m_entities.emplace(id, std::move(entityPtr));
+			return entity;
 		}
 
 	private:
-		uint32 m_nextEntityId;
-		std::queue<uint32> m_availableEntityId;
-		std::unordered_map<uint32, UniquePtr<Entity>> m_entities;
+		EntityId m_nextId;
+		std::vector<EntityId> m_idPool;
+		std::unordered_map<EntityId, UniquePtr<Entity>> m_entities;
+		std::vector<EntityId> m_entitiesToDestroy;
 	};
 }
 

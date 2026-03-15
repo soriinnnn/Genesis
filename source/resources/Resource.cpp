@@ -3,7 +3,7 @@
 using namespace genesis;
 using namespace std;
 
-Resource::Resource(const ResourceDesc& desc): Base(desc.base), m_path{string(desc.path)}, m_loaded{false} {}
+Resource::Resource(const ResourceDesc& desc) : Base(desc.base), m_graphicsDevice{desc.graphicsDevice}, m_path{string{desc.path}}, m_loaded{false} {}
 
 Resource::~Resource() {}
 

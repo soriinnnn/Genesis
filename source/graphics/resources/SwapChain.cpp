@@ -32,6 +32,13 @@ Rect SwapChain::getSize() const noexcept
 
 void SwapChain::resize(uint32 width, uint32 height)
 {
+	if (width == 0 || height == 0) {
+		return;
+	}
+	if (m_size.width() == static_cast<int32>(width) && m_size.height() == static_cast<int32>(height)) {
+		return;
+	}
+
 	m_size = Rect{static_cast<int32>(width), static_cast<int32>(height)};
 	m_graphicsDevice.clearState();
 

@@ -37,9 +37,9 @@ void GraphicsEngine::render(Mesh& mesh, Texture& texture, SwapChain& swapChain, 
     float yaw = m_rot.y;
     float pitch = m_rot.x;
     Vec3 direction{
-        std::cos(pitch) * std::sin(yaw),
+         std::cos(pitch) * std::sin(yaw),
         -std::sin(pitch),
-        std::cos(pitch) * std::cos(yaw)
+         std::cos(pitch) * std::cos(yaw)
     };
     Mat4 view = Mat4::lookAtLH(m_pos, m_pos + direction, Vec3{0, 1, 0});
 
@@ -131,7 +131,7 @@ void GraphicsEngine::onMouseUp(MouseButton button, Point pos)
 
 void GraphicsEngine::setGraphicsPipeline(ResourceManager& resourceManager) 
 {
-    SharedPtr<VertexShader> vs = resourceManager.getVertexShader("demo/assets/shaders/basic/vs.hlsl", "main");
-    SharedPtr<PixelShader> ps = resourceManager.getPixelShader("demo/assets/shaders/basic/ps.hlsl", "main");
+    SharedPtr<VertexShader> vs = resourceManager.getResource<VertexShader>("demo/assets/shaders/basic/vs.hlsl@main");
+    SharedPtr<PixelShader> ps = resourceManager.getResource<PixelShader>("demo/assets/shaders/basic/ps.hlsl@main");
     m_graphicsPipeline = m_graphicsDevice->createGraphicsPipelineState(GraphicsPipelineStateDesc{vs->getVertexShaderSignature(), ps->getShaderBinary(), PrimitiveTopology::Triangles});
 }

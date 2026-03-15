@@ -19,14 +19,17 @@ namespace genesis
     class Game;
     class Window;
     class Display;
+
     class InputManager;
     class InputListener;
+
     class ResourceManager;
     class Resource;
-    class VertexShader;
-    class PixelShader;
     class Texture;
     class Mesh;
+    class VertexShader;
+    class PixelShader;
+
     class EntityManager;
     class Entity;
 
@@ -44,6 +47,9 @@ namespace genesis
     class GraphicsPipelineState;
     class GraphicsTexture;
     class DepthBuffer;
+
+    using ResourceId = size_t;
+    using EntityId = size_t;
 
     typedef int8_t  int8;
     typedef int16_t int16;

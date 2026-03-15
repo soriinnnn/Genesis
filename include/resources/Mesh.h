@@ -4,15 +4,10 @@
 
 namespace genesis
 {
-	struct MeshDesc 
-	{
-		GraphicsDevice& graphicsDevice;
-	};
-
 	class Mesh final: public Resource
 	{
 	public:
-		Mesh(const MeshDesc& mdesc, const ResourceDesc& rdesc);
+		Mesh(const ResourceDesc& desc);
 		~Mesh() override;
 
 		VertexBuffer& getVertexBuffer();
@@ -23,7 +18,6 @@ namespace genesis
 		void onUnload() override;
 
 	private:
-		GraphicsDevice& m_graphicsDevice;
 		SharedPtr<VertexBuffer> m_vertexBuffer;
 		SharedPtr<IndexBuffer> m_indexBuffer;
 	};

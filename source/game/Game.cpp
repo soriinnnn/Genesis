@@ -23,8 +23,8 @@ Game::Game(const GameDesc& desc)
     m_graphicsEngine->setGraphicsPipeline(*m_resourceManager);
     m_inputManager->addListener(m_graphicsEngine.get());
     m_inputManager->setMouseVisibility(false);
-    m_texture = m_resourceManager->getTexture("demo/assets/textures/asteroid.jpg");
-    m_mesh = m_resourceManager->getMesh("demo/assets/meshes/statue.obj");
+    m_texture = m_resourceManager->getResource<Texture>("demo/assets/textures/asteroid.jpg");
+    m_mesh = m_resourceManager->getResource<Mesh>("demo/assets/meshes/statue.obj");
     m_resourceManager->unloadUnused();
 
     GENESIS_LOG_INFO("Game initialized.");

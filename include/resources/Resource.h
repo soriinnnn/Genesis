@@ -8,6 +8,7 @@ namespace genesis
 	struct ResourceDesc
 	{
 		BaseDesc base;
+		GraphicsDevice& graphicsDevice;
 		const char* path;
 	};
 
@@ -29,6 +30,7 @@ namespace genesis
 		virtual void onUnload() = 0;
 
 	protected:
+		GraphicsDevice& m_graphicsDevice;
 		std::string m_path;
 		bool m_loaded;
 	};

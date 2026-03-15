@@ -4,7 +4,7 @@
 using namespace genesis;
 using namespace std;
 
-Texture::Texture(const TextureDesc& tdesc, const ResourceDesc& rdesc): Resource(rdesc), m_graphicsDevice(tdesc.graphicsDevice) {}
+Texture::Texture(const ResourceDesc& desc): Resource(desc) {}
 
 Texture::~Texture() {}
 

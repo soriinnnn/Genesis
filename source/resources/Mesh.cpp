@@ -12,7 +12,7 @@ using namespace Assimp;
 static vector<Vertex> getVertices(const aiMesh& mesh);
 static vector<uint32> getIndices(const aiMesh& mesh);
 
-Mesh::Mesh(const MeshDesc& mdesc, const ResourceDesc& rdesc): Resource(rdesc), m_graphicsDevice(mdesc.graphicsDevice) {}
+Mesh::Mesh(const ResourceDesc& desc): Resource(desc) {}
 
 Mesh::~Mesh() {}
 

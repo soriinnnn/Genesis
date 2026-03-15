@@ -6,7 +6,16 @@
 using namespace genesis;
 using namespace std;
 
-PixelShader::PixelShader(const PixelShaderDesc& sdesc, const ResourceDesc& rdesc): Resource(rdesc), m_graphicsDevice(sdesc.graphicsDevice), m_entryPoint{sdesc.entryPoint} {}
+PixelShader::PixelShader(const ResourceDesc& desc): Resource(desc) 
+{
+	size_t pos = m_path.find_last_of('@');
+	if (pos == string::npos) {
+		GENESIS_LOG_THROW_ERROR("Shader entry point not found.");
+	}
+
+	m_entryPoint = m_path.substr(pos + 1);
+	m_path = m_path.substr(0, pos);
+}
 
 PixelShader::~PixelShader() {}
 

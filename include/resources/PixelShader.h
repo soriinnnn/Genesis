@@ -4,16 +4,10 @@
 
 namespace genesis
 {
-	struct PixelShaderDesc
-	{
-		GraphicsDevice& graphicsDevice;
-		const char* entryPoint;
-	};
-
 	class PixelShader final: public Resource
 	{
 	public:
-		PixelShader(const PixelShaderDesc& sdesc, const ResourceDesc& rdesc);
+		PixelShader(const ResourceDesc& desc);
 		~PixelShader() override;
 
 		ShaderBinary& getShaderBinary();
@@ -23,7 +17,6 @@ namespace genesis
 		void onUnload() override;
 
 	private:
-		GraphicsDevice& m_graphicsDevice;
 		SharedPtr<ShaderBinary> m_pixelShader;
 		std::string m_entryPoint;
 	};

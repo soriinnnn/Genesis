@@ -136,6 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\entity\Player.cpp" />
     <ClCompile Include="source\entity\Entity.cpp" />
     <ClCompile Include="source\entity\EntityManager.cpp" />
     <ClCompile Include="source\graphics\resources\DepthBuffer.cpp" />
@@ -176,6 +177,7 @@
     <ClCompile Include="source\math\Vec2.cpp" />
     <ClCompile Include="source\resources\Texture.cpp" />
     <ClCompile Include="source\resources\VertexShader.cpp" />
+    <ClCompile Include="source\game\World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\entity\Entity.h" />
@@ -218,12 +220,14 @@
     <ClInclude Include="include\graphics\resources\VertexBuffer.h" />
     <ClInclude Include="include\math\Vec3.h" />
     <ClInclude Include="include\graphics\resources\VertexShaderSignature.h" />
+    <ClInclude Include="include\entity\Player.h" />
     <ClInclude Include="source\display\win32\Win32Window.h" />
     <ClInclude Include="source\input\win32\Win32InputManager.h" />
     <ClInclude Include="include\math\Vec2.h" />
     <ClInclude Include="include\resources\Texture.h" />
     <ClInclude Include="include\resources\VertexShader.h" />
     <ClInclude Include="include\resources\utils\ResourcesUtils.h" />
+    <ClInclude Include="include\game\World.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
