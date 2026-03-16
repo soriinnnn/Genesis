@@ -10,3 +10,10 @@ EntityId Entity::getId() const noexcept
 {
 	return m_id;
 }
+
+void Entity::update(float deltaTime) {}
+
+void Entity::deleteComponent(ComponentId id)
+{
+	m_components.erase(id);
+}

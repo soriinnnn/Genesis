@@ -10,8 +10,7 @@ namespace genesis
 		explicit Player(const EntityDesc& desc);
 		~Player() override;
 
-	private:
-
+		void update(float deltaTime) override;
 	};
 }
 

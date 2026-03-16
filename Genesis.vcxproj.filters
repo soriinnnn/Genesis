@@ -87,9 +87,6 @@
     <ClCompile Include="source\input\InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\input\InputListener.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\input\win32\Win32InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -133,6 +130,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\entity\Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entity\components\Component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entity\components\Transform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entity\components\MeshRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game\TestWorld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entity\components\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -279,6 +291,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\entity\Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entity\components\Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entity\components\Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entity\components\MeshRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\TestWorld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entity\components\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

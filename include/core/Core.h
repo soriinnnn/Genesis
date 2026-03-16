@@ -17,6 +17,8 @@ namespace genesis
     class Logger;
 
     class Game;
+    class World;
+
     class Window;
     class Display;
 
@@ -32,6 +34,10 @@ namespace genesis
 
     class EntityManager;
     class Entity;
+    class Player;
+    class Component;
+    class Transform;
+    class MeshRenderer;
 
     class GraphicsEngine;
     class GraphicsDevice;

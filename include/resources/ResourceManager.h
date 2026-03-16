@@ -50,7 +50,6 @@ namespace genesis
 			if (it == m_resources.end()) {
 				return nullptr;
 			}
-
 			return static_pointer_cast<T>(it->second);
 		}
 

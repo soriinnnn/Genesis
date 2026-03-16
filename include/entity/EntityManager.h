@@ -34,7 +34,7 @@ namespace genesis
 		T* createEntity(EntityId id)
 		{
 			T* entity = new T(EntityDesc{m_logger, *this, id});
-			UniquePtr<T> entityPtr{entity};
+			UniquePtr<Entity> entityPtr{entity};
 
 			m_entities.emplace(id, std::move(entityPtr));
 			return entity;

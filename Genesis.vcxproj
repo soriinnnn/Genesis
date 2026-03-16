@@ -136,6 +136,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\entity\components\Camera.cpp" />
+    <ClCompile Include="source\entity\components\MeshRenderer.cpp" />
+    <ClCompile Include="source\entity\components\Component.cpp" />
     <ClCompile Include="source\entity\Player.cpp" />
     <ClCompile Include="source\entity\Entity.cpp" />
     <ClCompile Include="source\entity\EntityManager.cpp" />
@@ -146,7 +149,6 @@
     <ClCompile Include="source\resources\Resource.cpp" />
     <ClCompile Include="source\resources\ResourceManager.cpp" />
     <ClCompile Include="source\math\Point.cpp" />
-    <ClCompile Include="source\input\InputListener.cpp" />
     <ClCompile Include="source\input\InputManager.cpp" />
     <ClCompile Include="source\graphics\resources\IndexBuffer.cpp" />
     <ClCompile Include="source\math\Mat4.cpp" />
@@ -178,8 +180,12 @@
     <ClCompile Include="source\resources\Texture.cpp" />
     <ClCompile Include="source\resources\VertexShader.cpp" />
     <ClCompile Include="source\game\World.cpp" />
+    <ClCompile Include="source\entity\components\Transform.cpp" />
+    <ClCompile Include="source\game\TestWorld.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\entity\components\Camera.h" />
+    <ClInclude Include="include\entity\components\Component.h" />
     <ClInclude Include="include\entity\Entity.h" />
     <ClInclude Include="include\entity\EntityManager.h" />
     <ClInclude Include="include\graphics\resources\DepthBuffer.h" />
@@ -221,6 +227,7 @@
     <ClInclude Include="include\math\Vec3.h" />
     <ClInclude Include="include\graphics\resources\VertexShaderSignature.h" />
     <ClInclude Include="include\entity\Player.h" />
+    <ClInclude Include="include\entity\components\MeshRenderer.h" />
     <ClInclude Include="source\display\win32\Win32Window.h" />
     <ClInclude Include="source\input\win32\Win32InputManager.h" />
     <ClInclude Include="include\math\Vec2.h" />
@@ -228,6 +235,8 @@
     <ClInclude Include="include\resources\VertexShader.h" />
     <ClInclude Include="include\resources\utils\ResourcesUtils.h" />
     <ClInclude Include="include\game\World.h" />
+    <ClInclude Include="include\entity\components\Transform.h" />
+    <ClInclude Include="include\game\TestWorld.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

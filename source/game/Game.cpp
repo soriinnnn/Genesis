@@ -10,6 +10,7 @@
 
 using namespace genesis;
 using namespace std;
+using namespace chrono;
 
 Game::Game(const GameDesc& desc)
 {
@@ -20,12 +21,7 @@ Game::Game(const GameDesc& desc)
     m_inputManager = InputManager::create(InputManagerDesc{*m_logger, m_display->getWindow()});
     m_isRunning = true;
 
-    m_graphicsEngine->setGraphicsPipeline(*m_resourceManager);
-    m_inputManager->addListener(m_graphicsEngine.get());
-    m_inputManager->setMouseVisibility(false);
-    m_texture = m_resourceManager->getResource<Texture>("demo/assets/textures/asteroid.jpg");
-    m_mesh = m_resourceManager->getResource<Mesh>("demo/assets/meshes/statue.obj");
-    m_resourceManager->unloadUnused();
+    m_testWorld = make_unique<TestWorld>(WorldDesc{*m_logger, *m_inputManager, *m_resourceManager, *m_graphicsEngine, *m_display});
 
     GENESIS_LOG_INFO("Game initialized.");
 }
@@ -42,26 +38,12 @@ Logger& Game::getLogger() noexcept
 
 void Game::onInternalUpdate()
 {
-    auto currentTime = chrono::steady_clock::now();
-    chrono::duration<float> delta = currentTime - m_previousTime;
-    m_previousTime = currentTime;
+    auto currentTime = steady_clock::now();
+    duration<float> delta = currentTime - m_previousTime;
     float deltaTime = delta.count();
 
-    // FPS temporal... ---
-    static float timer = 0.0f;
-    static int frames = 0;
-    timer += deltaTime;
-    frames++;
-    if (timer >= 1.0f) {
-        GENESIS_LOG_INFO("FPS: {} - Delta: {} ms", frames, (1000.0f / frames));
-        frames = 0;
-        timer -= 1.0f;
-    }
-
+    m_previousTime = currentTime;
     m_inputManager->update();
-
-    Rect wndSize = m_display->getSize();
-    m_inputManager->setMousePosition({wndSize.width() / 2, wndSize.height() / 2});
-
-    m_graphicsEngine->render(*m_mesh, *m_texture, m_display->getSwapChain(), deltaTime);
+  
+    m_testWorld->update(deltaTime);
 }
