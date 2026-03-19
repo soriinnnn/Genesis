@@ -10,11 +10,7 @@ namespace genesis
     {
         BaseDesc base;
         Rect size{};
-#ifdef _WIN32
-        const wchar_t* title{};
-#else
         const char* title{};
-#endif
     };
 
     class Window: public Base

@@ -10,8 +10,6 @@ namespace genesis
 		BaseDesc base;
 		InputManager& inputManager;
 		ResourceManager& resourceManager;
-		GraphicsEngine& graphicsEngine;
-		Display& display;
 	};
 
 	class World: public Base
@@ -19,17 +17,24 @@ namespace genesis
 	public:
 		virtual ~World() override;
 
-		virtual void update(float deltaTime) = 0;
+		void update(float deltaTime);
+		EntityManager& getEntityManager();
+
+		// PROVA...
+		Player* getPlayer();
 
 	protected:
 		explicit World(const WorldDesc& desc);
 
+		virtual void onUpdate(float deltaTime) = 0;
+
 	protected:
 		InputManager& m_inputManager;
 		ResourceManager& m_resourceManager;
-		GraphicsEngine& m_graphicsEngine;
-		Display& m_display;
 		UniquePtr<EntityManager> m_entityManager;
+		
+		// PROVA...
+		Player* m_player;
 	};
 }
 

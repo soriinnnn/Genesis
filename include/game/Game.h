@@ -11,6 +11,7 @@ namespace genesis
 {
     struct GameDesc
     {
+        const char* wndTitle;
         Rect wndSize{1280, 720};
         Logger::LogLevel logLevel = Logger::LogLevel::Error;
     };
@@ -27,16 +28,18 @@ namespace genesis
 
     private:
         void onInternalUpdate();
+        float getDeltaTime();
 
     private:
         UniquePtr<Logger> m_logger;
         UniquePtr<GraphicsEngine> m_graphicsEngine;
-        UniquePtr<ResourceManager> m_resourceManager;
         UniquePtr<Display> m_display;
+        UniquePtr<ResourceManager> m_resourceManager;
         UniquePtr<InputManager> m_inputManager;
-        bool m_isRunning;
 
+        bool m_isRunning;
         std::chrono::steady_clock::time_point m_previousTime;
+        
         UniquePtr<TestWorld> m_testWorld;
     };
 }

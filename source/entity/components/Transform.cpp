@@ -38,20 +38,20 @@ const Mat4& Transform::getWorldMatrix() noexcept
 
 void Transform::setPosition(const Vec3& position) noexcept
 {
-	m_isDirty = true;
 	m_position = position;
+	m_isDirty = true;
 }
 
 void Transform::setRotation(const Vec3& rotation) noexcept
 {
-	m_isDirty = true;
 	m_rotation = rotation;
+	m_isDirty = true;
 }
 
 void Transform::setScale(const Vec3& scale) noexcept
 {
-	m_isDirty = true;
 	m_scale = scale;
+	m_isDirty = true;
 }
 
 void Transform::updateWorldMatrix() noexcept

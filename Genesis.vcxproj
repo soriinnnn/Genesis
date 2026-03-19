@@ -136,6 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\entity\components\PlayerController.cpp" />
     <ClCompile Include="source\entity\components\Camera.cpp" />
     <ClCompile Include="source\entity\components\MeshRenderer.cpp" />
     <ClCompile Include="source\entity\components\Component.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="include\graphics\resources\VertexShaderSignature.h" />
     <ClInclude Include="include\entity\Player.h" />
     <ClInclude Include="include\entity\components\MeshRenderer.h" />
+    <ClInclude Include="include\entity\components\PlayerController.h" />
     <ClInclude Include="source\display\win32\Win32Window.h" />
     <ClInclude Include="source\input\win32\Win32InputManager.h" />
     <ClInclude Include="include\math\Vec2.h" />

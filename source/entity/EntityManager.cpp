@@ -7,6 +7,11 @@ EntityManager::EntityManager(const EntityManagerDesc& desc): Base(desc.base), m_
 
 EntityManager::~EntityManager() {}
 
+const unordered_map<EntityId, UniquePtr<Entity>>& EntityManager::getEntities() const
+{
+	return m_entities;
+}
+
 void EntityManager::destroyEntity(EntityId id)
 {
 	if (!m_entities.contains(id)) {

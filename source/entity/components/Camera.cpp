@@ -1,6 +1,5 @@
 #include <entity/components/Camera.h>
 #include <entity/components/Transform.h>
-#include <entity/Entity.h>
 #include <core/utils/Macros.h>
 
 using namespace genesis;

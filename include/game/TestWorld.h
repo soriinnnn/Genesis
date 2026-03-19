@@ -10,11 +10,11 @@ namespace genesis
 		explicit TestWorld(const WorldDesc& desc);
 		~TestWorld() override;
 
-		void update(float deltaTime) override;
+	private:
+		void onUpdate(float deltaTime) override;
 
 	private:
 		Player* m_player;
-		Entity* m_statue;
 	};
 }
 

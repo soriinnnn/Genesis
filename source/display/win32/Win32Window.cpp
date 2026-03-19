@@ -12,6 +12,7 @@ static wstring createWindowClassName(void* instance);
 
 Win32Window::Win32Window(const WindowDesc& desc): Window(desc)
 {
+    wstring title{desc.title, desc.title + strlen(desc.title)};
     ATOM classId = createWindowClass(createWindowClassName(this).c_str(), wndProc);
     if (!classId) {
         GENESIS_LOG_THROW_ERROR("RegisterClassEx failed.\nError code: 0x{:08X}", GetLastError());
@@ -21,7 +22,7 @@ Win32Window::Win32Window(const WindowDesc& desc): Window(desc)
     m_handle = CreateWindowEx(
         0,
         MAKEINTATOM(classId),
-        desc.title,
+        title.c_str(),
         DEFAULT_WINDOW_STYLE,
         CW_USEDEFAULT,
         CW_USEDEFAULT,

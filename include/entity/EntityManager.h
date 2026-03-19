@@ -24,6 +24,8 @@ namespace genesis
 			return createEntity<T>(getAvailableId());
 		}
 
+		const std::unordered_map<EntityId, UniquePtr<Entity>>& getEntities() const;
+
 		void destroyEntity(EntityId id);
 		void destroyPending();
 

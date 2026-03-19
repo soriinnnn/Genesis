@@ -23,7 +23,7 @@ namespace genesis
 		Extra1,
 		Extra2,
 		Count
-	};
+	};	
 }
 
 #endif

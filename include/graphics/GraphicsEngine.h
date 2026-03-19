@@ -21,7 +21,7 @@ namespace genesis
         ~GraphicsEngine() override;
 
         GraphicsDevice& getGraphicsDevice() noexcept;
-        void render(Entity& entity, SwapChain& swapChain, float deltaTime);
+        void render(World& world, SwapChain& swapChain, float deltaTime);
 
     private:
         struct alignas(16) ConstantData
