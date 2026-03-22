@@ -4,20 +4,21 @@
 
 namespace genesis
 {
+	struct TextureDesc
+	{
+		ResourceDesc resource;
+	};
+
 	class Texture final: public Resource
 	{
 	public:
-		Texture(const ResourceDesc& desc);
+		explicit Texture(const TextureDesc& desc);
 		~Texture() override;
 
-		GraphicsTexture& getGraphicsTexture();
+		const GraphicsTexture& getGraphicsTexture() const noexcept;
 
 	private:
-		void onLoad() override;
-		void onUnload() override;
-
-	private:
-		SharedPtr<GraphicsTexture> m_graphicsTexture;
+		SharedPtr<GraphicsTexture> m_texture;
 	};
 }
 

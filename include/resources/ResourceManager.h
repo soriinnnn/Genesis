@@ -18,30 +18,19 @@ namespace genesis
 		explicit ResourceManager(const ResourceManagerDesc& desc);
 		~ResourceManager() override;
 
-		template<typename T>
-		SharedPtr<T> getResource(const char* path)
-		{
-			GENESIS_ASSERT((std::is_base_of<Resource, T>::value), "T must derive from Resource.");
-			std::string absolutePath = getAbsolutePath(path);
-			ResourceId id = getResourceId(absolutePath.c_str());
-			
-			SharedPtr<T> result = getResource<T>(id);
-			if (!result) {
-				result = createResource<T>(id, absolutePath.c_str());
-			}
-			if (!result->isLoaded()) {
-				result->load();
-			}
-
-			return result;
-		}
+		SharedPtr<Mesh> getMesh(const char* path);
+		SharedPtr<Material> getMaterial(const char* path);
+		SharedPtr<Texture> getTexture(const char* path);
+		SharedPtr<VertexShader> getVertexShader(const char* path, const char* entry);
+		SharedPtr<PixelShader> getPixelShader(const char* path, const char* entry);
 
 		void unloadAll();
 		void unloadUnused();
 
 	private:
-		static std::string getAbsolutePath(const char* path);
 		static ResourceId getResourceId(const char* path);
+		static std::string getAbsolutePath(const char* path);
+		ResourceDesc getResourceDesc(ResourceId id, const char* path);
 
 		template<typename T>
 		SharedPtr<T> getResource(ResourceId id)
@@ -50,15 +39,14 @@ namespace genesis
 			if (it == m_resources.end()) {
 				return nullptr;
 			}
-			return static_pointer_cast<T>(it->second);
+			return dynamic_pointer_cast<T>(it->second);
 		}
 
-		template<typename T>
-		SharedPtr<T> createResource(ResourceId id, const char* path)
+		template<typename T, typename D>
+		SharedPtr<T> createResource(ResourceId id, const char* path, const D& desc)
 		{
-			SharedPtr<T> resource = std::make_shared<T>(ResourceDesc{m_logger, m_graphicsDevice, path});
+			SharedPtr<T> resource = std::make_shared<T>(desc);
 			m_resources.emplace(id, resource);
-
 			return resource;
 		}
 

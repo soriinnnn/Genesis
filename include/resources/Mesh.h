@@ -4,18 +4,19 @@
 
 namespace genesis
 {
+	struct MeshDesc
+	{
+		ResourceDesc resource;
+	};
+
 	class Mesh final: public Resource
 	{
 	public:
-		Mesh(const ResourceDesc& desc);
+		explicit Mesh(const MeshDesc& desc);
 		~Mesh() override;
 
-		VertexBuffer& getVertexBuffer();
-		IndexBuffer& getIndexBuffer();
-
-	private:
-		void onLoad() override;
-		void onUnload() override;
+		VertexBuffer& getVertexBuffer() noexcept;
+		IndexBuffer& getIndexBuffer() noexcept;
 
 	private:
 		SharedPtr<VertexBuffer> m_vertexBuffer;

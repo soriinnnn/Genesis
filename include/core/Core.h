@@ -27,8 +27,9 @@ namespace genesis
 
     class ResourceManager;
     class Resource;
-    class Texture;
     class Mesh;
+    class Texture;
+    class Material;
     class VertexShader;
     class PixelShader;
 
@@ -50,6 +51,7 @@ namespace genesis
     class IndexBuffer;
     class ConstantBuffer;
     class VertexShaderSignature;
+    class PixelShaderSignature;
     class GraphicsPipelineState;
     class GraphicsTexture;
     class DepthBuffer;

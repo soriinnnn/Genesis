@@ -1,25 +1,25 @@
-#include <graphics/resources/VertexShaderSignature.h>
+#include <graphics/resources/PixelShaderSignature.h>
 #include <graphics/resources/ShaderBinary.h>
 #include <graphics/utils/GraphicsLogUtils.h>
 #include <graphics/utils/GraphicsUtils.h>
 
 using namespace genesis;
 
-VertexShaderSignature::VertexShaderSignature(const VertexShaderSignatureDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
+PixelShaderSignature::PixelShaderSignature(const PixelShaderSignatureDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
-	if (!sdesc.vertexShader) {
+	if (!sdesc.pixelShader) {
 		GENESIS_LOG_THROW_INVALID_ARG("No shader binary provided.");
 	}
-	if (sdesc.vertexShader->getType() != ShaderType::VertexShader) {
+	if (sdesc.pixelShader->getType() != ShaderType::PixelShader) {
 		GENESIS_LOG_THROW_INVALID_ARG("Invalid vertex shader type.");
 	}
-	m_vertexShader = sdesc.vertexShader;
+	m_pixelShader = sdesc.pixelShader;
 
-	BinaryData vertexShaderData = m_vertexShader->getData();
+	BinaryData pixelShaderData = m_pixelShader->getData();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		D3DReflect(
-			vertexShaderData.m_data,
-			vertexShaderData.dataSize,
+			pixelShaderData.m_data,
+			pixelShaderData.dataSize,
 			IID_PPV_ARGS(&m_shaderReflection)
 		),
 		"D3DReflect failed."
@@ -30,28 +30,6 @@ VertexShaderSignature::VertexShaderSignature(const VertexShaderSignatureDesc& sd
 		m_shaderReflection->GetDesc(&shaderDesc),
 		"ID3D11ShaderReflection::GetDesc failed."
 	);
-	
-	D3D11_SIGNATURE_PARAMETER_DESC params[D3D11_STANDARD_VERTEX_ELEMENT_COUNT]{};
-	m_numElements = shaderDesc.InputParameters;
-	for (uint32 i = 0; i < m_numElements; i++) {
-		GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
-			m_shaderReflection->GetInputParameterDesc(i, &params[i]),
-			"ID3D11ShaderReflection::GetInputParameterDesc failed."
-		);
-	}
-
-	for (uint32 i = 0; i < m_numElements; i++) {
-		auto param = params[i];
-		m_elements[i] = {
-			param.SemanticName,
-			param.SemanticIndex,
-			graphicsUtils::getDXGIFormatFromMask(param.ComponentType, param.Mask),
-			0,
-			D3D11_APPEND_ALIGNED_ELEMENT,
-			D3D11_INPUT_PER_VERTEX_DATA,
-			0
-		};
-	}
 
 	for (uint32 i = 0; i < shaderDesc.ConstantBuffers; i++) {
 		auto constantBuffer = m_shaderReflection->GetConstantBufferByIndex(i);
@@ -85,32 +63,24 @@ VertexShaderSignature::VertexShaderSignature(const VertexShaderSignatureDesc& sd
 			);
 			cbuffer.variables[varDesc.Name] = {varDesc.StartOffset, varDesc.Size};
 		}
-		
+
 		m_constantBuffers[constDesc.Name] = cbuffer;
 	}
 }
 
-VertexShaderSignature::~VertexShaderSignature() {}
+PixelShaderSignature::~PixelShaderSignature() {}
 
-BinaryData VertexShaderSignature::getShaderBinaryData() const noexcept
+BinaryData PixelShaderSignature::getShaderBinaryData() const noexcept
 {
-	return m_vertexShader->getData();
+    return m_pixelShader->getData();
 }
 
-BinaryData VertexShaderSignature::getInputElementsData() const noexcept
-{
-	return BinaryData{
-		m_elements,
-		m_numElements
-	};
-}
-
-bool VertexShaderSignature::hasConstantBuffer(const char* name) const noexcept
+bool PixelShaderSignature::hasConstantBuffer(const char* name) const noexcept
 {
 	return m_constantBuffers.contains(name);
 }
 
-const ShaderConstantBuffer* VertexShaderSignature::getConstantBuffer(const char* name) const
+const ShaderConstantBuffer* PixelShaderSignature::getConstantBuffer(const char* name) const
 {
 	auto it = m_constantBuffers.find(name);
 	if (it == m_constantBuffers.end()) {

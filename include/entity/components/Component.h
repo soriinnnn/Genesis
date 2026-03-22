@@ -1,7 +1,6 @@
 #ifndef GENESIS_COMPONENT_H
 #define GENESIS_COMPONENT_H
 #include <core/Core.h>
-#include <entity/Entity.h>
 
 namespace genesis
 {

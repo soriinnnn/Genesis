@@ -11,17 +11,14 @@ namespace genesis
 		~MeshRenderer() override;
 
 		Mesh* getMesh();
-		Texture* getTexture();
-		GraphicsPipelineState* getGraphicsPipelineState();
+		Material* getMaterial();
 
 		void setMesh(const SharedPtr<Mesh>& mesh);
-		void setTexture(const SharedPtr<Texture>& texture);
-		void setGraphicsPipelineState(const SharedPtr<GraphicsPipelineState>& pipeline);
+		void setMaterial(const SharedPtr<Material>& material);
 
 	private:
 		SharedPtr<Mesh> m_mesh;
-		SharedPtr<Texture> m_texture;
-		SharedPtr<GraphicsPipelineState> m_pipeline;
+		SharedPtr<Material> m_material;
 	};
 }
 

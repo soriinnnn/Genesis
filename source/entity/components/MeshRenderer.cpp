@@ -13,14 +13,9 @@ Mesh* MeshRenderer::getMesh()
 	return m_mesh.get();
 }
 
-Texture* MeshRenderer::getTexture()
+Material* MeshRenderer::getMaterial()
 {
-	return m_texture.get();
-}
-
-GraphicsPipelineState* MeshRenderer::getGraphicsPipelineState()
-{
-	return m_pipeline.get();
+	return m_material.get();
 }
 
 void MeshRenderer::setMesh(const SharedPtr<Mesh>& mesh)
@@ -28,12 +23,7 @@ void MeshRenderer::setMesh(const SharedPtr<Mesh>& mesh)
 	m_mesh = mesh;
 }
 
-void MeshRenderer::setTexture(const SharedPtr<Texture>& texture)
+void MeshRenderer::setMaterial(const SharedPtr<Material>& material)
 {
-	m_texture = texture;
-}
-
-void MeshRenderer::setGraphicsPipelineState(const SharedPtr<GraphicsPipelineState>& pipeline)
-{
-	m_pipeline = pipeline;
+	m_material = material;
 }

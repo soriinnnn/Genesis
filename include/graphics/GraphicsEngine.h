@@ -24,19 +24,25 @@ namespace genesis
         void render(World& world, SwapChain& swapChain, float deltaTime);
 
     private:
-        struct alignas(16) ConstantData
+        struct alignas(16) CameraData
         {
-            Mat4 world;
             Mat4 view;
             Mat4 projection;
-            Vec3 lightDirection;
             Vec3 camPos;
+            float padding;
+            Vec4 lightDirection;
+        };
+
+        struct alignas(16) ObjectData
+        {
+            Mat4 world;
         };
 
     private:
         UniquePtr<GraphicsDevice> m_graphicsDevice;
         SharedPtr<DeviceContext> m_deviceContext;
-        SharedPtr<ConstantBuffer> m_constantBuffer;
+        SharedPtr<ConstantBuffer> m_cameraBuffer;
+        SharedPtr<ConstantBuffer> m_objectBuffer;
     };
 }
 

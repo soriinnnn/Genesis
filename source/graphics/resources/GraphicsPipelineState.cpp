@@ -1,6 +1,6 @@
 #include <graphics/resources/GraphicsPipelineState.h>
-#include <graphics/resources/ShaderBinary.h>
 #include <graphics/resources/VertexShaderSignature.h>
+#include <graphics/resources/PixelShaderSignature.h>
 #include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;
@@ -11,10 +11,6 @@ static D3D11_COMPARISON_FUNC getD3D11ComparisonFunc(DepthComparison comparison);
 
 GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& pdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
-	if (pdesc.pixelShader.getType() != ShaderType::PixelShader) {
-		GENESIS_LOG_THROW_INVALID_ARG("Invalid pixel shader type.");
-	}
-
 	BinaryData vertexShader = pdesc.vertexShader.getShaderBinaryData();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateVertexShader(
@@ -38,7 +34,7 @@ GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& pd
 		"CreateInputLayout failed."
 	);
 
-	BinaryData pixelShader = pdesc.pixelShader.getData();
+	BinaryData pixelShader = pdesc.pixelShader.getShaderBinaryData();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreatePixelShader(
 			pixelShader.m_data,

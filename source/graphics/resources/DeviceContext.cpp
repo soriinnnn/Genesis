@@ -67,12 +67,12 @@ void DeviceContext::setIndexBuffer(const IndexBuffer& buffer)
 	m_context->IASetIndexBuffer(buff, buffer.m_indexFormat, 0);
 }
 
-void DeviceContext::setConstantBuffer(const ConstantBuffer& buffer)
+void DeviceContext::setConstantBuffer(const ConstantBuffer& buffer, uint32 slot)
 {
 	ID3D11Buffer* buff = buffer.m_buffer.Get();
 
-	m_context->VSSetConstantBuffers(0, 1, &buff);
-	m_context->PSSetConstantBuffers(0, 1, &buff);
+	m_context->VSSetConstantBuffers(slot, 1, &buff);
+	m_context->PSSetConstantBuffers(slot, 1, &buff);
 }
 	
 void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const void* m_data)
@@ -97,10 +97,12 @@ void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const voi
 	m_context->Unmap(buff, 0);
 }
 
-void DeviceContext::setTexture(const GraphicsTexture& texture)
+void DeviceContext::setTexture(const GraphicsTexture& texture, uint32 slot)
 {
 	ID3D11ShaderResourceView* resourceView = texture.m_resourceView.Get();
-	m_context->PSSetShaderResources(0, 1, &resourceView);
+
+	m_context->VSSetShaderResources(slot, 1, &resourceView);
+	m_context->PSSetShaderResources(slot, 1, &resourceView);
 }
 
 void DeviceContext::draw(uint32 vertexCount, uint32 startVertexLocation)

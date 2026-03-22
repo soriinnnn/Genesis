@@ -8,8 +8,10 @@ namespace genesis
 	struct ResourceDesc
 	{
 		BaseDesc base;
-		GraphicsDevice& graphicsDevice;
+		ResourceId id;
 		const char* path;
+		GraphicsDevice& graphicsDevice;
+		ResourceManager& resourceManager;
 	};
 
 	class Resource: public Base
@@ -17,22 +19,15 @@ namespace genesis
 	public:
 		~Resource() override;
 
+		ResourceId getId() const noexcept;
 		const char* getPath() const noexcept;
-		bool isLoaded() const noexcept;
-
-		void load();
-		void unload();
 
 	protected:
 		explicit Resource(const ResourceDesc& desc);
 
-		virtual void onLoad() = 0;
-		virtual void onUnload() = 0;
-
 	protected:
-		GraphicsDevice& m_graphicsDevice;
+		ResourceId m_id;
 		std::string m_path;
-		bool m_loaded;
 	};
 }
 

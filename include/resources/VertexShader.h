@@ -4,21 +4,22 @@
 
 namespace genesis
 {
+	struct VertexShaderDesc
+	{
+		ResourceDesc resource;
+		const char* entry;
+	};
+
 	class VertexShader final: public Resource
 	{
 	public:
-		VertexShader(const ResourceDesc& desc);
+		explicit VertexShader(const VertexShaderDesc& desc);
 		~VertexShader() override;
 
-		VertexShaderSignature& getVertexShaderSignature();
-
-	private:
-		void onLoad() override;
-		void onUnload() override;
+		VertexShaderSignature& getSignature() noexcept;
 
 	private:
 		SharedPtr<VertexShaderSignature> m_vertexShader;
-		std::string m_entryPoint;
 	};
 }
 

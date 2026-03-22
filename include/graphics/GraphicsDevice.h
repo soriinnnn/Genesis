@@ -11,6 +11,7 @@
 #include <graphics/resources/ConstantBuffer.h>
 #include <graphics/resources/GraphicsPipelineState.h>
 #include <graphics/resources/VertexShaderSignature.h>
+#include <graphics/resources/PixelShaderSignature.h>
 #include <graphics/resources/GraphicsTexture.h>
 #include <graphics/resources/DepthBuffer.h>
 #include <d3d11.h>
@@ -35,6 +36,7 @@ namespace genesis
         SharedPtr<GraphicsPipelineState> createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc);
         SharedPtr<VertexBuffer> createVertexBuffer(const VertexBufferDesc& desc);
         SharedPtr<VertexShaderSignature> createVertexShaderSignature(const VertexShaderSignatureDesc& desc);
+        SharedPtr<PixelShaderSignature> createPixelShaderSignature(const PixelShaderSignatureDesc& desc);
         SharedPtr<ConstantBuffer> createConstantBuffer(const ConstantBufferDesc& desc);
         SharedPtr<IndexBuffer> createIndexBuffer(const IndexBufferDesc& desc);
         SharedPtr<GraphicsTexture> createGraphicsTexture(const GraphicsTextureDesc& desc);

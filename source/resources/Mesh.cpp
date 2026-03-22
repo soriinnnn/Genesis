@@ -12,27 +12,7 @@ using namespace Assimp;
 static vector<Vertex> getVertices(const aiMesh& mesh);
 static vector<uint32> getIndices(const aiMesh& mesh);
 
-Mesh::Mesh(const ResourceDesc& desc): Resource(desc) {}
-
-Mesh::~Mesh() {}
-
-VertexBuffer& Mesh::getVertexBuffer()
-{
-    if (!isLoaded()) {
-        GENESIS_LOG_THROW_ERROR("Resource is not loaded: {}", m_path);
-    }
-    return *m_vertexBuffer;
-}
-
-IndexBuffer& Mesh::getIndexBuffer()
-{
-    if (!isLoaded()) {
-        GENESIS_LOG_THROW_ERROR("Resource is not loaded: {}", m_path);
-    }
-    return *m_indexBuffer;
-}
-
-void Mesh::onLoad()
+Mesh::Mesh(const MeshDesc& desc): Resource(desc.resource)
 {
     Importer importer;
     const aiScene* scene = importer.ReadFile(
@@ -41,24 +21,30 @@ void Mesh::onLoad()
     );
 
     if (!scene) {
-        GENESIS_LOG_THROW_ERROR("Failed to load mesh.\nDetails:\n{}", importer.GetErrorString());
+        GENESIS_LOG_THROW_ERROR("Failed to load mesh file \"{}\".\nDetails:\n{}", m_path.c_str(), importer.GetErrorString());
     }
 
     if (scene->mNumMeshes > 1) {
-        GENESIS_LOG_WARNING("Mesh \"{}\" contains multiple sub-meshes. Only the first one will be loaded.", m_path);
+        GENESIS_LOG_WARNING("Mesh \"{}\" contains multiple sub-meshes. Only the first one will be loaded.", m_path.c_str());
     }
 
     aiMesh* mesh = scene->mMeshes[0];
     vector<Vertex> vertices = getVertices(*mesh);
     vector<uint32> indices = getIndices(*mesh);
-    m_vertexBuffer = m_graphicsDevice.createVertexBuffer({vertices.data(), static_cast<uint32>(vertices.size()), sizeof(Vertex)});
-    m_indexBuffer = m_graphicsDevice.createIndexBuffer({indices.data(), static_cast<uint32>(indices.size())});
+    m_vertexBuffer = desc.resource.graphicsDevice.createVertexBuffer({vertices.data(), static_cast<uint32>(vertices.size()), sizeof(Vertex)});
+    m_indexBuffer = desc.resource.graphicsDevice.createIndexBuffer({indices.data(), static_cast<uint32>(indices.size())});
 }
 
-void Mesh::onUnload()
+Mesh::~Mesh() {}
+
+VertexBuffer& Mesh::getVertexBuffer() noexcept
 {
-    m_vertexBuffer.reset();
-    m_indexBuffer.reset();
+    return *m_vertexBuffer;
+}
+
+IndexBuffer& Mesh::getIndexBuffer() noexcept
+{
+    return *m_indexBuffer;
 }
 
 /* STATIC FUNCTION DEFINITIONS */

@@ -5,6 +5,7 @@
 #include <resources/PixelShader.h>
 #include <resources/Texture.h>
 #include <resources/Mesh.h>
+#include <resources/Material.h>
 #include <entity/Entity.h>
 #include <entity/Player.h>
 #include <entity/components/Transform.h>
@@ -20,8 +21,8 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
 {
     m_graphicsDevice = make_unique<GraphicsDevice>(GraphicsDeviceDesc{m_logger});
     m_deviceContext = m_graphicsDevice->createDeviceContext();
- 
-    m_constantBuffer = m_graphicsDevice->createConstantBuffer(ConstantBufferDesc{nullptr, sizeof(ConstantData)});
+    m_cameraBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(CameraData)});
+    m_objectBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(ObjectData)});
 }
 
 GraphicsEngine::~GraphicsEngine() {}
@@ -40,12 +41,18 @@ void GraphicsEngine::render(World& world, SwapChain& swapChain, float deltaTime)
         return;
     }
 
-    Mat4 view = camera->getViewMatrix();
-    Mat4 projection = camera->getProjectionMatrix();
-    Vec3 camPosition = cameraTransform->getPosition();
-
     m_deviceContext->clearAndSetBackBuffer(swapChain, Vec4{0.27f, 0.39f, 0.55f, 1.0f});
     m_deviceContext->setViewport(swapChain.getSize());
+
+    CameraData cameraData = {
+        camera->getViewMatrix(),
+        camera->getProjectionMatrix(),
+        cameraTransform->getPosition(),
+        0.0f,
+        Vec4{0.4f, -0.3f, 0.8f, 0.0f}
+    };
+    m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData);
+    m_deviceContext->setConstantBuffer(*m_cameraBuffer, 0);
 
     for (auto& [id, entity] : world.getEntityManager().getEntities()) {
         MeshRenderer* mesh = entity->getComponent<MeshRenderer>();
@@ -55,23 +62,29 @@ void GraphicsEngine::render(World& world, SwapChain& swapChain, float deltaTime)
             continue;
         }
 
-        ConstantData m_data{
-            transform->getWorldMatrix(),
-            view,
-            projection,
-            {0.4f, -0.3f, 0.8f},
-            camPosition
+        ObjectData objectData{
+            transform->getWorldMatrix()
         };
+        m_deviceContext->updateConstantBuffer(*m_objectBuffer, &objectData);
+        m_deviceContext->setConstantBuffer(*m_objectBuffer, 1);
 
-        m_deviceContext->updateConstantBuffer(*m_constantBuffer, &m_data);
-        m_deviceContext->setGraphicsPipelineState(*(mesh->getGraphicsPipelineState()));
+        Material* material = mesh->getMaterial();
+        m_deviceContext->setGraphicsPipelineState(material->getGraphicsPipelineState());
+
+        auto& textures = material->getTextures();
+        for (auto& texture : textures) {
+            m_deviceContext->setTexture(texture->getGraphicsTexture(), 0);
+        }
+
+        if (material->hasProperties()) {
+            m_deviceContext->setConstantBuffer(material->getProperties(), material->getPropertiesSlot());
+        }
+
         m_deviceContext->setVertexBuffer(mesh->getMesh()->getVertexBuffer());
         m_deviceContext->setIndexBuffer(mesh->getMesh()->getIndexBuffer());
-        m_deviceContext->setConstantBuffer(*m_constantBuffer);
-        m_deviceContext->setTexture(mesh->getTexture()->getGraphicsTexture());
         m_deviceContext->drawIndexed(mesh->getMesh()->getIndexBuffer().getIndexCount());
-
-        m_graphicsDevice->executeCommandList(*m_deviceContext);
-        swapChain.present();
     }
+
+    m_graphicsDevice->executeCommandList(*m_deviceContext);
+    swapChain.present();
 }

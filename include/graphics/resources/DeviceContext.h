@@ -17,9 +17,9 @@ namespace genesis
 		void setViewport(const Rect& size);
 		void setVertexBuffer(const VertexBuffer& buffer);
 		void setIndexBuffer(const IndexBuffer& buffer);
-		void setConstantBuffer(const ConstantBuffer& buffer);
+		void setConstantBuffer(const ConstantBuffer& buffer, uint32 slot = 0);
 		void updateConstantBuffer(const ConstantBuffer& buffer, const void* m_data);
-		void setTexture(const GraphicsTexture& texture);
+		void setTexture(const GraphicsTexture& texture, uint32 slot = 0);
 
 		void draw(uint32 vertexCount, uint32 startVertexLocation = 0);
 		void drawIndexed(uint32 indexCount, uint32 startIndexLocation = 0, int32 baseVertexLocation = 0);

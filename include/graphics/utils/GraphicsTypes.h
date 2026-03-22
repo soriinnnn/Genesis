@@ -18,6 +18,18 @@ namespace genesis
 		UnsignedInt32
 	};
 
+	struct ShaderVariable
+	{
+		uint32 offset;
+		uint32 size;
+	};
+
+	struct ShaderConstantBuffer {
+		uint32 slot;
+		uint32 size;
+		std::unordered_map<std::string, ShaderVariable> variables;
+	};
+
 	enum class ShaderType
 	{
 		VertexShader,

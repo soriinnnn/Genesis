@@ -77,6 +77,11 @@ SharedPtr<VertexShaderSignature> GraphicsDevice::createVertexShaderSignature(con
     return make_shared<VertexShaderSignature>(desc, getGraphicsResourceDesc());
 }
 
+SharedPtr<PixelShaderSignature> GraphicsDevice::createPixelShaderSignature(const PixelShaderSignatureDesc& desc)
+{
+    return make_shared<PixelShaderSignature>(desc, getGraphicsResourceDesc());
+}
+
 SharedPtr<ConstantBuffer> GraphicsDevice::createConstantBuffer(const ConstantBufferDesc& desc)
 {
     return make_shared<ConstantBuffer>(desc, getGraphicsResourceDesc());

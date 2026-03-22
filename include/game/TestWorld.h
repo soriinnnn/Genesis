@@ -12,9 +12,6 @@ namespace genesis
 
 	private:
 		void onUpdate(float deltaTime) override;
-
-	private:
-		Player* m_player;
 	};
 }
 

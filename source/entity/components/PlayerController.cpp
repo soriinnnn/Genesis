@@ -1,5 +1,6 @@
 #include <entity/components/PlayerController.h>
 #include <entity/components/Transform.h>
+#include <entity/Entity.h>
 #include <core/utils/Macros.h>
 
 using namespace genesis;
@@ -37,10 +38,10 @@ void PlayerController::update(float deltaTime)
 		position -= forward * MOVE_SPEED * deltaTime;
 	}
 	if (m_moveLeft) {
-		position += right * MOVE_SPEED * deltaTime;
+		position -= right * MOVE_SPEED * deltaTime;
 	}
 	if (m_moveRight) {
-		position -= right * MOVE_SPEED * deltaTime;
+		position += right * MOVE_SPEED * deltaTime;
 	}
 
 	rotation.x += m_delta.y * deltaTime;
@@ -50,6 +51,8 @@ void PlayerController::update(float deltaTime)
 
 	transform->setPosition(position);
 	transform->setRotation(rotation);
+
+	m_delta = Point{};
 }
 
 void PlayerController::onKeyDown(Key key)

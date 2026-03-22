@@ -12,13 +12,17 @@ struct OutputPS
     float2 texCoord: TEXCOORD0;
 };
 
-cbuffer ConstantData: register(b0)
+cbuffer CameraData: register(b0)
 {
-    row_major float4x4 world;
     row_major float4x4 view;
     row_major float4x4 projection;
-    float3 lightDirection;
     float3 camPosition;
+    float3 lightDirection;
+}
+
+cbuffer ObjectData: register(b1)
+{
+    row_major float4x4 world;
 }
 
 OutputPS main(InputVS input)
