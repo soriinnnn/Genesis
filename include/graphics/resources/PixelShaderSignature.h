@@ -21,12 +21,12 @@ namespace genesis
 		BinaryData getShaderBinaryData() const noexcept;
 
 		bool hasConstantBuffer(const char* name) const noexcept;
-		const ShaderConstantBuffer* getConstantBuffer(const char* name) const;
+		const ShaderReflectionConstantBuffer* getConstantBufferReflection(const char* name) const;
 
 	private:
 		SharedPtr<ShaderBinary> m_pixelShader;
 		Microsoft::WRL::ComPtr<ID3D11ShaderReflection> m_shaderReflection;
-		std::unordered_map<std::string, ShaderConstantBuffer> m_constantBuffers;
+		std::unordered_map<std::string, ShaderReflectionConstantBuffer> m_constantBuffers;
 	};
 }
 

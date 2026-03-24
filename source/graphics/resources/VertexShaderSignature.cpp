@@ -18,7 +18,7 @@ VertexShaderSignature::VertexShaderSignature(const VertexShaderSignatureDesc& sd
 	BinaryData vertexShaderData = m_vertexShader->getData();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		D3DReflect(
-			vertexShaderData.m_data,
+			vertexShaderData.data,
 			vertexShaderData.dataSize,
 			IID_PPV_ARGS(&m_shaderReflection)
 		),
@@ -65,7 +65,7 @@ VertexShaderSignature::VertexShaderSignature(const VertexShaderSignatureDesc& sd
 			continue;
 		}
 
-		ShaderConstantBuffer cbuffer{};
+		ShaderReflectionConstantBuffer cbuffer{};
 		cbuffer.size = constDesc.Size;
 
 		D3D11_SHADER_INPUT_BIND_DESC bindDesc{};
@@ -110,7 +110,7 @@ bool VertexShaderSignature::hasConstantBuffer(const char* name) const noexcept
 	return m_constantBuffers.contains(name);
 }
 
-const ShaderConstantBuffer* VertexShaderSignature::getConstantBuffer(const char* name) const
+const ShaderReflectionConstantBuffer* VertexShaderSignature::getConstantBufferReflection(const char* name) const
 {
 	auto it = m_constantBuffers.find(name);
 	if (it == m_constantBuffers.end()) {

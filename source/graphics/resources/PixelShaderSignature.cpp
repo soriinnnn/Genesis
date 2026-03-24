@@ -18,7 +18,7 @@ PixelShaderSignature::PixelShaderSignature(const PixelShaderSignatureDesc& sdesc
 	BinaryData pixelShaderData = m_pixelShader->getData();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		D3DReflect(
-			pixelShaderData.m_data,
+			pixelShaderData.data,
 			pixelShaderData.dataSize,
 			IID_PPV_ARGS(&m_shaderReflection)
 		),
@@ -43,7 +43,7 @@ PixelShaderSignature::PixelShaderSignature(const PixelShaderSignatureDesc& sdesc
 			continue;
 		}
 
-		ShaderConstantBuffer cbuffer{};
+		ShaderReflectionConstantBuffer cbuffer{};
 		cbuffer.size = constDesc.Size;
 
 		D3D11_SHADER_INPUT_BIND_DESC bindDesc{};
@@ -80,7 +80,7 @@ bool PixelShaderSignature::hasConstantBuffer(const char* name) const noexcept
 	return m_constantBuffers.contains(name);
 }
 
-const ShaderConstantBuffer* PixelShaderSignature::getConstantBuffer(const char* name) const
+const ShaderReflectionConstantBuffer* PixelShaderSignature::getConstantBufferReflection(const char* name) const
 {
 	auto it = m_constantBuffers.find(name);
 	if (it == m_constantBuffers.end()) {

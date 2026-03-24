@@ -44,8 +44,8 @@ static D3D11_BUFFER_DESC createBufferDesc(const ConstantBufferDesc& desc) {
 
 static D3D11_SUBRESOURCE_DATA createSubResourceData(const ConstantBufferDesc& desc)
 {
-	D3D11_SUBRESOURCE_DATA m_data{};
-	m_data.pSysMem = desc.buffer;
+	D3D11_SUBRESOURCE_DATA data{};
+	data.pSysMem = desc.buffer;
 
-	return m_data;
+	return data;
 }

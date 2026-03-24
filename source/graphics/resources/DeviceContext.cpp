@@ -75,9 +75,9 @@ void DeviceContext::setConstantBuffer(const ConstantBuffer& buffer, uint32 slot)
 	m_context->PSSetConstantBuffers(slot, 1, &buff);
 }
 	
-void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const void* m_data)
+void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const void* data)
 {
-	if (!m_data) {
+	if (!data) {
 		GENESIS_LOG_THROW_ERROR("Null data pointer.");
 	}
 
@@ -93,7 +93,7 @@ void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const voi
 		),
 		"ID3D11DeviceContext::Map failed."
 	);
-	memcpy(mapped.pData, m_data, buffer.m_size);
+	memcpy(mapped.pData, data, buffer.m_size);
 	m_context->Unmap(buff, 0);
 }
 

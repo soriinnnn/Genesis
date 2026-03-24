@@ -16,7 +16,7 @@ using namespace nlohmann;
 
 static SharedPtr<VertexShader> getVertexShader(json& data, ResourceManager& resourceManager);
 static SharedPtr<PixelShader> getPixelShader(json& data, ResourceManager& resourceManager);
-static vector<uint8> getPropertiesValues(json& data, const ShaderConstantBuffer& cbuffer, Logger& logger);
+static vector<uint8> getPropertiesValues(json& data, const ShaderReflectionConstantBuffer& cbuffer, Logger& logger);
 
 Material::Material(const MaterialDesc& desc): Resource(desc.resource)
 {
@@ -37,7 +37,7 @@ Material::Material(const MaterialDesc& desc): Resource(desc.resource)
 		
 		if (data.contains("properties")) {
 			auto& psSignature = m_pixelShader->getSignature();
-			const ShaderConstantBuffer* cbuffer = psSignature.getConstantBuffer(MATERIAL_CONSTANT_BUFFER_NAME);
+			const ShaderReflectionConstantBuffer* cbuffer = psSignature.getConstantBufferReflection(MATERIAL_CONSTANT_BUFFER_NAME);
 			
 			if (cbuffer) {
 				vector<uint8> buffer = getPropertiesValues(data, *cbuffer, getLogger());
@@ -109,7 +109,7 @@ static SharedPtr<PixelShader> getPixelShader(json& data, ResourceManager& resour
 	return resourceManager.getPixelShader(path.c_str(), entry.c_str());
 }
 
-static vector<uint8> getPropertiesValues(json& data, const ShaderConstantBuffer& cbuffer, Logger& logger)
+static vector<uint8> getPropertiesValues(json& data, const ShaderReflectionConstantBuffer& cbuffer, Logger& logger)
 {
 	vector<uint8> values(cbuffer.size, 0);
 
@@ -120,7 +120,7 @@ static vector<uint8> getPropertiesValues(json& data, const ShaderConstantBuffer&
 			continue;
 		}
 
-		const ShaderVariable& var = it->second;
+		const ShaderReflectionVariable& var = it->second;
 
 		if (value.is_number_float()) {
 			float f = value.get<float>();

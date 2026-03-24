@@ -72,8 +72,8 @@ static D3D11_BUFFER_DESC createBufferDesc(const IndexBufferDesc& desc)
 
 static D3D11_SUBRESOURCE_DATA createSubResourceData(const IndexBufferDesc& desc)
 {
-	D3D11_SUBRESOURCE_DATA m_data{};
-	m_data.pSysMem = desc.indexList;
+	D3D11_SUBRESOURCE_DATA data{};
+	data.pSysMem = desc.indexList;
 
-	return m_data;
+	return data;
 }

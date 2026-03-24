@@ -57,8 +57,8 @@ static D3D11_BUFFER_DESC createBufferDesc(const VertexBufferDesc& desc)
 
 static D3D11_SUBRESOURCE_DATA createSubResourceData(const VertexBufferDesc& desc)
 {
-	D3D11_SUBRESOURCE_DATA m_data{};
-	m_data.pSysMem = desc.vertexList;
+	D3D11_SUBRESOURCE_DATA data{};
+	data.pSysMem = desc.vertexList;
 
-	return m_data;
+	return data;
 }

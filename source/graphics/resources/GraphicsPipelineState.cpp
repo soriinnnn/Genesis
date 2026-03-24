@@ -14,7 +14,7 @@ GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& pd
 	BinaryData vertexShader = pdesc.vertexShader.getShaderBinaryData();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateVertexShader(
-			vertexShader.m_data,
+			vertexShader.data,
 			vertexShader.dataSize,
 			nullptr,
 			&m_vertexShader
@@ -25,9 +25,9 @@ GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& pd
 	BinaryData inputElements = pdesc.vertexShader.getInputElementsData();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateInputLayout(
-			static_cast<const D3D11_INPUT_ELEMENT_DESC*>(inputElements.m_data),
+			static_cast<const D3D11_INPUT_ELEMENT_DESC*>(inputElements.data),
 			static_cast<UINT>(inputElements.dataSize),
-			vertexShader.m_data,
+			vertexShader.data,
 			vertexShader.dataSize,
 			&m_inputLayout
 		),
@@ -37,7 +37,7 @@ GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& pd
 	BinaryData pixelShader = pdesc.pixelShader.getShaderBinaryData();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreatePixelShader(
-			pixelShader.m_data,
+			pixelShader.data,
 			pixelShader.dataSize,
 			nullptr,
 			&m_pixelShader

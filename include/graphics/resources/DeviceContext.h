@@ -18,7 +18,7 @@ namespace genesis
 		void setVertexBuffer(const VertexBuffer& buffer);
 		void setIndexBuffer(const IndexBuffer& buffer);
 		void setConstantBuffer(const ConstantBuffer& buffer, uint32 slot = 0);
-		void updateConstantBuffer(const ConstantBuffer& buffer, const void* m_data);
+		void updateConstantBuffer(const ConstantBuffer& buffer, const void* data);
 		void setTexture(const GraphicsTexture& texture, uint32 slot = 0);
 
 		void draw(uint32 vertexCount, uint32 startVertexLocation = 0);

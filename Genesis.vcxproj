@@ -136,6 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\graphics\resources\ShaderSignature.cpp" />
     <ClCompile Include="source\graphics\resources\PixelShaderSignature.cpp" />
     <ClCompile Include="source\resources\Material.cpp" />
     <ClCompile Include="source\entity\components\PlayerController.cpp" />
@@ -234,6 +235,7 @@
     <ClInclude Include="include\entity\components\PlayerController.h" />
     <ClInclude Include="include\resources\Material.h" />
     <ClInclude Include="include\graphics\resources\PixelShaderSignature.h" />
+    <ClInclude Include="include\graphics\resources\ShaderSignature.h" />
     <ClInclude Include="source\display\win32\Win32Window.h" />
     <ClInclude Include="source\input\win32\Win32InputManager.h" />
     <ClInclude Include="include\math\Vec2.h" />

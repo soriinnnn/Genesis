@@ -5,7 +5,7 @@ namespace genesis
 {
 	struct BinaryData
 	{
-		const void* m_data{};
+		const void* data{};
 		size_t dataSize{};
 	};
 }

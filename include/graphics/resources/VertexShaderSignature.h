@@ -22,14 +22,14 @@ namespace genesis
 		BinaryData getInputElementsData() const noexcept;
 
 		bool hasConstantBuffer(const char* name) const noexcept;
-		const ShaderConstantBuffer* getConstantBuffer(const char* name) const;
+		const ShaderReflectionConstantBuffer* getConstantBufferReflection(const char* name) const;
 
 	private:
 		SharedPtr<ShaderBinary> m_vertexShader;
 		Microsoft::WRL::ComPtr<ID3D11ShaderReflection> m_shaderReflection;
 		D3D11_INPUT_ELEMENT_DESC m_elements[D3D11_STANDARD_VERTEX_ELEMENT_COUNT];
 		uint32 m_numElements;
-		std::unordered_map<std::string, ShaderConstantBuffer> m_constantBuffers;
+		std::unordered_map<std::string, ShaderReflectionConstantBuffer> m_constantBuffers;
 	};
 }
 
