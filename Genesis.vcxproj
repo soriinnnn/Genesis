@@ -136,8 +136,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\resources\Shader.cpp" />
     <ClCompile Include="source\graphics\resources\ShaderSignature.cpp" />
-    <ClCompile Include="source\graphics\resources\PixelShaderSignature.cpp" />
     <ClCompile Include="source\resources\Material.cpp" />
     <ClCompile Include="source\entity\components\PlayerController.cpp" />
     <ClCompile Include="source\entity\components\Camera.cpp" />
@@ -148,7 +148,6 @@
     <ClCompile Include="source\entity\EntityManager.cpp" />
     <ClCompile Include="source\graphics\resources\DepthBuffer.cpp" />
     <ClCompile Include="source\resources\Mesh.cpp" />
-    <ClCompile Include="source\resources\PixelShader.cpp" />
     <ClCompile Include="source\graphics\resources\GraphicsTexture.cpp" />
     <ClCompile Include="source\resources\Resource.cpp" />
     <ClCompile Include="source\resources\ResourceManager.cpp" />
@@ -176,13 +175,11 @@
     <ClCompile Include="source\math\Vec4.cpp" />
     <ClCompile Include="source\graphics\resources\VertexBuffer.cpp" />
     <ClCompile Include="source\math\Vec3.cpp" />
-    <ClCompile Include="source\graphics\resources\VertexShaderSignature.cpp" />
     <ClCompile Include="source\display\win32\Win32Window.cpp" />
     <ClCompile Include="source\display\Window.cpp" />
     <ClCompile Include="source\input\win32\Win32InputManager.cpp" />
     <ClCompile Include="source\math\Vec2.cpp" />
     <ClCompile Include="source\resources\Texture.cpp" />
-    <ClCompile Include="source\resources\VertexShader.cpp" />
     <ClCompile Include="source\game\World.cpp" />
     <ClCompile Include="source\entity\components\Transform.cpp" />
     <ClCompile Include="source\game\TestWorld.cpp" />
@@ -193,7 +190,6 @@
     <ClInclude Include="include\entity\Entity.h" />
     <ClInclude Include="include\entity\EntityManager.h" />
     <ClInclude Include="include\graphics\resources\DepthBuffer.h" />
-    <ClInclude Include="include\resources\PixelShader.h" />
     <ClInclude Include="include\resources\Mesh.h" />
     <ClInclude Include="include\graphics\resources\GraphicsTexture.h" />
     <ClInclude Include="include\core\utils\Macros.h" />
@@ -229,18 +225,16 @@
     <ClInclude Include="include\math\Vec4.h" />
     <ClInclude Include="include\graphics\resources\VertexBuffer.h" />
     <ClInclude Include="include\math\Vec3.h" />
-    <ClInclude Include="include\graphics\resources\VertexShaderSignature.h" />
     <ClInclude Include="include\entity\Player.h" />
     <ClInclude Include="include\entity\components\MeshRenderer.h" />
     <ClInclude Include="include\entity\components\PlayerController.h" />
     <ClInclude Include="include\resources\Material.h" />
-    <ClInclude Include="include\graphics\resources\PixelShaderSignature.h" />
     <ClInclude Include="include\graphics\resources\ShaderSignature.h" />
+    <ClInclude Include="include\resources\Shader.h" />
     <ClInclude Include="source\display\win32\Win32Window.h" />
     <ClInclude Include="source\input\win32\Win32InputManager.h" />
     <ClInclude Include="include\math\Vec2.h" />
     <ClInclude Include="include\resources\Texture.h" />
-    <ClInclude Include="include\resources\VertexShader.h" />
     <ClInclude Include="include\resources\utils\ResourcesUtils.h" />
     <ClInclude Include="include\game\World.h" />
     <ClInclude Include="include\entity\components\Transform.h" />

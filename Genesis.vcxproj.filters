@@ -66,9 +66,6 @@
     <ClCompile Include="source\math\Vec3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics\resources\VertexShaderSignature.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\display\win32\Win32Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -106,12 +103,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\graphics\resources\GraphicsTexture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\resources\PixelShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\resources\VertexShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\resources\Mesh.cpp">
@@ -153,10 +144,10 @@
     <ClCompile Include="source\resources\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics\resources\PixelShaderSignature.cpp">
+    <ClCompile Include="source\graphics\resources\ShaderSignature.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics\resources\ShaderSignature.cpp">
+    <ClCompile Include="source\resources\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -224,9 +215,6 @@
     <ClInclude Include="include\math\Vec3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\graphics\resources\VertexShaderSignature.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\display\win32\Win32Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -275,12 +263,6 @@
     <ClInclude Include="include\graphics\resources\GraphicsTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\resources\PixelShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\resources\VertexShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\resources\utils\ResourcesUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -326,10 +308,10 @@
     <ClInclude Include="include\resources\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\graphics\resources\PixelShaderSignature.h">
+    <ClInclude Include="include\graphics\resources\ShaderSignature.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\graphics\resources\ShaderSignature.h">
+    <ClInclude Include="include\resources\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -30,8 +30,7 @@ namespace genesis
     class Mesh;
     class Texture;
     class Material;
-    class VertexShader;
-    class PixelShader;
+    class Shader;
 
     class EntityManager;
     class Entity;
@@ -47,11 +46,10 @@ namespace genesis
     class DeviceContext;
     class SwapChain;
     class ShaderBinary;
+    class ShaderSignature;
     class VertexBuffer;
     class IndexBuffer;
     class ConstantBuffer;
-    class VertexShaderSignature;
-    class PixelShaderSignature;
     class GraphicsPipelineState;
     class GraphicsTexture;
     class DepthBuffer;

@@ -62,6 +62,11 @@ SharedPtr<ShaderBinary> GraphicsDevice::compileShader(const ShaderCompileDesc& d
     return make_shared<ShaderBinary>(desc, getGraphicsResourceDesc());
 }
 
+SharedPtr<ShaderSignature> GraphicsDevice::reflectShader(const ShaderSignatureDesc& desc)
+{
+    return make_shared<ShaderSignature>(desc, getGraphicsResourceDesc());
+}
+
 SharedPtr<GraphicsPipelineState> GraphicsDevice::createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc)
 {
     return make_shared<GraphicsPipelineState>(desc, getGraphicsResourceDesc());
@@ -70,16 +75,6 @@ SharedPtr<GraphicsPipelineState> GraphicsDevice::createGraphicsPipelineState(con
 SharedPtr<VertexBuffer> GraphicsDevice::createVertexBuffer(const VertexBufferDesc& desc)
 {
     return make_shared<VertexBuffer>(desc, getGraphicsResourceDesc());
-}
-
-SharedPtr<VertexShaderSignature> GraphicsDevice::createVertexShaderSignature(const VertexShaderSignatureDesc& desc)
-{
-    return make_shared<VertexShaderSignature>(desc, getGraphicsResourceDesc());
-}
-
-SharedPtr<PixelShaderSignature> GraphicsDevice::createPixelShaderSignature(const PixelShaderSignatureDesc& desc)
-{
-    return make_shared<PixelShaderSignature>(desc, getGraphicsResourceDesc());
 }
 
 SharedPtr<ConstantBuffer> GraphicsDevice::createConstantBuffer(const ConstantBufferDesc& desc)

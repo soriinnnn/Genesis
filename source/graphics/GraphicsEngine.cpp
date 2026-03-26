@@ -1,18 +1,20 @@
 #include <graphics/GraphicsEngine.h>
 #include <graphics/GraphicsDevice.h>
 #include <graphics/resources/DeviceContext.h>
-#include <resources/VertexShader.h>
-#include <resources/PixelShader.h>
-#include <resources/Texture.h>
 #include <resources/Mesh.h>
+#include <resources/Shader.h>
+#include <resources/Texture.h>
 #include <resources/Material.h>
 #include <entity/Entity.h>
 #include <entity/Player.h>
+#include <entity/EntityManager.h>
 #include <entity/components/Transform.h>
 #include <entity/components/Camera.h>
 #include <entity/components/MeshRenderer.h>
 #include <game/World.h>
-#include <entity/EntityManager.h>
+
+#define CAMERA_CONSTANT_BUFFER_NAME "CameraData"
+#define OBJECT_CONSTANT_BUFFER_NAME "ObjectData"
 
 using namespace genesis;
 using namespace std;
@@ -52,7 +54,6 @@ void GraphicsEngine::render(World& world, SwapChain& swapChain, float deltaTime)
         Vec4{0.4f, -0.3f, 0.8f, 0.0f}
     };
     m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData);
-    m_deviceContext->setConstantBuffer(*m_cameraBuffer, 0);
 
     for (auto& [id, entity] : world.getEntityManager().getEntities()) {
         MeshRenderer* mesh = entity->getComponent<MeshRenderer>();
@@ -62,24 +63,35 @@ void GraphicsEngine::render(World& world, SwapChain& swapChain, float deltaTime)
             continue;
         }
 
+        Material* material = mesh->getMaterial();
+        auto& vsSignature = material->getVertexShader().getSignature();
+        auto& psSignature = material->getPixelShader().getSignature();
+
+        m_deviceContext->setConstantBuffer(*m_cameraBuffer, ShaderType::VertexShader, vsSignature.getConstantBufferSlot(CAMERA_CONSTANT_BUFFER_NAME));
+        if (psSignature.hasConstantBuffer(CAMERA_CONSTANT_BUFFER_NAME)) {
+            m_deviceContext->setConstantBuffer(*m_cameraBuffer, ShaderType::PixelShader, psSignature.getConstantBufferSlot(CAMERA_CONSTANT_BUFFER_NAME));
+        }
+
         ObjectData objectData{
             transform->getWorldMatrix()
         };
         m_deviceContext->updateConstantBuffer(*m_objectBuffer, &objectData);
-        m_deviceContext->setConstantBuffer(*m_objectBuffer, 1);
 
-        Material* material = mesh->getMaterial();
-        m_deviceContext->setGraphicsPipelineState(material->getGraphicsPipelineState());
-
-        auto& textures = material->getTextures();
-        for (auto& texture : textures) {
-            m_deviceContext->setTexture(texture->getGraphicsTexture(), 0);
+        m_deviceContext->setConstantBuffer(*m_objectBuffer, ShaderType::VertexShader, vsSignature.getConstantBufferSlot(OBJECT_CONSTANT_BUFFER_NAME));
+        if (psSignature.hasConstantBuffer(OBJECT_CONSTANT_BUFFER_NAME)) {
+            m_deviceContext->setConstantBuffer(*m_objectBuffer, ShaderType::PixelShader, psSignature.getConstantBufferSlot(OBJECT_CONSTANT_BUFFER_NAME));
         }
 
         if (material->hasProperties()) {
-            m_deviceContext->setConstantBuffer(material->getProperties(), material->getPropertiesSlot());
+            m_deviceContext->setConstantBuffer(material->getProperties(), ShaderType::PixelShader, material->getPropertiesSlot());
         }
 
+        auto& textures = material->getTextures();
+        for (uint32 i = 0; i < textures.size(); i++) {
+            m_deviceContext->setTexture(textures[i]->getGraphicsTexture(), i);
+        }
+
+        m_deviceContext->setGraphicsPipelineState(material->getGraphicsPipelineState());
         m_deviceContext->setVertexBuffer(mesh->getMesh()->getVertexBuffer());
         m_deviceContext->setIndexBuffer(mesh->getMesh()->getIndexBuffer());
         m_deviceContext->drawIndexed(mesh->getMesh()->getIndexBuffer().getIndexCount());

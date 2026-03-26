@@ -13,22 +13,26 @@ cbuffer CameraData: register(b0)
     float3 lightDirection;
 }
 
+cbuffer MaterialProperties: register(b2)
+{
+    float ka;
+    float kd;
+    float ks;
+    float shininess;
+}
+
 Texture2D tex: register(t0);
 SamplerState state: register(s0);
 
 float4 main(InputPS input): SV_Target0
 {
-    float ka = 0.1f;
     float3 ambientColor = float3(1.0f, 1.0f, 1.0f);
     float3 ambientLight = ka * ambientColor;
     
-    float kd = 1.0f;
     float3 diffuseColor = float3(1.0f, 1.0f, 1.0f);
     float diffuse = max(dot(-lightDirection, input.normal), 0.0f);
     float3 diffuseLight = kd * diffuse * diffuseColor;
     
-    float ks = 1.0f;
-    float shininess = 100.0f;
     float3 specularColor = float3(1.0f, 1.0f, 1.0f);
     float3 reflectedLight = reflect(lightDirection, input.normal);
     float3 viewDir = normalize(camPosition - input.position.xyz);

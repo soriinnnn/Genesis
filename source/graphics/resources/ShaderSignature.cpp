@@ -2,7 +2,6 @@
 #include <graphics/resources/ShaderBinary.h>
 #include <graphics/utils/GraphicsUtils.h>
 #include <graphics/utils/GraphicsLogUtils.h>
-#include <core/utils/Types.h>
 
 using namespace genesis;
 using namespace std;
@@ -87,6 +86,16 @@ ShaderSignature::~ShaderSignature() {}
 bool ShaderSignature::hasConstantBuffer(const char* name) const
 {
 	return m_constantBuffers.contains(name);
+}
+
+uint32 ShaderSignature::getConstantBufferSlot(const char* name) const
+{
+	auto it = m_constantBuffers.find(name);
+	if (it == m_constantBuffers.end()) {
+		GENESIS_LOG_THROW_ERROR("Constant buffer \"{}\" does not exist.", name);
+	}
+
+	return it->second.slot;
 }
 
 const ShaderReflectionConstantBuffer* ShaderSignature::getConstantBufferReflection(const char* name) const

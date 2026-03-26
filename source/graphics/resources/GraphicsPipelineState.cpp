@@ -1,6 +1,6 @@
 #include <graphics/resources/GraphicsPipelineState.h>
-#include <graphics/resources/VertexShaderSignature.h>
-#include <graphics/resources/PixelShaderSignature.h>
+#include <graphics/resources/ShaderBinary.h>
+#include <graphics/resources/ShaderSignature.h>
 #include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;
@@ -11,7 +11,7 @@ static D3D11_COMPARISON_FUNC getD3D11ComparisonFunc(DepthComparison comparison);
 
 GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& pdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
-	BinaryData vertexShader = pdesc.vertexShader.getShaderBinaryData();
+	BinaryData vertexShader = pdesc.vertexShaderBinary.getData();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateVertexShader(
 			vertexShader.data,
@@ -22,7 +22,7 @@ GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& pd
 		"CreateVertexShader failed."
 	);
 
-	BinaryData inputElements = pdesc.vertexShader.getInputElementsData();
+	BinaryData inputElements = pdesc.vertexShaderSignature.getInputElementsData();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateInputLayout(
 			static_cast<const D3D11_INPUT_ELEMENT_DESC*>(inputElements.data),
@@ -34,7 +34,7 @@ GraphicsPipelineState::GraphicsPipelineState(const GraphicsPipelineStateDesc& pd
 		"CreateInputLayout failed."
 	);
 
-	BinaryData pixelShader = pdesc.pixelShader.getShaderBinaryData();
+	BinaryData pixelShader = pdesc.pixelShaderBinary.getData();
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreatePixelShader(
 			pixelShader.data,

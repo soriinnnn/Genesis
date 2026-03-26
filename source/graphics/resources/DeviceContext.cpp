@@ -67,12 +67,18 @@ void DeviceContext::setIndexBuffer(const IndexBuffer& buffer)
 	m_context->IASetIndexBuffer(buff, buffer.m_indexFormat, 0);
 }
 
-void DeviceContext::setConstantBuffer(const ConstantBuffer& buffer, uint32 slot)
+void DeviceContext::setConstantBuffer(const ConstantBuffer& buffer, ShaderType type, uint32 slot)
 {
 	ID3D11Buffer* buff = buffer.m_buffer.Get();
 
-	m_context->VSSetConstantBuffers(slot, 1, &buff);
-	m_context->PSSetConstantBuffers(slot, 1, &buff);
+	switch (type) {
+	case ShaderType::VertexShader:
+		m_context->VSSetConstantBuffers(slot, 1, &buff);
+		break;
+	case ShaderType::PixelShader:
+		m_context->PSSetConstantBuffers(slot, 1, &buff);
+		break;
+	}
 }
 	
 void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const void* data)
@@ -100,8 +106,6 @@ void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const voi
 void DeviceContext::setTexture(const GraphicsTexture& texture, uint32 slot)
 {
 	ID3D11ShaderResourceView* resourceView = texture.m_resourceView.Get();
-
-	m_context->VSSetShaderResources(slot, 1, &resourceView);
 	m_context->PSSetShaderResources(slot, 1, &resourceView);
 }
 

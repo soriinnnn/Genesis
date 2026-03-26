@@ -51,7 +51,8 @@ namespace genesis
 		uint32 size;
 	};
 
-	struct ShaderReflectionConstantBuffer {
+	struct ShaderReflectionConstantBuffer 
+	{
 		uint32 slot;
 		uint32 size;
 		std::unordered_map<std::string, ShaderReflectionVariable> variables;

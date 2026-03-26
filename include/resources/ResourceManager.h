@@ -3,6 +3,7 @@
 #include <core/Base.h>
 #include <core/Core.h>
 #include <resources/Resource.h>
+#include <graphics/utils/GraphicsTypes.h>
 
 namespace genesis
 {
@@ -21,8 +22,7 @@ namespace genesis
 		SharedPtr<Mesh> getMesh(const char* path);
 		SharedPtr<Material> getMaterial(const char* path);
 		SharedPtr<Texture> getTexture(const char* path);
-		SharedPtr<VertexShader> getVertexShader(const char* path, const char* entry);
-		SharedPtr<PixelShader> getPixelShader(const char* path, const char* entry);
+		SharedPtr<Shader> getShader(const char* path, const char* entry, ShaderType type);
 
 		void unloadAll();
 		void unloadUnused();

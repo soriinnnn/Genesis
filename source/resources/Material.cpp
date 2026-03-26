@@ -1,7 +1,6 @@
 #include <resources/Material.h>
 #include <resources/Texture.h>
-#include <resources/VertexShader.h>
-#include <resources/PixelShader.h>
+#include <resources/Shader.h>
 #include <resources/ResourceManager.h>
 #include <resources/utils/ResourcesUtils.h>
 #include <graphics/GraphicsDevice.h>
@@ -14,23 +13,26 @@ using namespace genesis;
 using namespace std;
 using namespace nlohmann;
 
-static SharedPtr<VertexShader> getVertexShader(json& data, ResourceManager& resourceManager);
-static SharedPtr<PixelShader> getPixelShader(json& data, ResourceManager& resourceManager);
+static SharedPtr<Shader> getShader(json& data, ShaderType type, ResourceManager& resourceManager);
 static vector<uint8> getPropertiesValues(json& data, const ShaderReflectionConstantBuffer& cbuffer, Logger& logger);
 
-Material::Material(const MaterialDesc& desc): Resource(desc.resource)
+Material::Material(const MaterialDesc& desc): Resource(desc.resource), m_propertiesSlot(0)
 {
 	try {
 		json data = json::parse(resourcesUtils::readFile(m_path.c_str()));
 
-		auto m_vertexShader = getVertexShader(data, desc.resource.resourceManager);
-		auto m_pixelShader = getPixelShader(data, desc.resource.resourceManager);
-		m_pipeline = desc.resource.graphicsDevice.createGraphicsPipelineState({m_vertexShader->getSignature(), m_pixelShader->getSignature()});
+		m_vertexShader = getShader(data, ShaderType::VertexShader, desc.resource.resourceManager);
+		m_pixelShader = getShader(data, ShaderType::PixelShader, desc.resource.resourceManager);
+		m_pipeline = desc.resource.graphicsDevice.createGraphicsPipelineState({
+			m_vertexShader->getBinary(), 
+			m_pixelShader->getBinary(), 
+			m_vertexShader->getSignature(), 
+			m_pixelShader->getSignature()
+		});
 
 		if (data.contains("textures")) {
 			for (auto& texture : data["textures"]) {
 				string path = texture.at("path");
-				uint32 slot = texture.at("slot");
 				m_textures.push_back(desc.resource.resourceManager.getTexture(path.c_str()));
 			}
 		}
@@ -80,6 +82,16 @@ const vector<SharedPtr<Texture>>& Material::getTextures() const noexcept
 	return m_textures;
 }
 
+Shader& Material::getVertexShader() noexcept
+{
+	return *m_vertexShader;
+}
+
+Shader& Material::getPixelShader() noexcept
+{
+	return *m_pixelShader;
+}
+
 GraphicsPipelineState& Material::getGraphicsPipelineState() noexcept
 {
 	return *m_pipeline;
@@ -95,18 +107,28 @@ ConstantBuffer& Material::getProperties()
 
 /* STATIC FUNCTION DEFINITIONS */
 
-static SharedPtr<VertexShader> getVertexShader(json& data, ResourceManager& resourceManager)
+static SharedPtr<Shader> getShader(json& data, ShaderType type, ResourceManager& resourceManager)
 {
-	string path = data.at("shaders").at("vertex").at("path");
-	string entry = data.at("shaders").at("vertex").at("entry");
-	return resourceManager.getVertexShader(path.c_str(), entry.c_str());
-}
+	string path{};
+	string entry{};
+	auto& shaders = data.at("shaders");
 
-static SharedPtr<PixelShader> getPixelShader(json& data, ResourceManager& resourceManager)
-{
-	string path = data.at("shaders").at("pixel").at("path");
-	string entry = data.at("shaders").at("pixel").at("entry");
-	return resourceManager.getPixelShader(path.c_str(), entry.c_str());
+	switch (type) {
+	case ShaderType::VertexShader:
+	{
+		path = shaders.at("vertex").at("path");
+		entry = shaders.at("vertex").at("entry");
+	}
+	break;
+	case ShaderType::PixelShader:
+	{
+		path = shaders.at("pixel").at("path");
+		entry = shaders.at("pixel").at("entry");
+	}
+	break;
+	}
+
+	return resourceManager.getShader(path.c_str(), entry.c_str(), type);
 }
 
 static vector<uint8> getPropertiesValues(json& data, const ShaderReflectionConstantBuffer& cbuffer, Logger& logger)
@@ -130,11 +152,11 @@ static vector<uint8> getPropertiesValues(json& data, const ShaderReflectionConst
 			vector<float> fs = value.get<vector<float>>();
 			size_t size = fs.size() * sizeof(float);
 			memcpy(values.data() + var.offset, fs.data(), min<size_t>(var.size, size));
-		}/*
+		}
 		else if (value.is_number_integer()) {
 			int32 i = value.get<int32>();
 			memcpy(values.data() + var.offset, &i, var.size);
-		}*/
+		}
 		else {
 			GENESIS_LOG(logger, Logger::LogLevel::Warning, "Property \"{}\" has unsupported type, skipping.", name);
 		}

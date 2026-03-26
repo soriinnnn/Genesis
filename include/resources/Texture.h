@@ -15,7 +15,7 @@ namespace genesis
 		explicit Texture(const TextureDesc& desc);
 		~Texture() override;
 
-		const GraphicsTexture& getGraphicsTexture() const noexcept;
+		GraphicsTexture& getGraphicsTexture() noexcept;
 
 	private:
 		SharedPtr<GraphicsTexture> m_texture;

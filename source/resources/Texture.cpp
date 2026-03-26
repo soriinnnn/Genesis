@@ -12,7 +12,7 @@ Texture::Texture(const TextureDesc& desc): Resource(desc.resource)
 
 Texture::~Texture() {}
 
-const GraphicsTexture& Texture::getGraphicsTexture() const noexcept
+GraphicsTexture& Texture::getGraphicsTexture() noexcept
 {
 	return *m_texture;
 }

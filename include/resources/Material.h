@@ -17,14 +17,19 @@ namespace genesis
 		
 		bool hasProperties() const noexcept;
 		uint32 getPropertiesSlot() const;
+
 		const std::vector<SharedPtr<Texture>>& getTextures() const noexcept;
 
+		Shader& getVertexShader() noexcept;
+		Shader& getPixelShader() noexcept;
 		GraphicsPipelineState& getGraphicsPipelineState() noexcept;
 		ConstantBuffer& getProperties();
 
 	private:
-		SharedPtr<GraphicsPipelineState> m_pipeline;
+		SharedPtr<Shader> m_vertexShader;
+		SharedPtr<Shader> m_pixelShader;
 		std::vector<SharedPtr<Texture>> m_textures;
+		SharedPtr<GraphicsPipelineState> m_pipeline;
 		SharedPtr<ConstantBuffer> m_properties;
 		uint32 m_propertiesSlot;
 	};

@@ -1,8 +1,7 @@
 #include <resources/ResourceManager.h>
 #include <resources/Mesh.h>
 #include <resources/Texture.h>
-#include <resources/VertexShader.h>
-#include <resources/PixelShader.h>
+#include <resources/Shader.h>
 #include <resources/Material.h>
 #include <core/utils/Macros.h>
 #include <filesystem>
@@ -56,29 +55,15 @@ SharedPtr<Texture> ResourceManager::getTexture(const char* path)
 	return result;
 }
 
-SharedPtr<VertexShader> ResourceManager::getVertexShader(const char* path, const char* entry)
+SharedPtr<Shader> ResourceManager::getShader(const char* path, const char* entry, ShaderType type)
 {
 	string absolutePath = getAbsolutePath(path);
 	ResourceId id = getResourceId(string{absolutePath + "@" + entry}.c_str());
 
-	SharedPtr<VertexShader> result = getResource<VertexShader>(id);
+	SharedPtr<Shader> result = getResource<Shader>(id);
 	if (!result) {
 		ResourceDesc desc = getResourceDesc(id, absolutePath.c_str());
-		result = createResource<VertexShader, VertexShaderDesc>(id, absolutePath.c_str(), {desc, entry});
-	}
-
-	return result;
-}
-
-SharedPtr<PixelShader> ResourceManager::getPixelShader(const char* path, const char* entry)
-{
-	string absolutePath = getAbsolutePath(path);
-	ResourceId id = getResourceId(string{absolutePath + "@" + entry}.c_str());
-
-	SharedPtr<PixelShader> result = getResource<PixelShader>(id);
-	if (!result) {
-		ResourceDesc desc = getResourceDesc(id, absolutePath.c_str());
-		result = createResource<PixelShader, PixelShaderDesc>(id, absolutePath.c_str(), {desc, entry});
+		result = createResource<Shader, ShaderDesc>(id, absolutePath.c_str(), {desc, entry, type});
 	}
 
 	return result;
