@@ -2,10 +2,8 @@
 #define GENESIS_INPUT_MANAGER_H
 #include <core/Base.h>
 #include <core/Core.h>
+#include <display/Window.h>
 #include <input/InputListener.h>
-#include <input/InputCodes.h>
-#include <window/Window.h>
-#include <vector>
 
 namespace genesis
 {
@@ -34,9 +32,13 @@ namespace genesis
 		virtual bool isMouseReleased(MouseButton button) const = 0;
 		virtual Point getMousePosition() const = 0;
 		virtual Point getMouseDelta() const = 0;
+		bool isMouseVisible() const noexcept;
+		bool isMouseLocked() const noexcept;
 
 		virtual void setMousePosition(Point pos) = 0;
 		virtual void setMouseVisibility(bool visible) = 0;
+		virtual void setMouseLock(bool lock) = 0;
+		void ignoreNextMouseMove() noexcept;
 
 		static UniquePtr<InputManager> create(const InputManagerDesc& desc);
 
@@ -46,6 +48,9 @@ namespace genesis
 	protected:
 		Window& m_window;
 		std::vector<InputListener*> m_listeners;
+		bool m_mouseVisible;
+		bool m_mouseLocked;
+		bool m_ignoreNextMouseMove;
 	};
 }
 

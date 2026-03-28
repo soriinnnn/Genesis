@@ -7,6 +7,7 @@ namespace genesis
 	{
 	public:
 		Vec4();
+		Vec4(float x, float y, float z);
 		Vec4(float x, float y, float z, float w);
 
 		const float* toArray() const noexcept;

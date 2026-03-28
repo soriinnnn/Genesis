@@ -27,10 +27,12 @@ namespace genesis
 
 		void setMousePosition(Point pos) override;
 		void setMouseVisibility(bool visible) override;
+		void setMouseLock(bool lock) override;
  
 	private:
 		void updateKeyboard();
 		void updateMouse();
+		void updateMousePosition();
 
 	private:
 		uint8 m_currentKeys[KEYBOARD_STATE_SIZE];
@@ -38,7 +40,6 @@ namespace genesis
 		Point m_currentMousePos;
 		Point m_previousMousePos;
 		bool m_lostFocus;
-		bool m_mouseVisible;
 	};
 }
 

@@ -10,6 +10,14 @@ Vec4::Vec4()
 	this->w = 0;
 }
 
+Vec4::Vec4(float x, float y, float z)
+{
+	this->x = x;
+	this->y = y;
+	this->z = z;
+	this->w = 0;
+}
+
 Vec4::Vec4(float x, float y, float z, float w)
 {
 	this->x = x;

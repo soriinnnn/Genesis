@@ -5,7 +5,12 @@
 using namespace genesis;
 using namespace std;
 
-InputManager::InputManager(const InputManagerDesc& desc): Base(desc.base), m_window(desc.wnd) {}
+InputManager::InputManager(const InputManagerDesc& desc): Base(desc.base), m_window{desc.wnd}
+{
+	m_mouseVisible = true;
+	m_mouseLocked = false;
+	m_ignoreNextMouseMove = false;
+}
 
 InputManager::~InputManager() {}
 
@@ -24,6 +29,21 @@ void InputManager::removeListener(InputListener* listener)
 		*it = m_listeners.back();
 		m_listeners.pop_back();
 	}
+}
+
+bool InputManager::isMouseVisible() const noexcept
+{
+	return m_mouseVisible;
+}
+
+bool InputManager::isMouseLocked() const noexcept
+{
+	return m_mouseLocked;
+}
+
+void InputManager::ignoreNextMouseMove() noexcept
+{
+	m_ignoreNextMouseMove = true;
 }
 
 UniquePtr<InputManager> InputManager::create(const InputManagerDesc& desc)

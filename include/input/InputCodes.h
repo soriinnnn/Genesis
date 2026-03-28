@@ -1,5 +1,5 @@
-#ifndef GENESIS_INPUT_KEY_CODES_H
-#define GENESIS_INPUT_KEY_CODES_H
+#ifndef GENESIS_INPUT_CODES_H
+#define GENESIS_INPUT_CODES_H
 
 namespace genesis
 {
@@ -11,6 +11,7 @@ namespace genesis
 		Escape, Space, Enter, Tab, Backspace, 
 		LeftShift, RightShift, LeftControl, RightControl, LeftAlt, RightAlt,
 		Up, Down, Left, Right,
+		F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
 		Count
 	};
 
@@ -23,7 +24,7 @@ namespace genesis
 		Extra1,
 		Extra2,
 		Count
-	};
+	};	
 }
 
 #endif

@@ -1,11 +1,10 @@
 #include <graphics/GraphicsDevice.h>
-#include <graphics/DeviceContext.h>
 #include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;
 using namespace std;
 
-GraphicsDevice::GraphicsDevice(const GraphicsDeviceDesc& desc) : Base(desc.base)
+GraphicsDevice::GraphicsDevice(const GraphicsDeviceDesc& desc): Base(desc.base)
 {
     D3D_FEATURE_LEVEL featureLevel;
     UINT createDeviceFlags = 0;
@@ -58,9 +57,14 @@ SharedPtr<DeviceContext> GraphicsDevice::createDeviceContext()
     return make_shared<DeviceContext>(getGraphicsResourceDesc());
 }
 
-SharedPtr<ShaderBinary> GraphicsDevice::compileShader(const ShaderCompileDesc& desc)
+SharedPtr<ShaderBinary> GraphicsDevice::compileShader(const ShaderBinaryDesc& desc)
 {
     return make_shared<ShaderBinary>(desc, getGraphicsResourceDesc());
+}
+
+SharedPtr<ShaderSignature> GraphicsDevice::reflectShader(const ShaderSignatureDesc& desc)
+{
+    return make_shared<ShaderSignature>(desc, getGraphicsResourceDesc());
 }
 
 SharedPtr<GraphicsPipelineState> GraphicsDevice::createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc)
@@ -73,11 +77,6 @@ SharedPtr<VertexBuffer> GraphicsDevice::createVertexBuffer(const VertexBufferDes
     return make_shared<VertexBuffer>(desc, getGraphicsResourceDesc());
 }
 
-SharedPtr<VertexShaderSignature> GraphicsDevice::createVertexShaderSignature(const VertexShaderSignatureDesc& desc)
-{
-    return make_shared<VertexShaderSignature>(desc, getGraphicsResourceDesc());
-}
-
 SharedPtr<ConstantBuffer> GraphicsDevice::createConstantBuffer(const ConstantBufferDesc& desc)
 {
     return make_shared<ConstantBuffer>(desc, getGraphicsResourceDesc());
@@ -88,9 +87,24 @@ SharedPtr<IndexBuffer> GraphicsDevice::createIndexBuffer(const IndexBufferDesc& 
     return make_shared<IndexBuffer>(desc, getGraphicsResourceDesc());
 }
 
+SharedPtr<GraphicsTexture> GraphicsDevice::createGraphicsTexture(const GraphicsTextureDesc& desc)
+{
+    return make_shared<GraphicsTexture>(desc, getGraphicsResourceDesc());
+}
+
+SharedPtr<DepthBuffer> GraphicsDevice::createDepthBuffer(const DepthBufferDesc& desc)
+{
+    return make_shared<DepthBuffer>(desc, getGraphicsResourceDesc());
+}
+
 void GraphicsDevice::clearState()
 {
     m_d3dContext->ClearState();
+}
+
+void GraphicsDevice::clearCommandList(DeviceContext& context)
+{
+    context.m_context->ClearState();
 }
 
 void GraphicsDevice::executeCommandList(DeviceContext& context)
@@ -107,8 +121,8 @@ void GraphicsDevice::executeCommandList(DeviceContext& context)
 GraphicsResourceDesc GraphicsDevice::getGraphicsResourceDesc() noexcept
 {
     return GraphicsResourceDesc{
-        BaseDesc{m_logger},
-        shared_from_this(), 
+        m_logger,
+        *this, 
         *m_d3dDevice.Get(), 
         *m_dxgiFactory.Get()
     };

@@ -11,7 +11,6 @@ static int mapGenesisMouseToWin32(MouseButton button);
 Win32InputManager::Win32InputManager(const InputManagerDesc& desc): InputManager(desc), m_currentKeys({}), m_previousKeys({}) 
 {
     m_lostFocus = true;
-    m_mouseVisible = true;
 }
 
 Win32InputManager::~Win32InputManager() {}
@@ -20,10 +19,13 @@ void Win32InputManager::update()
 {
     if (!m_window.hasFocus()) {
         if (!m_lostFocus) {
-            ShowCursor(true);
             memset(m_currentKeys, 0, sizeof(uint8) * KEYBOARD_STATE_SIZE);
             memset(m_previousKeys, 0, sizeof(uint8) * KEYBOARD_STATE_SIZE);
             m_lostFocus = true;
+
+            if (!m_mouseVisible) {
+                ShowCursor(true);
+            }
         }
         return;
     }
@@ -151,6 +153,19 @@ void Win32InputManager::setMouseVisibility(bool visible)
     m_mouseVisible = visible;
 }
 
+void Win32InputManager::setMouseLock(bool lock)
+{
+    if (m_mouseLocked == lock) {
+        return;
+    }
+
+    m_mouseLocked = lock;
+    if (m_mouseLocked) {
+        Rect size = m_window.getSize();
+        setMousePosition({size.width() / 2, size.height() / 2});
+    }
+}
+
 void Win32InputManager::updateKeyboard()
 {
     memcpy(m_previousKeys, m_currentKeys, sizeof(uint8) * KEYBOARD_STATE_SIZE);
@@ -183,34 +198,8 @@ void Win32InputManager::updateKeyboard()
 
 void Win32InputManager::updateMouse()
 {
-    POINT pos{};
-    if (!GetCursorPos(&pos)) {
-        GENESIS_LOG_WARNING("GetCursorPos failed.\nError code: 0x{:08x}", GetLastError());
-        return;
-    }
-
-    if (!ScreenToClient(static_cast<HWND>(m_window.getHandle()), &pos)) {
-        GENESIS_LOG_WARNING("ScreenToClient failed.\nError code: 0x{:08x}", GetLastError());
-        return;
-    }
-
-    m_previousMousePos = m_currentMousePos;
-    m_currentMousePos = Point{pos.x, pos.y};
-
-    if (m_lostFocus) {
-        ShowCursor(false);
-        m_previousMousePos = m_currentMousePos;
-        m_lostFocus = false;
-    }
-
-    if (m_currentMousePos.x != m_previousMousePos.x || m_currentMousePos.y != m_previousMousePos.y) {
-        Point delta = getMouseDelta();
-
-        for (auto listener : m_listeners) {
-            listener->onMouseMove(delta, m_currentMousePos);
-        }
-    }
-
+    updateMousePosition();
+    
     for (int i = 1; i < static_cast<int>(MouseButton::Count); i++) {
         MouseButton button = static_cast<MouseButton>(i);
 
@@ -235,9 +224,52 @@ void Win32InputManager::updateMouse()
     }
 }
 
+void Win32InputManager::updateMousePosition()
+{
+    POINT pos{};
+    if (!GetCursorPos(&pos)) {
+        GENESIS_LOG_WARNING("GetCursorPos failed.\nError code: 0x{:08x}", GetLastError());
+        return;
+    }
+    if (!ScreenToClient(static_cast<HWND>(m_window.getHandle()), &pos)) {
+        GENESIS_LOG_WARNING("ScreenToClient failed.\nError code: 0x{:08x}", GetLastError());
+        return;
+    }
+
+    if (m_mouseLocked) {
+        Rect size = m_window.getSize();
+        setMousePosition({size.width() / 2, size.height() / 2});
+    }
+
+    m_previousMousePos = m_currentMousePos;
+    m_currentMousePos = Point{pos.x, pos.y};
+
+    if (m_lostFocus) {
+        m_previousMousePos = m_currentMousePos;
+        m_lostFocus = false;
+
+        if (!m_mouseVisible) {
+            ShowCursor(false);
+        }
+    }
+
+    if (!m_ignoreNextMouseMove) {
+        if (m_currentMousePos.x != m_previousMousePos.x || m_currentMousePos.y != m_previousMousePos.y) {
+            Point delta = getMouseDelta();
+            for (auto listener : m_listeners) {
+                listener->onMouseMove(delta, m_currentMousePos);
+            }
+        }
+    }
+    else {
+        m_previousMousePos = m_currentMousePos;
+        m_ignoreNextMouseMove = false;
+    }
+}
+
 /* STATIC FUNCTION DEFINITIONS */
 
-static Key mapWin32ToGenesisKey(int vkCode)
+Key mapWin32ToGenesisKey(int vkCode)
 {
 	switch (vkCode) {
     case 'A': return Key::A; 
@@ -291,11 +323,23 @@ static Key mapWin32ToGenesisKey(int vkCode)
     case VK_DOWN: return Key::Down;
     case VK_LEFT: return Key::Left;
     case VK_RIGHT: return Key::Right;
+    case VK_F1: return Key::F1;
+    case VK_F2: return Key::F2;
+    case VK_F3: return Key::F3;
+    case VK_F4: return Key::F4;
+    case VK_F5: return Key::F5;
+    case VK_F6: return Key::F6;
+    case VK_F7: return Key::F7;
+    case VK_F8: return Key::F8;
+    case VK_F9: return Key::F9;
+    case VK_F10: return Key::F10;
+    case VK_F11: return Key::F11;
+    case VK_F12: return Key::F12;
     default: return Key::Unknown;
 	}
 }
 
-static int mapGenesisKeyToWin32(Key key)
+int mapGenesisKeyToWin32(Key key)
 {
 	switch (key) {
     case Key::A: return 'A'; 
@@ -349,11 +393,23 @@ static int mapGenesisKeyToWin32(Key key)
     case Key::Down: return VK_DOWN;
     case Key::Left: return VK_LEFT;
     case Key::Right: return VK_RIGHT;
+    case Key::F1: return VK_F1;
+    case Key::F2: return VK_F2;
+    case Key::F3: return VK_F3;
+    case Key::F4: return VK_F4;
+    case Key::F5: return VK_F5;
+    case Key::F6: return VK_F6;
+    case Key::F7: return VK_F7;
+    case Key::F8: return VK_F8;
+    case Key::F9: return VK_F9;
+    case Key::F10: return VK_F10;
+    case Key::F11: return VK_F11;
+    case Key::F12: return VK_F12;
     default: return 0;
 	}
 }
 
-static MouseButton mapWin32ToGenesisMouse(int vkCode)
+MouseButton mapWin32ToGenesisMouse(int vkCode)
 {
     switch(vkCode) {
     case VK_LBUTTON: return MouseButton::Left;
@@ -365,7 +421,7 @@ static MouseButton mapWin32ToGenesisMouse(int vkCode)
     }
 }
 
-static int mapGenesisMouseToWin32(MouseButton button)
+int mapGenesisMouseToWin32(MouseButton button)
 {
     switch (button) {
     case MouseButton::Left: return VK_LBUTTON;

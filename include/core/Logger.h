@@ -1,7 +1,7 @@
 #ifndef GENESIS_LOGGER_H
 #define GENESIS_LOGGER_H
+#include <core/Core.h>
 #include <core/utils/Macros.h>
-#include <format>
 
 namespace genesis
 {

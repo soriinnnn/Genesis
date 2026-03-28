@@ -1,0 +1,18 @@
+#ifndef GENESIS_TEST_WORLD_H
+#define GENESIS_TEST_WORLD_H
+#include <game/World.h>
+
+namespace genesis
+{
+	class TestWorld final: public World
+	{
+	public:
+		explicit TestWorld(const WorldDesc& desc);
+		~TestWorld() override;
+
+	private:
+		void onUpdate(float deltaTime) override;
+	};
+}
+
+#endif
