@@ -3,6 +3,7 @@
 #include <core/Core.h>
 #include <core/Logger.h>
 #include <core/utils/Macros.h>
+#include <input/InputListener.h>
 #include <math/Rect.h>
 
 #include <game/TestWorld.h>
@@ -16,7 +17,7 @@ namespace genesis
         Logger::LogLevel logLevel = Logger::LogLevel::Error;
     };
 
-    class Game
+    class Game: public InputListener
     {
     GENESIS_DISABLE_COPY_AND_MOVE(Game)
     public:
@@ -25,6 +26,12 @@ namespace genesis
 
         Logger& getLogger() noexcept;
         virtual void run();
+
+        void onKeyDown(Key key);
+        void onKeyUp(Key key);
+        void onMouseMove(Point delta, Point pos);
+        void onMouseDown(MouseButton button, Point pos);
+        void onMouseUp(MouseButton button, Point pos);
 
     private:
         void onInternalUpdate();
@@ -41,6 +48,7 @@ namespace genesis
         std::chrono::steady_clock::time_point m_previousTime;
         
         UniquePtr<TestWorld> m_testWorld;
+        bool m_centerMouse;
     };
 }
 

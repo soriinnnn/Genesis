@@ -57,7 +57,7 @@ SharedPtr<DeviceContext> GraphicsDevice::createDeviceContext()
     return make_shared<DeviceContext>(getGraphicsResourceDesc());
 }
 
-SharedPtr<ShaderBinary> GraphicsDevice::compileShader(const ShaderCompileDesc& desc)
+SharedPtr<ShaderBinary> GraphicsDevice::compileShader(const ShaderBinaryDesc& desc)
 {
     return make_shared<ShaderBinary>(desc, getGraphicsResourceDesc());
 }
@@ -100,6 +100,11 @@ SharedPtr<DepthBuffer> GraphicsDevice::createDepthBuffer(const DepthBufferDesc& 
 void GraphicsDevice::clearState()
 {
     m_d3dContext->ClearState();
+}
+
+void GraphicsDevice::clearCommandList(DeviceContext& context)
+{
+    context.m_context->ClearState();
 }
 
 void GraphicsDevice::executeCommandList(DeviceContext& context)

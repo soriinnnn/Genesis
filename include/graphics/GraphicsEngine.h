@@ -29,8 +29,6 @@ namespace genesis
             Mat4 view;
             Mat4 projection;
             Vec3 camPos;
-            float padding;
-            Vec4 lightDirection;
         };
 
         struct alignas(16) ObjectData
@@ -38,11 +36,19 @@ namespace genesis
             Mat4 world;
         };
 
+        struct alignas(16) LightData
+        {
+            Vec4 direction;
+            Vec4 color;
+            float intensity;
+        };
+
     private:
         UniquePtr<GraphicsDevice> m_graphicsDevice;
         SharedPtr<DeviceContext> m_deviceContext;
         SharedPtr<ConstantBuffer> m_cameraBuffer;
         SharedPtr<ConstantBuffer> m_objectBuffer;
+        SharedPtr<ConstantBuffer> m_lightBuffer;
     };
 }
 

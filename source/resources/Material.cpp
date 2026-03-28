@@ -4,19 +4,18 @@
 #include <resources/ResourceManager.h>
 #include <resources/utils/ResourcesUtils.h>
 #include <graphics/GraphicsDevice.h>
+#include <graphics/utils/GraphicsMacros.h>
 #include <nlohmann/json.hpp>
 #include <cmath>
-
-#define MATERIAL_CONSTANT_BUFFER_NAME "MaterialProperties"
 
 using namespace genesis;
 using namespace std;
 using namespace nlohmann;
 
 static SharedPtr<Shader> getShader(json& data, ShaderType type, ResourceManager& resourceManager);
-static vector<uint8> getPropertiesValues(json& data, const ShaderReflectionConstantBuffer& cbuffer, Logger& logger);
+static vector<uint8> getPropertiesValues(json& data, const ShaderReflectionConstantBuffer& cbuffer, const char* path, Logger& logger);
 
-Material::Material(const MaterialDesc& desc): Resource(desc.resource), m_propertiesSlot(0)
+Material::Material(const MaterialDesc& desc): Resource(desc.resource)
 {
 	try {
 		json data = json::parse(resourcesUtils::readFile(m_path.c_str()));
@@ -33,21 +32,33 @@ Material::Material(const MaterialDesc& desc): Resource(desc.resource), m_propert
 		if (data.contains("textures")) {
 			for (auto& texture : data["textures"]) {
 				string path = texture.at("path");
-				m_textures.push_back(desc.resource.resourceManager.getTexture(path.c_str()));
+				uint32 slot = texture.at("slot");
+				m_textures.push_back({desc.resource.resourceManager.getTexture(path.c_str()), slot});
 			}
 		}
 		
 		if (data.contains("properties")) {
+			const ShaderReflectionConstantBuffer* cbuffer = nullptr;
+			auto& vsSignature = m_vertexShader->getSignature();
 			auto& psSignature = m_pixelShader->getSignature();
-			const ShaderReflectionConstantBuffer* cbuffer = psSignature.getConstantBufferReflection(MATERIAL_CONSTANT_BUFFER_NAME);
 			
-			if (cbuffer) {
-				vector<uint8> buffer = getPropertiesValues(data, *cbuffer, getLogger());
-				m_properties = desc.resource.graphicsDevice.createConstantBuffer({buffer.data(), static_cast<uint32>(buffer.size())});
-				m_propertiesSlot = cbuffer->slot;
+			if (vsSignature.hasConstantBuffer(MATERIAL_CONSTANT_BUFFER_NAME)) {
+				cbuffer = vsSignature.getConstantBufferReflection(MATERIAL_CONSTANT_BUFFER_NAME);
+			}
+			else if (psSignature.hasConstantBuffer(MATERIAL_CONSTANT_BUFFER_NAME)) {
+				cbuffer = psSignature.getConstantBufferReflection(MATERIAL_CONSTANT_BUFFER_NAME);
 			}
 			else {
-				GENESIS_LOG_WARNING("Material \"{}\" has properties defined but shader has no constant buffer \"{}\".", m_path.c_str(), MATERIAL_CONSTANT_BUFFER_NAME);
+				GENESIS_LOG_WARNING("Material \"{}\" has properties defined but no \"{}\" constant buffer found in shaders, skipping.", m_path.c_str(), MATERIAL_CONSTANT_BUFFER_NAME);
+			}
+
+			if (cbuffer) {
+				vector<uint8> buffer = getPropertiesValues(data, *cbuffer, m_path.c_str(), getLogger());
+				m_properties = desc.resource.graphicsDevice.createConstantBuffer({buffer.data(), static_cast<uint32>(buffer.size())});
+
+				if (cbuffer->slot != MATERIAL_CONSTANT_BUFFER_SLOT) {
+					GENESIS_LOG_WARNING("Material \"{}\" constant buffer \"{}\" is at slot {} but expected slot {}.", m_path.c_str(), MATERIAL_CONSTANT_BUFFER_NAME, cbuffer->slot, MATERIAL_CONSTANT_BUFFER_SLOT);
+				}
 			}
 		}
 	}
@@ -69,15 +80,7 @@ bool Material::hasProperties() const noexcept
 	return m_properties.get() != nullptr;
 }
 
-uint32 Material::getPropertiesSlot() const
-{
-	if (!hasProperties()) {
-		GENESIS_LOG_THROW_ERROR("Material \"{}\" has no properties buffer.", m_path.c_str());
-	}
-	return m_propertiesSlot;
-}
-
-const vector<SharedPtr<Texture>>& Material::getTextures() const noexcept
+const vector<Material::TextureBinding>& Material::getTextures() const noexcept
 {
 	return m_textures;
 }
@@ -114,7 +117,7 @@ static SharedPtr<Shader> getShader(json& data, ShaderType type, ResourceManager&
 	auto& shaders = data.at("shaders");
 
 	switch (type) {
-	case ShaderType::VertexShader:
+	case ShaderType::VertexShader: 
 	{
 		path = shaders.at("vertex").at("path");
 		entry = shaders.at("vertex").at("entry");
@@ -124,21 +127,21 @@ static SharedPtr<Shader> getShader(json& data, ShaderType type, ResourceManager&
 	{
 		path = shaders.at("pixel").at("path");
 		entry = shaders.at("pixel").at("entry");
-	}
+	} 
 	break;
 	}
 
 	return resourceManager.getShader(path.c_str(), entry.c_str(), type);
 }
 
-static vector<uint8> getPropertiesValues(json& data, const ShaderReflectionConstantBuffer& cbuffer, Logger& logger)
+static vector<uint8> getPropertiesValues(json& data, const ShaderReflectionConstantBuffer& cbuffer, const char* path, Logger& logger)
 {
 	vector<uint8> values(cbuffer.size, 0);
 
 	for (auto& [name, value] : data["properties"].items()) {
 		auto it = cbuffer.variables.find(name);
 		if (it == cbuffer.variables.end()) {
-			GENESIS_LOG(logger, Logger::LogLevel::Warning, "Property \"{}\" not found in material properties, skipping.", name);
+			GENESIS_LOG(logger, Logger::LogLevel::Warning, "Material \"{}\" property \"{}\" not found, skipping.", path, name);
 			continue;
 		}
 
@@ -151,6 +154,10 @@ static vector<uint8> getPropertiesValues(json& data, const ShaderReflectionConst
 		else if (value.is_array()) {
 			vector<float> fs = value.get<vector<float>>();
 			size_t size = fs.size() * sizeof(float);
+
+			if (size > var.size) {
+				GENESIS_LOG(logger, Logger::LogLevel::Warning, "Material \"{}\" property \"{}\" array is larger than expected, truncating.", path, name);
+			}
 			memcpy(values.data() + var.offset, fs.data(), min<size_t>(var.size, size));
 		}
 		else if (value.is_number_integer()) {
@@ -158,7 +165,7 @@ static vector<uint8> getPropertiesValues(json& data, const ShaderReflectionConst
 			memcpy(values.data() + var.offset, &i, var.size);
 		}
 		else {
-			GENESIS_LOG(logger, Logger::LogLevel::Warning, "Property \"{}\" has unsupported type, skipping.", name);
+			GENESIS_LOG(logger, Logger::LogLevel::Warning, "Material \"{}\" property \"{}\" has unsupported type, skipping.", path, name);
 		}
 	}
 

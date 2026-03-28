@@ -55,7 +55,7 @@ namespace genesis
 		template<typename T>
 		T* createComponent(ComponentId id)
 		{
-			T* component = new T{ComponentDesc{*this}};
+			T* component = new T{ComponentDesc{m_logger, *this}};
 			UniquePtr<Component> componentPtr{component};
 
 			m_components.emplace(id, std::move(componentPtr));

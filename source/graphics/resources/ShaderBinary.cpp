@@ -5,7 +5,7 @@
 
 using namespace genesis;
 
-ShaderBinary::ShaderBinary(const ShaderCompileDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
+ShaderBinary::ShaderBinary(const ShaderBinaryDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
 	if (!sdesc.shaderSourceName) {
 		GENESIS_LOG_THROW_INVALID_ARG("No shader source name provided.");

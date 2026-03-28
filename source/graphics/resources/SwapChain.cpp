@@ -2,16 +2,17 @@
 #include <graphics/GraphicsDevice.h>
 #include <graphics/utils/GraphicsLogUtils.h>
 
+#define DXGI_SWAP_CHAIN_FLAGS (DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH | DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING)
+
 using namespace genesis;
 
 static DXGI_SWAP_CHAIN_DESC createSwapChainDesc(const SwapChainDesc& desc);
 
-SwapChain::SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
+SwapChain::SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc), m_size{sdesc.wndSize}
 {
 	if (!sdesc.wndHandle) {
 		GENESIS_LOG_THROW_INVALID_ARG("Window handle is null.");
 	}
-	m_size = sdesc.wndSize;
 
 	DXGI_SWAP_CHAIN_DESC dxgiDesc = createSwapChainDesc(sdesc);
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
@@ -38,31 +39,35 @@ void SwapChain::resize(uint32 width, uint32 height)
 	if (m_size.width() == static_cast<int32>(width) && m_size.height() == static_cast<int32>(height)) {
 		return;
 	}
-
 	m_size = Rect{static_cast<int32>(width), static_cast<int32>(height)};
-	m_graphicsDevice.clearState();
 
 	m_renderTarget.Reset();
+	m_depthBuffer.reset();
+
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_swapChain->ResizeBuffers(
 			0, 
 			width, 
 			height, 
 			DXGI_FORMAT_UNKNOWN, 
-			0
+			DXGI_SWAP_CHAIN_FLAGS
 		),
 		"ResizeBuffers failed."
 	);
 	updateRenderTargetView();
 
-	m_depthBuffer.reset();
 	m_depthBuffer = m_graphicsDevice.createDepthBuffer({m_size});
 }
 
 void SwapChain::present(bool vsync)
 {
+	uint32 flags = 0;
+	if (!vsync) {
+		flags = DXGI_PRESENT_ALLOW_TEARING;
+	}
+
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
-		m_swapChain->Present(vsync, 0),
+		m_swapChain->Present(vsync, flags),
 		"Present failed."
 	);
 }
@@ -94,6 +99,7 @@ static DXGI_SWAP_CHAIN_DESC createSwapChainDesc(const SwapChainDesc& desc) {
 	dxgiDesc.OutputWindow = static_cast<HWND>(desc.wndHandle);
 	dxgiDesc.Windowed = true;
 	dxgiDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	dxgiDesc.Flags = DXGI_SWAP_CHAIN_FLAGS;
 
 	return dxgiDesc;
 }

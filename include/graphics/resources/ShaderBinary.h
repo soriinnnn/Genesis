@@ -6,7 +6,7 @@
 
 namespace genesis
 {
-	struct ShaderCompileDesc
+	struct ShaderBinaryDesc
 	{
 		const char* shaderSourceName{};
 		const void* shaderSourceCode{};
@@ -18,7 +18,7 @@ namespace genesis
 	class ShaderBinary final: public GraphicsResource
 	{
 	public:
-		ShaderBinary(const ShaderCompileDesc& sdesc, const GraphicsResourceDesc& gdesc);
+		ShaderBinary(const ShaderBinaryDesc& sdesc, const GraphicsResourceDesc& gdesc);
 		~ShaderBinary() override;
 
 		BinaryData getData() const noexcept;

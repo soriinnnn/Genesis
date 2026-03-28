@@ -14,12 +14,12 @@ namespace genesis
 		~DeviceContext() override;
 
 		void clearAndSetBackBuffer(const SwapChain& swapChain, const Vec4& color);
+		void updateConstantBuffer(const ConstantBuffer& buffer, const void* data);
 		void setGraphicsPipelineState(const GraphicsPipelineState& graphicsPipeline);
 		void setViewport(const Rect& size);
 		void setVertexBuffer(const VertexBuffer& buffer);
 		void setIndexBuffer(const IndexBuffer& buffer);
-		void setConstantBuffer(const ConstantBuffer& buffer, ShaderType type, uint32 slot = 0);
-		void updateConstantBuffer(const ConstantBuffer& buffer, const void* data);
+		void setConstantBuffer(const ConstantBuffer& buffer, uint32 slot = 0);
 		void setTexture(const GraphicsTexture& texture, uint32 slot = 0);
 
 		void draw(uint32 vertexCount, uint32 startVertexLocation = 0);

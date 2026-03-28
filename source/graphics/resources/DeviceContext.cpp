@@ -31,6 +31,28 @@ void DeviceContext::clearAndSetBackBuffer(const SwapChain& swapChain, const Vec4
 	m_context->OMSetRenderTargets(1, &renderTarget, depthView);
 }
 
+void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const void* data)
+{
+	if (!data) {
+		GENESIS_LOG_THROW_ERROR("Null data pointer.");
+	}
+
+	ID3D11Buffer* buff = buffer.m_buffer.Get();
+	D3D11_MAPPED_SUBRESOURCE mapped{};
+	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
+		m_context->Map(
+			buff,
+			0,
+			D3D11_MAP_WRITE_DISCARD,
+			0,
+			&mapped
+		),
+		"ID3D11DeviceContext::Map failed."
+	);
+	memcpy(mapped.pData, data, buffer.m_size);
+	m_context->Unmap(buff, 0);
+}
+
 void DeviceContext::setGraphicsPipelineState(const GraphicsPipelineState& graphicsPipeline)
 {
 	m_context->IASetInputLayout(graphicsPipeline.m_inputLayout.Get());
@@ -63,49 +85,20 @@ void DeviceContext::setVertexBuffer(const VertexBuffer& buffer)
 void DeviceContext::setIndexBuffer(const IndexBuffer& buffer)
 {
 	ID3D11Buffer* buff = buffer.m_buffer.Get();
-
 	m_context->IASetIndexBuffer(buff, buffer.m_indexFormat, 0);
 }
 
-void DeviceContext::setConstantBuffer(const ConstantBuffer& buffer, ShaderType type, uint32 slot)
+void DeviceContext::setConstantBuffer(const ConstantBuffer& buffer, uint32 slot)
 {
 	ID3D11Buffer* buff = buffer.m_buffer.Get();
-
-	switch (type) {
-	case ShaderType::VertexShader:
-		m_context->VSSetConstantBuffers(slot, 1, &buff);
-		break;
-	case ShaderType::PixelShader:
-		m_context->PSSetConstantBuffers(slot, 1, &buff);
-		break;
-	}
-}
-	
-void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const void* data)
-{
-	if (!data) {
-		GENESIS_LOG_THROW_ERROR("Null data pointer.");
-	}
-
-	ID3D11Buffer* buff = buffer.m_buffer.Get();
-	D3D11_MAPPED_SUBRESOURCE mapped{};
-	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
-		m_context->Map(
-			buff, 
-			0,
-			D3D11_MAP_WRITE_DISCARD, 
-			0, 
-			&mapped
-		),
-		"ID3D11DeviceContext::Map failed."
-	);
-	memcpy(mapped.pData, data, buffer.m_size);
-	m_context->Unmap(buff, 0);
+	m_context->VSSetConstantBuffers(slot, 1, &buff);
+	m_context->PSSetConstantBuffers(slot, 1, &buff);
 }
 
 void DeviceContext::setTexture(const GraphicsTexture& texture, uint32 slot)
 {
 	ID3D11ShaderResourceView* resourceView = texture.m_resourceView.Get();
+	m_context->VSSetShaderResources(slot, 1, &resourceView);
 	m_context->PSSetShaderResources(slot, 1, &resourceView);
 }
 

@@ -21,6 +21,7 @@ namespace genesis
 		bool hasConstantBuffer(const char* name) const;
 		uint32 getConstantBufferSlot(const char* name) const;
 		const ShaderReflectionConstantBuffer* getConstantBufferReflection(const char* name) const;
+
 		BinaryData getInputElementsData() const noexcept;
 
 	private:

@@ -3,9 +3,6 @@
 #include <input/InputManager.h>
 #include <graphics/GraphicsEngine.h>
 #include <resources/ResourceManager.h>
-#include <resources/Texture.h>
-#include <resources/Mesh.h>
-#include <entity/EntityManager.h>
 
 using namespace genesis;
 using namespace std;
@@ -16,19 +13,20 @@ Game::Game(const GameDesc& desc)
     m_logger = make_unique<Logger>(desc.logLevel);
     m_graphicsEngine = make_unique<GraphicsEngine>(GraphicsEngineDesc{*m_logger});
     m_resourceManager = make_unique<ResourceManager>(ResourceManagerDesc{*m_logger, m_graphicsEngine->getGraphicsDevice()});
-    m_display = make_unique<Display>(DisplayDesc{*m_logger, desc.wndSize, desc.wndTitle, m_graphicsEngine->getGraphicsDevice()});
+    m_display = make_unique<Display>(DisplayDesc{*m_logger, desc.wndSize, desc.wndTitle, WindowStyle::Windowed, m_graphicsEngine->getGraphicsDevice()});
     m_inputManager = InputManager::create(InputManagerDesc{*m_logger, m_display->getWindow()});
     m_isRunning = true;
 
     m_testWorld = make_unique<TestWorld>(WorldDesc{*m_logger, *m_inputManager, *m_resourceManager});
-    m_inputManager->setMouseVisibility(false);
-
+    m_centerMouse = false;
+    m_inputManager->addListener(this);
     GENESIS_LOG_INFO("Game initialized.");
 }
 
 Game::~Game() 
 {
     GENESIS_LOG_INFO("Game is shutting down...");
+    m_inputManager->removeListener(this);
 }
 
 Logger& Game::getLogger() noexcept
@@ -41,11 +39,6 @@ void Game::onInternalUpdate()
     float deltaTime = getDeltaTime();
 
     m_inputManager->update();
-
-    // Mouse center...
-    auto size = m_display->getSize();
-    m_inputManager->setMousePosition({size.width() / 2, size.height() / 2});
-
     m_testWorld->update(deltaTime);
     m_graphicsEngine->render(*m_testWorld, m_display->getSwapChain(), deltaTime);
 }
@@ -58,3 +51,35 @@ float Game::getDeltaTime()
 
     return delta.count();
 }
+
+void Game::onKeyDown(Key key) {}
+
+void Game::onKeyUp(Key key) 
+{
+    switch (key) {
+    case Key::G:
+    {
+        m_centerMouse = !m_centerMouse;
+        m_inputManager->setMouseLock(m_centerMouse);
+        m_inputManager->setMouseVisibility(!m_centerMouse);
+        break;
+    }
+    case Key::F11:
+    {
+        if (!m_display->isBorderless()) {
+            m_display->toggleBorderless(1920, 1080);
+        }
+        else {
+            m_display->toggleBorderless(1280, 720);
+        }
+        m_inputManager->ignoreNextMouseMove();
+        break;
+    }
+    }
+}
+
+void Game::onMouseMove(Point delta, Point pos) {}
+
+void Game::onMouseDown(MouseButton button, Point pos) {}
+
+void Game::onMouseUp(MouseButton button, Point pos) {}

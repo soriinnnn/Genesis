@@ -1,8 +1,8 @@
 #include <game/TestWorld.h>
 #include <input/InputManager.h>
-#include <entity/EntityManager.h>
 #include <entity/Entity.h>
 #include <entity/Player.h>
+#include <entity/EntityManager.h>
 #include <entity/components/Transform.h>
 #include <entity/components/Camera.h>
 #include <entity/components/MeshRenderer.h>
@@ -24,23 +24,21 @@ TestWorld::TestWorld(const WorldDesc& desc): World(desc)
     statueMesh->setMesh(mesh);
     statueMesh->setMaterial(material);
 
-    // PROVA...
     m_player = m_entityManager->createEntity<Player>();
-    m_inputManager.addListener(m_player->getComponent<PlayerController>());
+    m_player->getComponent<PlayerController>()->setInputManager(m_inputManager);
 }
 
 TestWorld::~TestWorld() 
 {
     m_resourceManager.unloadUnused();
-
-    // PROVA...
-    m_inputManager.removeListener(m_player->getComponent<PlayerController>());
 }
 
 void TestWorld::onUpdate(float deltaTime)
 {
     showFramerate(deltaTime, getLogger());
-    m_player->update(deltaTime);
+    for (auto& [id, entity] : m_entityManager->getEntities()) {
+        entity->update(deltaTime);
+    }
 }
 
 /* STATIC FUNCTION DEFINITIONS */

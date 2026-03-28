@@ -31,7 +31,7 @@ namespace genesis
 
         SharedPtr<SwapChain> createSwapChain(const SwapChainDesc& desc);
         SharedPtr<DeviceContext> createDeviceContext();
-        SharedPtr<ShaderBinary> compileShader(const ShaderCompileDesc& desc);
+        SharedPtr<ShaderBinary> compileShader(const ShaderBinaryDesc& desc);
         SharedPtr<ShaderSignature> reflectShader(const ShaderSignatureDesc& desc);
         SharedPtr<GraphicsPipelineState> createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc);
         SharedPtr<VertexBuffer> createVertexBuffer(const VertexBufferDesc& desc);
@@ -41,6 +41,7 @@ namespace genesis
         SharedPtr<DepthBuffer> createDepthBuffer(const DepthBufferDesc& desc);
 
         void clearState();
+        void clearCommandList(DeviceContext& context);
         void executeCommandList(DeviceContext& context);
 
     private:

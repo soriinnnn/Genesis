@@ -190,6 +190,7 @@
     <ClInclude Include="include\entity\Entity.h" />
     <ClInclude Include="include\entity\EntityManager.h" />
     <ClInclude Include="include\graphics\resources\DepthBuffer.h" />
+    <ClInclude Include="include\graphics\utils\GraphicsMacros.h" />
     <ClInclude Include="include\resources\Mesh.h" />
     <ClInclude Include="include\graphics\resources\GraphicsTexture.h" />
     <ClInclude Include="include\core\utils\Macros.h" />

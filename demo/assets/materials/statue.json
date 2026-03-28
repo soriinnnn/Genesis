@@ -11,7 +11,8 @@
   },
   "textures": [
     {
-      "path": "demo/assets/textures/asteroid.jpg"
+      "path": "demo/assets/textures/asteroid.jpg",
+      "slot": 0
     }
   ],
   "properties": {

@@ -89,7 +89,9 @@ void ResourceManager::unloadUnused()
 		}
 	}
 
-	GENESIS_LOG_INFO("Unloaded {} unused resources successfully.", unloadedCount);
+	if (unloadedCount > 0) {
+		GENESIS_LOG_INFO("Unloaded {} unused resources successfully.", unloadedCount);
+	}
 }
 
 string ResourceManager::getAbsolutePath(const char* path)

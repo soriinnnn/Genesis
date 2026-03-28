@@ -8,9 +8,7 @@ Window::Window(const WindowDesc& desc): Base(desc.base)
 {
 	m_handle = nullptr;
 	m_size = desc.size;
-	m_onResize = nullptr;
-	m_onFocus = nullptr;
-	m_onKillFocus = nullptr;
+	m_style = desc.style;
 	m_hasFocus = true;
 }
 
@@ -36,14 +34,9 @@ void Window::onResize(function<void(uint32, uint32)> callback)
 	m_onResize = callback;
 }
 
-void Window::onFocus(function<void()> callback)
+void Window::onFocusChanged(std::function<void(bool)> callback)
 {
-	m_onFocus = callback;
-}
-
-void Window::onKillFocus(function<void()> callback)
-{
-	m_onKillFocus = callback;
+	m_onFocusChanged = callback;
 }
 
 UniquePtr<Window> Window::create(const WindowDesc& desc)

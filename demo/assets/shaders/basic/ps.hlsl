@@ -10,10 +10,16 @@ cbuffer CameraData: register(b0)
     row_major float4x4 view;
     row_major float4x4 projection;
     float3 camPosition;
-    float3 lightDirection;
 }
 
-cbuffer MaterialProperties: register(b2)
+cbuffer LightData: register(b2)
+{
+    float3 lightDirection;
+    float3 lightColor;
+    float lightIntensity;
+}
+
+cbuffer MaterialData: register(b3)
 {
     float ka;
     float kd;
@@ -26,14 +32,14 @@ SamplerState state: register(s0);
 
 float4 main(InputPS input): SV_Target0
 {
-    float3 ambientColor = float3(1.0f, 1.0f, 1.0f);
+    float3 ambientColor = lightColor;
     float3 ambientLight = ka * ambientColor;
     
-    float3 diffuseColor = float3(1.0f, 1.0f, 1.0f);
+    float3 diffuseColor = lightColor;
     float diffuse = max(dot(-lightDirection, input.normal), 0.0f);
     float3 diffuseLight = kd * diffuse * diffuseColor;
     
-    float3 specularColor = float3(1.0f, 1.0f, 1.0f);
+    float3 specularColor = lightColor;
     float3 reflectedLight = reflect(lightDirection, input.normal);
     float3 viewDir = normalize(camPosition - input.position.xyz);
     float specular = pow(max(dot(reflectedLight, viewDir), 0.0f), shininess);

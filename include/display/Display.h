@@ -17,14 +17,17 @@ namespace genesis
 		~Display() override;
 
 		Rect getSize() const noexcept;
+		bool isBorderless() const noexcept;
 
 		Window& getWindow() noexcept;
 		SwapChain& getSwapChain() noexcept;
 		void resize(uint32 width, uint32 height);
+		void toggleBorderless(uint32 width, uint32 height);
 
 	private:
 		UniquePtr<Window> m_window;
 		SharedPtr<SwapChain> m_swapChain;
+		bool m_borderless;
 	};
 }
 

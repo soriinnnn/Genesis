@@ -1,29 +1,30 @@
 #include <display/win32/Win32Window.h>
 
 #define BASE_WINDOW_CLASS_NAME L"GenesisWindow"
-#define DEFAULT_WINDOW_STYLE (WS_OVERLAPPEDWINDOW)
 
 using namespace genesis;
 using namespace std;
 
-static RECT createWindowRect(UINT width, UINT height);
+static RECT createWindowRect(UINT width, UINT height, DWORD style);
 static ATOM createWindowClass(LPCTSTR className, WNDPROC windowProc);
+static DWORD getWindowStyle(WindowStyle style);
 static wstring createWindowClassName(void* instance);
 
 Win32Window::Win32Window(const WindowDesc& desc): Window(desc)
 {
     wstring title{desc.title, desc.title + strlen(desc.title)};
+    DWORD style = getWindowStyle(m_style);
+    RECT wndRect = createWindowRect(m_size.width(), m_size.height(), style);
     ATOM classId = createWindowClass(createWindowClassName(this).c_str(), wndProc);
     if (!classId) {
         GENESIS_LOG_THROW_ERROR("RegisterClassEx failed.\nError code: 0x{:08X}", GetLastError());
     }
-    RECT wndRect = createWindowRect(m_size.width(), m_size.height());
 
     m_handle = CreateWindowEx(
         0,
         MAKEINTATOM(classId),
         title.c_str(),
-        DEFAULT_WINDOW_STYLE,
+        style,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
         wndRect.right - wndRect.left,
@@ -46,13 +47,20 @@ Win32Window::~Win32Window()
     DestroyWindow(static_cast<HWND>(m_handle));
 }
 
+void Win32Window::center()
+{
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    setPosition((screenWidth - m_size.width()) / 2, (screenHeight - m_size.height()) / 2);
+}
+
 void Win32Window::resize(uint32 width, uint32 height)
 {
     if (m_size.width() == width && m_size.height() == height) {
         return;
     }
 
-    RECT wndRect = createWindowRect(width, height);
+    RECT wndRect = createWindowRect(width, height, getWindowStyle(m_style));
     SetWindowPos(
         static_cast<HWND>(m_handle),
         HWND_TOP,
@@ -64,9 +72,46 @@ void Win32Window::resize(uint32 width, uint32 height)
     );
 }
 
+void Win32Window::setPosition(uint32 x, uint32 y)
+{
+    SetWindowPos(
+        static_cast<HWND>(m_handle),
+        nullptr,
+        x,
+        y,
+        0,
+        0,
+        SWP_NOSIZE | SWP_NOZORDER
+    );
+}
+
+void Win32Window::setStyle(WindowStyle style)
+{
+    HWND hwnd = static_cast<HWND>(m_handle);
+
+    SetWindowLongPtr(hwnd, GWL_STYLE, getWindowStyle(style));
+    ShowWindow(hwnd, SW_SHOW);
+
+    RECT wndRect = createWindowRect(m_size.width(), m_size.height(), getWindowStyle(style));
+    SetWindowPos(
+        hwnd,
+        nullptr,
+        0, 
+        0, 
+        wndRect.right - wndRect.left,
+        wndRect.bottom - wndRect.top,
+        SWP_NOMOVE | SWP_NOZORDER
+    );
+
+    m_style = style;
+}
+
 LRESULT CALLBACK Win32Window::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    if (!wnd) {
+        return DefWindowProc(hwnd, msg, wparam, lparam);
+    }
 
     switch (msg) {
     case WM_DESTROY:
@@ -91,23 +136,28 @@ LRESULT CALLBACK Win32Window::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
 
         return 0;
     }
-    case WM_SETFOCUS:
+    case WM_ACTIVATE:
     {
-        wnd->m_hasFocus = true;
-        if (wnd->m_onFocus) {
-            wnd->m_onFocus();
+        WORD state = LOWORD(wparam);
+        bool isFocused = (state != WA_INACTIVE);
+
+        wnd->m_hasFocus = isFocused;
+        if (wnd->m_onFocusChanged) {
+            wnd->m_onFocusChanged(isFocused);
         }
 
         return 0;
     }
-    case WM_KILLFOCUS:
+    case WM_SETCURSOR:
     {
-        wnd->m_hasFocus = false;
-        if (wnd->m_onKillFocus) {
-            wnd->m_onKillFocus();
-        }
+        WORD hitTest = LOWORD(lparam);
 
-        return 0;
+        if (hitTest == HTCLIENT) {
+            SetCursor(LoadCursor(nullptr, IDC_ARROW));
+            return TRUE;
+        }
+        
+        return DefWindowProc(hwnd, msg, wparam, lparam);
     }
     default:
         return DefWindowProc(hwnd, msg, wparam, lparam);
@@ -116,15 +166,15 @@ LRESULT CALLBACK Win32Window::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
 
 /* STATIC FUNCTION DEFINITIONS */
 
-static RECT createWindowRect(UINT width, UINT height)
+RECT createWindowRect(UINT width, UINT height, DWORD style)
 {
     RECT wndRect = {0, 0, static_cast<LONG>(width), static_cast<LONG>(height)};
-    AdjustWindowRect(&wndRect, DEFAULT_WINDOW_STYLE, false);
+    AdjustWindowRect(&wndRect, style, false);
 
     return wndRect;
 }
 
-static ATOM createWindowClass(LPCTSTR className, WNDPROC windowProc)
+ATOM createWindowClass(LPCTSTR className, WNDPROC windowProc)
 {
     WNDCLASSEX wndClass = {};
     wndClass.cbSize = sizeof(WNDCLASSEX);
@@ -140,9 +190,21 @@ static ATOM createWindowClass(LPCTSTR className, WNDPROC windowProc)
     wndClass.hIconSm = nullptr;
 
     return RegisterClassEx(&wndClass);
-};
+}
 
-static wstring createWindowClassName(void* instance)
+DWORD getWindowStyle(WindowStyle style)
+{
+    switch (style) {
+    case WindowStyle::Windowed:
+        return WS_OVERLAPPEDWINDOW;
+    case WindowStyle::Borderless:
+        return WS_OVERLAPPED;
+    default:
+        return WS_OVERLAPPEDWINDOW;
+    }
+}
+
+wstring createWindowClassName(void* instance)
 {
     return wstring(BASE_WINDOW_CLASS_NAME) + L"_" + to_wstring(reinterpret_cast<uintptr_t>(instance));
 }
