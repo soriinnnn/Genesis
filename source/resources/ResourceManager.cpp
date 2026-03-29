@@ -13,15 +13,16 @@ ResourceManager::ResourceManager(const ResourceManagerDesc& desc): Base(desc.bas
 
 ResourceManager::~ResourceManager() {}
 
-SharedPtr<Mesh> ResourceManager::getMesh(const char* path)
+SharedPtr<Mesh> ResourceManager::getMesh(const char* path, uint32 components)
 {
 	string absolutePath = getAbsolutePath(path);
-	ResourceId id = getResourceId(absolutePath.c_str());
+	string uniqueKey = absolutePath + "@" + to_string(components);
+	ResourceId id = getResourceId(uniqueKey.c_str());
 
 	SharedPtr<Mesh> result = getResource<Mesh>(id);
 	if (!result) {
 		ResourceDesc desc = getResourceDesc(id, absolutePath.c_str());
-		result = createResource<Mesh, MeshDesc>(id, absolutePath.c_str(), {desc});
+		result = createResource<Mesh, MeshDesc>(id, absolutePath.c_str(), {desc, components});
 	}
 
 	return result;
@@ -58,7 +59,8 @@ SharedPtr<Texture> ResourceManager::getTexture(const char* path)
 SharedPtr<Shader> ResourceManager::getShader(const char* path, const char* entry, ShaderType type)
 {
 	string absolutePath = getAbsolutePath(path);
-	ResourceId id = getResourceId(string{absolutePath + "@" + entry}.c_str());
+	string uniqueKey = absolutePath + "@" + entry + "@" + to_string(static_cast<int>(type));
+	ResourceId id = getResourceId(uniqueKey.c_str());
 
 	SharedPtr<Shader> result = getResource<Shader>(id);
 	if (!result) {
@@ -69,9 +71,9 @@ SharedPtr<Shader> ResourceManager::getShader(const char* path, const char* entry
 	return result;
 }
 
-void ResourceManager::unloadAll()
+void ResourceManager::unloadResource(ResourceId id)
 {
-	m_resources.clear();
+	m_resources.erase(id);
 }
 
 void ResourceManager::unloadUnused()
@@ -92,6 +94,11 @@ void ResourceManager::unloadUnused()
 	if (unloadedCount > 0) {
 		GENESIS_LOG_INFO("Unloaded {} unused resources successfully.", unloadedCount);
 	}
+}
+
+void ResourceManager::unloadAll()
+{
+	m_resources.clear();
 }
 
 string ResourceManager::getAbsolutePath(const char* path)

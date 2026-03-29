@@ -19,13 +19,14 @@ namespace genesis
 		explicit ResourceManager(const ResourceManagerDesc& desc);
 		~ResourceManager() override;
 
-		SharedPtr<Mesh> getMesh(const char* path);
+		SharedPtr<Mesh> getMesh(const char* path, uint32 components = GENESIS_VERTEX_DEFAULT);
 		SharedPtr<Material> getMaterial(const char* path);
 		SharedPtr<Texture> getTexture(const char* path);
 		SharedPtr<Shader> getShader(const char* path, const char* entry, ShaderType type);
 
-		void unloadAll();
+		void unloadResource(ResourceId id);
 		void unloadUnused();
+		void unloadAll();
 
 	private:
 		static ResourceId getResourceId(const char* path);
