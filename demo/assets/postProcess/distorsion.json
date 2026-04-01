@@ -1,0 +1,6 @@
+{
+  "shader": {
+    "path": "demo/assets/shaders/effects/distorsionPS.hlsl",
+    "entry": "main"
+  }
+}

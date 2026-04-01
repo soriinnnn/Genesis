@@ -4,26 +4,36 @@
 
 using namespace genesis;
 
-Display::Display(const DisplayDesc& desc): Base(desc.window.base), m_borderless{false}
+Display::Display(const DisplayDesc& desc): Base(desc.window.base), m_borderless{false}, m_matchWindowResolution{false}, m_onResizeWindow{nullptr}
 {
 	m_window = Window::create(desc.window);
-	m_swapChain = desc.graphicsDevice.createSwapChain({m_window->getHandle(), m_window->getSize()});
-
+	m_swapChain = desc.graphicsContext.graphicsDevice.createSwapChain({m_window->getHandle(), m_window->getSize()});
+	
 	m_window->onResize([this](uint32 width, uint32 height) {
-		m_swapChain->resize(width, height);
+		if (m_matchWindowResolution) {
+			m_swapChain->resize(width, height);
+		}
+		if (m_onResizeWindow) {
+			m_onResizeWindow(width, height);
+		}
 	});
 }
 
 Display::~Display() {}
 
-Rect Display::getSize() const noexcept
+bool Display::isBorderless() const noexcept
+{
+	return m_borderless;
+}
+
+Rect Display::getWindowSize() const noexcept
 {
 	return m_window->getSize();
 }
 
-bool Display::isBorderless() const noexcept
+Rect Display::getImageResolution() const noexcept
 {
-	return m_borderless;
+	return m_swapChain->getSize();
 }
 
 Window& Display::getWindow() noexcept
@@ -36,7 +46,7 @@ SwapChain& Display::getSwapChain() noexcept
 	return *m_swapChain;
 }
 
-void Display::resize(uint32 width, uint32 height)
+void Display::resizeWindow(uint32 width, uint32 height)
 {
 	m_window->resize(width, height);
 }
@@ -52,6 +62,16 @@ void Display::toggleBorderless(uint32 width, uint32 height)
 	else {
 		m_window->setStyle(WindowStyle::Windowed);
 		m_window->resize(width, height);
-		m_window->center();
+		m_window->centerOnScreen();
 	}
+}
+
+void Display::setMatchWindowResolution(bool matchWindowResolution)
+{
+	m_matchWindowResolution = matchWindowResolution;
+}
+
+void Display::onResizeWindow(std::function<void(uint32, uint32)> callback)
+{
+	m_onResizeWindow = callback;
 }

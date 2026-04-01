@@ -21,6 +21,7 @@ void Win32InputManager::update()
         if (!m_lostFocus) {
             memset(m_currentKeys, 0, sizeof(uint8) * KEYBOARD_STATE_SIZE);
             memset(m_previousKeys, 0, sizeof(uint8) * KEYBOARD_STATE_SIZE);
+            m_previousMousePos = m_currentMousePos;
             m_lostFocus = true;
 
             if (!m_mouseVisible) {

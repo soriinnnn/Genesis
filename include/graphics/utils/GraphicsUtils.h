@@ -48,6 +48,76 @@ namespace genesis
 
 			return formatTable[typeIndex][componentCount-1];
 		}
+
+		inline D3D_PRIMITIVE_TOPOLOGY getD3DPrimitiveTopology(PrimitiveTopology primitive)
+		{
+			switch (primitive) {
+			case PrimitiveTopology::Points:
+				return D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
+			case PrimitiveTopology::Lines:
+				return D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+			case PrimitiveTopology::LinesStrip:
+				return D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP;
+			case PrimitiveTopology::Triangles:
+				return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+			case PrimitiveTopology::TrianglesStrip:
+				return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+			default:
+				return D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
+			}
+		}
+
+		inline D3D11_FILTER getD3D11Filter(TextureFilter filter)
+		{
+			switch (filter) {
+			case TextureFilter::Point:
+				return D3D11_FILTER_MIN_MAG_MIP_POINT;
+			case TextureFilter::Linear:
+				return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+			case TextureFilter::Anisotropic:
+				return D3D11_FILTER_ANISOTROPIC;
+			default:
+				return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+			}
+		}
+
+		inline D3D11_TEXTURE_ADDRESS_MODE getD3D11TextureAddressMode(TextureAddressMode mode)
+		{
+			switch (mode) {
+			case TextureAddressMode::Wrap:
+				return D3D11_TEXTURE_ADDRESS_WRAP;
+			case TextureAddressMode::Mirror:
+				return D3D11_TEXTURE_ADDRESS_MIRROR;
+			case TextureAddressMode::Clamp:
+				return D3D11_TEXTURE_ADDRESS_CLAMP;
+			default:
+				return D3D11_TEXTURE_ADDRESS_WRAP;
+			}
+		}
+
+		inline D3D11_COMPARISON_FUNC getD3D11ComparisonFunc(ComparisonFunction comparison)
+		{
+			switch (comparison) {
+			case ComparisonFunction::Never:
+				return D3D11_COMPARISON_NEVER;
+			case ComparisonFunction::Less:
+				return D3D11_COMPARISON_LESS;
+			case ComparisonFunction::LessEqual:
+				return D3D11_COMPARISON_LESS_EQUAL;
+			case ComparisonFunction::Equal:
+				return D3D11_COMPARISON_EQUAL;
+			case ComparisonFunction::NotEqual:
+				return D3D11_COMPARISON_NOT_EQUAL;
+			case ComparisonFunction::Greater:
+				return D3D11_COMPARISON_GREATER;
+			case ComparisonFunction::GreaterEqual:
+				return D3D11_COMPARISON_GREATER_EQUAL;
+			case ComparisonFunction::Always:
+				return D3D11_COMPARISON_ALWAYS;
+			default:
+				return D3D11_COMPARISON_LESS;
+			}
+		}
 	}
 }
 

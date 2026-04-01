@@ -8,7 +8,7 @@ namespace genesis
 	struct MeshDesc
 	{
 		ResourceDesc resource;
-		uint32 components = GENESIS_VERTEX_DEFAULT;
+		uint32 components = GENESIS_VERTEX_PRESET_DEFAULT;
 	};
 
 	class Mesh final: public Resource

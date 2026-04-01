@@ -9,8 +9,8 @@ namespace genesis
 	struct EntityDesc
 	{
 		BaseDesc base;
-		EntityManager& entityManager;
 		EntityId id;
+		EntityManager& entityManager;
 	};
 
 	class Entity: public Base
@@ -75,9 +75,9 @@ namespace genesis
 		}
 	
 	protected:
-		EntityManager& m_entityManager;
 		EntityId m_id;
-		std::unordered_map<ComponentId, UniquePtr<Component>> m_components;
+		HashMap<ComponentId, UniquePtr<Component>> m_components;
+		EntityManager& m_entityManager;
 	};
 }
 

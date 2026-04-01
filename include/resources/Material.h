@@ -17,23 +17,27 @@ namespace genesis
 			SharedPtr<Texture> texture;
 			uint32 slot;
 		};
+		
+		struct SamplerBinding
+		{
+			SharedPtr<SamplerState> sampler;
+			uint32 slot;
+		};
 
 	public:
 		explicit Material(const MaterialDesc& mdesc);
 		~Material() override;
 		
 		bool hasProperties() const noexcept;
-		const std::vector<TextureBinding>& getTextures() const noexcept;
+		const Vector<TextureBinding>& getTextures() const noexcept;
+		const Vector<SamplerBinding>& getSamplers() const noexcept;
 
-		Shader& getVertexShader() noexcept;
-		Shader& getPixelShader() noexcept;
 		GraphicsPipelineState& getGraphicsPipelineState() noexcept;
 		ConstantBuffer& getProperties();
 	
 	private:
-		SharedPtr<Shader> m_vertexShader;
-		SharedPtr<Shader> m_pixelShader;
-		std::vector<TextureBinding> m_textures;
+		Vector<TextureBinding> m_textures;
+		Vector<SamplerBinding> m_samplers;
 		SharedPtr<GraphicsPipelineState> m_pipeline;
 		SharedPtr<ConstantBuffer> m_properties;
 	};

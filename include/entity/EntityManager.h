@@ -24,7 +24,7 @@ namespace genesis
 			return createEntity<T>(getAvailableId());
 		}
 
-		const std::unordered_map<EntityId, UniquePtr<Entity>>& getEntities() const;
+		const HashMap<EntityId, UniquePtr<Entity>>& getEntities() const;
 
 		void destroyEntity(EntityId id);
 		void destroyPending();
@@ -35,7 +35,7 @@ namespace genesis
 		template<typename T>
 		T* createEntity(EntityId id)
 		{
-			T* entity = new T(EntityDesc{m_logger, *this, id});
+			T* entity = new T(EntityDesc{m_logger, id, *this});
 			UniquePtr<Entity> entityPtr{entity};
 
 			m_entities.emplace(id, std::move(entityPtr));
@@ -44,9 +44,9 @@ namespace genesis
 
 	private:
 		EntityId m_nextId;
-		std::vector<EntityId> m_idPool;
-		std::unordered_map<EntityId, UniquePtr<Entity>> m_entities;
-		std::vector<EntityId> m_entitiesToDestroy;
+		Vector<EntityId> m_idPool;
+		Vector<EntityId> m_entitiesToDestroy;
+		HashMap<EntityId, UniquePtr<Entity>> m_entities;
 	};
 }
 

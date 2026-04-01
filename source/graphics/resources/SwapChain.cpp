@@ -2,15 +2,15 @@
 #include <graphics/GraphicsDevice.h>
 #include <graphics/utils/GraphicsLogUtils.h>
 
-#define DXGI_SWAP_CHAIN_FLAGS (DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH | DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING)
+#define DXGI_SWAP_CHAIN_FLAGS (DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING | DXGI_MWA_NO_ALT_ENTER)
 
 using namespace genesis;
 
 static DXGI_SWAP_CHAIN_DESC createSwapChainDesc(const SwapChainDesc& desc);
 
-SwapChain::SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc), m_size{sdesc.wndSize}
+SwapChain::SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc), m_size{sdesc.windowSize}
 {
-	if (!sdesc.wndHandle) {
+	if (!sdesc.windowHandle) {
 		GENESIS_LOG_THROW_INVALID_ARG("Window handle is null.");
 	}
 
@@ -21,7 +21,7 @@ SwapChain::SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gde
 	);
 	updateRenderTargetView();
 
-	m_depthBuffer = m_graphicsDevice.createDepthBuffer({m_size});
+	m_depthStencil = m_graphicsDevice.createDepthStencilTexture({m_size});
 }
 
 SwapChain::~SwapChain() {}
@@ -42,7 +42,7 @@ void SwapChain::resize(uint32 width, uint32 height)
 	m_size = Rect{static_cast<int32>(width), static_cast<int32>(height)};
 
 	m_renderTarget.Reset();
-	m_depthBuffer.reset();
+	m_depthStencil.reset();
 
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_swapChain->ResizeBuffers(
@@ -56,7 +56,7 @@ void SwapChain::resize(uint32 width, uint32 height)
 	);
 	updateRenderTargetView();
 
-	m_depthBuffer = m_graphicsDevice.createDepthBuffer({m_size});
+	m_depthStencil = m_graphicsDevice.createDepthStencilTexture({m_size});
 }
 
 void SwapChain::present(bool vsync)
@@ -80,6 +80,7 @@ void SwapChain::updateRenderTargetView()
 		m_swapChain->GetBuffer(0, IID_PPV_ARGS(&buffer)),
 		"GetBuffer failed."
 	);
+
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateRenderTargetView(buffer.Get(), nullptr, &m_renderTarget),
 		"CreateRenderTargetView failed."
@@ -90,13 +91,13 @@ void SwapChain::updateRenderTargetView()
 
 static DXGI_SWAP_CHAIN_DESC createSwapChainDesc(const SwapChainDesc& desc) {
 	DXGI_SWAP_CHAIN_DESC dxgiDesc{};
-	dxgiDesc.BufferDesc.Width = desc.wndSize.width();
-	dxgiDesc.BufferDesc.Height = desc.wndSize.height();
+	dxgiDesc.BufferDesc.Width = desc.windowSize.width();
+	dxgiDesc.BufferDesc.Height = desc.windowSize.height();
 	dxgiDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	dxgiDesc.SampleDesc.Count = 1;
 	dxgiDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	dxgiDesc.BufferCount = 2;
-	dxgiDesc.OutputWindow = static_cast<HWND>(desc.wndHandle);
+	dxgiDesc.OutputWindow = static_cast<HWND>(desc.windowHandle);
 	dxgiDesc.Windowed = true;
 	dxgiDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	dxgiDesc.Flags = DXGI_SWAP_CHAIN_FLAGS;

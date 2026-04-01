@@ -11,8 +11,10 @@
 #include <graphics/resources/IndexBuffer.h>
 #include <graphics/resources/ConstantBuffer.h>
 #include <graphics/resources/GraphicsPipelineState.h>
-#include <graphics/resources/GraphicsTexture.h>
-#include <graphics/resources/DepthBuffer.h>
+#include <graphics/resources/SamplerState.h>
+#include <graphics/resources/ImageTexture.h>
+#include <graphics/resources/DepthStencilTexture.h>
+#include <graphics/resources/RenderTargetTexture.h>
 #include <d3d11.h>
 #include <wrl.h>
 
@@ -29,17 +31,21 @@ namespace genesis
         explicit GraphicsDevice(const GraphicsDeviceDesc& desc);
         virtual ~GraphicsDevice() override;
 
-        SharedPtr<SwapChain> createSwapChain(const SwapChainDesc& desc);
         SharedPtr<DeviceContext> createDeviceContext();
-        SharedPtr<ShaderBinary> compileShader(const ShaderBinaryDesc& desc);
+        SharedPtr<ShaderBinary> compileShader(const ShaderCompileDesc& desc);
         SharedPtr<ShaderSignature> reflectShader(const ShaderSignatureDesc& desc);
+        SharedPtr<ShaderBinary> createShaderBinary(const ShaderBinaryDesc& desc);
+        SharedPtr<SwapChain> createSwapChain(const SwapChainDesc& desc);
         SharedPtr<GraphicsPipelineState> createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc);
         SharedPtr<VertexBuffer> createVertexBuffer(const VertexBufferDesc& desc);
-        SharedPtr<ConstantBuffer> createConstantBuffer(const ConstantBufferDesc& desc);
         SharedPtr<IndexBuffer> createIndexBuffer(const IndexBufferDesc& desc);
-        SharedPtr<GraphicsTexture> createGraphicsTexture(const GraphicsTextureDesc& desc);
-        SharedPtr<DepthBuffer> createDepthBuffer(const DepthBufferDesc& desc);
+        SharedPtr<ConstantBuffer> createConstantBuffer(const ConstantBufferDesc& desc);
+        SharedPtr<SamplerState> createSamplerState(const SamplerStateDesc& desc);
+        SharedPtr<ImageTexture> createImageTexture(const ImageTextureDesc& desc);
+        SharedPtr<DepthStencilTexture> createDepthStencilTexture(const DepthStencilTextureDesc& desc);
+        SharedPtr<RenderTargetTexture> createRenderTargetTexture(const RenderTargetTextureDesc& desc);
 
+        void clearCache();
         void clearState();
         void clearCommandList(DeviceContext& context);
         void executeCommandList(DeviceContext& context);
@@ -53,6 +59,10 @@ namespace genesis
         Microsoft::WRL::ComPtr<IDXGIDevice> m_dxgiDevice;
         Microsoft::WRL::ComPtr<IDXGIAdapter> m_dxgiAdapter;
         Microsoft::WRL::ComPtr<IDXGIFactory> m_dxgiFactory;
+        UniquePtr<PipelineStateCache> m_pipelineCache;
+        UniquePtr<SamplerStateCache> m_samplerCache;
+
+        friend class GraphicsCache;
     };
 }
 

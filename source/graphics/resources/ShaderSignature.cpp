@@ -33,6 +33,10 @@ ShaderSignature::ShaderSignature(const ShaderSignatureDesc& sdesc, const Graphic
 			"ID3D11ShaderReflection::GetInputParameterDesc failed."
 		);
 
+		if (param.SystemValueType != D3D_NAME_UNDEFINED) {
+			continue;
+		}
+
 		m_inputElements.push_back({
 			param.SemanticName,
 			param.SemanticIndex,
@@ -45,7 +49,7 @@ ShaderSignature::ShaderSignature(const ShaderSignatureDesc& sdesc, const Graphic
 	}
 
 	for (uint32 i = 0; i < shaderDesc.ConstantBuffers; i++) {
-		auto cbuffer = m_shaderReflection->GetConstantBufferByIndex(i);
+		auto* cbuffer = m_shaderReflection->GetConstantBufferByIndex(i);
 
 		D3D11_SHADER_BUFFER_DESC cbufferDesc{};
 		GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
@@ -67,13 +71,23 @@ ShaderSignature::ShaderSignature(const ShaderSignatureDesc& sdesc, const Graphic
 		cbufferReflection.slot = bindDesc.BindPoint;
 
 		for (uint32 j = 0; j < cbufferDesc.Variables; j++) {
-			auto variable = cbuffer->GetVariableByIndex(j);
+			auto* variable = cbuffer->GetVariableByIndex(j);
+			auto* type = variable->GetType();
 
 			D3D11_SHADER_VARIABLE_DESC varDesc;
 			GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 				variable->GetDesc(&varDesc),
 				"ID3D11ShaderReflectionVariable::GetDesc failed."
 			);
+
+			/*
+			D3D11_SHADER_TYPE_DESC typeDesc;
+			GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
+				type->GetDesc(&typeDesc),
+				"ID3D11ShaderReflectionType::GetDesc failed."
+			)
+			*/
+
 			cbufferReflection.variables[varDesc.Name] = {varDesc.StartOffset, varDesc.Size};
 		}
 
@@ -94,7 +108,6 @@ uint32 ShaderSignature::getConstantBufferSlot(const char* name) const
 	if (it == m_constantBuffers.end()) {
 		GENESIS_LOG_THROW_ERROR("Constant buffer \"{}\" does not exist.", name);
 	}
-
 	return it->second.slot;
 }
 
@@ -104,7 +117,6 @@ const ShaderReflectionConstantBuffer* ShaderSignature::getConstantBufferReflecti
 	if (it == m_constantBuffers.end()) {
 		return nullptr;
 	}
-
 	return &it->second;
 }
 

@@ -15,6 +15,8 @@ static vector<uint32> getIndices(const aiMesh& mesh);
 
 Mesh::Mesh(const MeshDesc& desc): Resource(desc.resource)
 {
+    auto& graphicsContext = desc.resource.graphicsContext;
+
     Importer importer;
     const aiScene* scene = importer.ReadFile(
         m_path,
@@ -42,10 +44,10 @@ Mesh::Mesh(const MeshDesc& desc): Resource(desc.resource)
     }
 
     vector<uint8> vertices = getVertices(*mesh, desc.components);
-    m_vertexBuffer = desc.resource.graphicsDevice.createVertexBuffer({vertices.data(), static_cast<uint32>(vertices.size()) / stride, stride});
+    m_vertexBuffer = graphicsContext.graphicsDevice.createVertexBuffer({vertices.data(), static_cast<uint32>(vertices.size()) / stride, stride});
 
     vector<uint32> indices = getIndices(*mesh);
-    m_indexBuffer = desc.resource.graphicsDevice.createIndexBuffer({indices.data(), static_cast<uint32>(indices.size())});
+    m_indexBuffer = graphicsContext.graphicsDevice.createIndexBuffer({indices.data(), static_cast<uint32>(indices.size())});
 }
 
 Mesh::~Mesh() {}
@@ -92,17 +94,6 @@ vector<uint8> getVertices(const aiMesh& mesh, uint32 components)
             memcpy(data, &normal, sizeof(Vec3));
             data += sizeof(Vec3);
         }
-        if (components & GENESIS_VERTEX_COMPONENT_TEXCOORD) {
-            Vec2 texture{0.0f, 0.0f};
-
-            if (mesh.HasTextureCoords(0)) {
-                texture.x = mesh.mTextureCoords[0][i].x;
-                texture.y = mesh.mTextureCoords[0][i].y;
-            }
-            
-            memcpy(data, &texture, sizeof(Vec2));
-            data += sizeof(Vec2);
-        }
         if (components & GENESIS_VERTEX_COMPONENT_TANGENT) {
             Vec3 tangent{0.0f, 0.0f, 0.0f};
 
@@ -126,6 +117,17 @@ vector<uint8> getVertices(const aiMesh& mesh, uint32 components)
 
             memcpy(data, &bitangent, sizeof(Vec3));
             data += sizeof(Vec3);
+        }
+        if (components & GENESIS_VERTEX_COMPONENT_TEXCOORD) {
+            Vec2 texture{0.0f, 0.0f};
+
+            if (mesh.HasTextureCoords(0)) {
+                texture.x = mesh.mTextureCoords[0][i].x;
+                texture.y = mesh.mTextureCoords[0][i].y;
+            }
+            
+            memcpy(data, &texture, sizeof(Vec2));
+            data += sizeof(Vec2);
         }
         if (components & GENESIS_VERTEX_COMPONENT_COLOR) {
             Vec4 color{1.0f, 1.0f, 1.0f, 1.0f};
@@ -165,11 +167,12 @@ uint32 getVertexStride(uint32 components)
 {
     uint32 stride = 0;
 
-    if (components & GENESIS_VERTEX_COMPONENT_POSITION) stride += GENESIS_VERTEX_COMPONENT_POSITION_SIZE;
-    if (components & GENESIS_VERTEX_COMPONENT_NORMAL)   stride += GENESIS_VERTEX_COMPONENT_NORMAL_SIZE;
-    if (components & GENESIS_VERTEX_COMPONENT_TEXCOORD) stride += GENESIS_VERTEX_COMPONENT_TEXCOORD_SIZE;
-    if (components & GENESIS_VERTEX_COMPONENT_TANGENT)  stride += GENESIS_VERTEX_COMPONENT_TANGENT_SIZE;
-    if (components & GENESIS_VERTEX_COMPONENT_COLOR)    stride += GENESIS_VERTEX_COMPONENT_COLOR_SIZE;
+    if (components & GENESIS_VERTEX_COMPONENT_POSITION)  stride += GENESIS_VERTEX_COMPONENT_POSITION_SIZE;
+    if (components & GENESIS_VERTEX_COMPONENT_NORMAL)    stride += GENESIS_VERTEX_COMPONENT_NORMAL_SIZE;
+    if (components & GENESIS_VERTEX_COMPONENT_TANGENT)   stride += GENESIS_VERTEX_COMPONENT_TANGENT_SIZE;
+    if (components & GENESIS_VERTEX_COMPONENT_BITANGENT) stride += GENESIS_VERTEX_COMPONENT_BITANGENT_SIZE;
+    if (components & GENESIS_VERTEX_COMPONENT_TEXCOORD)  stride += GENESIS_VERTEX_COMPONENT_TEXCOORD_SIZE;
+    if (components & GENESIS_VERTEX_COMPONENT_COLOR)     stride += GENESIS_VERTEX_COMPONENT_COLOR_SIZE;
 
     return stride;
 }

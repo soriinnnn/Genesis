@@ -8,8 +8,8 @@ namespace genesis
 {
 	struct SwapChainDesc
 	{
-		void* wndHandle{};
-		Rect wndSize{};
+		void* windowHandle{};
+		Rect windowSize{};
 	};
 
 	class SwapChain final: public GraphicsResource
@@ -29,7 +29,7 @@ namespace genesis
 	private:
 		Microsoft::WRL::ComPtr<IDXGISwapChain> m_swapChain;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_renderTarget;
-		SharedPtr<DepthBuffer> m_depthBuffer;
+		SharedPtr<DepthStencilTexture> m_depthStencil;
 		Rect m_size;
 
 		friend class DeviceContext;

@@ -1,13 +1,14 @@
 #ifndef GENESIS_DISPLAY_H
 #define GENESIS_DISPLAY_H
 #include <display/Window.h>
+#include <graphics/utils/GraphicsTypes.h>
 
 namespace genesis 
 {
 	struct DisplayDesc
 	{
 		WindowDesc window;
-		GraphicsDevice& graphicsDevice;
+		GraphicsContext graphicsContext;
 	};
 
 	class Display final: public Base
@@ -16,18 +17,26 @@ namespace genesis
 		explicit Display(const DisplayDesc& desc);
 		~Display() override;
 
-		Rect getSize() const noexcept;
 		bool isBorderless() const noexcept;
-
+		Rect getWindowSize() const noexcept;
+		Rect getImageResolution() const noexcept;
 		Window& getWindow() noexcept;
 		SwapChain& getSwapChain() noexcept;
-		void resize(uint32 width, uint32 height);
+
+		void resizeWindow(uint32 width, uint32 height);
 		void toggleBorderless(uint32 width, uint32 height);
+		void setMatchWindowResolution(bool matchWindowResolution);
+
+		void onResizeWindow(std::function<void(uint32, uint32)> callback);
 
 	private:
 		UniquePtr<Window> m_window;
 		SharedPtr<SwapChain> m_swapChain;
 		bool m_borderless;
+		bool m_matchWindowResolution;
+
+	private:
+		std::function<void(uint32, uint32)> m_onResizeWindow;
 	};
 }
 

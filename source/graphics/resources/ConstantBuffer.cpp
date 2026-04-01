@@ -30,7 +30,7 @@ ConstantBuffer::~ConstantBuffer() {}
 
 /* STATIC FUNCTION DEFINITIONS */
 
-static D3D11_BUFFER_DESC createBufferDesc(const ConstantBufferDesc& desc) {
+D3D11_BUFFER_DESC createBufferDesc(const ConstantBufferDesc& desc) {
 	D3D11_BUFFER_DESC buffDesc{};
 
 	buffDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -42,7 +42,7 @@ static D3D11_BUFFER_DESC createBufferDesc(const ConstantBufferDesc& desc) {
 	return buffDesc;
 }
 
-static D3D11_SUBRESOURCE_DATA createSubResourceData(const ConstantBufferDesc& desc)
+D3D11_SUBRESOURCE_DATA createSubResourceData(const ConstantBufferDesc& desc)
 {
 	D3D11_SUBRESOURCE_DATA data{};
 	data.pSysMem = desc.buffer;

@@ -2,6 +2,7 @@
 #define GENESIS_RESOURCE_H
 #include <core/Base.h>
 #include <core/Core.h>
+#include <graphics/utils/GraphicsTypes.h>
 
 namespace genesis 
 {
@@ -10,14 +11,14 @@ namespace genesis
 		BaseDesc base;
 		ResourceId id;
 		const char* path;
-		GraphicsDevice& graphicsDevice;
 		ResourceManager& resourceManager;
+		GraphicsContext graphicsContext;
 	};
 
 	class Resource: public Base
 	{
 	public:
-		~Resource() override;
+		virtual ~Resource() override;
 
 		ResourceId getId() const noexcept;
 		const char* getPath() const noexcept;
@@ -27,7 +28,7 @@ namespace genesis
 
 	protected:
 		ResourceId m_id;
-		std::string m_path;
+		String m_path;
 	};
 }
 

@@ -8,25 +8,30 @@ namespace genesis
 {
 	struct ShaderBinaryDesc
 	{
-		const char* shaderSourceName{};
-		const void* shaderSourceCode{};
-		size_t shaderSourceCodeSize{};
-		const char* shaderEntryPoint{};
-		ShaderType shaderType{};
+		const void* binaryCode{};
+		size_t binaryCodeSize{};
+	};
+
+	struct ShaderCompileDesc
+	{
+		const char* sourceName{};
+		const void* sourceCode{};
+		size_t sourceCodeSize{};
+		const char* entryPoint{};
+		ShaderType type{};
 	};
 
 	class ShaderBinary final: public GraphicsResource
 	{
 	public:
 		ShaderBinary(const ShaderBinaryDesc& sdesc, const GraphicsResourceDesc& gdesc);
+		ShaderBinary(const ShaderCompileDesc& sdesc, const GraphicsResourceDesc& gdesc);
 		~ShaderBinary() override;
 
 		BinaryData getData() const noexcept;
-		ShaderType getType() const noexcept;
 
 	private:
-		Microsoft::WRL::ComPtr<ID3DBlob> m_blob;
-		ShaderType m_type;
+		Microsoft::WRL::ComPtr<ID3DBlob> m_binary;
 	};
 }
 

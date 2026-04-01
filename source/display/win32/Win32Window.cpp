@@ -13,8 +13,10 @@ static wstring createWindowClassName(void* instance);
 Win32Window::Win32Window(const WindowDesc& desc): Window(desc)
 {
     wstring title{desc.title, desc.title + strlen(desc.title)};
+
     DWORD style = getWindowStyle(m_style);
     RECT wndRect = createWindowRect(m_size.width(), m_size.height(), style);
+
     ATOM classId = createWindowClass(createWindowClassName(this).c_str(), wndProc);
     if (!classId) {
         GENESIS_LOG_THROW_ERROR("RegisterClassEx failed.\nError code: 0x{:08X}", GetLastError());
@@ -47,7 +49,7 @@ Win32Window::~Win32Window()
     DestroyWindow(static_cast<HWND>(m_handle));
 }
 
-void Win32Window::center()
+void Win32Window::centerOnScreen()
 {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -156,7 +158,7 @@ LRESULT CALLBACK Win32Window::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM
             SetCursor(LoadCursor(nullptr, IDC_ARROW));
             return TRUE;
         }
-        
+
         return DefWindowProc(hwnd, msg, wparam, lparam);
     }
     default:

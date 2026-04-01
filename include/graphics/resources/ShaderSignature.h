@@ -26,8 +26,8 @@ namespace genesis
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11ShaderReflection> m_shaderReflection;
-		std::vector<D3D11_INPUT_ELEMENT_DESC> m_inputElements;
-		std::unordered_map<std::string, ShaderReflectionConstantBuffer> m_constantBuffers;
+		Vector<D3D11_INPUT_ELEMENT_DESC> m_inputElements;
+		HashMap<String, ShaderReflectionConstantBuffer> m_constantBuffers;
 	};
 
 }

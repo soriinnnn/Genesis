@@ -25,12 +25,12 @@ namespace genesis
     public:
         virtual ~Window() override;
 
+        bool hasFocus() const noexcept;
         void* getHandle() const noexcept;
         Rect getSize() const noexcept;
-        bool hasFocus() const noexcept;
 
-        virtual void center() = 0;
         virtual void resize(uint32 width, uint32 height) = 0;
+        virtual void centerOnScreen() = 0;
         virtual void setPosition(uint32 x, uint32 y) = 0;
         virtual void setStyle(WindowStyle style) = 0;
 
@@ -48,6 +48,7 @@ namespace genesis
         bool m_hasFocus;
         WindowStyle m_style;
 
+    protected:
         std::function<void(uint32, uint32)> m_onResize;
         std::function<void(bool)> m_onFocusChanged;
     };

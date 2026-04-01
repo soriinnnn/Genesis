@@ -12,8 +12,8 @@ namespace genesis
 {
     struct GameDesc
     {
-        const char* wndTitle;
-        Rect wndSize{1280, 720};
+        const char* windowTitle;
+        Rect windowSize{1280, 720};
         Logger::LogLevel logLevel = Logger::LogLevel::Error;
     };
 
@@ -47,7 +47,9 @@ namespace genesis
         bool m_isRunning;
         std::chrono::steady_clock::time_point m_previousTime;
         
+        /* TEST */
         UniquePtr<TestWorld> m_testWorld;
+        SharedPtr<PostProcess> m_effect;
         bool m_centerMouse;
     };
 }

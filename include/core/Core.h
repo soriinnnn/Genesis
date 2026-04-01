@@ -19,8 +19,8 @@ namespace genesis
     class Game;
     class World;
 
-    class Window;
     class Display;
+    class Window;
 
     class InputManager;
     class InputListener;
@@ -28,19 +28,27 @@ namespace genesis
     class ResourceManager;
     class Resource;
     class Mesh;
+    class Shader;
     class Texture;
     class Material;
-    class Shader;
+    class PostProcess;
 
     class EntityManager;
     class Entity;
-    class Player;
     class Component;
     class Transform;
     class MeshRenderer;
 
+    class Player;
+    class PlayerController;
+
     class GraphicsEngine;
     class GraphicsDevice;
+    class EngineShaders;
+    class FrameBuffer;
+    class GraphicsCache;
+    class PipelineStateCache;
+    class SamplerStateCache;
 
     class GraphicsResource;
     class DeviceContext;
@@ -51,8 +59,10 @@ namespace genesis
     class IndexBuffer;
     class ConstantBuffer;
     class GraphicsPipelineState;
-    class GraphicsTexture;
-    class DepthBuffer;
+    class SamplerState;
+    class ImageTexture;
+    class RenderTargetTexture;
+    class DepthStencilTexture;
 
     using ResourceId = size_t;
     using EntityId = size_t;
@@ -69,6 +79,11 @@ namespace genesis
 
     template<typename T> using SharedPtr = std::shared_ptr<T>;
     template<typename T> using UniquePtr = std::unique_ptr<T>;
+    template<typename T> using WeakPtr = std::weak_ptr<T>;
+
+    using String = std::string;
+    template<typename T> using Vector = std::vector<T>;
+    template<typename K, typename T> using HashMap = std::unordered_map<K, T>;
 }
 
 #endif

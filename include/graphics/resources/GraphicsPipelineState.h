@@ -13,7 +13,7 @@ namespace genesis
 		const ShaderSignature& pixelShaderSignature;
 		PrimitiveTopology primitive = PrimitiveTopology::Triangles;
 		bool depthEnable = true;
-		DepthComparison depthComparison = DepthComparison::Less;
+		ComparisonFunction depthComparison = ComparisonFunction::Less;
 	};
 
 	class GraphicsPipelineState final: public GraphicsResource

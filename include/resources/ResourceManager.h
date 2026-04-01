@@ -10,7 +10,7 @@ namespace genesis
 	struct ResourceManagerDesc
 	{
 		BaseDesc base;
-		GraphicsDevice& graphicsDevice;
+		GraphicsContext graphicsContext;
 	};
 
 	class ResourceManager final: public Base
@@ -19,10 +19,11 @@ namespace genesis
 		explicit ResourceManager(const ResourceManagerDesc& desc);
 		~ResourceManager() override;
 
-		SharedPtr<Mesh> getMesh(const char* path, uint32 components = GENESIS_VERTEX_DEFAULT);
+		SharedPtr<Mesh> getMesh(const char* path, uint32 components = GENESIS_VERTEX_PRESET_DEFAULT);
 		SharedPtr<Material> getMaterial(const char* path);
 		SharedPtr<Texture> getTexture(const char* path);
 		SharedPtr<Shader> getShader(const char* path, const char* entry, ShaderType type);
+		SharedPtr<PostProcess> getPostProcess(const char* path);
 
 		void unloadResource(ResourceId id);
 		void unloadUnused();
@@ -30,7 +31,7 @@ namespace genesis
 
 	private:
 		static ResourceId getResourceId(const char* path);
-		static std::string getAbsolutePath(const char* path);
+		static String getAbsolutePath(const char* path);
 		ResourceDesc getResourceDesc(ResourceId id, const char* path);
 
 		template<typename T>
@@ -44,7 +45,7 @@ namespace genesis
 		}
 
 		template<typename T, typename D>
-		SharedPtr<T> createResource(ResourceId id, const char* path, const D& desc)
+		SharedPtr<T> createResource(ResourceId id, const D& desc)
 		{
 			SharedPtr<T> resource = std::make_shared<T>(desc);
 			m_resources.emplace(id, resource);
@@ -52,8 +53,8 @@ namespace genesis
 		}
 
 	private:
-		std::unordered_map<ResourceId, SharedPtr<Resource>> m_resources;
-		GraphicsDevice& m_graphicsDevice;
+		HashMap<ResourceId, SharedPtr<Resource>> m_resources;
+		GraphicsContext m_graphicsContext;
 	};
 }
 

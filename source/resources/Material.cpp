@@ -12,64 +12,86 @@ using namespace genesis;
 using namespace std;
 using namespace nlohmann;
 
-static SharedPtr<Shader> getShader(json& data, ShaderType type, ResourceManager& resourceManager);
-static vector<uint8> getPropertiesValues(json& data, const ShaderReflectionConstantBuffer& cbuffer, const char* path, Logger& logger);
+static SharedPtr<Shader> getShader(json& data, ShaderType type, ResourceManager& resourceManager, const char* path, Logger& logger);
+static SharedPtr<SamplerState> getSamplerState(json& data, GraphicsDevice& graphicsDevice, const char* path, Logger& logger);
+static Vector<uint8> getPropertiesValues(json& data, const ShaderReflectionConstantBuffer& cbuffer, const char* path, Logger& logger);
 
 Material::Material(const MaterialDesc& desc): Resource(desc.resource)
 {
-	try {
-		json data = json::parse(resourcesUtils::readFile(m_path.c_str()));
+	auto& graphicsContext = desc.resource.graphicsContext;
 
-		m_vertexShader = getShader(data, ShaderType::VertexShader, desc.resource.resourceManager);
-		m_pixelShader = getShader(data, ShaderType::PixelShader, desc.resource.resourceManager);
-		m_pipeline = desc.resource.graphicsDevice.createGraphicsPipelineState({
-			m_vertexShader->getBinary(), 
-			m_pixelShader->getBinary(), 
-			m_vertexShader->getSignature(), 
-			m_pixelShader->getSignature()
+	try {
+		json data = json::parse(resourcesUtils::readFile(getPath()));
+
+		auto vertexShader = getShader(data, ShaderType::VertexShader, desc.resource.resourceManager, getPath(), getLogger());
+		auto pixelShader = getShader(data, ShaderType::PixelShader, desc.resource.resourceManager, getPath(), getLogger());
+		
+		m_pipeline = graphicsContext.graphicsDevice.createGraphicsPipelineState({
+			vertexShader->getBinary(), 
+			pixelShader->getBinary(), 
+			vertexShader->getSignature(), 
+			pixelShader->getSignature()
 		});
 
 		if (data.contains("textures")) {
 			for (auto& texture : data["textures"]) {
-				string path = texture.at("path");
-				uint32 slot = texture.at("slot");
+				if (!texture.contains("path")) {
+					GENESIS_LOG_THROW_ERROR("Material \"{}\" texture is missing \"path\" field.", getPath());
+				}
+				if (!texture.contains("slot")) {
+					GENESIS_LOG_THROW_ERROR("Material \"{}\" texture is missing \"slot\" field.", getPath());
+				}
+
+				string path = texture["path"];
+				uint32 slot = texture["slot"];
 				m_textures.push_back({desc.resource.resourceManager.getTexture(path.c_str()), slot});
 			}
 		}
-		
-		if (data.contains("properties")) {
-			const ShaderReflectionConstantBuffer* cbuffer = nullptr;
-			auto& vsSignature = m_vertexShader->getSignature();
-			auto& psSignature = m_pixelShader->getSignature();
-			
-			if (vsSignature.hasConstantBuffer(MATERIAL_CONSTANT_BUFFER_NAME)) {
-				cbuffer = vsSignature.getConstantBufferReflection(MATERIAL_CONSTANT_BUFFER_NAME);
-			}
-			else if (psSignature.hasConstantBuffer(MATERIAL_CONSTANT_BUFFER_NAME)) {
-				cbuffer = psSignature.getConstantBufferReflection(MATERIAL_CONSTANT_BUFFER_NAME);
-			}
-			else {
-				GENESIS_LOG_WARNING("Material \"{}\" has properties defined but no \"{}\" constant buffer found in shaders, skipping.", m_path.c_str(), MATERIAL_CONSTANT_BUFFER_NAME);
-			}
 
-			if (cbuffer) {
-				vector<uint8> buffer = getPropertiesValues(data, *cbuffer, m_path.c_str(), getLogger());
-				m_properties = desc.resource.graphicsDevice.createConstantBuffer({buffer.data(), static_cast<uint32>(buffer.size())});
-
-				if (cbuffer->slot != MATERIAL_CONSTANT_BUFFER_SLOT) {
-					GENESIS_LOG_WARNING("Material \"{}\" constant buffer \"{}\" is at slot {} but expected slot {}.", m_path.c_str(), MATERIAL_CONSTANT_BUFFER_NAME, cbuffer->slot, MATERIAL_CONSTANT_BUFFER_SLOT);
+		if (data.contains("samplers")) {
+			for (auto& sampler : data["samplers"]) {
+				if (!sampler.contains("slot")) {
+					GENESIS_LOG_THROW_ERROR("Material \"{}\" texture sampler is missing \"slot\" field.", getPath());
 				}
+
+				uint32 slot = sampler["slot"];
+				m_samplers.push_back({getSamplerState(sampler, graphicsContext.graphicsDevice, getPath(), getLogger()), slot});
 			}
+		}
+		else {
+			m_samplers.push_back({graphicsContext.graphicsDevice.createSamplerState({}), 0});
+		}
+
+		const ShaderReflectionConstantBuffer* cbuffer = nullptr;
+		auto& vsSignature = vertexShader->getSignature();
+		auto& psSignature = pixelShader->getSignature();
+
+		if (vsSignature.hasConstantBuffer(MATERIAL_CONSTANT_BUFFER_NAME)) {
+			cbuffer = vsSignature.getConstantBufferReflection(MATERIAL_CONSTANT_BUFFER_NAME);
+		}
+		else if (psSignature.hasConstantBuffer(MATERIAL_CONSTANT_BUFFER_NAME)) {
+			cbuffer = psSignature.getConstantBufferReflection(MATERIAL_CONSTANT_BUFFER_NAME);
+		}
+
+		if (cbuffer && data.contains("properties")) {
+			Vector<uint8> buffer = getPropertiesValues(data, *cbuffer, getPath(), getLogger());
+			m_properties = graphicsContext.graphicsDevice.createConstantBuffer({buffer.data(), static_cast<uint32>(buffer.size())});
+			if (cbuffer->slot != MATERIAL_CONSTANT_BUFFER_SLOT) {
+				GENESIS_LOG_WARNING("Material \"{}\" constant buffer \"{}\" is at slot {} but expected slot {}.", getPath(), MATERIAL_CONSTANT_BUFFER_NAME, cbuffer->slot, MATERIAL_CONSTANT_BUFFER_SLOT);
+			}
+		}
+		else if (!cbuffer && data.contains("properties")) {
+			GENESIS_LOG_WARNING("Material \"{}\" has properties defined but no \"{}\" constant buffer found in shaders, skipping.", getPath(), MATERIAL_CONSTANT_BUFFER_NAME);
 		}
 	}
 	catch (const json::parse_error& error) {
-		GENESIS_LOG_THROW_ERROR("Failed to parse material file \"{}\".\nDetails:\n{}", m_path.c_str(), error.what());
+		GENESIS_LOG_THROW_ERROR("Failed to parse material file \"{}\".\nDetails:\n{}", getPath(), error.what());
 	}
 	catch (const json::out_of_range& error) {
-		GENESIS_LOG_THROW_ERROR("Failed to read material file \"{}\".\nDetails:\n{}", m_path.c_str(), error.what());
+		GENESIS_LOG_THROW_ERROR("Failed to read material file \"{}\".\nDetails:\n{}", getPath(), error.what());
 	}
 	catch (const json::type_error& error) {
-		GENESIS_LOG_THROW_ERROR("Failed to read material file \"{}\".\nDetails:\n{}", m_path.c_str(), error.what());
+		GENESIS_LOG_THROW_ERROR("Failed to read material file \"{}\".\nDetails:\n{}", getPath(), error.what());
 	}
 }
 
@@ -80,19 +102,14 @@ bool Material::hasProperties() const noexcept
 	return m_properties.get() != nullptr;
 }
 
-const vector<Material::TextureBinding>& Material::getTextures() const noexcept
+const Vector<Material::TextureBinding>& Material::getTextures() const noexcept
 {
 	return m_textures;
 }
 
-Shader& Material::getVertexShader() noexcept
+const Vector<Material::SamplerBinding>& Material::getSamplers() const noexcept
 {
-	return *m_vertexShader;
-}
-
-Shader& Material::getPixelShader() noexcept
-{
-	return *m_pixelShader;
+	return m_samplers;
 }
 
 GraphicsPipelineState& Material::getGraphicsPipelineState() noexcept
@@ -110,33 +127,102 @@ ConstantBuffer& Material::getProperties()
 
 /* STATIC FUNCTION DEFINITIONS */
 
-static SharedPtr<Shader> getShader(json& data, ShaderType type, ResourceManager& resourceManager)
+static SharedPtr<Shader> getShader(json& data, ShaderType type, ResourceManager& resourceManager, const char* path, Logger& logger)
 {
-	string path{};
-	string entry{};
-	auto& shaders = data.at("shaders");
-
-	switch (type) {
-	case ShaderType::VertexShader: 
-	{
-		path = shaders.at("vertex").at("path");
-		entry = shaders.at("vertex").at("entry");
+	if (!data.contains("shaders")) {
+		GENESIS_LOG_THROW(logger, std::runtime_error, Logger::LogLevel::Error, "Material \"{}\" is missing \"shaders\" field.", path);
 	}
-	break;
+
+	json shader;
+	switch (type) {
+	case ShaderType::VertexShader:
+	{
+		if (!data["shaders"].contains("vertex")) {
+			GENESIS_LOG_THROW(logger, std::runtime_error, Logger::LogLevel::Error, "Material \"{}\" is missing \"vertex\" shader.", path);
+		}
+		shader = data["shaders"]["vertex"];
+		break;
+	}
 	case ShaderType::PixelShader:
 	{
-		path = shaders.at("pixel").at("path");
-		entry = shaders.at("pixel").at("entry");
-	} 
-	break;
+		if (!data["shaders"].contains("pixel")) {
+			GENESIS_LOG_THROW(logger, std::runtime_error, Logger::LogLevel::Error, "Material \"{}\" is missing \"pixel\" shader.", path);
+		}
+		shader = data["shaders"]["pixel"];
+		break;
+	}
+	default:
+		GENESIS_LOG_THROW(logger, std::runtime_error, Logger::LogLevel::Error, "Material \"{}\" has unsupported shader type.", path);
+	}
+	
+	if (!shader.contains("path")) {
+		GENESIS_LOG_THROW(logger, std::runtime_error, Logger::LogLevel::Error, "Material \"{}\" shader is missing \"path\" field.", path);
+	}
+	if (!shader.contains("entry")) {
+		GENESIS_LOG_THROW(logger, std::runtime_error, Logger::LogLevel::Error, "Material \"{}\" shader is missing \"entry\" field.", path);
 	}
 
-	return resourceManager.getShader(path.c_str(), entry.c_str(), type);
+	string shaderPath = shader["path"];
+	string shaderEntry = shader["entry"];
+	return resourceManager.getShader(shaderPath.c_str(), shaderEntry.c_str(), type);
 }
 
-static vector<uint8> getPropertiesValues(json& data, const ShaderReflectionConstantBuffer& cbuffer, const char* path, Logger& logger)
+SharedPtr<SamplerState> getSamplerState(json& data, GraphicsDevice& graphicsDevice, const char* path, Logger& logger)
 {
-	vector<uint8> values(cbuffer.size, 0);
+	SamplerStateDesc desc{};
+
+	if (data.contains("filter")) {
+		string filter = data["filter"];
+
+		if (filter == "Point") {
+			desc.filter = TextureFilter::Point;
+		}
+		else if (filter == "Linear") {
+			desc.filter = TextureFilter::Linear;
+		}
+		else if (filter == "Anisotropic") {
+			desc.filter = TextureFilter::Anisotropic;
+		}
+		else {
+			GENESIS_LOG(logger, Logger::LogLevel::Warning, "Material \"{}\" has unknown sampler filter \"{}\", using default.", path, filter);
+		}
+	}
+
+	auto getAddressMode = [&](const string& key) {
+		if (!data.contains(key)) {
+			return TextureAddressMode::Wrap;
+		}
+
+		string mode = data[key];
+		if (mode == "Wrap") {
+			return TextureAddressMode::Wrap;
+		}
+		if (mode == "Mirror") {
+			return TextureAddressMode::Mirror;
+		}
+		else if (mode == "Clamp") {
+			return TextureAddressMode::Clamp;
+		}
+		else {
+			GENESIS_LOG(logger, Logger::LogLevel::Warning, "Material \"{}\" has unknown sampler address mode \"{}\" for \"{}\", using Wrap.", path, mode, key);
+		}
+		return TextureAddressMode::Wrap;
+	};
+
+	desc.addressU = getAddressMode("addressU");
+	desc.addressV = getAddressMode("addressV");
+	desc.addressW = getAddressMode("addressW");
+
+	if (data.contains("maxAnisotropy")) {
+		desc.maxAnisotropy = data["maxAnisotropy"];
+	}
+
+	return graphicsDevice.createSamplerState(desc);
+}
+
+Vector<uint8> getPropertiesValues(json& data, const ShaderReflectionConstantBuffer& cbuffer, const char* path, Logger& logger)
+{
+	Vector<uint8> values(cbuffer.size, 0);
 
 	for (auto& [name, value] : data["properties"].items()) {
 		auto it = cbuffer.variables.find(name);

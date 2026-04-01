@@ -11,12 +11,16 @@
   },
   "textures": [
     {
-      "path": "demo/assets/textures/asteroid.jpg",
+      "path": "demo/assets/textures/brick_d.jpg",
       "slot": 0
+    },
+    {
+      "path": "demo/assets/textures/brick_n.jpg",
+      "slot": 1
     }
   ],
   "properties": {
-    "ka": 0.1,
+    "ka": 0.3,
     "kd": 1.0,
     "ks": 1.0,
     "shininess": 100.0

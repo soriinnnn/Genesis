@@ -1,15 +1,8 @@
-struct InputPS
-{
-    float4 position: SV_Position;
-    float3 normal: COLOR0;
-    float2 texCoord: TEXCOORD0;
-};
-
 cbuffer CameraData: register(b0)
 {
     row_major float4x4 view;
     row_major float4x4 projection;
-    float3 camPosition;
+    float3 cameraPosition;
 }
 
 cbuffer LightData: register(b2)
@@ -27,25 +20,40 @@ cbuffer MaterialData: register(b3)
     float shininess;
 }
 
-Texture2D tex: register(t0);
-SamplerState state: register(s0);
+Texture2D colorTexture: register(t0);
+SamplerState colorSampler: register(s0);
+
+Texture2D normalTexture: register(t1);
+SamplerState normalSampler: register(s1);
+
+struct InputPS
+{
+    float4 position: SV_Position;
+    float2 uv: TEXCOORD0;
+    float3 worldPosition: TEXCOORD1;
+    row_major float3x3 tbn: TEXCOORD2;
+};
 
 float4 main(InputPS input): SV_Target0
 {
-    float3 ambientColor = lightColor;
-    float3 ambientLight = ka * ambientColor;
+    float4 color = colorTexture.Sample(colorSampler, input.uv);
+    float4 normal = normalTexture.Sample(normalSampler, input.uv);
     
-    float3 diffuseColor = lightColor;
-    float diffuse = max(dot(-lightDirection, input.normal), 0.0f);
-    float3 diffuseLight = kd * diffuse * diffuseColor;
+    normal.xyz = normal.xyz * 2.0 - 1.0;
+    normal.xyz = normalize(mul(normal.xyz, input.tbn));
     
-    float3 specularColor = lightColor;
-    float3 reflectedLight = reflect(lightDirection, input.normal);
-    float3 viewDir = normalize(camPosition - input.position.xyz);
-    float specular = pow(max(dot(reflectedLight, viewDir), 0.0f), shininess);
-    float3 specularLight = ks * specular * specularColor;
+    float3 reflectedLight = reflect(lightDirection, normal.xyz);
+    float3 viewDirection = normalize(cameraPosition - input.worldPosition);
     
-    //float2 coords = frac(input.texCoord);
-    //return tex.Sample(state, coords);
-    return float4(ambientLight + diffuseLight + specularLight, 1.0f);
+    float diffuse = max(dot(-lightDirection, normal.xyz), 0.0f);
+    float specular = 0.0f;
+    if (dot(-lightDirection, input.tbn[2]) > 0) {
+        specular = pow(max(dot(reflectedLight, viewDirection), 0.0f), shininess);
+    }
+    
+    float3 ambientLight = ka * lightColor * color.rgb;
+    float3 diffuseLight = kd * diffuse * lightColor * color.rgb;
+    float3 specularLight = ks * specular * lightColor;
+    
+    return float4(ambientLight + diffuseLight + specularLight, color.a);
 }

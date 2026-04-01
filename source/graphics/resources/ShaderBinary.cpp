@@ -4,19 +4,29 @@
 #include <d3dcompiler.h>
 
 using namespace genesis;
+using namespace std;
 
 ShaderBinary::ShaderBinary(const ShaderBinaryDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
-	if (!sdesc.shaderSourceName) {
+	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
+		D3DCreateBlob(sdesc.binaryCodeSize, &m_binary),
+		"D3DCreateBlob failed."
+	);
+	memcpy(m_binary->GetBufferPointer(), sdesc.binaryCode, sdesc.binaryCodeSize);
+}
+
+ShaderBinary::ShaderBinary(const ShaderCompileDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
+{
+	if (!sdesc.sourceName) {
 		GENESIS_LOG_THROW_INVALID_ARG("No shader source name provided.");
 	}
-	if (!sdesc.shaderSourceCode) {
+	if (!sdesc.sourceCode) {
 		GENESIS_LOG_THROW_INVALID_ARG("No shader source code provided.");
 	}
-	if (!sdesc.shaderSourceCodeSize) {
+	if (!sdesc.sourceCodeSize) {
 		GENESIS_LOG_THROW_INVALID_ARG("No shader source code size provided.");
 	}
-	if (!sdesc.shaderEntryPoint) {
+	if (!sdesc.entryPoint) {
 		GENESIS_LOG_THROW_INVALID_ARG("No shader entry point provided.");
 	}
 
@@ -29,32 +39,25 @@ ShaderBinary::ShaderBinary(const ShaderBinaryDesc& sdesc, const GraphicsResource
 
 	GENESIS_GRAPHICS_CHECK_SHADER_COMPILE(
 		D3DCompile(
-			sdesc.shaderSourceCode,
-			sdesc.shaderSourceCodeSize,
-			sdesc.shaderSourceName,
+			sdesc.sourceCode,
+			sdesc.sourceCodeSize,
+			sdesc.sourceName,
 			nullptr,
 			nullptr,
-			sdesc.shaderEntryPoint,
-			graphicsUtils::getShaderModelTarget(sdesc.shaderType),
+			sdesc.entryPoint,
+			graphicsUtils::getShaderModelTarget(sdesc.type),
 			compileFlags,
 			0,
-			&m_blob,
+			&m_binary,
 			&errorBlob
 		),
 		errorBlob.Get()
 	);
-
-	m_type = sdesc.shaderType;
 }
 
 ShaderBinary::~ShaderBinary() {}
 
 BinaryData ShaderBinary::getData() const noexcept
 {
-	return BinaryData{m_blob->GetBufferPointer(), m_blob->GetBufferSize()};
-}
-
-ShaderType ShaderBinary::getType() const noexcept
-{
-	return m_type;
+	return BinaryData{m_binary->GetBufferPointer(), m_binary->GetBufferSize()};
 }

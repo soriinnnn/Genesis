@@ -15,11 +15,12 @@ static void showFramerate(float deltaTime, Logger& logger);
 
 TestWorld::TestWorld(const WorldDesc& desc): World(desc) 
 {
-    SharedPtr<Mesh> mesh = m_resourceManager.getMesh("demo/assets/meshes/statue.obj");
+    SharedPtr<Mesh> mesh = m_resourceManager.getMesh("demo/assets/meshes/sphere.obj", GENESIS_VERTEX_PRESET_NORMAL_MAPPED);
     SharedPtr<Material> material = m_resourceManager.getMaterial("demo/assets/materials/statue.json");
 
     Entity* statue = m_entityManager->createEntity<Entity>();
     Transform* statueTransform = statue->createComponent<Transform>();
+    statueTransform->setScale({0.5, 0.5, 0.5});
     MeshRenderer* statueMesh = statue->createComponent<MeshRenderer>();
     statueMesh->setMesh(mesh);
     statueMesh->setMaterial(material);

@@ -5,7 +5,7 @@ using namespace genesis;
 int main() 
 {
 	try {
-		Game game({.wndTitle = "Demo", .logLevel = Logger::LogLevel::Info});
+		Game game({.windowTitle = "Demo", .logLevel = Logger::LogLevel::Info});
 		game.run();
 	}
 	catch (const std::runtime_error&) {

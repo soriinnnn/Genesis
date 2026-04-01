@@ -1,8 +1,10 @@
 #include <game/Game.h>
 #include <display/Display.h>
 #include <input/InputManager.h>
-#include <graphics/GraphicsEngine.h>
 #include <resources/ResourceManager.h>
+#include <graphics/GraphicsEngine.h>
+#include <graphics/EngineShaders.h>
+#include <graphics/FrameBuffer.h>
 
 using namespace genesis;
 using namespace std;
@@ -11,21 +13,31 @@ using namespace chrono;
 Game::Game(const GameDesc& desc)
 {
     m_logger = make_unique<Logger>(desc.logLevel);
-    m_graphicsEngine = make_unique<GraphicsEngine>(GraphicsEngineDesc{*m_logger});
-    m_resourceManager = make_unique<ResourceManager>(ResourceManagerDesc{*m_logger, m_graphicsEngine->getGraphicsDevice()});
-    m_display = make_unique<Display>(DisplayDesc{*m_logger, desc.wndSize, desc.wndTitle, WindowStyle::Windowed, m_graphicsEngine->getGraphicsDevice()});
-    m_inputManager = InputManager::create(InputManagerDesc{*m_logger, m_display->getWindow()});
+    m_graphicsEngine = make_unique<GraphicsEngine>(GraphicsEngineDesc{*m_logger, desc.windowSize});
+    m_resourceManager = make_unique<ResourceManager>(ResourceManagerDesc{*m_logger, m_graphicsEngine->getGraphicsContext()});
+    m_display = make_unique<Display>(DisplayDesc{*m_logger, desc.windowSize, desc.windowTitle, WindowStyle::Windowed, m_graphicsEngine->getGraphicsContext()});
+    m_inputManager = InputManager::create({*m_logger, m_display->getWindow()});
     m_isRunning = true;
 
+    m_display->setMatchWindowResolution(true);
+    m_display->onResizeWindow([this](uint32 width, uint32 height) {
+        m_graphicsEngine->resizeFrameBuffers(width, height);
+    });
+
+    /* TEST */
+    m_effect = m_resourceManager->getPostProcess("demo/assets/postProcess/distorsion.json");
     m_testWorld = make_unique<TestWorld>(WorldDesc{*m_logger, *m_inputManager, *m_resourceManager});
     m_centerMouse = false;
     m_inputManager->addListener(this);
+
     GENESIS_LOG_INFO("Game initialized.");
 }
 
 Game::~Game() 
 {
     GENESIS_LOG_INFO("Game is shutting down...");
+
+    /* TEST */
     m_inputManager->removeListener(this);
 }
 
@@ -40,7 +52,10 @@ void Game::onInternalUpdate()
 
     m_inputManager->update();
     m_testWorld->update(deltaTime);
-    m_graphicsEngine->render(*m_testWorld, m_display->getSwapChain(), deltaTime);
+    m_graphicsEngine->render(*m_testWorld);
+    m_graphicsEngine->postProcess(*m_effect);
+    m_graphicsEngine->present(m_display->getSwapChain());
+    //m_graphicsEngine->render(*m_testWorld, m_display->getSwapChain());
 }
 
 float Game::getDeltaTime()
@@ -48,7 +63,6 @@ float Game::getDeltaTime()
     auto currentTime = steady_clock::now();
     duration<float> delta = currentTime - m_previousTime;
     m_previousTime = currentTime;
-
     return delta.count();
 }
 

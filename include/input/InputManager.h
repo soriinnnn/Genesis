@@ -47,7 +47,7 @@ namespace genesis
 
 	protected:
 		Window& m_window;
-		std::vector<InputListener*> m_listeners;
+		Vector<InputListener*> m_listeners;
 		bool m_mouseVisible;
 		bool m_mouseLocked;
 		bool m_ignoreNextMouseMove;

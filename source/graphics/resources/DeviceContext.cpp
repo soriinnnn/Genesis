@@ -4,8 +4,10 @@
 #include <graphics/resources/VertexBuffer.h>
 #include <graphics/resources/IndexBuffer.h>
 #include <graphics/resources/ConstantBuffer.h>
-#include <graphics/resources/GraphicsTexture.h>
-#include <graphics/resources/DepthBuffer.h>
+#include <graphics/resources/SamplerState.h>
+#include <graphics/resources/ImageTexture.h>
+#include <graphics/resources/DepthStencilTexture.h>
+#include <graphics/resources/RenderTargetTexture.h>
 #include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;
@@ -23,12 +25,31 @@ DeviceContext::~DeviceContext() {}
 
 void DeviceContext::clearAndSetBackBuffer(const SwapChain& swapChain, const Vec4& color)
 {
-	ID3D11RenderTargetView* renderTarget = swapChain.m_renderTarget.Get();
-	ID3D11DepthStencilView* depthView = swapChain.m_depthBuffer->m_depthView.Get();
+	ID3D11RenderTargetView* renderView = swapChain.m_renderTarget.Get();
+	ID3D11DepthStencilView* depthView = swapChain.m_depthStencil->m_depthStencilView.Get();
 
-	m_context->ClearRenderTargetView(renderTarget, color.toArray());
+	m_context->ClearRenderTargetView(renderView, color.toArray());
 	m_context->ClearDepthStencilView(depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	m_context->OMSetRenderTargets(1, &renderTarget, depthView);
+	m_context->OMSetRenderTargets(1, &renderView, depthView);
+}
+
+void DeviceContext::clearRenderTarget(const RenderTargetTexture& renderTarget, const Vec4& color)
+{
+	ID3D11RenderTargetView* renderView = renderTarget.m_renderTargetView.Get();
+	m_context->ClearRenderTargetView(renderView, color.toArray());
+}
+
+void DeviceContext::clearDepthStencil(const DepthStencilTexture& depthStencil)
+{
+	ID3D11DepthStencilView* depthView = depthStencil.m_depthStencilView.Get();
+	m_context->ClearDepthStencilView(depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+}
+
+void DeviceContext::setRenderTarget(const RenderTargetTexture& renderTarget, const DepthStencilTexture& depthStencil)
+{
+	ID3D11RenderTargetView* renderView = renderTarget.m_renderTargetView.Get();
+	ID3D11DepthStencilView* depthView = depthStencil.m_depthStencilView.Get();
+	m_context->OMSetRenderTargets(1, &renderView, depthView);
 }
 
 void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const void* data)
@@ -95,11 +116,25 @@ void DeviceContext::setConstantBuffer(const ConstantBuffer& buffer, uint32 slot)
 	m_context->PSSetConstantBuffers(slot, 1, &buff);
 }
 
-void DeviceContext::setTexture(const GraphicsTexture& texture, uint32 slot)
+void DeviceContext::setTexture(const ImageTexture& texture, uint32 slot)
 {
 	ID3D11ShaderResourceView* resourceView = texture.m_resourceView.Get();
 	m_context->VSSetShaderResources(slot, 1, &resourceView);
 	m_context->PSSetShaderResources(slot, 1, &resourceView);
+}
+
+void genesis::DeviceContext::setTexture(const RenderTargetTexture& texture, uint32 slot)
+{
+	ID3D11ShaderResourceView* resourceView = texture.m_resourceView.Get();
+	m_context->VSSetShaderResources(slot, 1, &resourceView);
+	m_context->PSSetShaderResources(slot, 1, &resourceView);
+}
+
+void DeviceContext::setSamplerState(const SamplerState& sampler, uint32 slot)
+{
+	ID3D11SamplerState* samplerState = sampler.m_samplerState.Get();
+	m_context->VSSetSamplers(slot, 1, &samplerState);
+	m_context->PSSetSamplers(slot, 1, &samplerState);
 }
 
 void DeviceContext::draw(uint32 vertexCount, uint32 startVertexLocation)

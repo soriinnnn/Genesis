@@ -7,12 +7,14 @@ using namespace std;
 
 Shader::Shader(const ShaderDesc& desc): Resource(desc.resource), m_type{desc.type}
 {
+	auto& graphicsContext = desc.resource.graphicsContext;
+
 	string data = resourcesUtils::readFile(m_path.c_str());
 	if (data.empty()) {
 		GENESIS_LOG_THROW_ERROR("Failed to open shader file: {}", m_path.c_str());
 	}
 
-	m_binary = desc.resource.graphicsDevice.compileShader({
+	m_binary = graphicsContext.graphicsDevice.compileShader({
 		m_path.c_str(),
 		data.c_str(),
 		data.length(),
@@ -20,7 +22,7 @@ Shader::Shader(const ShaderDesc& desc): Resource(desc.resource), m_type{desc.typ
 		desc.type
 	});
 	
-	m_signature = desc.resource.graphicsDevice.reflectShader({*m_binary});
+	m_signature = graphicsContext.graphicsDevice.reflectShader({*m_binary});
 }
 
 Shader::~Shader() {}

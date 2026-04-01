@@ -1,4 +1,6 @@
 #include <graphics/GraphicsDevice.h>
+#include <graphics/PipelineStateCache.h>
+#include <graphics/SamplerStateCache.h>
 #include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;
@@ -43,21 +45,19 @@ GraphicsDevice::GraphicsDevice(const GraphicsDeviceDesc& desc): Base(desc.base)
         m_dxgiAdapter->GetParent(IID_PPV_ARGS(&m_dxgiFactory)),
         "Failed to retrieve IDXGIFactory."
     );
+
+    m_pipelineCache = make_unique<PipelineStateCache>(GraphicsCacheDesc{m_logger, *this});
+    m_samplerCache = make_unique<SamplerStateCache>(GraphicsCacheDesc{m_logger, *this});
 }
 
 GraphicsDevice::~GraphicsDevice() {}
-
-SharedPtr<SwapChain> GraphicsDevice::createSwapChain(const SwapChainDesc& desc)
-{
-    return make_shared<SwapChain>(desc, getGraphicsResourceDesc());
-}
 
 SharedPtr<DeviceContext> GraphicsDevice::createDeviceContext()
 {
     return make_shared<DeviceContext>(getGraphicsResourceDesc());
 }
 
-SharedPtr<ShaderBinary> GraphicsDevice::compileShader(const ShaderBinaryDesc& desc)
+SharedPtr<ShaderBinary> GraphicsDevice::compileShader(const ShaderCompileDesc& desc)
 {
     return make_shared<ShaderBinary>(desc, getGraphicsResourceDesc());
 }
@@ -67,9 +67,19 @@ SharedPtr<ShaderSignature> GraphicsDevice::reflectShader(const ShaderSignatureDe
     return make_shared<ShaderSignature>(desc, getGraphicsResourceDesc());
 }
 
+SharedPtr<ShaderBinary> GraphicsDevice::createShaderBinary(const ShaderBinaryDesc& desc)
+{
+    return make_shared<ShaderBinary>(desc, getGraphicsResourceDesc());
+}
+
+SharedPtr<SwapChain> GraphicsDevice::createSwapChain(const SwapChainDesc& desc)
+{
+    return make_shared<SwapChain>(desc, getGraphicsResourceDesc());
+}
+
 SharedPtr<GraphicsPipelineState> GraphicsDevice::createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc)
 {
-    return make_shared<GraphicsPipelineState>(desc, getGraphicsResourceDesc());
+    return m_pipelineCache->get(desc);
 }
 
 SharedPtr<VertexBuffer> GraphicsDevice::createVertexBuffer(const VertexBufferDesc& desc)
@@ -77,24 +87,40 @@ SharedPtr<VertexBuffer> GraphicsDevice::createVertexBuffer(const VertexBufferDes
     return make_shared<VertexBuffer>(desc, getGraphicsResourceDesc());
 }
 
-SharedPtr<ConstantBuffer> GraphicsDevice::createConstantBuffer(const ConstantBufferDesc& desc)
-{
-    return make_shared<ConstantBuffer>(desc, getGraphicsResourceDesc());
-}
-
 SharedPtr<IndexBuffer> GraphicsDevice::createIndexBuffer(const IndexBufferDesc& desc)
 {
     return make_shared<IndexBuffer>(desc, getGraphicsResourceDesc());
 }
 
-SharedPtr<GraphicsTexture> GraphicsDevice::createGraphicsTexture(const GraphicsTextureDesc& desc)
+SharedPtr<ConstantBuffer> GraphicsDevice::createConstantBuffer(const ConstantBufferDesc& desc)
 {
-    return make_shared<GraphicsTexture>(desc, getGraphicsResourceDesc());
+    return make_shared<ConstantBuffer>(desc, getGraphicsResourceDesc());
 }
 
-SharedPtr<DepthBuffer> GraphicsDevice::createDepthBuffer(const DepthBufferDesc& desc)
+SharedPtr<SamplerState> GraphicsDevice::createSamplerState(const SamplerStateDesc& desc)
 {
-    return make_shared<DepthBuffer>(desc, getGraphicsResourceDesc());
+    return m_samplerCache->get(desc);
+}
+
+SharedPtr<ImageTexture> GraphicsDevice::createImageTexture(const ImageTextureDesc& desc)
+{
+    return make_shared<ImageTexture>(desc, getGraphicsResourceDesc());
+}
+
+SharedPtr<DepthStencilTexture> GraphicsDevice::createDepthStencilTexture(const DepthStencilTextureDesc& desc)
+{
+    return make_shared<DepthStencilTexture>(desc, getGraphicsResourceDesc());
+}
+
+SharedPtr<RenderTargetTexture> GraphicsDevice::createRenderTargetTexture(const RenderTargetTextureDesc& desc)
+{
+    return make_shared<RenderTargetTexture>(desc, getGraphicsResourceDesc());
+}
+
+void GraphicsDevice::clearCache()
+{
+    m_pipelineCache->clear();
+    m_samplerCache->clear();
 }
 
 void GraphicsDevice::clearState()
