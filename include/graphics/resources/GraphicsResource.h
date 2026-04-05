@@ -10,7 +10,7 @@ namespace genesis
 	struct GraphicsResourceDesc
 	{
 		BaseDesc base;
-		GraphicsDevice& graphicsDevice;
+		SharedPtr<GraphicsDevice> graphicsDevice;
 		ID3D11Device& device;
 		IDXGIFactory& factory;
 	};
@@ -24,7 +24,7 @@ namespace genesis
 		explicit GraphicsResource(const GraphicsResourceDesc& desc);
 
 	protected:
-		GraphicsDevice& m_graphicsDevice;
+		SharedPtr<GraphicsDevice> m_graphicsDevice;
 		ID3D11Device& m_device;
 		IDXGIFactory& m_factory;
 	};

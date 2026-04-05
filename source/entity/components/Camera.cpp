@@ -13,7 +13,9 @@ Camera::Camera(const ComponentDesc& desc): Component(desc),
     m_farPlane{1000.0f},
     m_aspectRatio{16.0f/9.0f},
     m_isProjectionDirty{true}
-{}
+{
+    m_entity.createComponent<Transform>();
+}
 
 Camera::~Camera() {}
 
@@ -73,8 +75,6 @@ const Mat4& Camera::getProjectionMatrix() noexcept
 Mat4 Camera::getViewMatrix() noexcept
 {
     Transform* transform = m_entity.getComponent<Transform>();
-    GENESIS_ASSERT(transform != nullptr, "Camera requires a Transform component.");
-
     return Mat4::lookAtLH(
         transform->getPosition(),
         transform->getPosition() + getForwardVector(transform->getRotation()),

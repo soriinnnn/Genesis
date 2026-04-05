@@ -10,11 +10,14 @@
 #include <graphics/resources/VertexBuffer.h>
 #include <graphics/resources/IndexBuffer.h>
 #include <graphics/resources/ConstantBuffer.h>
+#include <graphics/resources/StructuredBuffer.h>
 #include <graphics/resources/GraphicsPipelineState.h>
 #include <graphics/resources/SamplerState.h>
 #include <graphics/resources/ImageTexture.h>
 #include <graphics/resources/DepthStencilTexture.h>
 #include <graphics/resources/RenderTargetTexture.h>
+#include <graphics/resources/SpriteBatch.h>
+#include <graphics/resources/FontAtlas.h>
 #include <d3d11.h>
 #include <wrl.h>
 
@@ -40,10 +43,13 @@ namespace genesis
         SharedPtr<VertexBuffer> createVertexBuffer(const VertexBufferDesc& desc);
         SharedPtr<IndexBuffer> createIndexBuffer(const IndexBufferDesc& desc);
         SharedPtr<ConstantBuffer> createConstantBuffer(const ConstantBufferDesc& desc);
+        SharedPtr<StructuredBuffer> createStructuredBuffer(const StructuredBufferDesc& desc);
         SharedPtr<SamplerState> createSamplerState(const SamplerStateDesc& desc);
         SharedPtr<ImageTexture> createImageTexture(const ImageTextureDesc& desc);
         SharedPtr<DepthStencilTexture> createDepthStencilTexture(const DepthStencilTextureDesc& desc);
         SharedPtr<RenderTargetTexture> createRenderTargetTexture(const RenderTargetTextureDesc& desc);
+        SharedPtr<SpriteBatch> createSpriteBatch(const SpriteBatchDesc& desc);
+        SharedPtr<FontAtlas> createFontAtlas(const FontAtlasDesc& desc);
 
         void clearCache();
         void clearState();

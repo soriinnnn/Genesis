@@ -34,11 +34,7 @@ void PlayerController::update(float deltaTime)
 	if (rotation.x > MAX_PITCH) rotation.x = MAX_PITCH;
 	if (rotation.x < -MAX_PITCH) rotation.x = -MAX_PITCH;
 
-	Vec3 forward{
-		 std::cos(rotation.x) * std::sin(rotation.y),
-		-std::sin(rotation.x),
-		 std::cos(rotation.x) * std::cos(rotation.y)
-	};
+	Vec3 forward = transform->getForwardVector();
 	Vec3 right = Vec3::normalize(Vec3::cross(Vec3{0.0f, 1.0f, 0.0f}, forward));
 
 	if (m_inputManager->isKeyDown(Key::W)) {

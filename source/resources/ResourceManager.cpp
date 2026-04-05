@@ -4,6 +4,7 @@
 #include <resources/Shader.h>
 #include <resources/Material.h>
 #include <resources/PostProcess.h>
+#include <resources/Font.h>
 #include <core/utils/Macros.h>
 #include <filesystem>
 
@@ -81,6 +82,20 @@ SharedPtr<PostProcess> ResourceManager::getPostProcess(const char* path)
 	if (!result) {
 		ResourceDesc desc = getResourceDesc(id, absolutePath.c_str());
 		result = createResource<PostProcess, PostProcessDesc>(id, {desc});
+	}
+
+	return result;
+}
+
+SharedPtr<Font> ResourceManager::getFont(const char* path)
+{
+	String absolutePath = getAbsolutePath(path);
+	ResourceId id = getResourceId(absolutePath.c_str());
+
+	SharedPtr<Font> result = getResource<Font>(id);
+	if (!result) {
+		ResourceDesc desc = getResourceDesc(id, absolutePath.c_str());
+		result = createResource<Font, FontDesc>(id, {desc});
 	}
 
 	return result;

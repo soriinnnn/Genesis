@@ -3,10 +3,12 @@
 #include <core/Core.h>
 #include <core/Logger.h>
 #include <core/utils/Macros.h>
-#include <input/InputListener.h>
+#include <display/Display.h>
+#include <ui/UIManager.h>
+#include <input/InputManager.h>
+#include <resources/ResourceManager.h>
+#include <game/World.h>
 #include <math/Rect.h>
-
-#include <game/TestWorld.h>
 
 namespace genesis 
 {
@@ -17,7 +19,7 @@ namespace genesis
         Logger::LogLevel logLevel = Logger::LogLevel::Error;
     };
 
-    class Game: public InputListener
+    class Game
     {
     GENESIS_DISABLE_COPY_AND_MOVE(Game)
     public:
@@ -25,32 +27,37 @@ namespace genesis
         virtual ~Game();
 
         Logger& getLogger() noexcept;
-        virtual void run();
+        World& getWorld() noexcept;
+        InputManager& getInput() noexcept;
+        ResourceManager& getResources() noexcept;
+        UIManager& getUI() noexcept;
+        void run();
 
-        void onKeyDown(Key key);
-        void onKeyUp(Key key);
-        void onMouseMove(Point delta, Point pos);
-        void onMouseDown(MouseButton button, Point pos);
-        void onMouseUp(MouseButton button, Point pos);
+    protected:
+        virtual void onCreate();
+        virtual void onUpdate(float deltaTime);
+
+        void addEffect(SharedPtr<PostProcess> effect);
+        void clearEffects();
+        void setImageResolution(uint32 width, uint32 height);
 
     private:
         void onInternalUpdate();
         float getDeltaTime();
 
-    private:
+    protected:
         UniquePtr<Logger> m_logger;
-        UniquePtr<GraphicsEngine> m_graphicsEngine;
         UniquePtr<Display> m_display;
-        UniquePtr<ResourceManager> m_resourceManager;
         UniquePtr<InputManager> m_inputManager;
-
-        bool m_isRunning;
-        std::chrono::steady_clock::time_point m_previousTime;
+        UniquePtr<ResourceManager> m_resourceManager;
+        UniquePtr<UIManager> m_uiManager;
+        UniquePtr<World> m_world;
         
-        /* TEST */
-        UniquePtr<TestWorld> m_testWorld;
-        SharedPtr<PostProcess> m_effect;
-        bool m_centerMouse;
+    private:
+        bool m_isRunning;
+        TimePoint m_previousTime;
+        UniquePtr<GraphicsEngine> m_graphicsEngine;
+        Vector<SharedPtr<PostProcess>> m_effects;
     };
 }
 

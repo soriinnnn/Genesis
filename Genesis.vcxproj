@@ -136,6 +136,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="demo\src\Demo.cpp" />
+    <ClCompile Include="demo\main.cpp" />
+    <ClCompile Include="source\resources\Font.cpp" />
+    <ClCompile Include="source\graphics\resources\FontAtlas.cpp" />
+    <ClCompile Include="source\entity\components\Light.cpp" />
     <ClCompile Include="source\resources\PostProcess.cpp" />
     <ClCompile Include="source\graphics\EngineShaders.cpp" />
     <ClCompile Include="source\graphics\SamplerStateCache.cpp" />
@@ -153,7 +158,6 @@
     <ClCompile Include="source\entity\components\Camera.cpp" />
     <ClCompile Include="source\entity\components\MeshRenderer.cpp" />
     <ClCompile Include="source\entity\components\Component.cpp" />
-    <ClCompile Include="source\entity\Player.cpp" />
     <ClCompile Include="source\entity\Entity.cpp" />
     <ClCompile Include="source\entity\EntityManager.cpp" />
     <ClCompile Include="source\resources\Mesh.cpp" />
@@ -178,7 +182,6 @@
     <ClCompile Include="source\core\Base.cpp">
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</MultiProcessorCompilation>
     </ClCompile>
-    <ClCompile Include="demo\main.cpp" />
     <ClCompile Include="source\graphics\resources\SwapChain.cpp" />
     <ClCompile Include="source\math\Vec4.cpp" />
     <ClCompile Include="source\graphics\resources\VertexBuffer.cpp" />
@@ -190,9 +193,16 @@
     <ClCompile Include="source\resources\Texture.cpp" />
     <ClCompile Include="source\game\World.cpp" />
     <ClCompile Include="source\entity\components\Transform.cpp" />
-    <ClCompile Include="source\game\TestWorld.cpp" />
+    <ClCompile Include="source\graphics\resources\StructuredBuffer.cpp" />
+    <ClCompile Include="source\ui\UIManager.cpp" />
+    <ClCompile Include="source\ui\elements\UIElement.cpp" />
+    <ClCompile Include="source\graphics\resources\SpriteBatch.cpp" />
+    <ClCompile Include="source\ui\elements\UILabel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="demo\src\Demo.h" />
+    <ClInclude Include="include\resources\Font.h" />
+    <ClInclude Include="include\graphics\resources\FontAtlas.h" />
     <ClInclude Include="include\graphics\EngineShaders.h" />
     <ClInclude Include="include\graphics\GraphicsCache.h" />
     <ClInclude Include="include\graphics\FrameBuffer.h" />
@@ -210,8 +220,8 @@
     <ClInclude Include="include\input\InputManager.h" />
     <ClInclude Include="include\input\InputListener.h" />
     <ClInclude Include="include\math\Point.h" />
-    <ClInclude Include="include\resources\ResourceManager.h" />
     <ClInclude Include="include\resources\Resource.h" />
+    <ClInclude Include="include\resources\ResourceManager.h" />
     <ClInclude Include="include\graphics\resources\IndexBuffer.h" />
     <ClInclude Include="include\graphics\resources\ConstantBuffer.h" />
     <ClInclude Include="include\core\utils\PlatformUtils.h" />
@@ -237,7 +247,6 @@
     <ClInclude Include="include\math\Vec4.h" />
     <ClInclude Include="include\graphics\resources\VertexBuffer.h" />
     <ClInclude Include="include\math\Vec3.h" />
-    <ClInclude Include="include\entity\Player.h" />
     <ClInclude Include="include\entity\components\MeshRenderer.h" />
     <ClInclude Include="include\entity\components\PlayerController.h" />
     <ClInclude Include="include\resources\Material.h" />
@@ -248,6 +257,7 @@
     <ClInclude Include="include\graphics\PipelineStateCache.h" />
     <ClInclude Include="include\graphics\SamplerStateCache.h" />
     <ClInclude Include="include\resources\PostProcess.h" />
+    <ClInclude Include="include\entity\components\Light.h" />
     <ClInclude Include="source\display\win32\Win32Window.h" />
     <ClInclude Include="source\input\win32\Win32InputManager.h" />
     <ClInclude Include="include\math\Vec2.h" />
@@ -255,7 +265,11 @@
     <ClInclude Include="include\resources\utils\ResourcesUtils.h" />
     <ClInclude Include="include\game\World.h" />
     <ClInclude Include="include\entity\components\Transform.h" />
-    <ClInclude Include="include\game\TestWorld.h" />
+    <ClInclude Include="include\graphics\resources\StructuredBuffer.h" />
+    <ClInclude Include="include\ui\UIManager.h" />
+    <ClInclude Include="include\ui\elements\UIElement.h" />
+    <ClInclude Include="include\graphics\resources\SpriteBatch.h" />
+    <ClInclude Include="include\ui\elements\UILabel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

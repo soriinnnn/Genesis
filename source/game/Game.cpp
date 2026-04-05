@@ -1,10 +1,5 @@
 #include <game/Game.h>
-#include <display/Display.h>
-#include <input/InputManager.h>
-#include <resources/ResourceManager.h>
 #include <graphics/GraphicsEngine.h>
-#include <graphics/EngineShaders.h>
-#include <graphics/FrameBuffer.h>
 
 using namespace genesis;
 using namespace std;
@@ -17,28 +12,15 @@ Game::Game(const GameDesc& desc)
     m_resourceManager = make_unique<ResourceManager>(ResourceManagerDesc{*m_logger, m_graphicsEngine->getGraphicsContext()});
     m_display = make_unique<Display>(DisplayDesc{*m_logger, desc.windowSize, desc.windowTitle, WindowStyle::Windowed, m_graphicsEngine->getGraphicsContext()});
     m_inputManager = InputManager::create({*m_logger, m_display->getWindow()});
+    m_uiManager = make_unique<UIManager>(UIManagerDesc{*m_logger});
+    m_world = make_unique<World>(WorldDesc{*m_logger});
     m_isRunning = true;
-
-    m_display->setMatchWindowResolution(true);
-    m_display->onResizeWindow([this](uint32 width, uint32 height) {
-        m_graphicsEngine->resizeFrameBuffers(width, height);
-    });
-
-    /* TEST */
-    m_effect = m_resourceManager->getPostProcess("demo/assets/postProcess/distorsion.json");
-    m_testWorld = make_unique<TestWorld>(WorldDesc{*m_logger, *m_inputManager, *m_resourceManager});
-    m_centerMouse = false;
-    m_inputManager->addListener(this);
-
     GENESIS_LOG_INFO("Game initialized.");
 }
 
 Game::~Game() 
 {
     GENESIS_LOG_INFO("Game is shutting down...");
-
-    /* TEST */
-    m_inputManager->removeListener(this);
 }
 
 Logger& Game::getLogger() noexcept
@@ -46,16 +28,42 @@ Logger& Game::getLogger() noexcept
     return *m_logger;
 }
 
+World& Game::getWorld() noexcept
+{
+    return *m_world;
+}
+
+InputManager& Game::getInput() noexcept
+{
+    return *m_inputManager;
+}
+
+ResourceManager& Game::getResources() noexcept
+{
+    return *m_resourceManager;
+}
+
+UIManager& Game::getUI() noexcept
+{
+    return *m_uiManager;
+}
+
 void Game::onInternalUpdate()
 {
     float deltaTime = getDeltaTime();
-
     m_inputManager->update();
-    m_testWorld->update(deltaTime);
-    m_graphicsEngine->render(*m_testWorld);
-    m_graphicsEngine->postProcess(*m_effect);
+    m_uiManager->update(deltaTime);
+
+    onUpdate(deltaTime);
+    m_world->update(deltaTime);
+
+    m_graphicsEngine->clear();
+    m_graphicsEngine->render(*m_world, deltaTime);
+    for (auto& effect : m_effects) {
+        m_graphicsEngine->postProcess(*effect);
+    }
+    m_graphicsEngine->render(*m_uiManager);
     m_graphicsEngine->present(m_display->getSwapChain());
-    //m_graphicsEngine->render(*m_testWorld, m_display->getSwapChain());
 }
 
 float Game::getDeltaTime()
@@ -66,34 +74,21 @@ float Game::getDeltaTime()
     return delta.count();
 }
 
-void Game::onKeyDown(Key key) {}
+void Game::onCreate() {}
 
-void Game::onKeyUp(Key key) 
+void Game::onUpdate(float deltaTime) {}
+
+void Game::addEffect(SharedPtr<PostProcess> effect)
 {
-    switch (key) {
-    case Key::G:
-    {
-        m_centerMouse = !m_centerMouse;
-        m_inputManager->setMouseLock(m_centerMouse);
-        m_inputManager->setMouseVisibility(!m_centerMouse);
-        break;
-    }
-    case Key::F11:
-    {
-        if (!m_display->isBorderless()) {
-            m_display->toggleBorderless(1920, 1080);
-        }
-        else {
-            m_display->toggleBorderless(1280, 720);
-        }
-        m_inputManager->ignoreNextMouseMove();
-        break;
-    }
-    }
+    m_effects.push_back(effect);
 }
 
-void Game::onMouseMove(Point delta, Point pos) {}
+void Game::clearEffects()
+{
+    m_effects.clear();
+}
 
-void Game::onMouseDown(MouseButton button, Point pos) {}
-
-void Game::onMouseUp(MouseButton button, Point pos) {}
+void Game::setImageResolution(uint32 width, uint32 height)
+{
+    m_graphicsEngine->resizeFrameBuffers(width, height);
+}

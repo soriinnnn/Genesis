@@ -16,6 +16,7 @@ namespace genesis
 		Vec3 getRotation() const noexcept;
 		Vec3 getScale() const noexcept;
 		const Mat4& getWorldMatrix() noexcept;
+		Vec3 getForwardVector() const noexcept;
 
 		void setPosition(const Vec3& position) noexcept;
 		void setRotation(const Vec3& rotation) noexcept;
@@ -29,7 +30,6 @@ namespace genesis
 		Vec3 m_rotation;
 		Vec3 m_scale;
 		Mat4 m_world;
-
 		bool m_isDirty;
 	};
 }

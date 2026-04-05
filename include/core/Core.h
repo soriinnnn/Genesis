@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <functional>
 #include <unordered_map>
+#include <map>
 
 namespace genesis 
 {
@@ -32,15 +33,17 @@ namespace genesis
     class Texture;
     class Material;
     class PostProcess;
+    class Font;
 
     class EntityManager;
     class Entity;
     class Component;
     class Transform;
     class MeshRenderer;
-
-    class Player;
     class PlayerController;
+
+    class UIManager;
+    class UIElement;
 
     class GraphicsEngine;
     class GraphicsDevice;
@@ -63,6 +66,9 @@ namespace genesis
     class ImageTexture;
     class RenderTargetTexture;
     class DepthStencilTexture;
+    class StructuredBuffer;
+    class SpriteBatch;
+    class FontAtlas;
 
     using ResourceId = size_t;
     using EntityId = size_t;
@@ -81,9 +87,12 @@ namespace genesis
     template<typename T> using UniquePtr = std::unique_ptr<T>;
     template<typename T> using WeakPtr = std::weak_ptr<T>;
 
-    using String = std::string;
     template<typename T> using Vector = std::vector<T>;
     template<typename K, typename T> using HashMap = std::unordered_map<K, T>;
+    template<typename K, typename T> using Map = std::map<K, T>;
+
+    using String = std::string;
+    using TimePoint = std::chrono::steady_clock::time_point;
 }
 
 #endif

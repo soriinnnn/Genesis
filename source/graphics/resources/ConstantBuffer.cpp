@@ -8,10 +8,6 @@ static D3D11_SUBRESOURCE_DATA createSubResourceData(const ConstantBufferDesc& de
 
 ConstantBuffer::ConstantBuffer(const ConstantBufferDesc& cdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
-	if (!cdesc.bufferSize) {
-		GENESIS_LOG_THROW_ERROR("Buffer size must be greater than zero.");
-	}
-
 	D3D11_BUFFER_DESC buffDesc = createBufferDesc(cdesc);
 	D3D11_SUBRESOURCE_DATA initData = createSubResourceData(cdesc);
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
@@ -46,6 +42,5 @@ D3D11_SUBRESOURCE_DATA createSubResourceData(const ConstantBufferDesc& desc)
 {
 	D3D11_SUBRESOURCE_DATA data{};
 	data.pSysMem = desc.buffer;
-
 	return data;
 }

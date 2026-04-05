@@ -11,7 +11,12 @@ EntityId Entity::getId() const noexcept
 	return m_id;
 }
 
-void Entity::update(float deltaTime) {}
+void Entity::update(float deltaTime) 
+{
+	for (auto& [key, component] : m_components) {
+		component->update(deltaTime);
+	}
+}
 
 void Entity::deleteComponent(ComponentId id)
 {

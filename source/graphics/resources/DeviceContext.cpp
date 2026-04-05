@@ -4,6 +4,7 @@
 #include <graphics/resources/VertexBuffer.h>
 #include <graphics/resources/IndexBuffer.h>
 #include <graphics/resources/ConstantBuffer.h>
+#include <graphics/resources/StructuredBuffer.h>
 #include <graphics/resources/SamplerState.h>
 #include <graphics/resources/ImageTexture.h>
 #include <graphics/resources/DepthStencilTexture.h>
@@ -74,6 +75,31 @@ void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const voi
 	m_context->Unmap(buff, 0);
 }
 
+void DeviceContext::updateStructuredBuffer(const StructuredBuffer& buffer, const void* data, uint32 dataSize)
+{
+	if (!data) {
+		GENESIS_LOG_THROW_ERROR("Null data pointer.");
+	}
+	if (dataSize > buffer.m_size) {
+		GENESIS_LOG_THROW_ERROR("Data size exceeds buffer capacity.");
+	}
+
+	ID3D11Buffer* buff = buffer.m_buffer.Get();
+	D3D11_MAPPED_SUBRESOURCE mapped{};
+	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
+		m_context->Map(
+			buff,
+			0,
+			D3D11_MAP_WRITE_DISCARD,
+			0,
+			&mapped
+		),
+		"ID3D11DeviceContext::Map failed."
+	);
+	memcpy(mapped.pData, data, dataSize);
+	m_context->Unmap(buff, 0);
+}
+
 void DeviceContext::setGraphicsPipelineState(const GraphicsPipelineState& graphicsPipeline)
 {
 	m_context->IASetInputLayout(graphicsPipeline.m_inputLayout.Get());
@@ -114,6 +140,13 @@ void DeviceContext::setConstantBuffer(const ConstantBuffer& buffer, uint32 slot)
 	ID3D11Buffer* buff = buffer.m_buffer.Get();
 	m_context->VSSetConstantBuffers(slot, 1, &buff);
 	m_context->PSSetConstantBuffers(slot, 1, &buff);
+}
+
+void DeviceContext::setStructuredBuffer(const StructuredBuffer& buffer, uint32 slot)
+{
+	ID3D11ShaderResourceView* resourceView = buffer.m_resourceView.Get();
+	m_context->VSSetShaderResources(slot, 1, &resourceView);
+	m_context->PSSetShaderResources(slot, 1, &resourceView);
 }
 
 void DeviceContext::setTexture(const ImageTexture& texture, uint32 slot)

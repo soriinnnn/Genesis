@@ -15,6 +15,7 @@ namespace genesis
 	{
 	public:
 		virtual ~Component();
+		virtual void update(float deltaTime);
 
 	protected:
 		explicit Component(const ComponentDesc& desc);

@@ -97,6 +97,11 @@ SharedPtr<ConstantBuffer> GraphicsDevice::createConstantBuffer(const ConstantBuf
     return make_shared<ConstantBuffer>(desc, getGraphicsResourceDesc());
 }
 
+SharedPtr<StructuredBuffer> GraphicsDevice::createStructuredBuffer(const StructuredBufferDesc& desc)
+{
+    return make_shared<StructuredBuffer>(desc, getGraphicsResourceDesc());
+}
+
 SharedPtr<SamplerState> GraphicsDevice::createSamplerState(const SamplerStateDesc& desc)
 {
     return m_samplerCache->get(desc);
@@ -115,6 +120,16 @@ SharedPtr<DepthStencilTexture> GraphicsDevice::createDepthStencilTexture(const D
 SharedPtr<RenderTargetTexture> GraphicsDevice::createRenderTargetTexture(const RenderTargetTextureDesc& desc)
 {
     return make_shared<RenderTargetTexture>(desc, getGraphicsResourceDesc());
+}
+
+SharedPtr<SpriteBatch> GraphicsDevice::createSpriteBatch(const SpriteBatchDesc& desc)
+{
+    return make_shared<SpriteBatch>(desc, getGraphicsResourceDesc());
+}
+
+SharedPtr<FontAtlas> GraphicsDevice::createFontAtlas(const FontAtlasDesc& desc)
+{
+    return make_shared<FontAtlas>(desc, getGraphicsResourceDesc());
 }
 
 void GraphicsDevice::clearCache()
@@ -148,8 +163,8 @@ GraphicsResourceDesc GraphicsDevice::getGraphicsResourceDesc() noexcept
 {
     return GraphicsResourceDesc{
         m_logger,
-        *this, 
-        *m_d3dDevice.Get(), 
+        shared_from_this(),
+        *m_d3dDevice.Get(),
         *m_dxgiFactory.Get()
     };
 }

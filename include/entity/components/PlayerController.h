@@ -10,7 +10,7 @@ namespace genesis
 		explicit PlayerController(const ComponentDesc& desc);
 		~PlayerController() override;
 
-		void update(float deltaTime);
+		void update(float deltaTime) override;
 		void setInputManager(InputManager& inputManager) noexcept;
 
 	private:

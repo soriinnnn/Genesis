@@ -21,7 +21,7 @@ SwapChain::SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gde
 	);
 	updateRenderTargetView();
 
-	m_depthStencil = m_graphicsDevice.createDepthStencilTexture({m_size});
+	m_depthStencil = m_graphicsDevice->createDepthStencilTexture({m_size});
 }
 
 SwapChain::~SwapChain() {}
@@ -56,7 +56,7 @@ void SwapChain::resize(uint32 width, uint32 height)
 	);
 	updateRenderTargetView();
 
-	m_depthStencil = m_graphicsDevice.createDepthStencilTexture({m_size});
+	m_depthStencil = m_graphicsDevice->createDepthStencilTexture({m_size});
 }
 
 void SwapChain::present(bool vsync)

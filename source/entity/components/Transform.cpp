@@ -1,6 +1,8 @@
 #include <entity/components/Transform.h>
+#include <cmath>
 
 using namespace genesis;
+using namespace std;
 
 Transform::Transform(const ComponentDesc& desc): 
 	Component(desc), 
@@ -34,6 +36,15 @@ const Mat4& Transform::getWorldMatrix() noexcept
 		m_isDirty = false;
 	}
 	return m_world;
+}
+
+Vec3 Transform::getForwardVector() const noexcept
+{
+	return Vec3{
+		 cos(m_rotation.x) * sin(m_rotation.y),
+		-sin(m_rotation.x),
+		 cos(m_rotation.x) * cos(m_rotation.y)
+	};
 }
 
 void Transform::setPosition(const Vec3& position) noexcept

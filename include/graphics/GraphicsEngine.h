@@ -26,8 +26,9 @@ namespace genesis
         GraphicsContext getGraphicsContext() noexcept;
         void resizeFrameBuffers(uint32 width, uint32 height);
 
-        void render(World& world);
-        void render(World& world, SwapChain& swapChain);
+        void clear();
+        void render(World& world, float deltaTime);
+        void render(UIManager& ui);
         void postProcess(PostProcess& effect);
         void present(SwapChain& swapChain);
 
@@ -36,6 +37,12 @@ namespace genesis
         void applyPostProcess(PostProcess& effect, FrameBuffer& input, FrameBuffer& output);
 
     private:
+        struct alignas(16) SceneData
+        {
+            float deltaTime;
+            uint32 lightCount;
+        };
+
         struct alignas(16) CameraData
         {
             Mat4 view;
@@ -50,22 +57,27 @@ namespace genesis
 
         struct alignas(16) LightData
         {
-            Vec4 direction;
-            Vec4 color;
+            Vec3 position;      float pd0;
+            Vec3 direction;     float pd1;
+            Vec3 color;
+            float radius;
             float intensity;
+            int type;
         };
 
     private:
-        UniquePtr<GraphicsDevice> m_graphicsDevice;
+        SharedPtr<GraphicsDevice> m_graphicsDevice;
         UniquePtr<EngineShaders> m_engineShaders;
         UniquePtr<FrameBuffer> m_primaryBuffer;
         UniquePtr<FrameBuffer> m_secondaryBuffer;
 
     private:
         SharedPtr<DeviceContext> m_deviceContext;
+        SharedPtr<SpriteBatch> m_spriteBatch;
+        SharedPtr<ConstantBuffer> m_sceneBuffer;
         SharedPtr<ConstantBuffer> m_cameraBuffer;
         SharedPtr<ConstantBuffer> m_objectBuffer;
-        SharedPtr<ConstantBuffer> m_lightBuffer;
+        SharedPtr<StructuredBuffer> m_lightsBuffer;
         SharedPtr<SamplerState> m_pointSampler;
         SharedPtr<GraphicsPipelineState> m_framePipeline;
     };

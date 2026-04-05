@@ -8,12 +8,12 @@
 #include <resources/Texture.h>
 #include <resources/Material.h>
 #include <resources/PostProcess.h>
-#include <entity/Player.h>
 #include <entity/Entity.h>
-#include <entity/EntityManager.h>
+#include <entity/components/Light.h>
 #include <entity/components/Camera.h>
 #include <entity/components/Transform.h>
 #include <entity/components/MeshRenderer.h>
+#include <ui/UIManager.h>
 #include <game/World.h>
 
 #define FULLSCREEN_TRIANGLE_VERTEX_COUNT 3
@@ -23,14 +23,16 @@ using namespace std;
 
 GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
 {
-    m_graphicsDevice = make_unique<GraphicsDevice>(GraphicsDeviceDesc{m_logger});
+    m_graphicsDevice = make_shared<GraphicsDevice>(GraphicsDeviceDesc{m_logger});
     m_engineShaders = make_unique<EngineShaders>(EngineShadersDesc{m_logger, *m_graphicsDevice});
     m_primaryBuffer = make_unique<FrameBuffer>(FrameBufferDesc{m_logger, desc.buffersSize, *m_graphicsDevice});
     m_secondaryBuffer = make_unique<FrameBuffer>(FrameBufferDesc{m_logger, desc.buffersSize, *m_graphicsDevice});
     m_deviceContext = m_graphicsDevice->createDeviceContext();
+    m_spriteBatch = m_graphicsDevice->createSpriteBatch({*m_deviceContext});
+    m_sceneBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(SceneData)});
     m_cameraBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(CameraData)});
     m_objectBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(ObjectData)});
-    m_lightBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(LightData)});
+    m_lightsBuffer = m_graphicsDevice->createStructuredBuffer({nullptr, sizeof(LightData), DEFAULT_MAX_LIGHTS});
     m_pointSampler = m_graphicsDevice->createSamplerState({
         TextureFilter::Linear,
         TextureAddressMode::Clamp,
@@ -58,71 +60,90 @@ void GraphicsEngine::resizeFrameBuffers(uint32 width, uint32 height)
     m_secondaryBuffer->resize(width, height);
 }
 
-void GraphicsEngine::render(World& world)
+void GraphicsEngine::clear()
 {
-    Camera* camera = world.getPlayer()->getComponent<Camera>();
-    Transform* cameraTransform = world.getPlayer()->getComponent<Transform>();
+    m_deviceContext->clearRenderTarget(m_primaryBuffer->getRenderTarget(), Vec4{1.0f, 1.0f, 1.0f, 1.0f});
+    m_deviceContext->clearDepthStencil(m_primaryBuffer->getDepthStencil());
+}
 
+void GraphicsEngine::render(World& world, float deltaTime)
+{
+    Entity* camera = world.getCamera();
     if (!camera) {
         return;
     }
 
-    m_deviceContext->clearRenderTarget(m_primaryBuffer->getRenderTarget(), Vec4{1.0f, 1.0f, 1.0f, 1.0f});
-    m_deviceContext->clearDepthStencil(m_primaryBuffer->getDepthStencil());
     m_deviceContext->setRenderTarget(m_primaryBuffer->getRenderTarget(), m_primaryBuffer->getDepthStencil());
     m_deviceContext->setViewport(m_primaryBuffer->getSize());
 
+    Camera* cameraComponent = camera->getComponent<Camera>();
     CameraData cameraData = {
-        camera->getViewMatrix(),
-        camera->getProjectionMatrix(),
-        cameraTransform->getPosition()
+        cameraComponent->getViewMatrix(),
+        cameraComponent->getProjectionMatrix(),
+        camera->getComponent<Transform>()->getPosition()
     };
     m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData);
     m_deviceContext->setConstantBuffer(*m_cameraBuffer, CAMERA_CONSTANT_BUFFER_SLOT);
 
-    LightData lightData = {
-        Vec4{-0.4f, -0.2f, 0.8f},
-        Vec4{1.0f,  1.0f, 1.0f},
-        100.0f
+    Vector<LightData> lights;
+    lights.reserve(DEFAULT_MAX_LIGHTS);
+    world.forEach([&](Entity& entity) {
+        Light* lightComponent = entity.getComponent<Light>();
+        
+        if (!lightComponent || !lightComponent->isEnabled()) {
+            return;
+        }
+        if (lights.size() > DEFAULT_MAX_LIGHTS) {
+            return;
+        }
+        
+        Transform* transformComponent = entity.getComponent<Transform>();
+        if (!transformComponent) {
+            return;
+        }
+
+        LightData data{};
+        data.type = static_cast<int>(lightComponent->getType());
+        data.color = lightComponent->getColor();
+        data.intensity = lightComponent->getIntensity();
+        data.radius = lightComponent->getRadius();
+        data.direction = transformComponent->getForwardVector();
+        data.position = transformComponent->getPosition();
+
+        lights.push_back(data);
+    });
+
+    m_deviceContext->updateStructuredBuffer(*m_lightsBuffer, lights.data(), static_cast<uint32>(lights.size()) * sizeof(LightData));
+    m_deviceContext->setStructuredBuffer(*m_lightsBuffer, LIGHT_DATA_TEXTURE_SLOT);
+
+    SceneData sceneData = {
+        deltaTime,
+        static_cast<uint32>(lights.size())
     };
-    m_deviceContext->updateConstantBuffer(*m_lightBuffer, &lightData);
-    m_deviceContext->setConstantBuffer(*m_lightBuffer, LIGHT_CONSTANT_BUFFER_SLOT);
+    m_deviceContext->updateConstantBuffer(*m_sceneBuffer, &sceneData);
+    m_deviceContext->setConstantBuffer(*m_sceneBuffer, SCENE_CONSTANT_BUFFER_SLOT);
 
     renderEntities(world);
     m_graphicsDevice->executeCommandList(*m_deviceContext);
 }
 
-void GraphicsEngine::render(World& world, SwapChain& swapChain)
+void GraphicsEngine::render(UIManager& ui)
 {
-    Camera* camera = world.getPlayer()->getComponent<Camera>();
-    Transform* cameraTransform = world.getPlayer()->getComponent<Transform>();
+    m_deviceContext->setRenderTarget(m_primaryBuffer->getRenderTarget(), m_primaryBuffer->getDepthStencil());
+    m_deviceContext->setViewport(m_primaryBuffer->getSize());
 
-    if (!camera) {
-        return;
+    try {
+        m_spriteBatch->m_batch->Begin();
+        ui.forEach([&](UIElement& element) {
+            if (element.isVisible()) {
+                element.render(*m_spriteBatch);
+            }
+        });
+        m_spriteBatch->m_batch->End();
     }
-
-    m_deviceContext->clearAndSetBackBuffer(swapChain, Vec4{1.0f, 1.0f, 1.0f, 1.0f});
-    m_deviceContext->setViewport(swapChain.getSize());
-
-    CameraData cameraData = {
-        camera->getViewMatrix(),
-        camera->getProjectionMatrix(),
-        cameraTransform->getPosition()
-    };
-    m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData);
-    m_deviceContext->setConstantBuffer(*m_cameraBuffer, CAMERA_CONSTANT_BUFFER_SLOT);
-
-    LightData lightData = {
-        Vec4{-0.4f, -0.2f, 0.8f},
-        Vec4{1.0f,  1.0f, 1.0f},
-        100.0f
-    };
-    m_deviceContext->updateConstantBuffer(*m_lightBuffer, &lightData);
-    m_deviceContext->setConstantBuffer(*m_lightBuffer, LIGHT_CONSTANT_BUFFER_SLOT);
-
-    renderEntities(world);
-    m_graphicsDevice->executeCommandList(*m_deviceContext);
-    swapChain.present();
+    catch (const std::exception& e) {
+        GENESIS_LOG_THROW_ERROR("UI rendering failed.\nDetails: {}", e.what());
+    }
 }
 
 void GraphicsEngine::postProcess(PostProcess& effect)
@@ -145,12 +166,12 @@ void GraphicsEngine::present(SwapChain& swapChain)
 
 void GraphicsEngine::renderEntities(World& world)
 {
-    for (auto& [id, entity] : world.getEntityManager().getEntities()) {
-        MeshRenderer* mesh = entity->getComponent<MeshRenderer>();
-        Transform* transform = entity->getComponent<Transform>();
+    world.forEach([&](Entity& entity) {
+        MeshRenderer* mesh = entity.getComponent<MeshRenderer>();
+        Transform* transform = entity.getComponent<Transform>();
 
         if (!mesh || !transform) {
-            continue;
+            return;
         }
 
         ObjectData objectData{
@@ -174,7 +195,7 @@ void GraphicsEngine::renderEntities(World& world)
         m_deviceContext->setVertexBuffer(mesh->getMesh()->getVertexBuffer());
         m_deviceContext->setIndexBuffer(mesh->getMesh()->getIndexBuffer());
         m_deviceContext->drawIndexed(mesh->getMesh()->getIndexBuffer().getIndexCount());
-    }
+    });
 }
 
 void GraphicsEngine::applyPostProcess(PostProcess& effect, FrameBuffer& input, FrameBuffer& output)

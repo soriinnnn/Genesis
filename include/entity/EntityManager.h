@@ -17,36 +17,50 @@ namespace genesis
 		explicit EntityManager(const EntityManagerDesc& desc);
 		~EntityManager() override;
 
-		template<typename T>
-		T* createEntity()
+		void update(float deltaTime);
+
+		Entity* createEntity();
+		Entity* getEntity(EntityId id);
+		void destroyEntity(EntityId id);
+
+		template<typename F>
+		void forEach(F&& callback) const
 		{
-			GENESIS_ASSERT((std::is_base_of<Entity, T>::value), "T must derive from Entity.");
-			return createEntity<T>(getAvailableId());
+			for (const auto& [key, entity] : m_entities) {
+				callback(*entity);
+			}
 		}
 
-		const HashMap<EntityId, UniquePtr<Entity>>& getEntities() const;
-
-		void destroyEntity(EntityId id);
-		void destroyPending();
+		template<typename F>
+		void forEach(F&& callback)
+		{
+			for (auto& [key, entity] : m_entities) {
+				callback(*entity);
+			}
+		}
 
 	private:
 		EntityId getAvailableId();
 
-		template<typename T>
-		T* createEntity(EntityId id)
+	private:
+		enum class EventType
 		{
-			T* entity = new T(EntityDesc{m_logger, id, *this});
-			UniquePtr<Entity> entityPtr{entity};
+			Create,
+			Destroy
+		};
 
-			m_entities.emplace(id, std::move(entityPtr));
-			return entity;
-		}
+		struct EntityEvent
+		{
+			EventType type;
+			EntityId id;
+		};
 
 	private:
 		EntityId m_nextId;
 		Vector<EntityId> m_idPool;
-		Vector<EntityId> m_entitiesToDestroy;
+		Vector<EntityEvent> m_events;
 		HashMap<EntityId, UniquePtr<Entity>> m_entities;
+		HashMap<EntityId, UniquePtr<Entity>> m_pendingEntities;
 	};
 }
 

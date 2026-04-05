@@ -13,14 +13,14 @@ namespace genesis
 		EntityManager& entityManager;
 	};
 
-	class Entity: public Base
+	class Entity final: public Base
 	{
 	public:
 		explicit Entity(const EntityDesc& desc);
-		virtual ~Entity() override;
+		~Entity() override;
 
 		EntityId getId() const noexcept;
-		virtual void update(float deltaTime);
+		void update(float deltaTime);
 
 		template<typename T>
 		T* createComponent()
@@ -57,7 +57,6 @@ namespace genesis
 		{
 			T* component = new T{ComponentDesc{m_logger, *this}};
 			UniquePtr<Component> componentPtr{component};
-
 			m_components.emplace(id, std::move(componentPtr));
 			return component;
 		}

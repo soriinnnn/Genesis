@@ -1,13 +1,13 @@
-cbuffer CameraData: register(b0)
+cbuffer CameraData: register(b1)
 {
-    row_major float4x4 view;
-    row_major float4x4 projection;
+    row_major float4x4 viewMatrix;
+    row_major float4x4 projectionMatrix;
     float3 cameraPosition;
 }
 
-cbuffer ObjectData: register(b1)
+cbuffer ObjectData: register(b2)
 {
-    row_major float4x4 world;
+    row_major float4x4 worldMatrix;
 }
 
 struct InputVS
@@ -31,15 +31,15 @@ OutputPS main(InputVS input)
 {
     OutputPS output;
     
-    output.position = mul(float4(input.position, 1), world);    
+    output.position = mul(float4(input.position, 1), worldMatrix);    
     output.worldPosition = output.position.xyz;
-    output.position = mul(output.position, view);
-    output.position = mul(output.position, projection);
+    output.position = mul(output.position, viewMatrix);
+    output.position = mul(output.position, projectionMatrix);
     output.uv = input.uv;
    
-    output.tbn[0] = normalize(mul(input.tangent, (float3x3) world));
-    output.tbn[1] = normalize(mul(input.bitangent, (float3x3) world));
-    output.tbn[2] = normalize(mul(input.normal, (float3x3) world));
+    output.tbn[0] = normalize(mul(input.tangent, (float3x3) worldMatrix));
+    output.tbn[1] = normalize(mul(input.bitangent, (float3x3) worldMatrix));
+    output.tbn[2] = normalize(mul(input.normal, (float3x3) worldMatrix));
     
     return output;
 }

@@ -136,23 +136,17 @@ static SharedPtr<Shader> getShader(json& data, ShaderType type, ResourceManager&
 	json shader;
 	switch (type) {
 	case ShaderType::VertexShader:
-	{
 		if (!data["shaders"].contains("vertex")) {
 			GENESIS_LOG_THROW(logger, std::runtime_error, Logger::LogLevel::Error, "Material \"{}\" is missing \"vertex\" shader.", path);
 		}
 		shader = data["shaders"]["vertex"];
 		break;
-	}
 	case ShaderType::PixelShader:
-	{
 		if (!data["shaders"].contains("pixel")) {
 			GENESIS_LOG_THROW(logger, std::runtime_error, Logger::LogLevel::Error, "Material \"{}\" is missing \"pixel\" shader.", path);
 		}
 		shader = data["shaders"]["pixel"];
 		break;
-	}
-	default:
-		GENESIS_LOG_THROW(logger, std::runtime_error, Logger::LogLevel::Error, "Material \"{}\" has unsupported shader type.", path);
 	}
 	
 	if (!shader.contains("path")) {

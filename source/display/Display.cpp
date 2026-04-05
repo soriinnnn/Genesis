@@ -4,12 +4,12 @@
 
 using namespace genesis;
 
-Display::Display(const DisplayDesc& desc): Base(desc.window.base), m_borderless{false}, m_matchWindowResolution{false}, m_onResizeWindow{nullptr}
+Display::Display(const DisplayDesc& desc): Base(desc.window.base), m_borderless{false}, m_matchWindowResolution{true}, m_onResizeWindow{nullptr}
 {
 	m_window = Window::create(desc.window);
 	m_swapChain = desc.graphicsContext.graphicsDevice.createSwapChain({m_window->getHandle(), m_window->getSize()});
 	
-	m_window->onResize([this](uint32 width, uint32 height) {
+	m_window->onResize([&](uint32 width, uint32 height) {
 		if (m_matchWindowResolution) {
 			m_swapChain->resize(width, height);
 		}
