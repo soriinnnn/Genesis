@@ -11,27 +11,26 @@
 
 using namespace genesis;
 
-void setupWorld(Game& game) 
+void createScene(Game& game)
 {
 	auto context = game.getContext();
 
-	SharedPtr<Mesh> mesh = context.resources.getMesh("assets/meshes/scene.obj", GENESIS_VERTEX_PRESET_NORMAL_MAPPED);
-	SharedPtr<Material> material = context.resources.getMaterial("demo/assets/materials/statue.json");
+	SharedPtr<Mesh> floorMesh = context.resources.getMesh("assets/meshes/terrain.obj", GENESIS_VERTEX_PRESET_NORMAL_MAPPED);
+	SharedPtr<Material> brickMaterial = context.resources.getMaterial("demo/assets/materials/brick.json");
 
-	Entity* statue = context.world.createEntity();
+	Entity* floor = context.world.createEntity();
 
-	Transform* statueTransform = statue->createComponent<Transform>();
-	statueTransform->setScale({0.5, 0.5, 0.5});
+	Transform* floorTransform = floor->createComponent<Transform>();
+	floorTransform->setScale({0.5f, 0.5f, 0.5f});
 
-	MeshRenderer* statueMesh = statue->createComponent<MeshRenderer>();
-	statueMesh->setMesh(mesh);
-	statueMesh->setMaterial(material);
+	MeshRenderer* floorMeshRenderer = floor->createComponent<MeshRenderer>();
+	floorMeshRenderer->setMesh(floorMesh);
+	floorMeshRenderer->setMaterial(brickMaterial);
+}
 
-	Entity* camera = context.world.createEntity();
-	camera->createComponent<Camera>();
-	camera->getComponent<Transform>()->setPosition({0, 1, -1});
-	camera->createComponent<PlayerController>()->setInputManager(context.input);
-	context.world.setCamera(camera);
+void createLights(Game& game)
+{
+	auto context = game.getContext();
 
 	Entity* sun = context.world.createEntity();
 
@@ -43,6 +42,24 @@ void setupWorld(Game& game)
 	Transform* sunTransform = sun->getComponent<Transform>();
 	sunTransform->setPosition(Vec3{0.0f, 100.0f, 0.0f});
 	sunTransform->setRotation(Vec3{-0.785f, 0.523f, 0.0f});
+}
+
+void createCamera(Game& game)
+{
+	auto context = game.getContext();
+
+	Entity* camera = context.world.createEntity();
+	camera->createComponent<Camera>();
+	camera->getComponent<Transform>()->setPosition({0, 1, -1});
+	camera->createComponent<PlayerController>()->setInputManager(context.input);
+	context.world.setCamera(camera);
+}
+
+void setupWorld(Game& game) 
+{
+	createCamera(game);
+	createLights(game);
+	createScene(game);
 }
 
 int main()

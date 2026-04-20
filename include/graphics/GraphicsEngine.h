@@ -57,8 +57,8 @@ namespace genesis
 
         struct alignas(16) LightData
         {
-            Vec3 position;      float pd0;
-            Vec3 direction;     float pd1;
+            Vec3 position;      int pd0;
+            Vec3 direction;     int pd1;
             Vec3 color;
             float radius;
             float intensity;

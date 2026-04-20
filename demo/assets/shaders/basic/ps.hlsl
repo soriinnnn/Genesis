@@ -83,13 +83,13 @@ float4 main(InputPS input): SV_Target0
         float diffuse = max(dot(normal.xyz, lightDirection), 0.0f);
         float specular = 0.0f;
         
-        // Només calculem el reflex si la llum realment toca aquesta cara
+        // Només calculem el reflex si la llum realment toca aquesta cara.
         if (diffuse > 0.0f) {
             float3 reflectedLight = reflect(-lightDirection, normal.xyz);
             specular = pow(max(dot(reflectedLight, viewDirection), 0.0f), shininess);
         }
         
-        // Combinem els valors utilitzant el color, la intensitat i l'atenuació de la llum actual
+        // Combinem els valors utilitzant el color, la intensitat i l'atenuació de la llum actual.
         float3 currentLightColor = light.color * light.intensity * attenuation;
         
         float3 diffuseLight = kd * diffuse * currentLightColor * color.rgb;

@@ -1,0 +1,42 @@
+{
+  "shaders": {
+    "vertex": {
+      "path": "demo/assets/shaders/brick/vs.hlsl",
+      "entry": "main"
+    },
+    "pixel": {
+      "path": "demo/assets/shaders/brick/ps.hlsl",
+      "entry": "main"
+    }
+  },
+  "textures": [
+    {
+      "path": "assets/textures/brick_d.jpg",
+      "slot": 0
+    },
+    {
+      "path": "assets/textures/brick_n.jpg",
+      "slot": 1
+    }
+  ],
+  "samplers": [
+    {
+      "slot": 0,
+      "filter": "Linear",
+      "addressU": "Wrap",
+      "addressV": "Wrap"
+    },
+    {
+      "slot": 1,
+      "filter": "Linear",
+      "addressU": "Wrap",
+      "addressV": "Wrap"
+    }
+  ],
+  "properties": {
+    "ka": 0.35,
+    "kd": 0.9,
+    "ks": 0.05,
+    "shininess": 2.0
+  }
+}
