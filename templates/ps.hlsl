@@ -21,10 +21,12 @@ cbuffer MaterialData: register(b3)
 struct LightData
 {
     float3 position;
+    int pd0;
     float3 direction;
+    int pd1;
     float3 color;
-    float intensity;
     float radius;
+    float intensity;
     int type;
 };
 

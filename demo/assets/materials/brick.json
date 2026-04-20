@@ -34,7 +34,7 @@
     }
   ],
   "properties": {
-    "ka": 0.35,
+    "ka": 0.3,
     "kd": 0.9,
     "ks": 0.05,
     "shininess": 2.0

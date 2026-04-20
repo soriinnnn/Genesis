@@ -47,7 +47,6 @@ struct InputPS
     row_major float3x3 tbn: TEXCOORD2;
 };
 
-
 float3 getLightColor(uint lightIndex, float3 textureColor, float3 textureNormal, float3 viewDirection, float3 worldPosition)
 {
     LightData light = lights[lightIndex];
@@ -62,21 +61,8 @@ float3 getLightColor(uint lightIndex, float3 textureColor, float3 textureNormal,
             attenuation = 1.0f;
             break;
         }
-        // Point light
-        /*
-        case 1: {
-            float3 vectorLightWorld = light.position - worldPosition;
-            float distance = length(vectorLightWorld);
- 
-            if (distance > light.radius) {
-                return float3(0.0f, 0.0f, 0.0f);
-            }
-            
-            lightDirection = normalize(vectorLightWorld);
-            attenuation = 1.0f - (distance / light.radius);
-            attenuation = attenuation * attenuation;
-            break;
-        }*/
+        default:
+            return float3(0.0f, 0.0f, 0.0f);
     }
     
     float diff = max(dot(textureNormal, lightDirection), 0.0f);
