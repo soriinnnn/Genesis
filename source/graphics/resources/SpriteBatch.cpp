@@ -1,6 +1,7 @@
 #include <graphics/resources/SpriteBatch.h>
 #include <graphics/resources/FontAtlas.h>
 #include <graphics/resources/DeviceContext.h>
+#include <graphics/resources/SamplerState.h>
 
 using namespace genesis;
 using namespace std;
@@ -16,6 +17,26 @@ SpriteBatch::SpriteBatch(const SpriteBatchDesc& sdesc, const GraphicsResourceDes
 }
 
 SpriteBatch::~SpriteBatch() {}
+
+void SpriteBatch::begin(SamplerState* samplerState)
+{
+	ID3D11SamplerState* dxSamplerState = samplerState ? samplerState->m_samplerState.Get() : nullptr;
+
+	m_batch->Begin(
+		DirectX::DX11::SpriteSortMode_Deferred,
+		nullptr,
+		dxSamplerState,
+		nullptr,
+		nullptr,
+		nullptr,
+		DirectX::XMMatrixIdentity()
+	);
+}
+
+void SpriteBatch::end()
+{
+	m_batch->End();
+}
 
 void SpriteBatch::drawText(FontAtlas& font, const char* text, Point pos, Vec4 color)
 {

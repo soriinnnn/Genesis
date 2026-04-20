@@ -10,6 +10,7 @@ namespace genesis
 	struct UIElementDesc
 	{
 		BaseDesc base;
+		UIManager& manager;
 	};
 
 	class UIElement: public Base
@@ -25,11 +26,13 @@ namespace genesis
 
 		Rect getBounds() const noexcept;
 		Point getPosition() const noexcept;
+		int getZOrder() const noexcept;
 		bool isVisible() const noexcept;
 		bool isEnabled() const noexcept;
 		bool isHovered() const noexcept;
 		bool isPressed() const noexcept;
 
+		void setZOrder(int zOrder) noexcept;
 		void setPosition(Point position) noexcept;
 		void setVisible(bool visible);
 		void setEnabled(bool enabled);
@@ -48,8 +51,10 @@ namespace genesis
 		virtual void onMouseOut();
 
 	protected:
+		UIManager& m_manager;
 		Point m_position;
 		Rect m_bounds;
+		int m_zOrder;
 		bool m_visible;
 		bool m_enabled;
 		bool m_hovered;

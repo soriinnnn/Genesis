@@ -1,34 +1,36 @@
 #include <ui/UIManager.h>
 #include <ui/elements/UIElement.h>
 #include <graphics/GraphicsDevice.h>
+#include <algorithm>
 
 using namespace genesis;
 
-UIManager::UIManager(const UIManagerDesc& desc): Base(desc.base), m_pressedElement{nullptr}  {}
+UIManager::UIManager(const UIManagerDesc& desc): Base(desc.base), m_pressedElement{nullptr}, m_isZDirty{false} {}
 
 UIManager::~UIManager() {}
 
 void UIManager::update(float deltaTime)
 {
-    for (auto& element : m_elements) {
+    if (m_isZDirty) {
+        std::stable_sort(m_zOrdered.begin(), m_zOrdered.end(), [](const UIElement* a, const UIElement* b) {return a->getZOrder() < b->getZOrder();});
+        m_isZDirty = false;
+    }
+
+    for (auto* element : m_zOrdered) {
         if (element->isEnabled()) {
             element->update(deltaTime);
         }
     }
 }
 
-void UIManager::destroyElement(UIElement* element)
+void UIManager::destroyElement(const char* name)
 {
-    auto it = std::find_if(m_elements.begin(), m_elements.end(),
-        [element](const UniquePtr<UIElement>& e) {
-            return e.get() == element;
-        }
-    );
-
+    auto it = m_elements.find(name);
     if (it != m_elements.end()) {
-        if (it->get() == m_pressedElement) {
+        if (it->second.get() == m_pressedElement) {
             m_pressedElement = nullptr;
         }
+        m_zOrdered.erase(std::remove(m_zOrdered.begin(), m_zOrdered.end(), it->second.get()), m_zOrdered.end());
         m_elements.erase(it);
     }
 }
@@ -41,8 +43,8 @@ void UIManager::onMouseMove(Point delta, Point pos)
 {
     bool hoverHandled = false;
 
-    for (auto it = m_elements.rbegin(); it != m_elements.rend(); ++it) {
-        auto& element = *it;    
+    for (auto it = m_zOrdered.rbegin(); it != m_zOrdered.rend(); ++it) {
+        auto* element = *it;    
 
         if (!element->isEnabled() || !element->isVisible()) {
             continue;
@@ -64,15 +66,15 @@ void UIManager::onMouseMove(Point delta, Point pos)
 
 void UIManager::onMouseDown(MouseButton button, Point pos) 
 {
-    for (auto it = m_elements.rbegin(); it != m_elements.rend(); ++it) {
-        auto& element = *it;
+    for (auto it = m_zOrdered.rbegin(); it != m_zOrdered.rend(); ++it) {
+        auto* element = *it;
 
         if (!element->isEnabled() || !element->isVisible()) {
             continue;
         }
 
         if (element->contains(pos)) {
-            m_pressedElement = element.get();
+            m_pressedElement = element;
             element->onMouseDown(button);
             break;
         }

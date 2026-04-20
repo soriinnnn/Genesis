@@ -27,6 +27,7 @@ namespace genesis
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> m_samplerState;
 
 		friend class DeviceContext;
+		friend class SpriteBatch;
 	};
 }
 

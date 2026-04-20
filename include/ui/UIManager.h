@@ -2,8 +2,8 @@
 #define GENESIS_UI_MANAGER_H
 #include <core/Base.h>
 #include <core/Core.h>
-#include <ui/elements/UIElement.h>
 #include <input/InputListener.h>
+#include <ui/elements/UIElement.h>
 #include <graphics/utils/GraphicsTypes.h>
 
 namespace genesis
@@ -22,22 +22,36 @@ namespace genesis
 		void update(float deltaTime);
 
 		template<typename T>
-		T* createElement()
+		T* createElement(const char* name)
 		{	
 			GENESIS_ASSERT((std::is_base_of<UIElement, T>::value), "T must derive from UIElement.");
-			UniquePtr<T> element = std::make_unique<T>(UIElementDesc{m_logger});
-			T* result = element.get();
-			m_elements.push_back(std::move(element));
+			T* result = getElement<T>(name);
+			if (!result) {
+				UniquePtr<T> element = std::make_unique<T>(UIElementDesc{m_logger, *this});
+				result = element.get();
+				m_elements.emplace(name, std::move(element));
+				m_zOrdered.push_back(result);
+				m_isZDirty = true;
+			}
 			return result;
 		}
-		// template<typename T>
-		// T* getElement();
-		void destroyElement(UIElement* element);
+
+		template<typename T>
+		T* getElement(const char* name)
+		{
+			auto it = m_elements.find(name);
+			if (it == m_elements.end()) {
+				return nullptr;
+			}
+			return dynamic_cast<T*>(it->second.get());
+		}
+
+		void destroyElement(const char* name);
 
 		template<typename F>
 		void forEach(F&& callback) const
 		{
-			for (const auto& element : m_elements) {
+			for (const auto* element : m_zOrdered) {
 				callback(*element);
 			}
 		}
@@ -45,7 +59,7 @@ namespace genesis
 		template<typename F>
 		void forEach(F&& callback)
 		{
-			for (auto& element : m_elements) {
+			for (auto* element : m_zOrdered) {
 				callback(*element);
 			}
 		}
@@ -58,8 +72,12 @@ namespace genesis
 		void onMouseUp(MouseButton button, Point pos) override;
 
 	private:
-		Vector<UniquePtr<UIElement>> m_elements;
+		HashMap<String, UniquePtr<UIElement>> m_elements;
 		UIElement* m_pressedElement;
+		Vector<UIElement*> m_zOrdered;
+		bool m_isZDirty;
+
+		friend class UIElement;
 	};
 }
 

@@ -33,7 +33,7 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
     m_cameraBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(CameraData)});
     m_objectBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(ObjectData)});
     m_lightsBuffer = m_graphicsDevice->createStructuredBuffer({nullptr, sizeof(LightData), DEFAULT_MAX_LIGHTS});
-    m_pointSampler = m_graphicsDevice->createSamplerState({
+    m_pointClampSampler = m_graphicsDevice->createSamplerState({
         TextureFilter::Linear,
         TextureAddressMode::Clamp,
         TextureAddressMode::Clamp,
@@ -133,13 +133,13 @@ void GraphicsEngine::render(UIManager& ui)
     m_deviceContext->setViewport(m_primaryBuffer->getSize());
 
     try {
-        m_spriteBatch->m_batch->Begin();
+        m_spriteBatch->begin();
         ui.forEach([&](UIElement& element) {
             if (element.isVisible()) {
                 element.render(*m_spriteBatch);
             }
         });
-        m_spriteBatch->m_batch->End();
+        m_spriteBatch->end();
     }
     catch (const std::exception& e) {
         GENESIS_LOG_THROW_ERROR("UI rendering failed.\nDetails: {}", e.what());
@@ -158,7 +158,7 @@ void GraphicsEngine::present(SwapChain& swapChain)
     m_deviceContext->setViewport(swapChain.getSize());
     m_deviceContext->setGraphicsPipelineState(*m_framePipeline);
     m_deviceContext->setTexture(m_primaryBuffer->getRenderTarget());
-    m_deviceContext->setSamplerState(*m_pointSampler);
+    m_deviceContext->setSamplerState(*m_pointClampSampler);
     m_deviceContext->draw(FULLSCREEN_TRIANGLE_VERTEX_COUNT);
     m_graphicsDevice->executeCommandList(*m_deviceContext);
     swapChain.present();
@@ -204,7 +204,7 @@ void GraphicsEngine::applyPostProcess(PostProcess& effect, FrameBuffer& input, F
     m_deviceContext->setViewport(output.getSize());
     m_deviceContext->setGraphicsPipelineState(effect.getGraphicsPipelineState());
     m_deviceContext->setTexture(input.getRenderTarget());
-    m_deviceContext->setSamplerState(*m_pointSampler);
+    m_deviceContext->setSamplerState(*m_pointClampSampler);
     if (effect.hasProperties()) {
         if (effect.isDirty()) {
             m_deviceContext->updateConstantBuffer(effect.getProperties(), effect.getData());

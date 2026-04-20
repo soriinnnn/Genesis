@@ -18,12 +18,12 @@ namespace genesis
 		SpriteBatch(const SpriteBatchDesc& sdesc, const GraphicsResourceDesc& gdesc);
 		~SpriteBatch() override;
 
+		void begin(SamplerState* samplerState = nullptr);
 		void drawText(FontAtlas& font, const char* text, Point pos, Vec4 color);
+		void end();
 
 	private:
 		UniquePtr<DirectX::DX11::SpriteBatch> m_batch;
-
-		friend class GraphicsEngine;
 	};
 }
 

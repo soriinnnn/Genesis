@@ -13,16 +13,12 @@ using namespace genesis;
 
 void setupWorld(Game& game) 
 {
-	auto& input = game.getInput();
-	auto& world = game.getWorld();
-	auto& resources = game.getResources();
-	auto& ui = game.getUI();
+	auto context = game.getContext();
 
-	SharedPtr<Mesh> mesh = resources.getMesh("assets/meshes/scene.obj", GENESIS_VERTEX_PRESET_NORMAL_MAPPED);
-	SharedPtr<Material> material = resources.getMaterial("demo/assets/materials/statue.json");
-	SharedPtr<Font> font = resources.getFont("demo/assets/fonts/arial_48.spritefont");
+	SharedPtr<Mesh> mesh = context.resources.getMesh("assets/meshes/scene.obj", GENESIS_VERTEX_PRESET_NORMAL_MAPPED);
+	SharedPtr<Material> material = context.resources.getMaterial("demo/assets/materials/statue.json");
 
-	Entity* statue = world.createEntity();
+	Entity* statue = context.world.createEntity();
 
 	Transform* statueTransform = statue->createComponent<Transform>();
 	statueTransform->setScale({0.5, 0.5, 0.5});
@@ -31,13 +27,13 @@ void setupWorld(Game& game)
 	statueMesh->setMesh(mesh);
 	statueMesh->setMaterial(material);
 
-	Entity* camera = world.createEntity();
+	Entity* camera = context.world.createEntity();
 	camera->createComponent<Camera>();
 	camera->getComponent<Transform>()->setPosition({0, 1, -1});
-	camera->createComponent<PlayerController>()->setInputManager(input);
-	world.setCamera(camera);
+	camera->createComponent<PlayerController>()->setInputManager(context.input);
+	context.world.setCamera(camera);
 
-	Entity* sun = world.createEntity();
+	Entity* sun = context.world.createEntity();
 
 	Light* sunLight = sun->createComponent<Light>();
 	sunLight->setType(Light::LightType::Directional);
@@ -47,12 +43,6 @@ void setupWorld(Game& game)
 	Transform* sunTransform = sun->getComponent<Transform>();
 	sunTransform->setPosition(Vec3{0.0f, 100.0f, 0.0f});
 	sunTransform->setRotation(Vec3{-0.785f, 0.523f, 0.0f});
-
-	UILabel* label = ui.createElement<UILabel>();
-	label->setContent("Malo");
-	label->setFont(font);
-	label->setColor({0.0f, 0.0f, 0.0f, 1.0f});
-	label->setPosition({0, 100});
 }
 
 int main()

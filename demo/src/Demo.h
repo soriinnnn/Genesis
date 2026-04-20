@@ -23,7 +23,6 @@ protected:
 
 private:
 	bool m_centerMouse;
-	UILabel* m_label;
 };
 
 #endif

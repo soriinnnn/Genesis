@@ -28,24 +28,9 @@ Logger& Game::getLogger() noexcept
     return *m_logger;
 }
 
-World& Game::getWorld() noexcept
+GameContext Game::getContext() noexcept
 {
-    return *m_world;
-}
-
-InputManager& Game::getInput() noexcept
-{
-    return *m_inputManager;
-}
-
-ResourceManager& Game::getResources() noexcept
-{
-    return *m_resourceManager;
-}
-
-UIManager& Game::getUI() noexcept
-{
-    return *m_uiManager;
+    return {*m_world, *m_inputManager, *m_resourceManager, *m_uiManager};
 }
 
 void Game::onInternalUpdate()

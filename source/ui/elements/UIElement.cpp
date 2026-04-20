@@ -1,9 +1,11 @@
 #include <ui/elements/UIElement.h>
+#include <ui/UIManager.h>
 
 using namespace genesis;
 
-UIElement::UIElement(const UIElementDesc& desc): Base(desc.base) 
+UIElement::UIElement(const UIElementDesc& desc): Base(desc.base), m_manager{desc.manager}
 {
+	m_zOrder = 0;
 	m_visible = true;
 	m_enabled = true;
 	m_hovered = false;
@@ -35,6 +37,11 @@ Point UIElement::getPosition() const noexcept
 	return m_position;
 }
 
+int UIElement::getZOrder() const noexcept
+{
+	return m_zOrder;
+}
+
 bool UIElement::isVisible() const noexcept
 {
 	return m_visible;
@@ -53,6 +60,12 @@ bool UIElement::isHovered() const noexcept
 bool UIElement::isPressed() const noexcept
 {
 	return m_pressed;
+}
+
+void UIElement::setZOrder(int zOrder) noexcept
+{
+	m_zOrder = zOrder;
+	m_manager.m_isZDirty = true;
 }
 
 void UIElement::setPosition(Point position) noexcept

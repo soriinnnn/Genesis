@@ -2,11 +2,12 @@
 #define GENESIS_GAME_H
 #include <core/Core.h>
 #include <core/Logger.h>
+#include <core/utils/Types.h>
 #include <core/utils/Macros.h>
 #include <display/Display.h>
-#include <ui/UIManager.h>
 #include <input/InputManager.h>
 #include <resources/ResourceManager.h>
+#include <ui/UIManager.h>
 #include <game/World.h>
 #include <math/Rect.h>
 
@@ -27,10 +28,7 @@ namespace genesis
         virtual ~Game();
 
         Logger& getLogger() noexcept;
-        World& getWorld() noexcept;
-        InputManager& getInput() noexcept;
-        ResourceManager& getResources() noexcept;
-        UIManager& getUI() noexcept;
+        GameContext getContext() noexcept;
         void run();
 
     protected:

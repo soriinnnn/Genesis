@@ -78,7 +78,7 @@ namespace genesis
         SharedPtr<ConstantBuffer> m_cameraBuffer;
         SharedPtr<ConstantBuffer> m_objectBuffer;
         SharedPtr<StructuredBuffer> m_lightsBuffer;
-        SharedPtr<SamplerState> m_pointSampler;
+        SharedPtr<SamplerState> m_pointClampSampler;
         SharedPtr<GraphicsPipelineState> m_framePipeline;
     };
 }
