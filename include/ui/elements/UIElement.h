@@ -4,13 +4,15 @@
 #include <input/InputCodes.h>
 #include <math/Rect.h>
 #include <math/Point.h>
+#include <math/Vec4.h>
+#include <math/Vec2.h>
 
 namespace genesis
 {
 	struct UIElementDesc
 	{
 		BaseDesc base;
-		UIManager& manager;
+		UIElement* parent = nullptr;
 	};
 
 	class UIElement: public Base
@@ -24,16 +26,21 @@ namespace genesis
 		void release() noexcept;
 		bool contains(Point position) const noexcept;
 
-		Rect getBounds() const noexcept;
+		Point getGlobalPosition() const noexcept;
 		Point getPosition() const noexcept;
+		Vec2 getScale() const noexcept;
+		Vec4 getColor() const noexcept;
+		Rect getBounds() const noexcept;
 		int getZOrder() const noexcept;
 		bool isVisible() const noexcept;
 		bool isEnabled() const noexcept;
 		bool isHovered() const noexcept;
 		bool isPressed() const noexcept;
 
-		void setZOrder(int zOrder) noexcept;
 		void setPosition(Point position) noexcept;
+		void setScale(Vec2 scale) noexcept;
+		void setColor(Vec4 color) noexcept;
+		void setZOrder(int zOrder) noexcept;
 		void setVisible(bool visible);
 		void setEnabled(bool enabled);
 
@@ -45,15 +52,22 @@ namespace genesis
 	protected:
 		explicit UIElement(const UIElementDesc& desc);
 
+		virtual void onScale();
+
 		virtual void onMouseDown(MouseButton button);
 		virtual void onMouseUp(MouseButton button);
 		virtual void onMouseEnter();
 		virtual void onMouseOut();
+	
+	private:
+		void setOnZOrderCallback(std::function<void()> callback) noexcept;
 
 	protected:
-		UIManager& m_manager;
+		UIElement* m_parent;
 		Point m_position;
-		Rect m_bounds;
+		Vec2 m_scale;
+		Vec4 m_color;
+		Rect m_size;
 		int m_zOrder;
 		bool m_visible;
 		bool m_enabled;
@@ -65,6 +79,7 @@ namespace genesis
 		std::function<void(MouseButton)> m_onMouseUp;
 		std::function<void()> m_onMouseEnter;
 		std::function<void()> m_onMouseOut;
+		std::function<void()> m_onZOrder;
 
 		friend class UIManager;
 	};

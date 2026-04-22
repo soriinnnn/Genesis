@@ -14,15 +14,13 @@ namespace genesis
 		void render(SpriteBatch& batch) override;
 
 		void setContent(const char* content);
-		void setColor(Vec4 color);
 		void setFont(SharedPtr<Font> font);
 
 	private:
-		void updateBounds();
+		void updateSize();
 
 	private:
 		String m_content;
-		Vec4 m_color;
 		SharedPtr<Font> m_font;
 	};
 }

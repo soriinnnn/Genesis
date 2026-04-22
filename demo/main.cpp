@@ -7,7 +7,6 @@
 #include <entity/components/Transform.h>
 #include <entity/components/MeshRenderer.h>
 #include <entity/components/PlayerController.h>
-#include <ui/elements/UILabel.h>
 
 using namespace genesis;
 

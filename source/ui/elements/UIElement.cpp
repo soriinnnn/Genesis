@@ -3,8 +3,10 @@
 
 using namespace genesis;
 
-UIElement::UIElement(const UIElementDesc& desc): Base(desc.base), m_manager{desc.manager}
+UIElement::UIElement(const UIElementDesc& desc): Base(desc.base), m_parent{desc.parent}
 {
+	m_scale = Vec2{1.0f, 1.0f};
+	m_color = Vec4{1.0f, 1.0f, 1.0f, 1.0f};
 	m_zOrder = 0;
 	m_visible = true;
 	m_enabled = true;
@@ -23,18 +25,46 @@ void UIElement::release() noexcept
 
 bool UIElement::contains(Point point) const noexcept
 {
-	return point.x >= m_position.x && point.x <= m_position.x + m_bounds.width() &&
-		   point.y >= m_position.y && point.y <= m_position.y + m_bounds.height();
+	Rect bounds = getBounds();
+	return point.x >= bounds.left && 
+		   point.x <= bounds.right &&
+		   point.y >= bounds.top && 
+		   point.y <= bounds.bottom;
 }
 
-Rect UIElement::getBounds() const noexcept
+Point UIElement::getGlobalPosition() const noexcept
 {
-	return m_bounds;
+	if (m_parent) {
+		Point parentPos = m_parent->getGlobalPosition();
+		return Point{parentPos.x + m_position.x, parentPos.y + m_position.y};
+	}
+	return m_position;
 }
 
 Point UIElement::getPosition() const noexcept
 {
 	return m_position;
+}
+
+Vec2 UIElement::getScale() const noexcept
+{
+	return m_scale;
+}
+
+Vec4 UIElement::getColor() const noexcept
+{
+	return m_color;
+}
+
+Rect UIElement::getBounds() const noexcept
+{
+	Point globalPos = getGlobalPosition();
+	return Rect{
+		globalPos.x,
+		globalPos.y,
+		globalPos.x + static_cast<int32>(m_size.width() * m_scale.x),
+		globalPos.y + static_cast<int32>(m_size.height() * m_scale.y)
+	};
 }
 
 int UIElement::getZOrder() const noexcept
@@ -62,15 +92,28 @@ bool UIElement::isPressed() const noexcept
 	return m_pressed;
 }
 
-void UIElement::setZOrder(int zOrder) noexcept
-{
-	m_zOrder = zOrder;
-	m_manager.m_isZDirty = true;
-}
-
 void UIElement::setPosition(Point position) noexcept
 {
 	m_position = position;
+}
+
+void UIElement::setScale(Vec2 scale) noexcept
+{
+	m_scale = scale;
+	onScale();
+}
+
+void UIElement::setColor(Vec4 color) noexcept
+{
+	m_color = color;
+}
+
+void UIElement::setZOrder(int zOrder) noexcept
+{
+	m_zOrder = zOrder;
+	if (m_onZOrder) {
+		m_onZOrder();
+	}
 }
 
 void UIElement::setVisible(bool visible)
@@ -88,6 +131,8 @@ void UIElement::setEnabled(bool enabled)
 		onMouseOut();
 	}
 }
+
+void UIElement::onScale() {}
 
 void UIElement::onMouseDown(MouseButton button)
 {
@@ -151,4 +196,9 @@ void UIElement::setOnMouseEnterCallback(std::function<void()> callback) noexcept
 void UIElement::setOnMouseOutCallback(std::function<void()> callback) noexcept
 {
 	m_onMouseOut = callback;
+}
+
+void UIElement::setOnZOrderCallback(std::function<void()> callback) noexcept
+{
+	m_onZOrder = callback;
 }

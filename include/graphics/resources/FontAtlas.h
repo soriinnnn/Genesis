@@ -18,7 +18,7 @@ namespace genesis
 		FontAtlas(const FontAtlasDesc& fdesc, const GraphicsResourceDesc& gdesc);
 		~FontAtlas() override;
 
-		Rect getBounds(const char* text, Point pos);
+		Rect getSize(const char* text);
 
 	private:
 		UniquePtr<DirectX::DX11::SpriteFont> m_font;

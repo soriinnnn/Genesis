@@ -1,7 +1,6 @@
 #ifndef DEMO_H
 #define DEMO_H
 #include <game/Game.h>
-#include <ui/elements/UILabel.h>
 
 using namespace genesis;
 

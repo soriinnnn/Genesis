@@ -8,11 +8,15 @@ using namespace genesis;
 
 static DXGI_SWAP_CHAIN_DESC createSwapChainDesc(const SwapChainDesc& desc);
 
-SwapChain::SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc), m_size{sdesc.windowSize}
+SwapChain::SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
 	if (!sdesc.windowHandle) {
 		GENESIS_LOG_THROW_INVALID_ARG("Window handle is null.");
 	}
+	m_size = Rect{
+		(sdesc.windowSize.width() > 1) ? sdesc.windowSize.width() : 1, 
+		(sdesc.windowSize.height() > 1) ? sdesc.windowSize.height() : 1
+	};
 
 	DXGI_SWAP_CHAIN_DESC dxgiDesc = createSwapChainDesc(sdesc);
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(

@@ -2,25 +2,36 @@
 #define GENESIS_IMAGE_TEXTURE_H
 #include <graphics/resources/GraphicsResource.h>
 #include <math/Rect.h>
+#include <math/Vec4.h>
 
 namespace genesis
 {
-	struct ImageTextureDesc
+	struct ImageTextureFileDesc
 	{
 		const wchar_t* path{};
+	};
+
+	struct ImageTextureSolidDesc
+	{
+		Vec4 color = {1.0f, 1.0f, 1.0f, 1.0f};
+		Rect size = {1, 1};
 	};
 
 	class ImageTexture final: public GraphicsResource
 	{
 	public:
-		ImageTexture(const ImageTextureDesc& tdesc, const GraphicsResourceDesc& gdesc);
+		ImageTexture(const ImageTextureFileDesc& tdesc, const GraphicsResourceDesc& gdesc);
+		ImageTexture(const ImageTextureSolidDesc& tdesc, const GraphicsResourceDesc& gdesc);
 		~ImageTexture() override;
 
+		Rect getSize() const noexcept;
+
 	private:
-		Microsoft::WRL::ComPtr<ID3D11Resource> m_texture;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_resourceView;
+		Rect m_size;
 
 		friend class DeviceContext;
+		friend class SpriteBatch;
 	};
 }
 

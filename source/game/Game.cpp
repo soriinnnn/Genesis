@@ -1,5 +1,6 @@
 #include <game/Game.h>
 #include <graphics/GraphicsEngine.h>
+#include <input/InputManager.h>
 
 using namespace genesis;
 using namespace std;
@@ -15,6 +16,7 @@ Game::Game(const GameDesc& desc)
     m_uiManager = make_unique<UIManager>(UIManagerDesc{*m_logger});
     m_world = make_unique<World>(WorldDesc{*m_logger});
     m_isRunning = true;
+    m_inputManager->addListener(m_uiManager.get());
     GENESIS_LOG_INFO("Game initialized.");
 }
 

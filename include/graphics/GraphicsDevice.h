@@ -45,7 +45,8 @@ namespace genesis
         SharedPtr<ConstantBuffer> createConstantBuffer(const ConstantBufferDesc& desc);
         SharedPtr<StructuredBuffer> createStructuredBuffer(const StructuredBufferDesc& desc);
         SharedPtr<SamplerState> createSamplerState(const SamplerStateDesc& desc);
-        SharedPtr<ImageTexture> createImageTexture(const ImageTextureDesc& desc);
+        SharedPtr<ImageTexture> createImageTexture(const ImageTextureFileDesc& desc);
+        SharedPtr<ImageTexture> createImageTexture(const ImageTextureSolidDesc& desc);
         SharedPtr<DepthStencilTexture> createDepthStencilTexture(const DepthStencilTextureDesc& desc);
         SharedPtr<RenderTargetTexture> createRenderTargetTexture(const RenderTargetTextureDesc& desc);
         SharedPtr<SpriteBatch> createSpriteBatch(const SpriteBatchDesc& desc);

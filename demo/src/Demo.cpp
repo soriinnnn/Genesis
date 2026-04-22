@@ -2,6 +2,9 @@
 #include <resources/Font.h>
 #include <entity/Entity.h>
 #include <entity/components/Transform.h>
+#include <ui/elements/UILabel.h>
+#include <ui/elements/UIImage.h>
+#include <ui/elements/UIButton.h>
 
 using namespace std;
 
@@ -40,7 +43,7 @@ void Demo::onKeyUp(Key key)
             }
             m_inputManager->ignoreNextMouseMove();
 
-            auto screenSize = m_uiManager->getElement<UILabel>("screenSize");
+            auto* screenSize = m_uiManager->getElement<UILabel>("screenSize");
             updateScreenSize(m_display->getImageResolution(), *screenSize);
             break;
         }
@@ -60,39 +63,86 @@ void Demo::onCreate()
         setImageResolution(width, height);
     });
 
-    auto fps = m_uiManager->createElement<UILabel>("fps");
+    auto* fps = m_uiManager->createElement<UILabel>("fps");
     fps->setFont(m_resourceManager->getFont("demo/assets/fonts/bahnschrift_16.spritefont"));
     fps->setColor({0.0f, 0.0f, 0.0f, 1.0f});
     fps->setContent("FPS: ");
 
-    auto screenSize = m_uiManager->createElement<UILabel>("screenSize");
+    auto* screenSize = m_uiManager->createElement<UILabel>("screenSize");
     screenSize->setFont(m_resourceManager->getFont("demo/assets/fonts/bahnschrift_16.spritefont"));
     screenSize->setColor({0.0f, 0.0f, 0.0f, 1.0f});
     screenSize->setPosition({0, 26});
     updateScreenSize(m_display->getImageResolution(), *screenSize);
 
-    auto playerPosition = m_uiManager->createElement<UILabel>("playerPosition");
+    auto* playerPosition = m_uiManager->createElement<UILabel>("playerPosition");
     playerPosition->setFont(m_resourceManager->getFont("demo/assets/fonts/bahnschrift_16.spritefont"));
     playerPosition->setColor({0.0f, 0.0f, 0.0f, 1.0f});
     playerPosition->setPosition({0, 52});
     updatePlayerPosition({}, *playerPosition);
 
-    auto playerRotation = m_uiManager->createElement<UILabel>("playerRotation");
+    auto* playerRotation = m_uiManager->createElement<UILabel>("playerRotation");
     playerRotation->setFont(m_resourceManager->getFont("demo/assets/fonts/bahnschrift_16.spritefont"));
     playerRotation->setColor({0.0f, 0.0f, 0.0f, 1.0f});
     playerRotation->setPosition({0, 78});
     updatePlayerRotation({}, *playerRotation);
+
+    auto* ammo = m_uiManager->createElement<UIImage>("ammo");
+    ammo->setTexture(m_resourceManager->getTexture("assets/textures/UI/ammo.png"));
+    ammo->setColor({0.0f, 0.0f, 0.0f, 1.0f});
+    ammo->setPosition({0, 120});
+    ammo->setScale({1.0f, 1.0f});
+
+    auto* button = m_uiManager->createElement<UIButton>("button");
+    button->setPosition({5, 250});
+    button->setScale({100, 50});
+
+    auto* buttonImage = button->getBackgroundImage();
+    buttonImage->setColor({0.4f, 0.4f, 0.4f, 1.0f});
+
+    auto* buttonLabel = button->getLabel();
+    buttonLabel->setFont(m_resourceManager->getFont("demo/assets/fonts/bahnschrift_16.spritefont"));
+    buttonLabel->setContent("Malo");
+    button->centerLabel();
+
+    button->setOnMouseEnterCallback([buttonImage]() {
+        buttonImage->setColor({0.3f, 0.3f, 0.3f, 1.0f});
+    });
+    button->setOnMouseOutCallback([buttonImage]() {
+        buttonImage->setColor({0.4f, 0.4f, 0.4f, 1.0f});
+    });
+    button->setOnMouseUpCallback([&](MouseButton button) {
+        GENESIS_LOG(getLogger(), Logger::LogLevel::Info, "Malo");
+    });
+
+    auto* testLabel = m_uiManager->createElement<UILabel>("testLabel");
+    testLabel->setFont(m_resourceManager->getFont("demo/assets/fonts/bahnschrift_16.spritefont"));
+    testLabel->setColor({0.0f, 0.0f, 0.0f, 1.0f});
+    testLabel->setContent("Test");
+    testLabel->setPosition({500, 500});
+    testLabel->setZOrder(1);
+
+    auto bounds0 = testLabel->getBounds();
+
+    auto* testImage0 = m_uiManager->createElement<UIImage>("testImage0");
+    testImage0->setScale({100.0f, 100.0f});
+    testImage0->setPosition({500, 500});
+    testImage0->setColor({0.0f, 1.0f, 0.0f, 1.0f});
+
+    auto* testImage = m_uiManager->createElement<UIImage>("testImage");
+    testImage->setScale({100.0f, 100.0f});
+    testImage->setPosition({500, 500 + bounds0.height()});
+    testImage->setColor({1.0f, 0.0f, 0.0f, 1.0f});
 }
 
 void Demo::onUpdate(float deltaTime)
 {
-    auto fps = m_uiManager->getElement<UILabel>("fps");
-    auto playerPosition = m_uiManager->getElement<UILabel>("playerPosition");
-    auto playerRotation = m_uiManager->getElement<UILabel>("playerRotation");
+    auto* fps = m_uiManager->getElement<UILabel>("fps");
+    auto* playerPosition = m_uiManager->getElement<UILabel>("playerPosition");
+    auto* playerRotation = m_uiManager->getElement<UILabel>("playerRotation");
 
     updateFPS(deltaTime, *fps);
 
-    auto camera = m_world->getCamera();
+    auto* camera = m_world->getCamera();
     if (!camera) {
         return;
     }

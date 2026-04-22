@@ -27,8 +27,11 @@ namespace genesis
 			GENESIS_ASSERT((std::is_base_of<UIElement, T>::value), "T must derive from UIElement.");
 			T* result = getElement<T>(name);
 			if (!result) {
-				UniquePtr<T> element = std::make_unique<T>(UIElementDesc{m_logger, *this});
+				UniquePtr<T> element = std::make_unique<T>(UIElementDesc{m_logger});
 				result = element.get();
+				result->setOnZOrderCallback([this]() {
+					m_isZDirty = true;
+				});
 				m_elements.emplace(name, std::move(element));
 				m_zOrdered.push_back(result);
 				m_isZDirty = true;
@@ -76,8 +79,6 @@ namespace genesis
 		UIElement* m_pressedElement;
 		Vector<UIElement*> m_zOrdered;
 		bool m_isZDirty;
-
-		friend class UIElement;
 	};
 }
 

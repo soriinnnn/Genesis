@@ -107,7 +107,12 @@ SharedPtr<SamplerState> GraphicsDevice::createSamplerState(const SamplerStateDes
     return m_samplerCache->get(desc);
 }
 
-SharedPtr<ImageTexture> GraphicsDevice::createImageTexture(const ImageTextureDesc& desc)
+SharedPtr<ImageTexture> GraphicsDevice::createImageTexture(const ImageTextureFileDesc& desc)
+{
+    return make_shared<ImageTexture>(desc, getGraphicsResourceDesc());
+}
+
+SharedPtr<ImageTexture> GraphicsDevice::createImageTexture(const ImageTextureSolidDesc& desc)
 {
     return make_shared<ImageTexture>(desc, getGraphicsResourceDesc());
 }
