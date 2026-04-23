@@ -46,6 +46,7 @@ namespace genesis
     class UIElement;
     class UILabel;
     class UIImage;
+    class UIPanel;
     class UIButton;
 
     class GraphicsEngine;

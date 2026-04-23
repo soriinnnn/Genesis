@@ -23,15 +23,14 @@ namespace genesis
 		virtual void update(float deltaTime);
 		virtual void render(SpriteBatch& batch) = 0;
 
-		void release() noexcept;
 		bool contains(Point position) const noexcept;
 
 		Point getGlobalPosition() const noexcept;
 		Point getPosition() const noexcept;
 		Vec2 getScale() const noexcept;
 		Vec4 getColor() const noexcept;
+		Rect getSize() const noexcept;
 		Rect getBounds() const noexcept;
-		int getZOrder() const noexcept;
 		bool isVisible() const noexcept;
 		bool isEnabled() const noexcept;
 		bool isHovered() const noexcept;
@@ -40,9 +39,13 @@ namespace genesis
 		void setPosition(Point position) noexcept;
 		void setScale(Vec2 scale) noexcept;
 		void setColor(Vec4 color) noexcept;
-		void setZOrder(int zOrder) noexcept;
 		void setVisible(bool visible);
 		void setEnabled(bool enabled);
+
+		// Temporal, per impedir canviar la mida d'elements d'UI que es modifiquen sols i 
+		// evitar modificar la label per acceptar mides fixes.
+		// En un futur ho canviaré treient el virtual.
+		virtual void setSize(Rect size) noexcept;
 
 		void setOnMouseDownCallback(std::function<void(MouseButton)> callback) noexcept;
 		void setOnMouseUpCallback(std::function<void(MouseButton)> callback) noexcept;
@@ -52,15 +55,15 @@ namespace genesis
 	protected:
 		explicit UIElement(const UIElementDesc& desc);
 
-		virtual void onScale();
-
 		virtual void onMouseDown(MouseButton button);
 		virtual void onMouseUp(MouseButton button);
 		virtual void onMouseEnter();
 		virtual void onMouseOut();
-	
-	private:
-		void setOnZOrderCallback(std::function<void()> callback) noexcept;
+
+		virtual void onPosition();
+		virtual void onScale();
+		virtual void onColor();
+		virtual void onSize();
 
 	protected:
 		UIElement* m_parent;
@@ -68,7 +71,6 @@ namespace genesis
 		Vec2 m_scale;
 		Vec4 m_color;
 		Rect m_size;
-		int m_zOrder;
 		bool m_visible;
 		bool m_enabled;
 		bool m_hovered;
@@ -79,7 +81,6 @@ namespace genesis
 		std::function<void(MouseButton)> m_onMouseUp;
 		std::function<void()> m_onMouseEnter;
 		std::function<void()> m_onMouseOut;
-		std::function<void()> m_onZOrder;
 
 		friend class UIManager;
 	};

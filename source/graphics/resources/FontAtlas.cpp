@@ -20,8 +20,9 @@ FontAtlas::~FontAtlas() {}
 
 Rect FontAtlas::getSize(const char* text)
 {
-	DirectX::XMVECTOR sizeVector = m_font->MeasureString(text);
-	DirectX::XMFLOAT2 size{};
-	DirectX::XMStoreFloat2(&size, sizeVector);
-	return Rect{static_cast<int32>(size.x), static_cast<int32>(size.y)};
+	RECT bounds = m_font->MeasureDrawBounds(text, DirectX::XMFLOAT2(0.0f, 0.0f));
+	return Rect{
+		bounds.left + bounds.right,
+		bounds.top + bounds.bottom
+	};
 }

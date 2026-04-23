@@ -30,6 +30,11 @@ void UILabel::setFont(SharedPtr<Font> font)
 	updateSize();
 }
 
+void UILabel::setSize(Rect size) noexcept
+{
+	GENESIS_LOG_INFO("Label cannot be resized manually.");
+}
+
 void UILabel::updateSize()
 {
 	if (!m_font) {

@@ -200,6 +200,7 @@
     <ClCompile Include="source\ui\elements\UILabel.cpp" />
     <ClCompile Include="source\ui\elements\UIImage.cpp" />
     <ClCompile Include="source\ui\elements\UIButton.cpp" />
+    <ClCompile Include="source\ui\elements\UIPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demo\src\Demo.h" />
@@ -274,6 +275,7 @@
     <ClInclude Include="include\ui\elements\UILabel.h" />
     <ClInclude Include="include\ui\elements\UIImage.h" />
     <ClInclude Include="include\ui\elements\UIButton.h" />
+    <ClInclude Include="include\ui\elements\UIPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

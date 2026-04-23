@@ -29,11 +29,8 @@ namespace genesis
 			if (!result) {
 				UniquePtr<T> element = std::make_unique<T>(UIElementDesc{m_logger});
 				result = element.get();
-				result->setOnZOrderCallback([this]() {
-					m_isZDirty = true;
-				});
-				m_elements.emplace(name, std::move(element));
-				m_zOrdered.push_back(result);
+				auto [it, inserted] = m_elements.emplace(name, RootElement{std::move(element)});
+				m_zOrdered.push_back(&it->second);
 				m_isZDirty = true;
 			}
 			return result;
@@ -46,24 +43,26 @@ namespace genesis
 			if (it == m_elements.end()) {
 				return nullptr;
 			}
-			return dynamic_cast<T*>(it->second.get());
+			auto& root = it->second;
+			return dynamic_cast<T*>(root.element.get());
 		}
 
 		void destroyElement(const char* name);
+		void setZOrder(const char* name, int zOrder);
 
 		template<typename F>
 		void forEach(F&& callback) const
 		{
-			for (const auto* element : m_zOrdered) {
-				callback(*element);
+			for (const auto* root : m_zOrdered) {
+				callback(*root->element);
 			}
 		}
 
 		template<typename F>
 		void forEach(F&& callback)
 		{
-			for (auto* element : m_zOrdered) {
-				callback(*element);
+			for (auto* root : m_zOrdered) {
+				callback(*root->element);
 			}
 		}
 
@@ -75,9 +74,16 @@ namespace genesis
 		void onMouseUp(MouseButton button, Point pos) override;
 
 	private:
-		HashMap<String, UniquePtr<UIElement>> m_elements;
+		struct RootElement
+		{
+			UniquePtr<UIElement> element;
+			int zOrder{0};
+		};
+
+	private:
+		HashMap<String, RootElement> m_elements;
 		UIElement* m_pressedElement;
-		Vector<UIElement*> m_zOrdered;
+		Vector<RootElement*> m_zOrdered;
 		bool m_isZDirty;
 	};
 }

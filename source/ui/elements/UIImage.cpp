@@ -5,21 +5,24 @@
 
 using namespace genesis;
 
-UIImage::UIImage(const UIElementDesc& desc): UIElement(desc) 
-{
-	m_size = Rect{1, 1};
-}
+UIImage::UIImage(const UIElementDesc& desc): UIElement(desc) {}
 
 UIImage::~UIImage() {}
 
 void UIImage::render(SpriteBatch& batch) 
 {
-	ImageTexture* image = (m_texture != nullptr) ? &m_texture->getImageTexture() : nullptr;
-	batch.drawImage(image, getGlobalPosition(), m_scale, m_color);
+	if (!m_texture) {
+		return;
+	}
+	batch.drawImage(m_texture->getImageTexture(), m_size, getGlobalPosition(), m_scale, m_color);
 }
 
 void UIImage::setTexture(SharedPtr<Texture> texture) noexcept
 {
 	m_texture = texture;
+	if (!texture) {
+		m_size = Rect{};
+		return;
+	}
 	m_size = texture->getImageTexture().getSize();
 }

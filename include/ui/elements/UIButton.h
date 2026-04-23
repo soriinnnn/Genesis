@@ -11,17 +11,12 @@ namespace genesis
 		~UIButton() override;
 
 		void render(SpriteBatch& batch) override;
-		void centerLabel() noexcept;
 		
 		UILabel* getLabel() noexcept;
-		UIImage* getBackgroundImage() noexcept;
-
-	private:
-		void onScale() override;
+		void centerLabel() noexcept;
 
 	private:
 		UniquePtr<UILabel> m_label;
-		UniquePtr<UIImage> m_backgroundImage;
 	};
 }
 

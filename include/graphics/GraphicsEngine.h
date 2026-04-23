@@ -26,7 +26,7 @@ namespace genesis
         GraphicsContext getGraphicsContext() noexcept;
         void resizeFrameBuffers(uint32 width, uint32 height);
 
-        void clear();
+        void clear(Vec4 color = {1.0f, 1.0f, 1.0f, 1.0f});
         void render(World& world, float deltaTime);
         void render(UIManager& ui);
         void postProcess(PostProcess& effect);

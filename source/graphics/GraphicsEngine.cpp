@@ -60,9 +60,9 @@ void GraphicsEngine::resizeFrameBuffers(uint32 width, uint32 height)
     m_secondaryBuffer->resize(width, height);
 }
 
-void GraphicsEngine::clear()
+void GraphicsEngine::clear(Vec4 color)
 {
-    m_deviceContext->clearRenderTarget(m_primaryBuffer->getRenderTarget(), Vec4{1.0f, 1.0f, 1.0f, 1.0f});
+    m_deviceContext->clearRenderTarget(m_primaryBuffer->getRenderTarget(), color);
     m_deviceContext->clearDepthStencil(m_primaryBuffer->getDepthStencil());
 }
 

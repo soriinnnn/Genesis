@@ -15,6 +15,7 @@ namespace genesis
 
 		void setContent(const char* content);
 		void setFont(SharedPtr<Font> font);
+		void setSize(Rect size) noexcept override;
 
 	private:
 		void updateSize();

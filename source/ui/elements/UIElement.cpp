@@ -7,7 +7,6 @@ UIElement::UIElement(const UIElementDesc& desc): Base(desc.base), m_parent{desc.
 {
 	m_scale = Vec2{1.0f, 1.0f};
 	m_color = Vec4{1.0f, 1.0f, 1.0f, 1.0f};
-	m_zOrder = 0;
 	m_visible = true;
 	m_enabled = true;
 	m_hovered = false;
@@ -17,11 +16,6 @@ UIElement::UIElement(const UIElementDesc& desc): Base(desc.base), m_parent{desc.
 UIElement::~UIElement() {}
 
 void UIElement::update(float deltaTime) {}
-
-void UIElement::release() noexcept
-{
-	m_pressed = false;
-}
 
 bool UIElement::contains(Point point) const noexcept
 {
@@ -56,6 +50,11 @@ Vec4 UIElement::getColor() const noexcept
 	return m_color;
 }
 
+Rect UIElement::getSize() const noexcept
+{
+	return m_size;
+}
+
 Rect UIElement::getBounds() const noexcept
 {
 	Point globalPos = getGlobalPosition();
@@ -65,11 +64,6 @@ Rect UIElement::getBounds() const noexcept
 		globalPos.x + static_cast<int32>(m_size.width() * m_scale.x),
 		globalPos.y + static_cast<int32>(m_size.height() * m_scale.y)
 	};
-}
-
-int UIElement::getZOrder() const noexcept
-{
-	return m_zOrder;
 }
 
 bool UIElement::isVisible() const noexcept
@@ -100,7 +94,6 @@ void UIElement::setPosition(Point position) noexcept
 void UIElement::setScale(Vec2 scale) noexcept
 {
 	m_scale = scale;
-	onScale();
 }
 
 void UIElement::setColor(Vec4 color) noexcept
@@ -108,12 +101,9 @@ void UIElement::setColor(Vec4 color) noexcept
 	m_color = color;
 }
 
-void UIElement::setZOrder(int zOrder) noexcept
+void UIElement::setSize(Rect size) noexcept
 {
-	m_zOrder = zOrder;
-	if (m_onZOrder) {
-		m_onZOrder();
-	}
+	m_size = size;
 }
 
 void UIElement::setVisible(bool visible)
@@ -131,8 +121,6 @@ void UIElement::setEnabled(bool enabled)
 		onMouseOut();
 	}
 }
-
-void UIElement::onScale() {}
 
 void UIElement::onMouseDown(MouseButton button)
 {
@@ -178,6 +166,14 @@ void UIElement::onMouseOut()
 	}
 }
 
+void UIElement::onPosition() {}
+
+void UIElement::onScale() {}
+
+void UIElement::onColor() {}
+
+void UIElement::onSize() {}
+
 void UIElement::setOnMouseDownCallback(std::function<void(MouseButton)> callback) noexcept
 {
 	m_onMouseDown = callback;
@@ -196,9 +192,4 @@ void UIElement::setOnMouseEnterCallback(std::function<void()> callback) noexcept
 void UIElement::setOnMouseOutCallback(std::function<void()> callback) noexcept
 {
 	m_onMouseOut = callback;
-}
-
-void UIElement::setOnZOrderCallback(std::function<void()> callback) noexcept
-{
-	m_onZOrder = callback;
 }

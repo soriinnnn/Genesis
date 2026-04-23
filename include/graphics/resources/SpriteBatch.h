@@ -1,6 +1,7 @@
 #ifndef GENESIS_SPRITE_BATCH_H
 #define GENESIS_SPRITE_BATCH_H
 #include <graphics/resources/GraphicsResource.h>
+#include <math/Rect.h>
 #include <math/Point.h>
 #include <math/Vec4.h>
 #include <math/Vec2.h>
@@ -22,7 +23,8 @@ namespace genesis
 
 		void begin(SamplerState* samplerState = nullptr);
 		void drawText(FontAtlas& font, const char* text, Point pos, Vec2 scale, Vec4 color);
-		void drawImage(ImageTexture* image, Point pos, Vec2 scale, Vec4 color);
+		void drawImage(ImageTexture& image, Rect size, Point pos, Vec2 scale, Vec4 color);
+		void drawSolid(Rect size, Point pos, Vec2 scale, Vec4 color);
 		void end();
 
 	private:
