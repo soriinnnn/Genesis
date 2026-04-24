@@ -16,6 +16,7 @@ Game::Game(const GameDesc& desc)
     m_uiManager = make_unique<UIManager>(UIManagerDesc{*m_logger});
     m_world = make_unique<World>(WorldDesc{*m_logger});
     m_isRunning = true;
+    m_vsync = false;
     m_inputManager->addListener(m_uiManager.get());
     GENESIS_LOG_INFO("Game initialized.");
 }
@@ -50,7 +51,7 @@ void Game::onInternalUpdate()
         m_graphicsEngine->postProcess(*effect);
     }
     m_graphicsEngine->render(*m_uiManager);
-    m_graphicsEngine->present(m_display->getSwapChain());
+    m_graphicsEngine->present(m_display->getSwapChain(), m_vsync);
 }
 
 float Game::getDeltaTime()
@@ -65,6 +66,11 @@ void Game::onCreate() {}
 
 void Game::onUpdate(float deltaTime) {}
 
+void Game::setImageResolution(uint32 width, uint32 height)
+{
+    m_graphicsEngine->resizeFrameBuffers(width, height);
+}
+
 void Game::addEffect(SharedPtr<PostProcess> effect)
 {
     m_effects.push_back(effect);
@@ -73,9 +79,4 @@ void Game::addEffect(SharedPtr<PostProcess> effect)
 void Game::clearEffects()
 {
     m_effects.clear();
-}
-
-void Game::setImageResolution(uint32 width, uint32 height)
-{
-    m_graphicsEngine->resizeFrameBuffers(width, height);
 }

@@ -26,11 +26,11 @@ namespace genesis
         GraphicsContext getGraphicsContext() noexcept;
         void resizeFrameBuffers(uint32 width, uint32 height);
 
-        void clear(Vec4 color = {1.0f, 1.0f, 1.0f, 1.0f});
+        void clear(const Vec4& color = {1.0f, 1.0f, 1.0f, 1.0f});
         void render(World& world, float deltaTime);
         void render(UIManager& ui);
         void postProcess(PostProcess& effect);
-        void present(SwapChain& swapChain);
+        void present(SwapChain& swapChain, bool vsync);
 
     private:
         void renderEntities(World& world);
@@ -45,20 +45,20 @@ namespace genesis
 
         struct alignas(16) CameraData
         {
-            Mat4 view;
-            Mat4 projection;
-            Vec3 camPos;
+            Mat4 viewMatrix;
+            Mat4 projectionMatrix;
+            Vec4 cameraPosition;
         };
 
         struct alignas(16) ObjectData
         {
-            Mat4 world;
+            Mat4 worldMatrix;
         };
 
-        struct alignas(16) LightData
+        struct LightData
         {
-            Vec3 position;      int pd0;
-            Vec3 direction;     int pd1;
+            Vec3 position;
+            Vec3 direction;
             Vec3 color;
             float radius;
             float intensity;
@@ -67,9 +67,10 @@ namespace genesis
 
     private:
         SharedPtr<GraphicsDevice> m_graphicsDevice;
-        UniquePtr<EngineShaders> m_engineShaders;
         UniquePtr<FrameBuffer> m_primaryBuffer;
         UniquePtr<FrameBuffer> m_secondaryBuffer;
+        UniquePtr<EngineShaders> m_shaders;
+        UniquePtr<EngineStates> m_states;
 
     private:
         SharedPtr<DeviceContext> m_deviceContext;
@@ -78,8 +79,7 @@ namespace genesis
         SharedPtr<ConstantBuffer> m_cameraBuffer;
         SharedPtr<ConstantBuffer> m_objectBuffer;
         SharedPtr<StructuredBuffer> m_lightsBuffer;
-        SharedPtr<SamplerState> m_pointClampSampler;
-        SharedPtr<GraphicsPipelineState> m_framePipeline;
+        SharedPtr<GraphicsPipelineState> m_frameBufferPipeline;
     };
 }
 

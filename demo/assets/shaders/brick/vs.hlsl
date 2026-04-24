@@ -2,7 +2,7 @@ cbuffer CameraData: register(b1)
 {
     row_major float4x4 viewMatrix;
     row_major float4x4 projectionMatrix;
-    float3 cameraPosition;
+    float4 cameraPosition;
 }
 
 cbuffer ObjectData: register(b2)

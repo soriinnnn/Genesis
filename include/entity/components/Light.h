@@ -25,7 +25,7 @@ namespace genesis
 		bool isEnabled() const noexcept;
 
 		void setType(LightType type) noexcept;
-		void setColor(Vec3 color) noexcept;
+		void setColor(const Vec3& color) noexcept;
 		void setIntensity(float intensity) noexcept;
 		void setRadius(float radius) noexcept;
 		void setEnabled(bool enabled) noexcept;

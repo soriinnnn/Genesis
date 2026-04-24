@@ -36,7 +36,7 @@ void createLights(Game& game)
 	Light* sunLight = sun->createComponent<Light>();
 	sunLight->setType(Light::LightType::Directional);
 	sunLight->setColor(Vec3{1.0f, 0.95f, 0.85f});
-	sunLight->setIntensity(1.2f);
+	sunLight->setIntensity(1.0f);
 
 	Transform* sunTransform = sun->getComponent<Transform>();
 	sunTransform->setPosition(Vec3{0.0f, 100.0f, 0.0f});

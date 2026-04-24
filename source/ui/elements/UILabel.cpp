@@ -24,13 +24,13 @@ void UILabel::setContent(const char* content)
 	updateSize();
 }
 
-void UILabel::setFont(SharedPtr<Font> font)
+void UILabel::setFont(const SharedPtr<Font>& font)
 {
 	m_font = font;
 	updateSize();
 }
 
-void UILabel::setSize(Rect size) noexcept
+void UILabel::setSize(const Rect& size) noexcept
 {
 	GENESIS_LOG_INFO("Label cannot be resized manually.");
 }

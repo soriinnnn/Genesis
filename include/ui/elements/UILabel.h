@@ -14,8 +14,8 @@ namespace genesis
 		void render(SpriteBatch& batch) override;
 
 		void setContent(const char* content);
-		void setFont(SharedPtr<Font> font);
-		void setSize(Rect size) noexcept override;
+		void setFont(const SharedPtr<Font>& font);
+		void setSize(const Rect& size) noexcept override;
 
 	private:
 		void updateSize();

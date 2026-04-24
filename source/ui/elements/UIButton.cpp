@@ -16,7 +16,9 @@ UIButton::~UIButton() {}
 void UIButton::render(SpriteBatch& batch)
 {
 	batch.drawSolid(m_size, getGlobalPosition(), m_scale, m_color);
-	m_label->render(batch);
+    if (m_label->isVisible()) {
+        m_label->render(batch);
+    }
 }
 
 UILabel* UIButton::getLabel() noexcept

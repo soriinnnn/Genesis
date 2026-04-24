@@ -32,7 +32,8 @@ void Demo::onKeyUp(Key key)
         }
         case Key::V:
         {
-            // VSYNC
+            m_vsync = !m_vsync;
+            break;
         }
         case Key::F11:
         {
@@ -43,9 +44,6 @@ void Demo::onKeyUp(Key key)
                 m_display->toggleBorderless(1280, 720);
             }
             m_inputManager->ignoreNextMouseMove();
-
-            auto* screenSize = m_uiManager->getElement<UILabel>("screenSize");
-            updateScreenSize(m_display->getImageResolution(), *screenSize);
             break;
         }
     }
@@ -59,9 +57,11 @@ void Demo::onMouseUp(MouseButton button, Point pos) {}
 
 void Demo::onCreate()
 {
+    m_vsync = true;
     m_inputManager->addListener(this);
     m_display->onResizeWindow([&](uint32 width, uint32 height) {
         setImageResolution(width, height);
+        updateScreenSize(m_display->getImageResolution(), *m_uiManager->getElement<UILabel>("screenSize"));
     });
 
     auto* fps = m_uiManager->createElement<UILabel>("fps");

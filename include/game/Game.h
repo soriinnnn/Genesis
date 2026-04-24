@@ -35,9 +35,9 @@ namespace genesis
         virtual void onCreate();
         virtual void onUpdate(float deltaTime);
 
+        void setImageResolution(uint32 width, uint32 height);
         void addEffect(SharedPtr<PostProcess> effect);
         void clearEffects();
-        void setImageResolution(uint32 width, uint32 height);
 
     private:
         void onInternalUpdate();
@@ -50,6 +50,7 @@ namespace genesis
         UniquePtr<ResourceManager> m_resourceManager;
         UniquePtr<UIManager> m_uiManager;
         UniquePtr<World> m_world;
+        bool m_vsync;
         
     private:
         bool m_isRunning;

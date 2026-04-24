@@ -47,7 +47,7 @@ void Light::setType(LightType type) noexcept
 	m_type = type;
 }
 
-void Light::setColor(Vec3 color) noexcept
+void Light::setColor(const Vec3& color) noexcept
 {
 	m_color = color;
 }

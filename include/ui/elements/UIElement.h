@@ -23,7 +23,7 @@ namespace genesis
 		virtual void update(float deltaTime);
 		virtual void render(SpriteBatch& batch) = 0;
 
-		bool contains(Point position) const noexcept;
+		bool contains(const Point& position) const noexcept;
 
 		Point getGlobalPosition() const noexcept;
 		Point getPosition() const noexcept;
@@ -36,16 +36,15 @@ namespace genesis
 		bool isHovered() const noexcept;
 		bool isPressed() const noexcept;
 
-		void setPosition(Point position) noexcept;
-		void setScale(Vec2 scale) noexcept;
-		void setColor(Vec4 color) noexcept;
+		void setPosition(const Point& position) noexcept;
+		void setScale(const Vec2& scale) noexcept;
+		void setColor(const Vec4& color) noexcept;
 		void setVisible(bool visible);
 		void setEnabled(bool enabled);
 
-		// Temporal, per impedir canviar la mida d'elements d'UI que es modifiquen sols i 
-		// evitar modificar la label per acceptar mides fixes.
+		// Temporal, per impedir canviar la mida d'elements d'UI que es modifiquen sols i evitar modificar la label per acceptar mides fixes.
 		// En un futur ho canviaré treient el virtual.
-		virtual void setSize(Rect size) noexcept;
+		virtual void setSize(const Rect& size) noexcept;
 
 		void setOnMouseDownCallback(std::function<void(MouseButton)> callback) noexcept;
 		void setOnMouseUpCallback(std::function<void(MouseButton)> callback) noexcept;

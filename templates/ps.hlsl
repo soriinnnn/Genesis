@@ -10,7 +10,7 @@ cbuffer CameraData: register(b1)
 {
     row_major float4x4 viewMatrix;
     row_major float4x4 projectionMatrix;
-    float3 cameraPosition;
+    float4 cameraPosition;
 }
 
 cbuffer MaterialData: register(b3)
@@ -21,9 +21,7 @@ cbuffer MaterialData: register(b3)
 struct LightData
 {
     float3 position;
-    int pd0;
     float3 direction;
-    int pd1;
     float3 color;
     float radius;
     float intensity;

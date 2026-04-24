@@ -71,11 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>\intermediate\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>include;source;lib/xxhash-0.8.3;$(IncludePath)</IncludePath>
+    <OutDir>\$(ProjectName)\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>\$(ProjectName)\intermediate\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>include;source;$(IncludePath)</IncludePath>
     <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <LibraryPath>lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -113,11 +113,13 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3dcompiler.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dcompiler.lib;d3d11.lib;xxhash.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -138,6 +140,8 @@
   <ItemGroup>
     <ClCompile Include="demo\src\Demo.cpp" />
     <ClCompile Include="demo\main.cpp" />
+    <ClCompile Include="source\physics\PhysicsEngine.cpp" />
+    <ClCompile Include="source\graphics\EngineStates.cpp" />
     <ClCompile Include="source\resources\Font.cpp" />
     <ClCompile Include="source\graphics\resources\FontAtlas.cpp" />
     <ClCompile Include="source\entity\components\Light.cpp" />
@@ -204,6 +208,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demo\src\Demo.h" />
+    <ClInclude Include="include\graphics\EngineStates.h" />
     <ClInclude Include="include\resources\Font.h" />
     <ClInclude Include="include\graphics\resources\FontAtlas.h" />
     <ClInclude Include="include\graphics\EngineShaders.h" />
@@ -261,6 +266,7 @@
     <ClInclude Include="include\graphics\SamplerStateCache.h" />
     <ClInclude Include="include\resources\PostProcess.h" />
     <ClInclude Include="include\entity\components\Light.h" />
+    <ClInclude Include="include\physics\PhysicsEngine.h" />
     <ClInclude Include="source\display\win32\Win32Window.h" />
     <ClInclude Include="source\input\win32\Win32InputManager.h" />
     <ClInclude Include="include\math\Vec2.h" />
@@ -282,20 +288,24 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="packages\directxtk_uwp.2025.10.28.2\build\native\directxtk_uwp.targets" Condition="Exists('packages\directxtk_uwp.2025.10.28.2\build\native\directxtk_uwp.targets')" />
     <Import Project="packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets" Condition="Exists('packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets')" />
     <Import Project="packages\Assimp.3.0.0\build\native\Assimp.targets" Condition="Exists('packages\Assimp.3.0.0\build\native\Assimp.targets')" />
-    <Import Project="packages\directxtex_uwp.2025.10.28.1\build\native\directxtex_uwp.targets" Condition="Exists('packages\directxtex_uwp.2025.10.28.1\build\native\directxtex_uwp.targets')" />
     <Import Project="packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets" Condition="Exists('packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" />
+    <Import Project="packages\xxhash_cpp.1.0.1\build\native\xxhash_cpp.targets" Condition="Exists('packages\xxhash_cpp.1.0.1\build\native\xxhash_cpp.targets')" />
+    <Import Project="packages\jolt_cpp.1.0.0\build\native\jolt_cpp.targets" Condition="Exists('packages\jolt_cpp.1.0.0\build\native\jolt_cpp.targets')" />
+    <Import Project="packages\directxtex_uwp.2026.4.1.1\build\native\directxtex_uwp.targets" Condition="Exists('packages\directxtex_uwp.2026.4.1.1\build\native\directxtex_uwp.targets')" />
+    <Import Project="packages\directxtk_uwp.2026.4.1.1\build\native\directxtk_uwp.targets" Condition="Exists('packages\directxtk_uwp.2026.4.1.1\build\native\directxtk_uwp.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('packages\directxtk_uwp.2025.10.28.2\build\native\directxtk_uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtk_uwp.2025.10.28.2\build\native\directxtk_uwp.targets'))" />
     <Error Condition="!Exists('packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets'))" />
     <Error Condition="!Exists('packages\Assimp.3.0.0\build\native\Assimp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Assimp.3.0.0\build\native\Assimp.targets'))" />
-    <Error Condition="!Exists('packages\directxtex_uwp.2025.10.28.1\build\native\directxtex_uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtex_uwp.2025.10.28.1\build\native\directxtex_uwp.targets'))" />
     <Error Condition="!Exists('packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets'))" />
+    <Error Condition="!Exists('packages\xxhash_cpp.1.0.1\build\native\xxhash_cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\xxhash_cpp.1.0.1\build\native\xxhash_cpp.targets'))" />
+    <Error Condition="!Exists('packages\jolt_cpp.1.0.0\build\native\jolt_cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\jolt_cpp.1.0.0\build\native\jolt_cpp.targets'))" />
+    <Error Condition="!Exists('packages\directxtex_uwp.2026.4.1.1\build\native\directxtex_uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtex_uwp.2026.4.1.1\build\native\directxtex_uwp.targets'))" />
+    <Error Condition="!Exists('packages\directxtk_uwp.2026.4.1.1\build\native\directxtk_uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtk_uwp.2026.4.1.1\build\native\directxtk_uwp.targets'))" />
   </Target>
 </Project>

@@ -1,6 +1,7 @@
 #include <graphics/GraphicsEngine.h>
 #include <graphics/GraphicsDevice.h>
 #include <graphics/EngineShaders.h>
+#include <graphics/EngineStates.h>
 #include <graphics/FrameBuffer.h>
 #include <graphics/resources/DeviceContext.h>
 #include <graphics/utils/GraphicsMacros.h>
@@ -24,7 +25,8 @@ using namespace std;
 GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
 {
     m_graphicsDevice = make_shared<GraphicsDevice>(GraphicsDeviceDesc{m_logger});
-    m_engineShaders = make_unique<EngineShaders>(EngineShadersDesc{m_logger, *m_graphicsDevice});
+    m_shaders = make_unique<EngineShaders>(EngineShadersDesc{m_logger, *m_graphicsDevice});
+    m_states = make_unique<EngineStates>(EngineStatesDesc{m_logger, *m_graphicsDevice});
     m_primaryBuffer = make_unique<FrameBuffer>(FrameBufferDesc{m_logger, desc.buffersSize, *m_graphicsDevice});
     m_secondaryBuffer = make_unique<FrameBuffer>(FrameBufferDesc{m_logger, desc.buffersSize, *m_graphicsDevice});
     m_deviceContext = m_graphicsDevice->createDeviceContext();
@@ -33,17 +35,11 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
     m_cameraBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(CameraData)});
     m_objectBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(ObjectData)});
     m_lightsBuffer = m_graphicsDevice->createStructuredBuffer({nullptr, sizeof(LightData), DEFAULT_MAX_LIGHTS});
-    m_pointClampSampler = m_graphicsDevice->createSamplerState({
-        TextureFilter::Linear,
-        TextureAddressMode::Clamp,
-        TextureAddressMode::Clamp,
-        TextureAddressMode::Clamp
-    });
-    m_framePipeline = m_graphicsDevice->createGraphicsPipelineState({
-        m_engineShaders->getFullscreenVSBinary(),
-        m_engineShaders->getFullscreenPSBinary(),
-        m_engineShaders->getFullscreenVSSignature(),
-        m_engineShaders->getFullscreenPSSignature()
+    m_frameBufferPipeline = m_graphicsDevice->createGraphicsPipelineState({
+        m_shaders->getFullscreenVSBinary(),
+        m_shaders->getFullscreenPSBinary(),
+        m_shaders->getFullscreenVSSignature(),
+        m_shaders->getFullscreenPSSignature()
     });
 }
 
@@ -51,7 +47,7 @@ GraphicsEngine::~GraphicsEngine() {}
 
 GraphicsContext GraphicsEngine::getGraphicsContext() noexcept
 {
-    return {*m_graphicsDevice, *m_engineShaders};
+    return {*m_graphicsDevice, *m_shaders};
 }
 
 void GraphicsEngine::resizeFrameBuffers(uint32 width, uint32 height)
@@ -60,7 +56,7 @@ void GraphicsEngine::resizeFrameBuffers(uint32 width, uint32 height)
     m_secondaryBuffer->resize(width, height);
 }
 
-void GraphicsEngine::clear(Vec4 color)
+void GraphicsEngine::clear(const Vec4& color)
 {
     m_deviceContext->clearRenderTarget(m_primaryBuffer->getRenderTarget(), color);
     m_deviceContext->clearDepthStencil(m_primaryBuffer->getDepthStencil());
@@ -80,7 +76,7 @@ void GraphicsEngine::render(World& world, float deltaTime)
     CameraData cameraData = {
         cameraComponent->getViewMatrix(),
         cameraComponent->getProjectionMatrix(),
-        camera->getComponent<Transform>()->getPosition()
+        Vec4{camera->getComponent<Transform>()->getPosition()}
     };
     m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData);
     m_deviceContext->setConstantBuffer(*m_cameraBuffer, CAMERA_CONSTANT_BUFFER_SLOT);
@@ -103,13 +99,13 @@ void GraphicsEngine::render(World& world, float deltaTime)
         }
 
         LightData data{};
-        data.type = static_cast<int>(lightComponent->getType());
-        data.color = lightComponent->getColor();
-        data.intensity = lightComponent->getIntensity();
-        data.radius = lightComponent->getRadius();
-        data.direction = transformComponent->getForwardVector();
         data.position = transformComponent->getPosition();
-
+        data.direction = transformComponent->getForwardVector();
+        data.color = lightComponent->getColor();
+        data.radius = lightComponent->getRadius();
+        data.intensity = lightComponent->getIntensity();
+        data.type = static_cast<int>(lightComponent->getType());
+        
         lights.push_back(data);
     });
 
@@ -152,16 +148,16 @@ void GraphicsEngine::postProcess(PostProcess& effect)
     std::swap(m_primaryBuffer, m_secondaryBuffer);
 }
 
-void GraphicsEngine::present(SwapChain& swapChain)
+void GraphicsEngine::present(SwapChain& swapChain, bool vsync)
 {
     m_deviceContext->clearAndSetBackBuffer(swapChain, Vec4{1.0f, 1.0f, 1.0f, 1.0f});
     m_deviceContext->setViewport(swapChain.getSize());
-    m_deviceContext->setGraphicsPipelineState(*m_framePipeline);
+    m_deviceContext->setGraphicsPipelineState(*m_frameBufferPipeline);
     m_deviceContext->setTexture(m_primaryBuffer->getRenderTarget());
-    m_deviceContext->setSamplerState(*m_pointClampSampler);
+    m_deviceContext->setSamplerState(m_states->getPointClamp());
     m_deviceContext->draw(FULLSCREEN_TRIANGLE_VERTEX_COUNT);
     m_graphicsDevice->executeCommandList(*m_deviceContext);
-    swapChain.present();
+    swapChain.present(vsync);
 }
 
 void GraphicsEngine::renderEntities(World& world)
@@ -204,7 +200,7 @@ void GraphicsEngine::applyPostProcess(PostProcess& effect, FrameBuffer& input, F
     m_deviceContext->setViewport(output.getSize());
     m_deviceContext->setGraphicsPipelineState(effect.getGraphicsPipelineState());
     m_deviceContext->setTexture(input.getRenderTarget());
-    m_deviceContext->setSamplerState(*m_pointClampSampler);
+    m_deviceContext->setSamplerState(m_states->getPointClamp());
     if (effect.hasProperties()) {
         if (effect.isDirty()) {
             m_deviceContext->updateConstantBuffer(effect.getProperties(), effect.getData());

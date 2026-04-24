@@ -26,6 +26,14 @@ Vec4::Vec4(float x, float y, float z, float w)
 	this->w = w;
 }
 
+Vec4::Vec4(const Vec3& v, float w)
+{
+	this->x = v.x;
+	this->y = v.y;
+	this->z = v.z;
+	this->w = w;
+}
+
 const float* Vec4::toArray() const noexcept
 {
 	return &this->x;

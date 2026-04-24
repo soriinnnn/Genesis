@@ -13,7 +13,7 @@ namespace genesis
 
 		void render(SpriteBatch& batch) override;
 
-		void setTexture(SharedPtr<Texture> texture) noexcept;
+		void setTexture(const SharedPtr<Texture>& texture) noexcept;
 
 	private:
 		SharedPtr<Texture> m_texture;

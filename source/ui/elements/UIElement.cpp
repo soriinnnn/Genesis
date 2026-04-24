@@ -17,7 +17,7 @@ UIElement::~UIElement() {}
 
 void UIElement::update(float deltaTime) {}
 
-bool UIElement::contains(Point point) const noexcept
+bool UIElement::contains(const Point& point) const noexcept
 {
 	Rect bounds = getBounds();
 	return point.x >= bounds.left && 
@@ -86,22 +86,22 @@ bool UIElement::isPressed() const noexcept
 	return m_pressed;
 }
 
-void UIElement::setPosition(Point position) noexcept
+void UIElement::setPosition(const Point& position) noexcept
 {
 	m_position = position;
 }
 
-void UIElement::setScale(Vec2 scale) noexcept
+void UIElement::setScale(const Vec2& scale) noexcept
 {
 	m_scale = scale;
 }
 
-void UIElement::setColor(Vec4 color) noexcept
+void UIElement::setColor(const Vec4& color) noexcept
 {
 	m_color = color;
 }
 
-void UIElement::setSize(Rect size) noexcept
+void UIElement::setSize(const Rect& size) noexcept
 {
 	m_size = size;
 }

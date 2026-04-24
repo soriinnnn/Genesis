@@ -17,7 +17,7 @@ void UIImage::render(SpriteBatch& batch)
 	batch.drawImage(m_texture->getImageTexture(), m_size, getGlobalPosition(), m_scale, m_color);
 }
 
-void UIImage::setTexture(SharedPtr<Texture> texture) noexcept
+void UIImage::setTexture(const SharedPtr<Texture>& texture) noexcept
 {
 	m_texture = texture;
 	if (!texture) {
