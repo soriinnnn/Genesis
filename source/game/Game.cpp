@@ -14,6 +14,7 @@ Game::Game(const GameDesc& desc)
     m_display = make_unique<Display>(DisplayDesc{*m_logger, desc.windowSize, desc.windowTitle, WindowStyle::Windowed, m_graphicsEngine->getGraphicsContext()});
     m_inputManager = InputManager::create({*m_logger, m_display->getWindow()});
     m_uiManager = make_unique<UIManager>(UIManagerDesc{*m_logger});
+    m_physicsEngine = make_unique<PhysicsEngine>(PhysicsEngineDesc{*m_logger, m_graphicsEngine->getGraphicsContext()});
     m_world = make_unique<World>(WorldDesc{*m_logger});
     m_isRunning = true;
     m_vsync = false;
@@ -33,7 +34,7 @@ Logger& Game::getLogger() noexcept
 
 GameContext Game::getContext() noexcept
 {
-    return {*m_world, *m_inputManager, *m_resourceManager, *m_uiManager};
+    return {*m_world, *m_inputManager, *m_resourceManager, *m_uiManager, *m_physicsEngine};
 }
 
 void Game::onInternalUpdate()
@@ -44,9 +45,11 @@ void Game::onInternalUpdate()
 
     onUpdate(deltaTime);
     m_world->update(deltaTime);
+    m_physicsEngine->update(*m_world, deltaTime);
 
     m_graphicsEngine->clear();
     m_graphicsEngine->render(*m_world, deltaTime);
+    m_graphicsEngine->render(*m_world, m_physicsEngine->getDebugRenderer());
     for (auto& effect : m_effects) {
         m_graphicsEngine->postProcess(*effect);
     }

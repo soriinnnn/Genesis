@@ -8,6 +8,7 @@
 #include <math/Vec4.h>
 #include <math/Mat4.h>
 #include <graphics/utils/GraphicsTypes.h>
+#include <physics/DebugRenderer.h>
 
 namespace genesis
 {
@@ -28,6 +29,7 @@ namespace genesis
 
         void clear(const Vec4& color = {1.0f, 1.0f, 1.0f, 1.0f});
         void render(World& world, float deltaTime);
+        void render(World& world, DebugRenderer& debug);
         void render(UIManager& ui);
         void postProcess(PostProcess& effect);
         void present(SwapChain& swapChain, bool vsync);

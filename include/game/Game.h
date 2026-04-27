@@ -7,6 +7,7 @@
 #include <display/Display.h>
 #include <input/InputManager.h>
 #include <resources/ResourceManager.h>
+#include <physics/PhysicsEngine.h>
 #include <ui/UIManager.h>
 #include <game/World.h>
 #include <math/Rect.h>
@@ -49,6 +50,7 @@ namespace genesis
         UniquePtr<InputManager> m_inputManager;
         UniquePtr<ResourceManager> m_resourceManager;
         UniquePtr<UIManager> m_uiManager;
+        UniquePtr<PhysicsEngine> m_physicsEngine;
         UniquePtr<World> m_world;
         bool m_vsync;
         

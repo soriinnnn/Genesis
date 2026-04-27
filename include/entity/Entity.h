@@ -49,6 +49,13 @@ namespace genesis
 			return getComponent<T>(typeid(T).hash_code());
 		}
 
+		template<typename T>
+		bool hasComponent()
+		{
+			GENESIS_ASSERT((std::is_base_of<Component, T>::value), "T must derive from Component.");
+			return getComponent<T>(typeid(T).hash_code()) != nullptr;
+		}
+
 	private:
 		using ComponentId = size_t;
 		

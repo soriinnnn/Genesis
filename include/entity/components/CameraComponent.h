@@ -5,11 +5,11 @@
 
 namespace genesis
 {
-    class Camera final: public Component
+    class CameraComponent final: public Component
     {
     public:
-        explicit Camera(const ComponentDesc& desc);
-        ~Camera() override;
+        explicit CameraComponent(const ComponentDesc& desc);
+        ~CameraComponent() override;
 
         float getFov() const noexcept;
         float getNearPlane() const noexcept;
@@ -32,8 +32,7 @@ namespace genesis
         float m_farPlane;
         float m_aspectRatio;
         Mat4 m_projection;
-
-        bool m_isProjectionDirty;
+        bool m_isDirty;
     };
 }
 

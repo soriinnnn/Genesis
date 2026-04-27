@@ -117,7 +117,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;NOMINMAX;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;JPH_PROFILE_ENABLED;JPH_DEBUG_RENDERER;JPH_OBJECT_STREAM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
@@ -151,13 +151,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\physics\DebugRenderer.cpp" />
+    <ClCompile Include="demo\src\components\PlayerControllerComponent.cpp" />
+    <ClCompile Include="source\physics\RigidBody.cpp" />
+    <ClCompile Include="source\entity\components\RigidBodyComponent.cpp" />
+    <ClCompile Include="source\physics\OOCollisionFilter.cpp" />
+    <ClCompile Include="source\physics\OBPCollisionFilter.cpp" />
+    <ClCompile Include="source\physics\OBPMapping.cpp" />
     <ClCompile Include="demo\src\Demo.cpp" />
     <ClCompile Include="demo\main.cpp" />
     <ClCompile Include="source\physics\PhysicsEngine.cpp" />
     <ClCompile Include="source\graphics\EngineStates.cpp" />
     <ClCompile Include="source\resources\Font.cpp" />
     <ClCompile Include="source\graphics\resources\FontAtlas.cpp" />
-    <ClCompile Include="source\entity\components\Light.cpp" />
+    <ClCompile Include="source\entity\components\LightComponent.cpp" />
     <ClCompile Include="source\resources\PostProcess.cpp" />
     <ClCompile Include="source\graphics\EngineShaders.cpp" />
     <ClCompile Include="source\graphics\SamplerStateCache.cpp" />
@@ -171,9 +178,8 @@
     <ClCompile Include="source\resources\Shader.cpp" />
     <ClCompile Include="source\graphics\resources\ShaderSignature.cpp" />
     <ClCompile Include="source\resources\Material.cpp" />
-    <ClCompile Include="source\entity\components\PlayerController.cpp" />
-    <ClCompile Include="source\entity\components\Camera.cpp" />
-    <ClCompile Include="source\entity\components\MeshRenderer.cpp" />
+    <ClCompile Include="source\entity\components\CameraComponent.cpp" />
+    <ClCompile Include="source\entity\components\MeshRendererComponent.cpp" />
     <ClCompile Include="source\entity\components\Component.cpp" />
     <ClCompile Include="source\entity\Entity.cpp" />
     <ClCompile Include="source\entity\EntityManager.cpp" />
@@ -209,7 +215,7 @@
     <ClCompile Include="source\math\Vec2.cpp" />
     <ClCompile Include="source\resources\Texture.cpp" />
     <ClCompile Include="source\game\World.cpp" />
-    <ClCompile Include="source\entity\components\Transform.cpp" />
+    <ClCompile Include="source\entity\components\TransformComponent.cpp" />
     <ClCompile Include="source\graphics\resources\StructuredBuffer.cpp" />
     <ClCompile Include="source\ui\UIManager.cpp" />
     <ClCompile Include="source\ui\elements\UIElement.cpp" />
@@ -220,6 +226,14 @@
     <ClCompile Include="source\ui\elements\UIPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\physics\DebugRenderer.h" />
+    <ClInclude Include="include\entity\components\RigidBodyComponent.h" />
+    <ClInclude Include="include\physics\RigidBody.h" />
+    <ClInclude Include="demo\src\components\PlayerControllerComponent.h" />
+    <ClInclude Include="source\physics\OOCollisionFilter.h" />
+    <ClInclude Include="source\physics\OBPCollisionFilter.h" />
+    <ClInclude Include="source\physics\Layers.h" />
+    <ClInclude Include="source\physics\OBPMapping.h" />
     <ClInclude Include="demo\src\Demo.h" />
     <ClInclude Include="include\graphics\EngineStates.h" />
     <ClInclude Include="include\resources\Font.h" />
@@ -229,7 +243,7 @@
     <ClInclude Include="include\graphics\FrameBuffer.h" />
     <ClInclude Include="include\graphics\resources\DepthStencilTexture.h" />
     <ClInclude Include="include\graphics\resources\ImageTexture.h" />
-    <ClInclude Include="include\entity\components\Camera.h" />
+    <ClInclude Include="include\entity\components\CameraComponent.h" />
     <ClInclude Include="include\entity\components\Component.h" />
     <ClInclude Include="include\entity\Entity.h" />
     <ClInclude Include="include\entity\EntityManager.h" />
@@ -268,8 +282,7 @@
     <ClInclude Include="include\math\Vec4.h" />
     <ClInclude Include="include\graphics\resources\VertexBuffer.h" />
     <ClInclude Include="include\math\Vec3.h" />
-    <ClInclude Include="include\entity\components\MeshRenderer.h" />
-    <ClInclude Include="include\entity\components\PlayerController.h" />
+    <ClInclude Include="include\entity\components\MeshRendererComponent.h" />
     <ClInclude Include="include\resources\Material.h" />
     <ClInclude Include="include\graphics\resources\ShaderSignature.h" />
     <ClInclude Include="include\resources\Shader.h" />
@@ -278,7 +291,7 @@
     <ClInclude Include="include\graphics\PipelineStateCache.h" />
     <ClInclude Include="include\graphics\SamplerStateCache.h" />
     <ClInclude Include="include\resources\PostProcess.h" />
-    <ClInclude Include="include\entity\components\Light.h" />
+    <ClInclude Include="include\entity\components\LightComponent.h" />
     <ClInclude Include="include\physics\PhysicsEngine.h" />
     <ClInclude Include="source\display\win32\Win32Window.h" />
     <ClInclude Include="source\input\win32\Win32InputManager.h" />
@@ -286,7 +299,7 @@
     <ClInclude Include="include\resources\Texture.h" />
     <ClInclude Include="include\resources\utils\ResourcesUtils.h" />
     <ClInclude Include="include\game\World.h" />
-    <ClInclude Include="include\entity\components\Transform.h" />
+    <ClInclude Include="include\entity\components\TransformComponent.h" />
     <ClInclude Include="include\graphics\resources\StructuredBuffer.h" />
     <ClInclude Include="include\ui\UIManager.h" />
     <ClInclude Include="include\ui\elements\UIElement.h" />

@@ -1,7 +1,7 @@
 #include "Demo.h"
 #include <resources/Font.h>
 #include <entity/Entity.h>
-#include <entity/components/Transform.h>
+#include <entity/components/TransformComponent.h>
 #include <ui/elements/UILabel.h>
 #include <ui/elements/UIImage.h>
 #include <ui/elements/UIPanel.h>
@@ -127,8 +127,8 @@ void Demo::onUpdate(float deltaTime)
         return;
     }
     
-    updatePlayerPosition(camera->getComponent<Transform>()->getPosition(), *playerPosition);
-    updatePlayerRotation(camera->getComponent<Transform>()->getRotation(), *playerRotation);
+    updatePlayerPosition(camera->getComponent<TransformComponent>()->getPosition(), *playerPosition);
+    updatePlayerRotation(camera->getComponent<TransformComponent>()->getRotation(), *playerRotation);
 }
 
 void updateFPS(float deltaTime, UILabel& label)

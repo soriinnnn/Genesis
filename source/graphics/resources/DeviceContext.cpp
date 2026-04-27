@@ -53,6 +53,28 @@ void DeviceContext::setRenderTarget(const RenderTargetTexture& renderTarget, con
 	m_context->OMSetRenderTargets(1, &renderView, depthView);
 }
 
+void DeviceContext::updateVertexBuffer(const VertexBuffer& buffer, const void* data, uint32 dataSize)
+{
+	if (!data) {
+		GENESIS_LOG_THROW_ERROR("Null data pointer.");
+	}
+
+	ID3D11Buffer* buff = buffer.m_buffer.Get();
+	D3D11_MAPPED_SUBRESOURCE mapped{};
+	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
+		m_context->Map(
+			buff,
+			0,
+			D3D11_MAP_WRITE_DISCARD,
+			0,
+			&mapped
+		),
+		"ID3D11DeviceContext::Map failed."
+	);
+	memcpy(mapped.pData, data, dataSize);
+	m_context->Unmap(buff, 0);
+}
+
 void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const void* data)
 {
 	if (!data) {

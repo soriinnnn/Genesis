@@ -38,9 +38,11 @@ namespace genesis
     class EntityManager;
     class Entity;
     class Component;
-    class Transform;
-    class MeshRenderer;
-    class PlayerController;
+    class TransformComponent;
+    class MeshRendererComponent;
+    class LightComponent;
+    class RigidBodyComponent;
+    class CameraComponent;
 
     class UIManager;
     class UIElement;
@@ -48,6 +50,9 @@ namespace genesis
     class UIImage;
     class UIPanel;
     class UIButton;
+
+    class PhysicsEngine;
+    class RigidBody;
 
     class GraphicsEngine;
     class GraphicsDevice;

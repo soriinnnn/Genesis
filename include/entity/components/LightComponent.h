@@ -1,11 +1,11 @@
-#ifndef GENESIS_LIGHT_H
-#define GENESIS_LIGHT_H
+#ifndef GENESIS_LIGHT_COMPONENT_H
+#define GENESIS_LIGHT_COMPONENT_H
 #include <entity/components/Component.h>
 #include <math/Vec3.h>
 
 namespace genesis
 {
-	class Light final: public Component
+	class LightComponent final: public Component
 	{
 	public:
 		enum class LightType
@@ -15,8 +15,8 @@ namespace genesis
 		};
 
 	public:
-		explicit Light(const ComponentDesc& desc);
-		virtual ~Light() override;
+		explicit LightComponent(const ComponentDesc& desc);
+		virtual ~LightComponent() override;
 
 		LightType getType() const noexcept;
 		Vec3 getColor() const noexcept;

@@ -114,16 +114,13 @@
     <ClCompile Include="source\entity\components\Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\entity\components\Transform.cpp">
+    <ClCompile Include="source\entity\components\TransformComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\entity\components\MeshRenderer.cpp">
+    <ClCompile Include="source\entity\components\MeshRendererComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\entity\components\Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entity\components\PlayerController.cpp">
+    <ClCompile Include="source\entity\components\CameraComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\resources\Material.cpp">
@@ -165,7 +162,7 @@
     <ClCompile Include="source\resources\PostProcess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\entity\components\Light.cpp">
+    <ClCompile Include="source\entity\components\LightComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\graphics\resources\StructuredBuffer.cpp">
@@ -208,6 +205,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\physics\PhysicsEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\physics\OBPMapping.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\physics\OBPCollisionFilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\physics\OOCollisionFilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entity\components\RigidBodyComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\physics\RigidBody.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="demo\src\components\PlayerControllerComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\physics\DebugRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -338,16 +356,13 @@
     <ClInclude Include="include\entity\components\Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\entity\components\Transform.h">
+    <ClInclude Include="include\entity\components\TransformComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\entity\components\MeshRenderer.h">
+    <ClInclude Include="include\entity\components\MeshRendererComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\entity\components\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\entity\components\PlayerController.h">
+    <ClInclude Include="include\entity\components\CameraComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\resources\Material.h">
@@ -392,7 +407,7 @@
     <ClInclude Include="include\resources\PostProcess.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\entity\components\Light.h">
+    <ClInclude Include="include\entity\components\LightComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\graphics\resources\StructuredBuffer.h">
@@ -435,6 +450,30 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\physics\PhysicsEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\physics\OBPMapping.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\physics\OBPCollisionFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\physics\Layers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\physics\OOCollisionFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entity\components\RigidBodyComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\RigidBody.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="demo\src\components\PlayerControllerComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\physics\DebugRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

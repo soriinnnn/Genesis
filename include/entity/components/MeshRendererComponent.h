@@ -1,14 +1,14 @@
-#ifndef GENESIS_MESH_RENDERER_H
-#define GENESIS_MESH_RENDERER_H
+#ifndef GENESIS_MESH_RENDERER_COMPONENT_H
+#define GENESIS_MESH_RENDERER_COMPONENT_H
 #include <entity/components/Component.h>
 
 namespace genesis
 {
-	class MeshRenderer final: public Component
+	class MeshRendererComponent final: public Component
 	{
 	public:
-		explicit MeshRenderer(const ComponentDesc& desc);
-		~MeshRenderer() override;
+		explicit MeshRendererComponent(const ComponentDesc& desc);
+		~MeshRendererComponent() override;
 
 		Mesh* getMesh();
 		Material* getMaterial();

@@ -1,16 +1,16 @@
-#ifndef GENESIS_TRANSFORM_H
-#define GENESIS_TRANSFORM_H
+#ifndef GENESIS_TRANSFORM_COMPONENT_H
+#define GENESIS_TRANSFORM_COMPONENT_H
 #include <entity/components/Component.h>
 #include <math/Vec3.h>
 #include <math/Mat4.h>
 
 namespace genesis
 {
-	class Transform final: public Component
+	class TransformComponent final: public Component
 	{
 	public:
-		explicit Transform(const ComponentDesc& desc);
-		~Transform() override;
+		explicit TransformComponent(const ComponentDesc& desc);
+		~TransformComponent() override;
 
 		Vec3 getPosition() const noexcept;
 		Vec3 getRotation() const noexcept;

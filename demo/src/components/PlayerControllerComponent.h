@@ -1,14 +1,14 @@
-#ifndef GENESIS_PLAYER_CONTROLLER_H
-#define GENESIS_PLAYER_CONTROLLER_H
+#ifndef PLAYER_CONTROLLER_COMPONENT_H
+#define PLAYER_CONTROLLER_COMPONENT_H
 #include <entity/components/Component.h>
 
 namespace genesis
 {
-	class PlayerController: public Component
+	class PlayerControllerComponent: public Component
 	{
 	public:
-		explicit PlayerController(const ComponentDesc& desc);
-		~PlayerController() override;
+		explicit PlayerControllerComponent(const ComponentDesc& desc);
+		~PlayerControllerComponent() override;
 
 		void update(float deltaTime) override;
 		void setInputManager(InputManager& inputManager) noexcept;

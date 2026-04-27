@@ -10,10 +10,10 @@
 #include <resources/Material.h>
 #include <resources/PostProcess.h>
 #include <entity/Entity.h>
-#include <entity/components/Light.h>
-#include <entity/components/Camera.h>
-#include <entity/components/Transform.h>
-#include <entity/components/MeshRenderer.h>
+#include <entity/components/LightComponent.h>
+#include <entity/components/CameraComponent.h>
+#include <entity/components/TransformComponent.h>
+#include <entity/components/MeshRendererComponent.h>
 #include <ui/UIManager.h>
 #include <game/World.h>
 
@@ -72,11 +72,11 @@ void GraphicsEngine::render(World& world, float deltaTime)
     m_deviceContext->setRenderTarget(m_primaryBuffer->getRenderTarget(), m_primaryBuffer->getDepthStencil());
     m_deviceContext->setViewport(m_primaryBuffer->getSize());
 
-    Camera* cameraComponent = camera->getComponent<Camera>();
+    CameraComponent* cameraComponent = camera->getComponent<CameraComponent>();
     CameraData cameraData = {
         cameraComponent->getViewMatrix(),
         cameraComponent->getProjectionMatrix(),
-        Vec4{camera->getComponent<Transform>()->getPosition()}
+        Vec4{camera->getComponent<TransformComponent>()->getPosition()}
     };
     m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData);
     m_deviceContext->setConstantBuffer(*m_cameraBuffer, CAMERA_CONSTANT_BUFFER_SLOT);
@@ -84,7 +84,7 @@ void GraphicsEngine::render(World& world, float deltaTime)
     Vector<LightData> lights;
     lights.reserve(DEFAULT_MAX_LIGHTS);
     world.forEach([&](Entity& entity) {
-        Light* lightComponent = entity.getComponent<Light>();
+        LightComponent* lightComponent = entity.getComponent<LightComponent>();
         
         if (!lightComponent || !lightComponent->isEnabled()) {
             return;
@@ -93,7 +93,7 @@ void GraphicsEngine::render(World& world, float deltaTime)
             return;
         }
         
-        Transform* transformComponent = entity.getComponent<Transform>();
+        TransformComponent* transformComponent = entity.getComponent<TransformComponent>();
         if (!transformComponent) {
             return;
         }
@@ -120,6 +120,29 @@ void GraphicsEngine::render(World& world, float deltaTime)
     m_deviceContext->setConstantBuffer(*m_sceneBuffer, SCENE_CONSTANT_BUFFER_SLOT);
 
     renderEntities(world);
+    m_graphicsDevice->executeCommandList(*m_deviceContext);
+}
+
+void GraphicsEngine::render(World& world, DebugRenderer& debug)
+{
+    Entity* camera = world.getCamera();
+    if (!camera) {
+        return;
+    }
+
+    m_deviceContext->setRenderTarget(m_primaryBuffer->getRenderTarget(), m_primaryBuffer->getDepthStencil());
+    m_deviceContext->setViewport(m_primaryBuffer->getSize());
+
+    CameraComponent* cameraComponent = camera->getComponent<CameraComponent>();
+    CameraData cameraData = {
+        cameraComponent->getViewMatrix(),
+        cameraComponent->getProjectionMatrix(),
+        Vec4{camera->getComponent<TransformComponent>()->getPosition()}
+    };
+    m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData);
+    m_deviceContext->setConstantBuffer(*m_cameraBuffer, CAMERA_CONSTANT_BUFFER_SLOT);
+
+    debug.render(*m_deviceContext);
     m_graphicsDevice->executeCommandList(*m_deviceContext);
 }
 
@@ -163,8 +186,8 @@ void GraphicsEngine::present(SwapChain& swapChain, bool vsync)
 void GraphicsEngine::renderEntities(World& world)
 {
     world.forEach([&](Entity& entity) {
-        MeshRenderer* mesh = entity.getComponent<MeshRenderer>();
-        Transform* transform = entity.getComponent<Transform>();
+        MeshRendererComponent* mesh = entity.getComponent<MeshRendererComponent>();
+        TransformComponent* transform = entity.getComponent<TransformComponent>();
 
         if (!mesh || !transform) {
             return;

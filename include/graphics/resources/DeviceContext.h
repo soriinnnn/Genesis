@@ -17,6 +17,7 @@ namespace genesis
 		void clearRenderTarget(const RenderTargetTexture& renderTarget, const Vec4& color);
 		void clearDepthStencil(const DepthStencilTexture& depthStencil);
 		void setRenderTarget(const RenderTargetTexture& renderTarget, const DepthStencilTexture& depthStencil);
+		void updateVertexBuffer(const VertexBuffer& buffer, const void* data, uint32 dataSize);
 		void updateConstantBuffer(const ConstantBuffer& buffer, const void* data);
 		void updateStructuredBuffer(const StructuredBuffer& buffer, const void* data, uint32 dataSize);
 		void setGraphicsPipelineState(const GraphicsPipelineState& graphicsPipeline);

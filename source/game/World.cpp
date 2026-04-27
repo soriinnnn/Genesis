@@ -1,6 +1,9 @@
 #include <game/World.h>
 #include <entity/EntityManager.h>
-#include <entity/components/Camera.h>
+#include <entity/components/CameraComponent.h>
+#include <entity/components/TransformComponent.h>
+#include <entity/components/RigidBodyComponent.h>
+#include <physics/RigidBody.h>
 
 using namespace genesis;
 using namespace std;
@@ -31,6 +34,6 @@ Entity* World::getCamera()
 void World::setCamera(Entity* camera)
 {
 	GENESIS_ASSERT(camera != nullptr, "Camera is null.");
-	GENESIS_ASSERT(camera->getComponent<Camera>() != nullptr, "Entity must have a Camera component.");
+	GENESIS_ASSERT(camera->getComponent<CameraComponent>() != nullptr, "Entity must have a Camera component.");
 	m_camera = camera;
 }
