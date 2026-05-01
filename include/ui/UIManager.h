@@ -20,6 +20,7 @@ namespace genesis
 		~UIManager() override;
 
 		void update(float deltaTime);
+		void render(SpriteBatch& batch);
 
 		template<typename T>
 		T* createElement(const char* name)
@@ -49,22 +50,6 @@ namespace genesis
 
 		void destroyElement(const char* name);
 		void setZOrder(const char* name, int zOrder);
-
-		template<typename F>
-		void forEach(F&& callback) const
-		{
-			for (const auto* root : m_zOrdered) {
-				callback(*root->element);
-			}
-		}
-
-		template<typename F>
-		void forEach(F&& callback)
-		{
-			for (auto* root : m_zOrdered) {
-				callback(*root->element);
-			}
-		}
 
 	public:
 		void onKeyDown(Key key) override;

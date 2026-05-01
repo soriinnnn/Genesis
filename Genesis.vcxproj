@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\physics\ContactListener.cpp" />
     <ClCompile Include="source\physics\DebugRenderer.cpp" />
     <ClCompile Include="demo\src\components\PlayerControllerComponent.cpp" />
     <ClCompile Include="source\physics\RigidBody.cpp" />
@@ -226,6 +227,7 @@
     <ClCompile Include="source\ui\elements\UIPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\physics\ContactListener.h" />
     <ClInclude Include="source\physics\DebugRenderer.h" />
     <ClInclude Include="include\entity\components\RigidBodyComponent.h" />
     <ClInclude Include="include\physics\RigidBody.h" />

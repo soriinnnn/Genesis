@@ -20,6 +20,13 @@ namespace genesis
 		void update(float deltaTime);
 		
 		Entity* createEntity();
+		Entity* getEntity(EntityId id);
+
+		Entity* createEntity(const char* name);
+		Entity* getEntity(const char* name);
+
+		Entity* getCamera();
+		void setCamera(Entity* camera);
 
 		template<typename F>
 		void forEach(F&& callback) const
@@ -33,11 +40,9 @@ namespace genesis
 			m_entityManager->forEach(std::forward<F>(callback));
 		}
 
-		Entity* getCamera();
-		void setCamera(Entity* camera);
-
 	protected:
 		UniquePtr<EntityManager> m_entityManager;
+		HashMap<String, EntityId> m_entityMapping;
 		Entity* m_camera;
 	};
 }

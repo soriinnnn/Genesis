@@ -8,6 +8,7 @@
 #include <jolt/Core/Factory.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <jolt/Physics/Collision/Shape/BoxShape.h>
+#include <jolt/Physics/Collision/Shape/CapsuleShape.h>
 #include <iostream>
 #include <cstdarg>
 
@@ -15,22 +16,18 @@
 #define NUM_BODY_MUTEXES 0
 #define MAX_BODY_PAIRS 1024
 #define MAX_CONTACT_CONSTRAINTS 1024
-#define COLLISION_STEPS 1
+#define MAX_COLLISION_STEPS 5
+
+constexpr float UPDATE_RATE = 1.0f / 60.0f;
 
 using namespace genesis;
 using namespace std;
 
-static void trace(const char* inFMT, ...)
-{
-	va_list list;
-	va_start(list, inFMT);
-	char buffer[1024];
-	vsnprintf(buffer, sizeof(buffer), inFMT, list);
-	va_end(list);
-	cout << buffer << endl;
-}
+static JPH::EMotionType mapMotionTypeToJolt(PhysicsEngine::MotionType motionType);
+static JPH::ObjectLayer getObjectLayer(JPH::EMotionType motionType);
+static void trace(const char* inFMT, ...);
 
-PhysicsEngine::PhysicsEngine(const PhysicsEngineDesc& desc): Base(desc.base) 
+PhysicsEngine::PhysicsEngine(const PhysicsEngineDesc& desc): Base(desc.base), m_accumulator{0.0f}
 {
 	JPH::RegisterDefaultAllocator();
 	JPH::Trace = trace;
@@ -59,6 +56,9 @@ PhysicsEngine::PhysicsEngine(const PhysicsEngineDesc& desc): Base(desc.base)
 		*m_ooCollisionFilter
 	);
 
+	m_contactListener = make_unique<ContactListener>(ContactListenerDesc{m_physicsSystem->GetBodyInterface()});
+	m_physicsSystem->SetContactListener(m_contactListener.get());
+
 	m_debugRenderer = make_unique<DebugRenderer>(DebugRendererDesc{desc.graphicsContext});
 	m_drawSettings.mDrawShape = true;
 	m_drawSettings.mDrawBoundingBox = false;
@@ -73,18 +73,47 @@ PhysicsEngine::~PhysicsEngine()
 
 void PhysicsEngine::update(World& world, float deltaTime)
 {
-	m_physicsSystem->Update(deltaTime, COLLISION_STEPS, m_tempAllocator.get(), m_jobSystem.get());
-	world.forEach([&](Entity& entity) {
+	world.forEach([](Entity& entity) {
 		auto* rigidBody = entity.getComponent<RigidBodyComponent>();
 		auto* transform = entity.getComponent<TransformComponent>();
 
 		if (rigidBody) {
 			auto* body = rigidBody->getBody();
-			transform->setPosition(body->getPosition());
-			transform->setRotation(body->getRotation());
+			body->setPosition(transform->getPosition());
+			body->setRotation(transform->getRotation());
 		}
 	});
+
+	m_accumulator += deltaTime;
+
+	int steps = 0;
+	while (m_accumulator >= UPDATE_RATE && steps < MAX_COLLISION_STEPS) {
+		steps += 1;
+		m_accumulator -= UPDATE_RATE;
+	}
+	if (steps == MAX_COLLISION_STEPS) {
+		m_accumulator = 0.0f;
+	}
+
+	if (steps > 0) {
+		m_physicsSystem->Update(UPDATE_RATE * steps, steps, m_tempAllocator.get(), m_jobSystem.get());
+		m_contactListener->dispatchEvents();
+
+		world.forEach([](Entity& entity) {
+			auto* rigidBody = entity.getComponent<RigidBodyComponent>();
+			auto* transform = entity.getComponent<TransformComponent>();
+
+			if (rigidBody) {
+				auto* body = rigidBody->getBody();
+				transform->setPosition(body->getPosition());
+				transform->setRotation(body->getRotation());
+			}
+		});
+	}
+
+#ifdef _DEBUG
 	m_physicsSystem->DrawBodies(m_drawSettings, m_debugRenderer.get());
+#endif
 }
 
 DebugRenderer& PhysicsEngine::getDebugRenderer()
@@ -92,25 +121,95 @@ DebugRenderer& PhysicsEngine::getDebugRenderer()
 	return *m_debugRenderer;
 }
 
-SharedPtr<RigidBody> PhysicsEngine::createBox(Vec3 position, Vec3 size, bool isDynamic)
+SharedPtr<RigidBody> PhysicsEngine::createBox(Vec3 position, Vec3 size, MotionType motionType)
 {
 	JPH::BoxShapeSettings settings{JPH::Vec3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f)};
 	JPH::ShapeSettings::ShapeResult result = settings.Create();
-	JPH::ShapeRefC shape = result.Get();
+	if (result.HasError()) {
+		GENESIS_LOG_THROW_ERROR("Invalid box shape.\nDetails: {}", result.GetError().c_str());
+	}
 
-	JPH::ObjectLayer layer = isDynamic ? ObjectLayers::MOVING : ObjectLayers::NON_MOVING;
-	JPH::EMotionType motionType = isDynamic ? JPH::EMotionType::Dynamic : JPH::EMotionType::Static;
+	JPH::ShapeRefC shape = result.Get();
+	JPH::EMotionType type = mapMotionTypeToJolt(motionType);
+	JPH::ObjectLayer layer = getObjectLayer(type);
 
 	JPH::BodyCreationSettings bodySettings(
 		shape,
 		JPH::Vec3(position.x, position.y, position.z),
 		JPH::Quat::sIdentity(),
-		motionType,
+		type,
 		layer
 	);
-	
+
 	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
 	JPH::BodyID body = bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);
 	
 	return make_shared<RigidBody>(RigidBodyDesc{m_logger, body, bodyInterface});
+}
+
+SharedPtr<RigidBody> PhysicsEngine::createCapsule(Vec3 position, float height, float radius, MotionType motionType)
+{
+	float halfHeightOfCylinder = (height / 2.0f) - radius;
+	JPH::CapsuleShapeSettings settings{halfHeightOfCylinder, radius};
+	JPH::ShapeSettings::ShapeResult result = settings.Create();
+	if (result.HasError()) {
+		GENESIS_LOG_THROW_ERROR("Invalid capsule shape.\nDetails: {}", result.GetError().c_str());
+	}
+
+	JPH::ShapeRefC shape = result.Get();
+	JPH::EMotionType type = mapMotionTypeToJolt(motionType);
+	JPH::ObjectLayer layer = getObjectLayer(type);
+
+	JPH::BodyCreationSettings bodySettings(
+		shape,
+		JPH::Vec3(position.x, position.y, position.z),
+		JPH::Quat::sIdentity(),
+		type,
+		layer
+	);
+
+	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
+	JPH::BodyID body = bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);
+
+	return make_shared<RigidBody>(RigidBodyDesc{m_logger, body, bodyInterface});
+}
+
+/* STATIC FUNCTIONS DEFINITIONS */
+
+JPH::EMotionType mapMotionTypeToJolt(PhysicsEngine::MotionType motionType)
+{
+	switch (motionType) {
+	case PhysicsEngine::MotionType::Static:
+		return JPH::EMotionType::Static;
+	case PhysicsEngine::MotionType::Kinematic:
+		return JPH::EMotionType::Kinematic;
+	case PhysicsEngine::MotionType::Dynamic:
+		return JPH::EMotionType::Dynamic;
+	default:
+		return JPH::EMotionType::Static;
+	}
+}
+
+JPH::ObjectLayer getObjectLayer(JPH::EMotionType motionType)
+{
+	switch (motionType) {
+	case JPH::EMotionType::Static:
+		return ObjectLayers::NON_MOVING;
+	case JPH::EMotionType::Kinematic:
+		return ObjectLayers::MOVING;
+	case JPH::EMotionType::Dynamic:
+		return ObjectLayers::MOVING;
+	default:
+		return ObjectLayers::NON_MOVING;
+	}
+}
+
+void trace(const char* inFMT, ...)
+{
+	va_list list;
+	va_start(list, inFMT);
+	char buffer[1024];
+	vsnprintf(buffer, sizeof(buffer), inFMT, list);
+	va_end(list);
+	cout << buffer << endl;
 }

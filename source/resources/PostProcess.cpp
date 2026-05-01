@@ -26,9 +26,9 @@ PostProcess::PostProcess(const PostProcessDesc& desc): Resource(desc.resource), 
 
 		SharedPtr<Shader> pixelShader = getShader(data, ShaderType::PixelShader, desc.resource.resourceManager, getPath(), getLogger());
 		m_pipeline = graphicsContext.graphicsDevice.createGraphicsPipelineState({
-			graphicsContext.engineShaders.getFullscreenVSBinary(),
+			*graphicsContext.engineShaders.getFullscreenTriangle().vsBinary,
 			pixelShader->getBinary(),
-			graphicsContext.engineShaders.getFullscreenVSSignature(),
+			*graphicsContext.engineShaders.getFullscreenTriangle().vsSignature,
 			pixelShader->getSignature(),
 			PrimitiveTopology::Triangles,
 			false

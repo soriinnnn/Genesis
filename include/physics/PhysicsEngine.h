@@ -10,6 +10,7 @@
 #include <physics/OBPMapping.h>
 #include <physics/OBPCollisionFilter.h>
 #include <physics/OOCollisionFilter.h>
+#include <physics/ContactListener.h>
 #include <physics/DebugRenderer.h>
 
 namespace genesis
@@ -23,13 +24,22 @@ namespace genesis
 	class PhysicsEngine final: public Base
 	{
 	public:
+		enum class MotionType
+		{
+			Static,
+			Kinematic,
+			Dynamic
+		};
+
+	public:
 		explicit PhysicsEngine(const PhysicsEngineDesc& desc);
 		~PhysicsEngine() override;
 
 		void update(World& world, float deltaTime);
 
 		DebugRenderer& getDebugRenderer();
-		SharedPtr<RigidBody> createBox(Vec3 position, Vec3 size, bool isDynamic);
+		SharedPtr<RigidBody> createBox(Vec3 position, Vec3 size, MotionType motionType);
+		SharedPtr<RigidBody> createCapsule(Vec3 position, float height, float radius, MotionType motionType);
 
 	private:
 		UniquePtr<JPH::TempAllocatorImpl> m_tempAllocator;
@@ -38,8 +48,10 @@ namespace genesis
 		UniquePtr<OBPMapping> m_obpMapping;
 		UniquePtr<OBPCollisionFilter> m_obpCollisionFilter;
 		UniquePtr<OOCollisionFilter> m_ooCollisionFilter;
+		UniquePtr<ContactListener> m_contactListener;
 		UniquePtr<DebugRenderer> m_debugRenderer;
 		JPH::BodyManager::DrawSettings m_drawSettings;
+		float m_accumulator;
 	};
 }
 

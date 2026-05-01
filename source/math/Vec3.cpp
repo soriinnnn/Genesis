@@ -57,6 +57,11 @@ Vec3 Vec3::normalize() const noexcept
 	};
 }
 
+Vec3 Vec3::operator-() const noexcept
+{
+	return Vec3{-x, -y, -z};
+}
+
 Vec3 Vec3::operator+(const Vec3& rhs) const noexcept
 {
 	return Vec3

@@ -35,6 +35,7 @@ namespace genesis
         void present(SwapChain& swapChain, bool vsync);
 
     private:
+        uint32 getLights(World& world);
         void renderEntities(World& world);
         void applyPostProcess(PostProcess& effect, FrameBuffer& input, FrameBuffer& output);
 

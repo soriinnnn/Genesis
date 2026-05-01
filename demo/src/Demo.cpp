@@ -126,6 +126,13 @@ void Demo::onUpdate(float deltaTime)
     if (!camera) {
         return;
     }
+    /*
+    static float time = 0.0f;
+    time += deltaTime;
+    if (time > 5.0f) {
+        m_world->getEntity("cube")->getComponent<TransformComponent>()->setPosition({0.0f, 100.0f, 0.0f});
+        time = 0.0f;
+    }*/
     
     updatePlayerPosition(camera->getComponent<TransformComponent>()->getPosition(), *playerPosition);
     updatePlayerRotation(camera->getComponent<TransformComponent>()->getRotation(), *playerRotation);

@@ -22,7 +22,7 @@ void createScene(Game& game)
 	SharedPtr<Material> brickMaterial = context.resources.getMaterial("demo/assets/materials/brick.json");
 
 	SharedPtr<Mesh> floorMesh = context.resources.getMesh("assets/meshes/terrain.obj", GENESIS_VERTEX_PRESET_NORMAL_MAPPED);
-	Entity* floor = context.world.createEntity();
+	Entity* floor = context.world.createEntity("floor");
 
 	TransformComponent* floorTransform = floor->createComponent<TransformComponent>();
 	floorTransform->setScale({0.5f, 0.5f, 0.5f});
@@ -32,10 +32,10 @@ void createScene(Game& game)
 	floorMeshRenderer->setMaterial(brickMaterial);
 
 	RigidBodyComponent* floorRigidBody = floor->createComponent<RigidBodyComponent>();
-	floorRigidBody->setBody(context.physics.createBox(floorTransform->getPosition(), {50.0f, 0.0f, 50.0f}, false));
+	floorRigidBody->setBody(context.physics.createBox(floorTransform->getPosition(), {50.0f, 0.0f, 50.0f}, PhysicsEngine::MotionType::Static));
 
 	SharedPtr<Mesh> cubeMesh = context.resources.getMesh("assets/meshes/box.obj", GENESIS_VERTEX_PRESET_NORMAL_MAPPED);
-	Entity* cube = context.world.createEntity();
+	Entity* cube = context.world.createEntity("cube");
 
 	TransformComponent* cubeTransform = cube->createComponent<TransformComponent>();
 	cubeTransform->setPosition({0.0f, 2.5f, 0.0f});
@@ -45,15 +45,20 @@ void createScene(Game& game)
 	cubeMeshRenderer->setMaterial(brickMaterial);
 
 	RigidBodyComponent* cubeRigidBody = cube->createComponent<RigidBodyComponent>();
-	cubeRigidBody->setBody(context.physics.createBox({0.0f, 100.0f, 0.0f}, {0.8f, 0.8f, 0.8f}, true));
-	cubeRigidBody->getBody()->addForce({0.0f, -9.8f, 0.0f});
+	cubeRigidBody->setBody(context.physics.createBox({0.0f, 100.0f, 0.0f}, {0.8f, 0.8f, 0.8f}, PhysicsEngine::MotionType::Dynamic));
+	cubeRigidBody->getBody()->addForce({0.0f, -2.0f, 0.0f});
+
+	auto* body = cubeRigidBody->getBody();
+	body->setOnContactAddedCallback([body](const RigidBody::ContactAddedData& data) {
+		body->setPosition({0.0f, 10.0f, 0.0f});
+	});
 }
 
 void createLights(Game& game)
 {
 	auto context = game.getContext();
 
-	Entity* sun = context.world.createEntity();
+	Entity* sun = context.world.createEntity("sun");
 
 	LightComponent* sunLight = sun->createComponent<LightComponent>();
 	sunLight->setType(LightComponent::LightType::Directional);
@@ -69,7 +74,7 @@ void createCamera(Game& game)
 {
 	auto context = game.getContext();
 
-	Entity* camera = context.world.createEntity();
+	Entity* camera = context.world.createEntity("camera");
 	camera->createComponent<CameraComponent>();
 	camera->getComponent<TransformComponent>()->setPosition({0, 1, -1});
 	camera->createComponent<PlayerControllerComponent>()->setInputManager(context.input);

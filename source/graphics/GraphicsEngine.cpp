@@ -35,11 +35,13 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
     m_cameraBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(CameraData)});
     m_objectBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(ObjectData)});
     m_lightsBuffer = m_graphicsDevice->createStructuredBuffer({nullptr, sizeof(LightData), DEFAULT_MAX_LIGHTS});
+
+    auto& m_fullscreenShader = m_shaders->getFullscreenTriangle();
     m_frameBufferPipeline = m_graphicsDevice->createGraphicsPipelineState({
-        m_shaders->getFullscreenVSBinary(),
-        m_shaders->getFullscreenPSBinary(),
-        m_shaders->getFullscreenVSSignature(),
-        m_shaders->getFullscreenPSSignature()
+        *m_fullscreenShader.vsBinary,
+        *m_fullscreenShader.psBinary,
+        *m_fullscreenShader.vsSignature,
+        *m_fullscreenShader.psSignature
     });
 }
 
@@ -81,40 +83,10 @@ void GraphicsEngine::render(World& world, float deltaTime)
     m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData);
     m_deviceContext->setConstantBuffer(*m_cameraBuffer, CAMERA_CONSTANT_BUFFER_SLOT);
 
-    Vector<LightData> lights;
-    lights.reserve(DEFAULT_MAX_LIGHTS);
-    world.forEach([&](Entity& entity) {
-        LightComponent* lightComponent = entity.getComponent<LightComponent>();
-        
-        if (!lightComponent || !lightComponent->isEnabled()) {
-            return;
-        }
-        if (lights.size() > DEFAULT_MAX_LIGHTS) {
-            return;
-        }
-        
-        TransformComponent* transformComponent = entity.getComponent<TransformComponent>();
-        if (!transformComponent) {
-            return;
-        }
-
-        LightData data{};
-        data.position = transformComponent->getPosition();
-        data.direction = transformComponent->getForwardVector();
-        data.color = lightComponent->getColor();
-        data.radius = lightComponent->getRadius();
-        data.intensity = lightComponent->getIntensity();
-        data.type = static_cast<int>(lightComponent->getType());
-        
-        lights.push_back(data);
-    });
-
-    m_deviceContext->updateStructuredBuffer(*m_lightsBuffer, lights.data(), static_cast<uint32>(lights.size()) * sizeof(LightData));
-    m_deviceContext->setStructuredBuffer(*m_lightsBuffer, LIGHT_DATA_TEXTURE_SLOT);
-
+    uint32 lightCount = getLights(world);
     SceneData sceneData = {
         deltaTime,
-        static_cast<uint32>(lights.size())
+        lightCount
     };
     m_deviceContext->updateConstantBuffer(*m_sceneBuffer, &sceneData);
     m_deviceContext->setConstantBuffer(*m_sceneBuffer, SCENE_CONSTANT_BUFFER_SLOT);
@@ -153,11 +125,7 @@ void GraphicsEngine::render(UIManager& ui)
 
     try {
         m_spriteBatch->begin();
-        ui.forEach([&](UIElement& element) {
-            if (element.isVisible()) {
-                element.render(*m_spriteBatch);
-            }
-        });
+        ui.render(*m_spriteBatch);
         m_spriteBatch->end();
     }
     catch (const std::exception& e) {
@@ -181,6 +149,43 @@ void GraphicsEngine::present(SwapChain& swapChain, bool vsync)
     m_deviceContext->draw(FULLSCREEN_TRIANGLE_VERTEX_COUNT);
     m_graphicsDevice->executeCommandList(*m_deviceContext);
     swapChain.present(vsync);
+}
+
+uint32 GraphicsEngine::getLights(World& world)
+{
+    Vector<LightData> lights;
+    lights.reserve(DEFAULT_MAX_LIGHTS);
+
+    world.forEach([&](Entity& entity) {
+        LightComponent* lightComponent = entity.getComponent<LightComponent>();
+
+        if (!lightComponent || !lightComponent->isEnabled()) {
+            return;
+        }
+        if (lights.size() > DEFAULT_MAX_LIGHTS) {
+            return;
+        }
+
+        TransformComponent* transformComponent = entity.getComponent<TransformComponent>();
+        if (!transformComponent) {
+            return;
+        }
+
+        LightData data{};
+        data.position = transformComponent->getPosition();
+        data.direction = transformComponent->getForwardVector();
+        data.color = lightComponent->getColor();
+        data.radius = lightComponent->getRadius();
+        data.intensity = lightComponent->getIntensity();
+        data.type = static_cast<int>(lightComponent->getType());
+
+        lights.push_back(data);
+    });
+
+    m_deviceContext->updateStructuredBuffer(*m_lightsBuffer, lights.data(), static_cast<uint32>(lights.size()) * sizeof(LightData));
+    m_deviceContext->setStructuredBuffer(*m_lightsBuffer, LIGHT_DATA_TEXTURE_SLOT);
+
+    return static_cast<uint32>(lights.size());
 }
 
 void GraphicsEngine::renderEntities(World& world)

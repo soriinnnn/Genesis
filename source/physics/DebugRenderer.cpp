@@ -9,11 +9,12 @@ using namespace genesis;
 
 DebugRenderer::DebugRenderer(const DebugRendererDesc& desc): m_graphicsDevice{desc.graphicsContext.graphicsDevice}
 {
+	auto& debugShader = desc.graphicsContext.engineShaders.getDebugLine();
 	m_pipeline = m_graphicsDevice.createGraphicsPipelineState({
-		desc.graphicsContext.engineShaders.getDebugLineVSBinary(),
-		desc.graphicsContext.engineShaders.getDebugLinePSBinary(),
-		desc.graphicsContext.engineShaders.getDebugLineVSSignature(),
-		desc.graphicsContext.engineShaders.getDebugLinePSSignature(),
+		*debugShader.vsBinary,
+		*debugShader.psBinary,
+		*debugShader.vsSignature,
+		*debugShader.psSignature,
 		PrimitiveTopology::Lines,
 		false
 	});

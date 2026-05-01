@@ -14,6 +14,7 @@ namespace genesis
 		Vec3 cross(const Vec3& v) const noexcept;
 		Vec3 normalize() const noexcept;
 
+		Vec3 operator-() const noexcept;
 		Vec3 operator+(const Vec3& rhs) const noexcept;
 		Vec3 operator-(const Vec3& rhs) const noexcept;
 		Vec3 operator*(float scalar) const noexcept;

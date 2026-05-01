@@ -1,9 +1,6 @@
 #include <game/World.h>
 #include <entity/EntityManager.h>
 #include <entity/components/CameraComponent.h>
-#include <entity/components/TransformComponent.h>
-#include <entity/components/RigidBodyComponent.h>
-#include <physics/RigidBody.h>
 
 using namespace genesis;
 using namespace std;
@@ -23,6 +20,30 @@ void World::update(float deltaTime)
 Entity* World::createEntity()
 {
 	return m_entityManager->createEntity();
+}
+
+Entity* World::getEntity(EntityId id)
+{
+	return m_entityManager->getEntity(id);
+}
+
+Entity* World::createEntity(const char* name)
+{
+	if (m_entityMapping.contains(name)) {
+		GENESIS_LOG_THROW_ERROR("Entity with name \"{}\" already exists.", name);
+	}
+	Entity* entity = m_entityManager->createEntity();
+	m_entityMapping.emplace(name, entity->getId());
+	return entity;
+}
+
+Entity* World::getEntity(const char* name)
+{
+	auto it = m_entityMapping.find(name);
+	if (it == m_entityMapping.end()) {
+		return nullptr;
+	}
+	return m_entityManager->getEntity(it->second);
 }
 
 Entity* World::getCamera()

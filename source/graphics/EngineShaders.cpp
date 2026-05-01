@@ -7,57 +7,36 @@
 
 using namespace genesis;
 
+static EngineShaders::EngineShader createShader(const void* vsCompiledCode, size_t vsSize, const void* psCompiledCode, size_t psSize, GraphicsDevice& graphicsDevice);
+
 EngineShaders::EngineShaders(const EngineShadersDesc& desc): Base(desc.base)
 {
-	m_fullscreenVS.binary = desc.graphicsDevice.createShaderBinary({fullscreenTriangleVS, sizeof(fullscreenTriangleVS)});
-	m_fullscreenPS.binary = desc.graphicsDevice.createShaderBinary({fullscreenTrianglePS, sizeof(fullscreenTrianglePS)});
-	m_fullscreenVS.signature = desc.graphicsDevice.reflectShader({*m_fullscreenVS.binary});
-	m_fullscreenPS.signature = desc.graphicsDevice.reflectShader({*m_fullscreenPS.binary});
-
-	m_debugLineVS.binary = desc.graphicsDevice.createShaderBinary({debugLineVS, sizeof(debugLineVS)});
-	m_debugLinePS.binary = desc.graphicsDevice.createShaderBinary({debugLinePS, sizeof(debugLinePS)});
-	m_debugLineVS.signature = desc.graphicsDevice.reflectShader({*m_debugLineVS.binary});
-	m_debugLinePS.signature = desc.graphicsDevice.reflectShader({*m_debugLinePS.binary});
+	m_fullscreenTriangle = createShader(fullscreenTriangleVS, sizeof(fullscreenTriangleVS), fullscreenTrianglePS, sizeof(fullscreenTrianglePS), desc.graphicsDevice);
+	m_debugLine = createShader(debugLineVS, sizeof(debugLineVS), debugLinePS, sizeof(debugLinePS), desc.graphicsDevice);
 }
 
 EngineShaders::~EngineShaders() {}
 
-const ShaderBinary& EngineShaders::getFullscreenVSBinary() const
+const EngineShaders::EngineShader& EngineShaders::getFullscreenTriangle() const
 {
-	return *m_fullscreenVS.binary;
+	return m_fullscreenTriangle;
 }
 
-const ShaderBinary& EngineShaders::getFullscreenPSBinary() const
+const EngineShaders::EngineShader& EngineShaders::getDebugLine() const
 {
-	return *m_fullscreenPS.binary;
+	return m_debugLine;
 }
 
-const ShaderSignature& EngineShaders::getFullscreenVSSignature() const
-{
-	return *m_fullscreenVS.signature;
-}
+/* STATIC FUNCTIONS DEFINITIONS */
 
-const ShaderSignature& EngineShaders::getFullscreenPSSignature() const
+EngineShaders::EngineShader createShader(const void* vsCompiledCode, size_t vsSize, const void* psCompiledCode, size_t psSize, GraphicsDevice& graphicsDevice)
 {
-	return *m_fullscreenPS.signature;
-}
+	EngineShaders::EngineShader shader;
 
-const ShaderBinary& EngineShaders::getDebugLineVSBinary() const
-{
-	return *m_debugLineVS.binary;
-}
+	shader.vsBinary = graphicsDevice.createShaderBinary({vsCompiledCode, vsSize});
+	shader.psBinary = graphicsDevice.createShaderBinary({psCompiledCode, psSize});
+	shader.vsSignature = graphicsDevice.reflectShader({*shader.vsBinary});
+	shader.psSignature = graphicsDevice.reflectShader({*shader.psBinary});
 
-const ShaderBinary& EngineShaders::getDebugLinePSBinary() const
-{
-	return *m_debugLinePS.binary;
-}
-
-const ShaderSignature& EngineShaders::getDebugLineVSSignature() const
-{
-	return *m_debugLineVS.signature;
-}
-
-const ShaderSignature& EngineShaders::getDebugLinePSSignature() const
-{
-	return *m_debugLinePS.signature;
+	return shader;
 }

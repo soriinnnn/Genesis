@@ -49,7 +49,11 @@ void Game::onInternalUpdate()
 
     m_graphicsEngine->clear();
     m_graphicsEngine->render(*m_world, deltaTime);
+
+#ifdef _DEBUG
     m_graphicsEngine->render(*m_world, m_physicsEngine->getDebugRenderer());
+#endif
+
     for (auto& effect : m_effects) {
         m_graphicsEngine->postProcess(*effect);
     }

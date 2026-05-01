@@ -14,31 +14,24 @@ namespace genesis
 	class EngineShaders final: public Base
 	{
 	public:
+		struct EngineShader
+		{
+			SharedPtr<ShaderBinary> vsBinary;
+			SharedPtr<ShaderBinary> psBinary;
+			SharedPtr<ShaderSignature> vsSignature;
+			SharedPtr<ShaderSignature> psSignature;
+		};
+
+	public:
 		explicit EngineShaders(const EngineShadersDesc& desc);
 		~EngineShaders() override;
 
-		const ShaderBinary& getFullscreenVSBinary() const;
-		const ShaderBinary& getFullscreenPSBinary() const;
-		const ShaderSignature& getFullscreenVSSignature() const;
-		const ShaderSignature& getFullscreenPSSignature() const;
-
-		const ShaderBinary& getDebugLineVSBinary() const;
-		const ShaderBinary& getDebugLinePSBinary() const;
-		const ShaderSignature& getDebugLineVSSignature() const;
-		const ShaderSignature& getDebugLinePSSignature() const;
+		const EngineShader& getFullscreenTriangle() const;
+		const EngineShader& getDebugLine() const;
 
 	private:
-		struct EngineShader
-		{
-			SharedPtr<ShaderBinary> binary;
-			SharedPtr<ShaderSignature> signature;
-		};
-
-	private:
-		EngineShader m_fullscreenVS;
-		EngineShader m_fullscreenPS;
-		EngineShader m_debugLineVS;
-		EngineShader m_debugLinePS;
+		EngineShader m_fullscreenTriangle;
+		EngineShader m_debugLine;
 	};
 }
 
