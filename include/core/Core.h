@@ -16,9 +16,7 @@ namespace genesis
 {
     class Base;
     class Logger;
-
     class Game;
-    class World;
 
     class Display;
     class Window;
@@ -82,6 +80,7 @@ namespace genesis
 
     using ResourceId = size_t;
     using EntityId = size_t;
+    using TypeId = size_t;
 
     typedef int8_t  int8;
     typedef int16_t int16;

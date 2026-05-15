@@ -1,7 +1,8 @@
 #include <physics/PhysicsEngine.h>
 #include <physics/RigidBody.h>
 #include <physics/Layers.h>
-#include <game/World.h>
+#include <entity/EntityManager.h>
+#include <entity/Entity.h>
 #include <entity/components/TransformComponent.h>
 #include <entity/components/RigidBodyComponent.h>
 #include <jolt/RegisterTypes.h>
@@ -71,17 +72,15 @@ PhysicsEngine::~PhysicsEngine()
 	JPH::Factory::sInstance = nullptr;
 }
 
-void PhysicsEngine::update(World& world, float deltaTime)
+void PhysicsEngine::update(EntityManager& entities, float deltaTime)
 {
-	world.forEach([](Entity& entity) {
-		auto* rigidBody = entity.getComponent<RigidBodyComponent>();
+	entities.forEachComponent<RigidBodyComponent>([](RigidBodyComponent& rigidBody) {
+		Entity& entity = rigidBody.getEntity();
 		auto* transform = entity.getComponent<TransformComponent>();
 
-		if (rigidBody) {
-			auto* body = rigidBody->getBody();
-			body->setPosition(transform->getPosition());
-			body->setRotation(transform->getRotation());
-		}
+		auto* body = rigidBody.getBody();
+		body->setPosition(transform->getPosition());
+		body->setRotation(transform->getRotation());
 	});
 
 	m_accumulator += deltaTime;
@@ -99,15 +98,13 @@ void PhysicsEngine::update(World& world, float deltaTime)
 		m_physicsSystem->Update(UPDATE_RATE * steps, steps, m_tempAllocator.get(), m_jobSystem.get());
 		m_contactListener->dispatchEvents();
 
-		world.forEach([](Entity& entity) {
-			auto* rigidBody = entity.getComponent<RigidBodyComponent>();
+		entities.forEachComponent<RigidBodyComponent>([](RigidBodyComponent& rigidBody) {
+			Entity& entity = rigidBody.getEntity();
 			auto* transform = entity.getComponent<TransformComponent>();
 
-			if (rigidBody) {
-				auto* body = rigidBody->getBody();
-				transform->setPosition(body->getPosition());
-				transform->setRotation(body->getRotation());
-			}
+			auto* body = rigidBody.getBody();
+			transform->setPosition(body->getPosition());
+			transform->setRotation(body->getRotation());
 		});
 	}
 

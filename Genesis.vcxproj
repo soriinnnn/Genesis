@@ -215,7 +215,6 @@
     <ClCompile Include="source\input\win32\Win32InputManager.cpp" />
     <ClCompile Include="source\math\Vec2.cpp" />
     <ClCompile Include="source\resources\Texture.cpp" />
-    <ClCompile Include="source\game\World.cpp" />
     <ClCompile Include="source\entity\components\TransformComponent.cpp" />
     <ClCompile Include="source\graphics\resources\StructuredBuffer.cpp" />
     <ClCompile Include="source\ui\UIManager.cpp" />
@@ -300,7 +299,6 @@
     <ClInclude Include="include\math\Vec2.h" />
     <ClInclude Include="include\resources\Texture.h" />
     <ClInclude Include="include\resources\utils\ResourcesUtils.h" />
-    <ClInclude Include="include\game\World.h" />
     <ClInclude Include="include\entity\components\TransformComponent.h" />
     <ClInclude Include="include\graphics\resources\StructuredBuffer.h" />
     <ClInclude Include="include\ui\UIManager.h" />
@@ -313,6 +311,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="source\entity\Entity.inl" />
+    <None Include="source\entity\EntityManager.inl" />
+    <None Include="source\resources\ResourceManager.inl" />
+    <None Include="source\ui\UIManager.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

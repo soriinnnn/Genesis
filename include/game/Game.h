@@ -5,11 +5,11 @@
 #include <core/utils/Types.h>
 #include <core/utils/Macros.h>
 #include <display/Display.h>
+#include <physics/PhysicsEngine.h>
 #include <input/InputManager.h>
 #include <resources/ResourceManager.h>
-#include <physics/PhysicsEngine.h>
+#include <entity/EntityManager.h>
 #include <ui/UIManager.h>
-#include <game/World.h>
 #include <math/Rect.h>
 
 namespace genesis 
@@ -36,6 +36,9 @@ namespace genesis
         virtual void onCreate();
         virtual void onUpdate(float deltaTime);
 
+        EntityId getMainCamera() const noexcept;
+
+        void setMainCamera(EntityId camera);
         void setImageResolution(uint32 width, uint32 height);
         void addEffect(SharedPtr<PostProcess> effect);
         void clearEffects();
@@ -47,17 +50,18 @@ namespace genesis
     protected:
         UniquePtr<Logger> m_logger;
         UniquePtr<Display> m_display;
-        UniquePtr<InputManager> m_inputManager;
-        UniquePtr<ResourceManager> m_resourceManager;
-        UniquePtr<UIManager> m_uiManager;
         UniquePtr<PhysicsEngine> m_physicsEngine;
-        UniquePtr<World> m_world;
+        UniquePtr<ResourceManager> m_resourceManager;
+        UniquePtr<InputManager> m_inputManager;
+        UniquePtr<UIManager> m_uiManager;
+        UniquePtr<EntityManager> m_entityManager;
         bool m_vsync;
         
     private:
         bool m_isRunning;
         TimePoint m_previousTime;
         UniquePtr<GraphicsEngine> m_graphicsEngine;
+        EntityId m_mainCamera;
         Vector<SharedPtr<PostProcess>> m_effects;
     };
 }

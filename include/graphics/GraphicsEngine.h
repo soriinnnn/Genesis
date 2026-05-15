@@ -28,15 +28,15 @@ namespace genesis
         void resizeFrameBuffers(uint32 width, uint32 height);
 
         void clear(const Vec4& color = {1.0f, 1.0f, 1.0f, 1.0f});
-        void render(World& world, float deltaTime);
-        void render(World& world, DebugRenderer& debug);
+        void render(EntityManager& entities, Entity& camera, float deltaTime);
+        void render(DebugRenderer& debug, Entity& camera);
         void render(UIManager& ui);
         void postProcess(PostProcess& effect);
         void present(SwapChain& swapChain, bool vsync);
 
     private:
-        uint32 getLights(World& world);
-        void renderEntities(World& world);
+        uint32 getLights(EntityManager& entities);
+        void renderEntities(EntityManager& entities);
         void applyPostProcess(PostProcess& effect, FrameBuffer& input, FrameBuffer& output);
 
     private:

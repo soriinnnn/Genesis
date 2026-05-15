@@ -1,6 +1,8 @@
 #include "Demo.h"
+#include "components/PlayerControllerComponent.h"
 #include <resources/Font.h>
 #include <entity/Entity.h>
+#include <entity/components/CameraComponent.h>
 #include <entity/components/TransformComponent.h>
 #include <ui/elements/UILabel.h>
 #include <ui/elements/UIImage.h>
@@ -87,6 +89,7 @@ void Demo::onCreate()
     playerRotation->setPosition({0, 78});
     updatePlayerRotation({}, *playerRotation);
 
+    /*
     auto* ammo = m_uiManager->createElement<UIImage>("ammo");
     ammo->setTexture(m_resourceManager->getTexture("assets/textures/UI/ammo.png"));
     ammo->setPosition({0, 120});
@@ -112,6 +115,13 @@ void Demo::onCreate()
     button->setOnMouseUpCallback([&](MouseButton button) {
         GENESIS_LOG(getLogger(), Logger::LogLevel::Info, "Malo");
     });
+    */
+
+    Entity* camera = m_entityManager->createEntity("camera");
+    camera->createComponent<CameraComponent>();
+    camera->getComponent<TransformComponent>()->setPosition({0, 1, -1});
+    camera->createComponent<PlayerControllerComponent>()->setInputManager(*m_inputManager);
+    this->setMainCamera(camera->getId());
 }
 
 void Demo::onUpdate(float deltaTime)
@@ -122,7 +132,7 @@ void Demo::onUpdate(float deltaTime)
 
     updateFPS(deltaTime, *fps);
 
-    auto* camera = m_world->getCamera();
+    auto* camera = m_entityManager->getEntityByName("camera");
     if (!camera) {
         return;
     }

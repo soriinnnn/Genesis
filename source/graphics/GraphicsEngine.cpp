@@ -10,12 +10,12 @@
 #include <resources/Material.h>
 #include <resources/PostProcess.h>
 #include <entity/Entity.h>
+#include <entity/EntityManager.h>
 #include <entity/components/LightComponent.h>
 #include <entity/components/CameraComponent.h>
 #include <entity/components/TransformComponent.h>
 #include <entity/components/MeshRendererComponent.h>
 #include <ui/UIManager.h>
-#include <game/World.h>
 
 #define FULLSCREEN_TRIANGLE_VERTEX_COUNT 3
 
@@ -64,26 +64,25 @@ void GraphicsEngine::clear(const Vec4& color)
     m_deviceContext->clearDepthStencil(m_primaryBuffer->getDepthStencil());
 }
 
-void GraphicsEngine::render(World& world, float deltaTime)
+void GraphicsEngine::render(EntityManager& entities, Entity& camera, float deltaTime)
 {
-    Entity* camera = world.getCamera();
-    if (!camera) {
+    CameraComponent* cameraComponent = camera.getComponent<CameraComponent>();
+    if (!cameraComponent) {
         return;
     }
 
     m_deviceContext->setRenderTarget(m_primaryBuffer->getRenderTarget(), m_primaryBuffer->getDepthStencil());
     m_deviceContext->setViewport(m_primaryBuffer->getSize());
 
-    CameraComponent* cameraComponent = camera->getComponent<CameraComponent>();
     CameraData cameraData = {
         cameraComponent->getViewMatrix(),
         cameraComponent->getProjectionMatrix(),
-        Vec4{camera->getComponent<TransformComponent>()->getPosition()}
+        Vec4{camera.getComponent<TransformComponent>()->getPosition()}
     };
     m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData);
     m_deviceContext->setConstantBuffer(*m_cameraBuffer, CAMERA_CONSTANT_BUFFER_SLOT);
 
-    uint32 lightCount = getLights(world);
+    uint32 lightCount = getLights(entities);
     SceneData sceneData = {
         deltaTime,
         lightCount
@@ -91,25 +90,24 @@ void GraphicsEngine::render(World& world, float deltaTime)
     m_deviceContext->updateConstantBuffer(*m_sceneBuffer, &sceneData);
     m_deviceContext->setConstantBuffer(*m_sceneBuffer, SCENE_CONSTANT_BUFFER_SLOT);
 
-    renderEntities(world);
+    renderEntities(entities);
     m_graphicsDevice->executeCommandList(*m_deviceContext);
 }
 
-void GraphicsEngine::render(World& world, DebugRenderer& debug)
+void GraphicsEngine::render(DebugRenderer& debug, Entity& camera)
 {
-    Entity* camera = world.getCamera();
-    if (!camera) {
+    CameraComponent* cameraComponent = camera.getComponent<CameraComponent>();
+    if (!cameraComponent) {
         return;
     }
 
     m_deviceContext->setRenderTarget(m_primaryBuffer->getRenderTarget(), m_primaryBuffer->getDepthStencil());
     m_deviceContext->setViewport(m_primaryBuffer->getSize());
 
-    CameraComponent* cameraComponent = camera->getComponent<CameraComponent>();
     CameraData cameraData = {
         cameraComponent->getViewMatrix(),
         cameraComponent->getProjectionMatrix(),
-        Vec4{camera->getComponent<TransformComponent>()->getPosition()}
+        Vec4{camera.getComponent<TransformComponent>()->getPosition()}
     };
     m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData);
     m_deviceContext->setConstantBuffer(*m_cameraBuffer, CAMERA_CONSTANT_BUFFER_SLOT);
@@ -151,21 +149,20 @@ void GraphicsEngine::present(SwapChain& swapChain, bool vsync)
     swapChain.present(vsync);
 }
 
-uint32 GraphicsEngine::getLights(World& world)
+uint32 GraphicsEngine::getLights(EntityManager& entities)
 {
     Vector<LightData> lights;
     lights.reserve(DEFAULT_MAX_LIGHTS);
 
-    world.forEach([&](Entity& entity) {
-        LightComponent* lightComponent = entity.getComponent<LightComponent>();
-
-        if (!lightComponent || !lightComponent->isEnabled()) {
+    entities.forEachComponent<LightComponent>([&](LightComponent& lightComponent) {
+        if (!lightComponent.isEnabled()) {
             return;
         }
         if (lights.size() > DEFAULT_MAX_LIGHTS) {
             return;
         }
 
+        Entity& entity = lightComponent.getEntity();
         TransformComponent* transformComponent = entity.getComponent<TransformComponent>();
         if (!transformComponent) {
             return;
@@ -174,10 +171,10 @@ uint32 GraphicsEngine::getLights(World& world)
         LightData data{};
         data.position = transformComponent->getPosition();
         data.direction = transformComponent->getForwardVector();
-        data.color = lightComponent->getColor();
-        data.radius = lightComponent->getRadius();
-        data.intensity = lightComponent->getIntensity();
-        data.type = static_cast<int>(lightComponent->getType());
+        data.color = lightComponent.getColor();
+        data.radius = lightComponent.getRadius();
+        data.intensity = lightComponent.getIntensity();
+        data.type = static_cast<int>(lightComponent.getType());
 
         lights.push_back(data);
     });
@@ -188,23 +185,19 @@ uint32 GraphicsEngine::getLights(World& world)
     return static_cast<uint32>(lights.size());
 }
 
-void GraphicsEngine::renderEntities(World& world)
+void GraphicsEngine::renderEntities(EntityManager& entities)
 {
-    world.forEach([&](Entity& entity) {
-        MeshRendererComponent* mesh = entity.getComponent<MeshRendererComponent>();
-        TransformComponent* transform = entity.getComponent<TransformComponent>();
-
-        if (!mesh || !transform) {
-            return;
-        }
+    entities.forEachComponent<MeshRendererComponent>([&](MeshRendererComponent& meshComponent) {
+        Entity& entity = meshComponent.getEntity();
+        TransformComponent* transformComponent = entity.getComponent<TransformComponent>();
 
         ObjectData objectData{
-            transform->getWorldMatrix()
+           transformComponent->getWorldMatrix()
         };
         m_deviceContext->updateConstantBuffer(*m_objectBuffer, &objectData);
         m_deviceContext->setConstantBuffer(*m_objectBuffer, OBJECT_CONSTANT_BUFFER_SLOT);
 
-        Material* material = mesh->getMaterial();
+        Material* material = meshComponent.getMaterial();
         if (material->hasProperties()) {
             m_deviceContext->setConstantBuffer(material->getProperties(), MATERIAL_CONSTANT_BUFFER_SLOT);
         }
@@ -214,11 +207,12 @@ void GraphicsEngine::renderEntities(World& world)
         for (auto& binding : material->getSamplers()) {
             m_deviceContext->setSamplerState(*binding.sampler, binding.slot);
         }
-
         m_deviceContext->setGraphicsPipelineState(material->getGraphicsPipelineState());
-        m_deviceContext->setVertexBuffer(mesh->getMesh()->getVertexBuffer());
-        m_deviceContext->setIndexBuffer(mesh->getMesh()->getIndexBuffer());
-        m_deviceContext->drawIndexed(mesh->getMesh()->getIndexBuffer().getIndexCount());
+
+        Mesh* mesh = meshComponent.getMesh();
+        m_deviceContext->setVertexBuffer(mesh->getVertexBuffer());
+        m_deviceContext->setIndexBuffer(mesh->getIndexBuffer());
+        m_deviceContext->drawIndexed(mesh->getIndexBuffer().getIndexCount());
     });
 }
 

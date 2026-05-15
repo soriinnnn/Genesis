@@ -14,6 +14,7 @@ RigidBodyComponent::~RigidBodyComponent() {}
 
 RigidBody* RigidBodyComponent::getBody()
 {
+    GENESIS_ASSERT(m_body.get() != nullptr, "Body is null.");
     return m_body.get();
 }
 

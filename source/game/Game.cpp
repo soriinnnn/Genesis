@@ -1,6 +1,9 @@
 #include <game/Game.h>
 #include <graphics/GraphicsEngine.h>
 #include <input/InputManager.h>
+#include <entity/EntityManager.h>
+#include <entity/Entity.h>
+#include <entity/components/CameraComponent.h>
 
 using namespace genesis;
 using namespace std;
@@ -13,11 +16,12 @@ Game::Game(const GameDesc& desc)
     m_resourceManager = make_unique<ResourceManager>(ResourceManagerDesc{*m_logger, m_graphicsEngine->getGraphicsContext()});
     m_display = make_unique<Display>(DisplayDesc{*m_logger, desc.windowSize, desc.windowTitle, WindowStyle::Windowed, m_graphicsEngine->getGraphicsContext()});
     m_inputManager = InputManager::create({*m_logger, m_display->getWindow()});
+    m_entityManager = make_unique<EntityManager>(EntityManagerDesc{*m_logger});
     m_uiManager = make_unique<UIManager>(UIManagerDesc{*m_logger});
     m_physicsEngine = make_unique<PhysicsEngine>(PhysicsEngineDesc{*m_logger, m_graphicsEngine->getGraphicsContext()});
-    m_world = make_unique<World>(WorldDesc{*m_logger});
-    m_isRunning = true;
+    m_isRunning = false;
     m_vsync = false;
+    m_mainCamera = GENESIS_INVALID_ENTITY;
     m_inputManager->addListener(m_uiManager.get());
     GENESIS_LOG_INFO("Game initialized.");
 }
@@ -34,29 +38,32 @@ Logger& Game::getLogger() noexcept
 
 GameContext Game::getContext() noexcept
 {
-    return {*m_world, *m_inputManager, *m_resourceManager, *m_uiManager, *m_physicsEngine};
+    return {*m_entityManager, *m_inputManager, *m_resourceManager, *m_uiManager, *m_physicsEngine};
 }
 
 void Game::onInternalUpdate()
 {
     float deltaTime = getDeltaTime();
+
     m_inputManager->update();
     m_uiManager->update(deltaTime);
-
     onUpdate(deltaTime);
-    m_world->update(deltaTime);
-    m_physicsEngine->update(*m_world, deltaTime);
+    m_entityManager->update(deltaTime);
+    m_physicsEngine->update(*m_entityManager, deltaTime);
 
     m_graphicsEngine->clear();
-    m_graphicsEngine->render(*m_world, deltaTime);
 
+    Entity* camera = m_entityManager->getEntity(m_mainCamera);
+    if (camera) {
+        m_graphicsEngine->render(*m_entityManager, *camera, deltaTime);
 #ifdef _DEBUG
-    m_graphicsEngine->render(*m_world, m_physicsEngine->getDebugRenderer());
+        m_graphicsEngine->render(m_physicsEngine->getDebugRenderer(), *camera);
 #endif
-
-    for (auto& effect : m_effects) {
-        m_graphicsEngine->postProcess(*effect);
+        for (auto& effect : m_effects) {
+            m_graphicsEngine->postProcess(*effect);
+        }
     }
+
     m_graphicsEngine->render(*m_uiManager);
     m_graphicsEngine->present(m_display->getSwapChain(), m_vsync);
 }
@@ -73,6 +80,25 @@ void Game::onCreate() {}
 
 void Game::onUpdate(float deltaTime) {}
 
+EntityId Game::getMainCamera() const noexcept
+{
+    return m_mainCamera;
+}
+
+void Game::setMainCamera(EntityId camera)
+{
+    Entity* entity = m_entityManager->getEntity(camera);
+    if (!entity) {
+        GENESIS_LOG_WARNING("Trying to set main camera with nonexistent entity ID.");
+        return;
+    }
+    if (!entity->getComponent<CameraComponent>()) {
+        GENESIS_LOG_WARNING("Entity has no camera component, cannot set as main camera.");
+        return;
+    }
+    m_mainCamera = camera;
+}
+
 void Game::setImageResolution(uint32 width, uint32 height)
 {
     m_graphicsEngine->resizeFrameBuffers(width, height);
@@ -80,7 +106,7 @@ void Game::setImageResolution(uint32 width, uint32 height)
 
 void Game::addEffect(SharedPtr<PostProcess> effect)
 {
-    m_effects.push_back(effect);
+    m_effects.push_back(std::move(effect));
 }
 
 void Game::clearEffects()

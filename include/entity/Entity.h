@@ -2,7 +2,6 @@
 #define GENESIS_ENTITY_H
 #include <core/Base.h>
 #include <core/Core.h>
-#include <entity/components/Component.h>
 
 namespace genesis
 {
@@ -10,7 +9,8 @@ namespace genesis
 	{
 		BaseDesc base;
 		EntityId id;
-		EntityManager& entityManager;
+		const char* name;
+		EntityManager& manager;
 	};
 
 	class Entity final: public Base
@@ -19,72 +19,30 @@ namespace genesis
 		explicit Entity(const EntityDesc& desc);
 		~Entity() override;
 
-		EntityId getId() const noexcept;
 		void update(float deltaTime);
 
-		template<typename T>
-		T* createComponent()
-		{
-			GENESIS_ASSERT((std::is_base_of<Component, T>::value), "T must derive from Component.");
-			ComponentId id = typeid(T).hash_code();
-
-			T* result = getComponent<T>(id);
-			if (!result) {
-				result = createComponent<T>(id);
-			}
-			return result;
-		}
+		EntityId getId() const noexcept;
+		const char* getName() const noexcept;
 
 		template<typename T>
-		void deleteComponent()
-		{
-			GENESIS_ASSERT((std::is_base_of<Component, T>::value), "T must derive from Component.");
-			deleteComponent(typeid(T).hash_code());
-		}
+		bool hasComponent() const;
 
-		template<typename T>
-		T* getComponent()
-		{
-			GENESIS_ASSERT((std::is_base_of<Component, T>::value), "T must derive from Component.");
-			return getComponent<T>(typeid(T).hash_code());
-		}
+		template<typename T>	
+		T* createComponent();
 
-		template<typename T>
-		bool hasComponent()
-		{
-			GENESIS_ASSERT((std::is_base_of<Component, T>::value), "T must derive from Component.");
-			return getComponent<T>(typeid(T).hash_code()) != nullptr;
-		}
+		template<typename T> 
+		void deleteComponent();
 
-	private:
-		using ComponentId = size_t;
-		
-		template<typename T>
-		T* createComponent(ComponentId id)
-		{
-			T* component = new T{ComponentDesc{m_logger, *this}};
-			UniquePtr<Component> componentPtr{component};
-			m_components.emplace(id, std::move(componentPtr));
-			return component;
-		}
-
-		void deleteComponent(ComponentId id);
-
-		template<typename T>
-		T* getComponent(ComponentId id)
-		{
-			auto it = m_components.find(id);
-			if (it == m_components.end()) {
-				return nullptr;
-			}
-			return static_cast<T*>(it->second.get());
-		}
+		template<typename T> 
+		T* getComponent();
 	
-	protected:
+	private:
 		EntityId m_id;
-		HashMap<ComponentId, UniquePtr<Component>> m_components;
-		EntityManager& m_entityManager;
+		String m_name;
+		EntityManager& m_manager;
+		HashMap<TypeId, UniquePtr<Component>> m_components;
 	};
 }
 
+#include <entity/Entity.inl>
 #endif

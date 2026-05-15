@@ -12,7 +12,7 @@ namespace genesis
 
 	struct GameContext
 	{
-		World& world;
+		EntityManager& entities;
 		InputManager& input;
 		ResourceManager& resources;
 		UIManager& ui;

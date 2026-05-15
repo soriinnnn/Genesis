@@ -1,10 +1,14 @@
 #include <entity/EntityManager.h>
+#include <entity/Entity.h>
 #include <algorithm>
 
 using namespace genesis;
 using namespace std;
 
-EntityManager::EntityManager(const EntityManagerDesc& desc): Base(desc.base), m_nextId{0} {}
+EntityManager::EntityManager(const EntityManagerDesc& desc): Base(desc.base) 
+{
+	m_nextId = 0;
+}
 
 EntityManager::~EntityManager() {}
 
@@ -12,13 +16,15 @@ void EntityManager::update(float deltaTime)
 {
 	for (auto& event : m_events) {
 		switch (event.type) {
-		case EventType::Create: 
-			m_entities.emplace(event.id, std::move(m_pendingEntities[event.id]));
-			break;
-		case EventType::Destroy:
-			m_entities.erase(event.id);
-			m_idPool.push_back(event.id);
-			break;
+			case EventType::Create: {
+				m_entities.emplace(event.id, std::move(m_pendingEntities[event.id]));
+				break;
+			}
+			case EventType::Destroy: {
+				m_entities.erase(event.id);
+				m_idPool.push_back(event.id);
+				break;
+			}	
 		}
 	}
 	m_events.clear();
@@ -29,39 +35,77 @@ void EntityManager::update(float deltaTime)
 	}
 }
 
-Entity* EntityManager::createEntity()
+Entity* EntityManager::createEntity(const char* name)
 {
-	EntityId id = getAvailableId();
-	UniquePtr<Entity> entity = make_unique<Entity>(EntityDesc{m_logger, id, *this});
+	EntityId id = getAvailableEntityId();
+	UniquePtr<Entity> entity = make_unique<Entity>(EntityDesc{m_logger, id, name, *this});
 	Entity* result = entity.get();
 
 	m_pendingEntities.emplace(id, move(entity));
 	m_events.push_back({EventType::Create, id});
-	
-	return result;
-}
-
-Entity* EntityManager::getEntity(EntityId id)
-{
-	auto it = m_entities.find(id);
-	if (it == m_entities.end()) {
-		return nullptr;
+	if (name) {
+		m_nameToId.emplace(name, id);
 	}
-	return it->second.get();
+
+	return result;
 }
 
 void EntityManager::destroyEntity(EntityId id)
 {
-	if (!m_entities.contains(id)) {
+	auto it = m_entities.find(id);
+	if (it == m_entities.end()) {
 		GENESIS_LOG_WARNING("Trying to destroy nonexistent entity.");
 		return;
 	}
 	m_events.push_back({EventType::Destroy, id});
+	m_nameToId.erase(it->second->getName());
 }
 
-EntityId EntityManager::getAvailableId()
+Entity* EntityManager::getEntity(EntityId id)
+{
+	auto entity = m_entities.find(id);
+	if (entity != m_entities.end()) {
+		return entity->second.get();
+	}
+
+	auto pending = m_pendingEntities.find(id);
+	if (pending != m_pendingEntities.end()) {
+		return pending->second.get();
+	}
+
+	return nullptr;
+}
+
+void EntityManager::destroyEntityByName(const char* name)
+{
+	auto it = m_nameToId.find(name);
+	if (it == m_nameToId.end()) {
+		GENESIS_LOG_WARNING("Trying to destroy nonexistent entity.");
+		return;
+	}
+	m_events.push_back({EventType::Destroy, it->second});
+	m_nameToId.erase(it);
+}
+
+Entity* EntityManager::getEntityByName(const char* name)
+{
+	auto id = m_nameToId.find(name);
+	if (id == m_nameToId.end()) {
+		return nullptr;
+	}
+
+	auto entity = m_entities.find(id->second);
+	if (entity != m_entities.end()) {
+		return entity->second.get();
+	}
+
+	return m_pendingEntities[id->second].get();
+}
+
+EntityId EntityManager::getAvailableEntityId()
 {
 	EntityId id;	
+
 	if (m_idPool.empty()) {
 		id = m_nextId;
 		m_nextId++;
@@ -72,4 +116,33 @@ EntityId EntityManager::getAvailableId()
 	}
 
 	return id;
+}
+
+void EntityManager::registerComponent(TypeId id, Component* component)
+{
+	m_components[id].push_back(component);
+}
+
+void EntityManager::unregisterComponent(TypeId id, Component* component)
+{
+	auto it = m_components.find(id);
+	if (it == m_components.end()) {
+		return;
+	}
+	auto& components = it->second;
+
+	int i = 0;
+	bool found = false;
+	while (i < components.size() && !found) {
+		if (components[i] == component) {
+			found = true;
+		}
+		else {
+			i++;
+		}
+	}
+	if (found) {
+		components[i] = components.back();
+		components.pop_back();
+	}
 }

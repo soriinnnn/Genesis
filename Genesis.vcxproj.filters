@@ -108,9 +108,6 @@
     <ClCompile Include="source\entity\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\game\World.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\entity\components\Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -353,9 +350,6 @@
     <ClInclude Include="include\entity\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\game\World.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\entity\components\Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -485,5 +479,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="source\entity\Entity.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="source\entity\EntityManager.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="source\resources\ResourceManager.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="source\ui\UIManager.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

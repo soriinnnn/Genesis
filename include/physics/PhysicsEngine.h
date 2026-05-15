@@ -35,7 +35,7 @@ namespace genesis
 		explicit PhysicsEngine(const PhysicsEngineDesc& desc);
 		~PhysicsEngine() override;
 
-		void update(World& world, float deltaTime);
+		void update(EntityManager& entities, float deltaTime);
 
 		DebugRenderer& getDebugRenderer();
 		SharedPtr<RigidBody> createBox(Vec3 position, Vec3 size, MotionType motionType);

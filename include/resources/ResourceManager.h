@@ -36,22 +36,10 @@ namespace genesis
 		ResourceDesc getResourceDesc(ResourceId id, const char* path);
 
 		template<typename T>
-		SharedPtr<T> getResource(ResourceId id)
-		{
-			auto it = m_resources.find(id);
-			if (it == m_resources.end()) {
-				return nullptr;
-			}
-			return dynamic_pointer_cast<T>(it->second);
-		}
+		SharedPtr<T> getResource(ResourceId id);
 
 		template<typename T, typename D>
-		SharedPtr<T> createResource(ResourceId id, const D& desc)
-		{
-			SharedPtr<T> resource = std::make_shared<T>(desc);
-			m_resources.emplace(id, resource);
-			return resource;
-		}
+		SharedPtr<T> createResource(ResourceId id, const D& desc);
 
 	private:
 		HashMap<ResourceId, SharedPtr<Resource>> m_resources;
@@ -59,4 +47,5 @@ namespace genesis
 	};
 }
 
+#include <resources/ResourceManager.inl>
 #endif
