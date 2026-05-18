@@ -10,7 +10,8 @@ namespace genesis
 		explicit UIPanel(const UIElementDesc& desc);
 		~UIPanel() override;
 
-		void render(SpriteBatch& batch) override;
+	private:
+		void onRender(SpriteBatch& batch) override;
 	};
 }
 

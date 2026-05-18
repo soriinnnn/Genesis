@@ -37,9 +37,13 @@ namespace genesis
         virtual void onUpdate(float deltaTime);
 
         EntityId getMainCamera() const noexcept;
+        Rect getRenderResolution() const noexcept;
+        bool getVSync() const noexcept;
 
         void setMainCamera(EntityId camera);
-        void setImageResolution(uint32 width, uint32 height);
+        void setRenderResolution(uint32 width, uint32 height);
+        void setVSync(bool enabled);
+
         void addEffect(SharedPtr<PostProcess> effect);
         void clearEffects();
 
@@ -55,14 +59,14 @@ namespace genesis
         UniquePtr<InputManager> m_inputManager;
         UniquePtr<UIManager> m_uiManager;
         UniquePtr<EntityManager> m_entityManager;
-        bool m_vsync;
         
     private:
-        bool m_isRunning;
-        TimePoint m_previousTime;
         UniquePtr<GraphicsEngine> m_graphicsEngine;
-        EntityId m_mainCamera;
         Vector<SharedPtr<PostProcess>> m_effects;
+        TimePoint m_previousTime;
+        EntityId m_mainCamera;
+        bool m_isRunning;
+        bool m_vsync;
     };
 }
 

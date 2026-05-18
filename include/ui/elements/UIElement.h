@@ -9,6 +9,20 @@
 
 namespace genesis
 {
+	struct UIAnchor
+	{
+		enum class Horizontal {Left, Center, Right};
+		enum class Vertical {Top, Center, Bottom};
+
+		Horizontal horizontal = Horizontal::Left;
+		Vertical vertical = Vertical::Top;
+		Rect margin{};
+		float widthPercent = 0.0f;
+		float heightPercent = 0.0f;
+		float fixedWidth = 200.0f;
+		float fixedHeight = 100.0f;
+	};
+
 	struct UIElementDesc
 	{
 		BaseDesc base;
@@ -20,8 +34,8 @@ namespace genesis
 	public:
 		virtual ~UIElement() override;
 
-		virtual void update(float deltaTime);
-		virtual void render(SpriteBatch& batch) = 0;
+		void update(float deltaTime);
+		void render(SpriteBatch& batch);
 
 		bool contains(const Point& position) const noexcept;
 
@@ -39,12 +53,9 @@ namespace genesis
 		void setPosition(const Point& position) noexcept;
 		void setScale(const Vec2& scale) noexcept;
 		void setColor(const Vec4& color) noexcept;
+		void setSize(const Rect& size) noexcept;
 		void setVisible(bool visible);
 		void setEnabled(bool enabled);
-
-		// Temporal, per impedir canviar la mida d'elements d'UI que es modifiquen sols i evitar modificar la label per acceptar mides fixes.
-		// En un futur ho canviaré treient el virtual.
-		virtual void setSize(const Rect& size) noexcept;
 
 		void setOnMouseDownCallback(std::function<void(MouseButton)> callback) noexcept;
 		void setOnMouseUpCallback(std::function<void(MouseButton)> callback) noexcept;
@@ -54,15 +65,17 @@ namespace genesis
 	protected:
 		explicit UIElement(const UIElementDesc& desc);
 
-		virtual void onMouseDown(MouseButton button);
-		virtual void onMouseUp(MouseButton button);
-		virtual void onMouseEnter();
-		virtual void onMouseOut();
-
+		virtual void onUpdate(float deltaTime);
+		virtual void onRender(SpriteBatch& batch);
 		virtual void onPosition();
 		virtual void onScale();
 		virtual void onColor();
 		virtual void onSize();
+
+		virtual void onMouseDown(MouseButton button);
+		virtual void onMouseUp(MouseButton button);
+		virtual void onMouseEnter();
+		virtual void onMouseOut();
 
 	protected:
 		UIElement* m_parent;

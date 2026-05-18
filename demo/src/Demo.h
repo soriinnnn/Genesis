@@ -19,9 +19,6 @@ public:
 protected:
 	void onCreate() override;
 	void onUpdate(float deltaTime) override;
-
-private:
-	bool m_centerMouse;
 };
 
 #endif

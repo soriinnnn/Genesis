@@ -41,12 +41,14 @@ namespace genesis
 		explicit RigidBody(const RigidBodyDesc& desc);
 		~RigidBody() override;
 
+		Entity* getEntity() const;
 		Vec3 getPosition() const;
 		Vec3 getRotation() const;
 		Vec3 getLinearVelocity() const;
 		Vec3 getAngularVelocity() const;
 		bool isActive() const;
 
+		void setEntity(Entity* entity);
 		void setPosition(const Vec3& position);
 		void setRotation(const Vec3& rotation);
 		void setLinearVelocity(const Vec3& velocity);
@@ -67,6 +69,7 @@ namespace genesis
 		void deactivate();
 
 	private:
+		Entity* m_entity;
 		JPH::BodyID m_body;
 		JPH::BodyInterface& m_bodyInterface;
 

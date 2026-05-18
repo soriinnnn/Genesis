@@ -11,12 +11,18 @@ namespace genesis
 		explicit UIImage(const UIElementDesc& desc);
 		~UIImage() override;
 
-		void render(SpriteBatch& batch) override;
-
 		void setTexture(const SharedPtr<Texture>& texture) noexcept;
+		void setAutoSize(bool enable) noexcept;
+
+	private:
+		void applyAutoSize();
+
+		void onRender(SpriteBatch& batch) override;
+		void onSize() override;
 
 	private:
 		SharedPtr<Texture> m_texture;
+		bool m_autoSize;
 	};
 }
 

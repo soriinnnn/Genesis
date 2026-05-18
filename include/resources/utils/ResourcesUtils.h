@@ -12,13 +12,12 @@ namespace genesis
 			if (!stream) {
 				return std::string{};
 			}
-
 			return std::string(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
 		}
 
 		inline void generateFont(const char* font, uint32 size, const char* outputFile, Logger& logger)
 		{
-			std::string command = "MakeSpriteFont.exe \"";
+			std::string command = "makespritefont.exe \"";
 			command += font;
 			command += "\" \"";
 			command += outputFile;

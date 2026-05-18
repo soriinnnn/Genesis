@@ -11,17 +11,18 @@ namespace genesis
 		explicit UILabel(const UIElementDesc& desc);
 		~UILabel() override;
 
-		void render(SpriteBatch& batch) override;
-
 		void setContent(const char* content);
 		void setFont(const SharedPtr<Font>& font);
-		void setSize(const Rect& size) noexcept override;
 
 	private:
-		void updateSize();
+		void adjustContent();
+
+		void onRender(SpriteBatch& batch) override;
+		void onSize() override;
 
 	private:
-		String m_content;
+		WString m_content;
+		WString m_adjustedContent;
 		SharedPtr<Font> m_font;
 	};
 }

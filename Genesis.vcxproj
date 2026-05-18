@@ -226,6 +226,7 @@
     <ClCompile Include="source\ui\elements\UIPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="demo\src\Utils.h" />
     <ClInclude Include="source\physics\ContactListener.h" />
     <ClInclude Include="source\physics\DebugRenderer.h" />
     <ClInclude Include="include\entity\components\RigidBodyComponent.h" />

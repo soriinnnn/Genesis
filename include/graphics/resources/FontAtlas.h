@@ -9,16 +9,34 @@ namespace genesis
 {
 	struct FontAtlasDesc
 	{
-		const wchar_t* path;
+		const char* path;
 	};
 
 	class FontAtlas final: GraphicsResource
 	{
 	public:
+		struct Glyph
+		{
+			uint32 character;
+			Rect subRect;
+			float xOffset;
+			float yOffset;
+			float xAdvance;
+		};
+
+	public:
 		FontAtlas(const FontAtlasDesc& fdesc, const GraphicsResourceDesc& gdesc);
 		~FontAtlas() override;
 
-		Rect getSize(const char* text);
+		bool contains(wchar_t character) const;
+
+		Rect getSize(const wchar_t* text) const;
+		Glyph getGlyph(wchar_t character) const;
+		float getLineSpacing() const;
+
+		void setPixelAlignment(bool enable);
+		void setLineSpacing(float spacing);
+		void setDefaultCharacter(wchar_t character);
 
 	private:
 		UniquePtr<DirectX::DX11::SpriteFont> m_font;

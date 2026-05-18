@@ -20,5 +20,12 @@ RigidBody* RigidBodyComponent::getBody()
 
 void RigidBodyComponent::setBody(const SharedPtr<RigidBody>& body)
 {
+    if (!body) {
+        return;
+    }
+    if (m_body) {
+        m_body->setEntity(nullptr);
+    }
     m_body = body;
+    m_body->setEntity(&m_entity);
 }

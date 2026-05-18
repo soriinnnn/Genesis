@@ -10,7 +10,7 @@ UIPanel::UIPanel(const UIElementDesc& desc): UIElement(desc)
 
 UIPanel::~UIPanel() {}
 
-void UIPanel::render(SpriteBatch& batch) 
+void UIPanel::onRender(SpriteBatch& batch)
 {
 	batch.drawSolid(m_size, getGlobalPosition(), m_scale, m_color);
 }

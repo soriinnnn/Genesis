@@ -101,6 +101,7 @@ namespace genesis
     template<typename K, typename T> using Map = std::map<K, T>;
 
     using String = std::string;
+    using WString = std::wstring;
     using TimePoint = std::chrono::steady_clock::time_point;
 }
 

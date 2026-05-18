@@ -13,3 +13,8 @@ Point::Point(int32 x, int32 y)
 	this->x = x;
 	this->y = y;
 }
+
+bool Point::operator==(const Point& rhs) const noexcept
+{
+	return this->x == rhs.x && this->y == rhs.y;
+}

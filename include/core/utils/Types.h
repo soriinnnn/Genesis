@@ -17,6 +17,7 @@ namespace genesis
 		ResourceManager& resources;
 		UIManager& ui;
 		PhysicsEngine& physics;
+		Display& display;
 	};
 }
 

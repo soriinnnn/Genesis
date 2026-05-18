@@ -38,7 +38,7 @@ Logger& Game::getLogger() noexcept
 
 GameContext Game::getContext() noexcept
 {
-    return {*m_entityManager, *m_inputManager, *m_resourceManager, *m_uiManager, *m_physicsEngine};
+    return {*m_entityManager, *m_inputManager, *m_resourceManager, *m_uiManager, *m_physicsEngine, *m_display};
 }
 
 void Game::onInternalUpdate()
@@ -85,6 +85,16 @@ EntityId Game::getMainCamera() const noexcept
     return m_mainCamera;
 }
 
+Rect Game::getRenderResolution() const noexcept
+{
+    return m_graphicsEngine->getRenderResolution();
+}
+
+bool Game::getVSync() const noexcept
+{
+    return m_vsync;
+}
+
 void Game::setMainCamera(EntityId camera)
 {
     Entity* entity = m_entityManager->getEntity(camera);
@@ -93,15 +103,19 @@ void Game::setMainCamera(EntityId camera)
         return;
     }
     if (!entity->getComponent<CameraComponent>()) {
-        GENESIS_LOG_WARNING("Entity has no camera component, cannot set as main camera.");
-        return;
+        GENESIS_LOG_WARNING("Entity has no camera component.");
     }
     m_mainCamera = camera;
 }
 
-void Game::setImageResolution(uint32 width, uint32 height)
+void Game::setRenderResolution(uint32 width, uint32 height)
 {
-    m_graphicsEngine->resizeFrameBuffers(width, height);
+    m_graphicsEngine->setRenderResolution(width, height);
+}
+
+void Game::setVSync(bool enabled)
+{
+    m_vsync = enabled;
 }
 
 void Game::addEffect(SharedPtr<PostProcess> effect)

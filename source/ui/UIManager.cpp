@@ -27,13 +27,6 @@ void UIManager::update(float deltaTime)
     }
 }
 
-void UIManager::render(SpriteBatch& batch)
-{
-    for (auto* root : m_zOrdered) {
-        root->element->render(batch);
-    }
-}
-
 void UIManager::destroyElement(const char* name)
 {
     auto it = m_elements.find(name);

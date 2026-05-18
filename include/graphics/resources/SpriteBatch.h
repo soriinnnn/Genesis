@@ -22,8 +22,8 @@ namespace genesis
 		~SpriteBatch() override;
 
 		void begin(SamplerState* samplerState = nullptr);
-		void drawText(FontAtlas& font, const char* text, Point pos, Vec2 scale, Vec4 color);
-		void drawImage(ImageTexture& image, Rect size, Point pos, Vec2 scale, Vec4 color);
+		void drawText(FontAtlas& font, const wchar_t* text, Point pos, Vec2 scale, Vec4 color);
+		void drawImage(ImageTexture& image, Rect sourceRect, Point pos, Vec2 scale, Vec4 color);
 		void drawSolid(Rect size, Point pos, Vec2 scale, Vec4 color);
 		void end();
 

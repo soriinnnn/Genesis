@@ -23,6 +23,8 @@ namespace genesis
 		Vec2& operator*=(float scalar) noexcept;
 		Vec2& operator/=(float scalar) noexcept;
 
+		bool operator==(const Vec2& rhs) const noexcept;
+
 		static float dot(const Vec2& v1, const Vec2& v2) noexcept;
 		static float cross(const Vec2& v1, const Vec2& v2) noexcept;
 		static Vec2 normalize(const Vec2& v) noexcept;

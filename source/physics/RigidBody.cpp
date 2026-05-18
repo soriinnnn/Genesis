@@ -2,7 +2,7 @@
 
 using namespace genesis;
 
-RigidBody::RigidBody(const RigidBodyDesc& desc): Base(desc.base), m_body{desc.body}, m_bodyInterface{desc.bodyInterface} 
+RigidBody::RigidBody(const RigidBodyDesc& desc): Base(desc.base), m_entity{nullptr}, m_body{desc.body}, m_bodyInterface{desc.bodyInterface}
 {
 	m_bodyInterface.SetUserData(m_body, reinterpret_cast<uint64>(this));
 }
@@ -11,6 +11,11 @@ RigidBody::~RigidBody()
 {
 	m_bodyInterface.RemoveBody(m_body);
 	m_bodyInterface.DestroyBody(m_body);
+}
+
+Entity* RigidBody::getEntity() const
+{
+	return m_entity;
 }
 
 Vec3 RigidBody::getPosition() const
@@ -40,6 +45,11 @@ Vec3 RigidBody::getAngularVelocity() const
 bool RigidBody::isActive() const
 {
 	return m_bodyInterface.IsActive(m_body);
+}
+
+void RigidBody::setEntity(Entity* entity)
+{
+	m_entity = entity;
 }
 
 void RigidBody::setPosition(const Vec3& position)

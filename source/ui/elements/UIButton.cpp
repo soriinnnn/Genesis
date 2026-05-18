@@ -13,14 +13,6 @@ UIButton::UIButton(const UIElementDesc& desc): UIElement(desc)
 
 UIButton::~UIButton() {}
 
-void UIButton::render(SpriteBatch& batch)
-{
-	batch.drawSolid(m_size, getGlobalPosition(), m_scale, m_color);
-    if (m_label->isVisible()) {
-        m_label->render(batch);
-    }
-}
-
 UILabel* UIButton::getLabel() noexcept
 {
 	return m_label.get();
@@ -36,4 +28,10 @@ void UIButton::centerLabel() noexcept
     int labelWidth = labelBounds.right - labelBounds.left;
     int labelHeight = labelBounds.bottom - labelBounds.top;
     m_label->setPosition({((parentWidth - labelWidth) / 2), ((parentHeight - labelHeight) / 2)});
+}
+
+void UIButton::onRender(SpriteBatch& batch)
+{
+    batch.drawSolid(m_size, getGlobalPosition(), m_scale, m_color);
+    m_label->render(batch);
 }

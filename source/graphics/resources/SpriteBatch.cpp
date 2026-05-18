@@ -37,7 +37,7 @@ void SpriteBatch::begin(SamplerState* samplerState)
 	);
 }
 
-void SpriteBatch::drawText(FontAtlas& font, const char* text, Point pos, Vec2 scale, Vec4 color)
+void SpriteBatch::drawText(FontAtlas& font, const wchar_t* text, Point pos, Vec2 scale, Vec4 color)
 {
 	DirectX::XMFLOAT2 dxPosition = DirectX::XMFLOAT2(static_cast<float>(pos.x), static_cast<float>(pos.y));
 	DirectX::XMFLOAT2 dxScale = DirectX::XMFLOAT2(scale.toArray());
@@ -56,10 +56,10 @@ void SpriteBatch::drawText(FontAtlas& font, const char* text, Point pos, Vec2 sc
 	);
 }
 
-void SpriteBatch::drawImage(ImageTexture& image, Rect size, Point pos, Vec2 scale, Vec4 color)
+void SpriteBatch::drawImage(ImageTexture& image, Rect sourceRect, Point pos, Vec2 scale, Vec4 color)
 {
 	ID3D11ShaderResourceView* resourceView = image.m_resourceView.Get();
-	RECT sourceRect = RECT{static_cast<LONG>(size.left), static_cast<LONG>(size.top), static_cast<LONG>(size.right), static_cast<LONG>(size.bottom)};
+	RECT dxSourceRect = RECT{static_cast<LONG>(sourceRect.left), static_cast<LONG>(sourceRect.top), static_cast<LONG>(sourceRect.right), static_cast<LONG>(sourceRect.bottom)};
 	DirectX::XMFLOAT2 dxPosition = DirectX::XMFLOAT2(static_cast<float>(pos.x), static_cast<float>(pos.y));
 	DirectX::XMFLOAT2 dxScale = DirectX::XMFLOAT2(scale.toArray());
 	DirectX::XMFLOAT4 dxColor = DirectX::XMFLOAT4(color.toArray());
@@ -67,7 +67,7 @@ void SpriteBatch::drawImage(ImageTexture& image, Rect size, Point pos, Vec2 scal
 	m_batch->Draw(
 		resourceView,
 		dxPosition,
-		&sourceRect,
+		&dxSourceRect,
 		DirectX::XMLoadFloat4(&dxColor),
 		0.0f,
 		DirectX::XMFLOAT2(0.0f, 0.0f),

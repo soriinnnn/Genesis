@@ -34,6 +34,11 @@ Vec4::Vec4(const Vec3& v, float w)
 	this->w = w;
 }
 
+bool Vec4::operator==(const Vec4& rhs) const noexcept
+{
+	return this->x == rhs.x && this->y == rhs.y && this->z == rhs.z && this->w == rhs.w;
+}
+
 const float* Vec4::toArray() const noexcept
 {
 	return &this->x;

@@ -14,6 +14,8 @@ namespace genesis
 		int32 width() const noexcept;
 		int32 height() const noexcept;
 
+		bool operator==(const Rect& rhs) const noexcept;
+
 	public:
 		int32 left, top, right, bottom;
 	};

@@ -25,7 +25,8 @@ namespace genesis
         ~GraphicsEngine() override;
 
         GraphicsContext getGraphicsContext() noexcept;
-        void resizeFrameBuffers(uint32 width, uint32 height);
+        Rect getRenderResolution() const noexcept;
+        void setRenderResolution(uint32 width, uint32 height);
 
         void clear(const Vec4& color = {1.0f, 1.0f, 1.0f, 1.0f});
         void render(EntityManager& entities, Entity& camera, float deltaTime);

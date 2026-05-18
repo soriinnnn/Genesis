@@ -30,4 +30,20 @@ namespace genesis
 		auto& root = it->second;
 		return dynamic_cast<T*>(root.element.get());
 	}
+
+	template<typename F>
+	inline void UIManager::forEach(F&& callback) const
+	{
+		for (const auto& [id, root] : m_elements) {
+			callback(*root.element);
+		}
+	}
+
+	template<typename F>
+	inline void UIManager::forEach(F&& callback)
+	{
+		for (auto& [id, root] : m_elements) {
+			callback(*root.element);
+		}
+	}
 }

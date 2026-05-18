@@ -120,6 +120,11 @@ Vec2& Vec2::operator/=(float scalar) noexcept
 	return *this;
 }
 
+bool Vec2::operator==(const Vec2& rhs) const noexcept
+{
+	return this->x == rhs.x && this->y == rhs.y;
+}
+
 float Vec2::dot(const Vec2& v1, const Vec2& v2) noexcept
 {
 	return v1.dot(v2);

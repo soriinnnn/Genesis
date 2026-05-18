@@ -9,11 +9,12 @@ namespace genesis
 	public:
 		explicit UIButton(const UIElementDesc& desc);
 		~UIButton() override;
-
-		void render(SpriteBatch& batch) override;
 		
 		UILabel* getLabel() noexcept;
 		void centerLabel() noexcept;
+
+	private:
+		void onRender(SpriteBatch& batch) override;
 
 	private:
 		UniquePtr<UILabel> m_label;

@@ -33,3 +33,8 @@ int32 Rect::width() const noexcept {
 int32 Rect::height() const noexcept {
 	return this->bottom - this->top;
 }
+
+bool Rect::operator==(const Rect& rhs) const noexcept
+{
+	return this->left == rhs.left && this->top == rhs.top && this->right == rhs.right && this->bottom == rhs.bottom;
+}

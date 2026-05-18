@@ -12,6 +12,8 @@ namespace genesis
 		Vec4(float x, float y, float z, float w);
 		explicit Vec4(const Vec3& v, float w = 1.0f);
 
+		bool operator==(const Vec4& rhs) const noexcept;
+
 		const float* toArray() const noexcept;
 
 	public:

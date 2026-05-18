@@ -6,8 +6,7 @@ using namespace std;
 
 Font::Font(const FontDesc& desc): Resource(desc.resource)
 {
-	wstring path{m_path.begin(), m_path.end()};
-	m_font = desc.resource.graphicsContext.graphicsDevice.createFontAtlas({path.c_str()});
+	m_font = desc.resource.graphicsContext.graphicsDevice.createFontAtlas({desc.resource.path});
 }
 
 Font::~Font() {}

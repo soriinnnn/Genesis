@@ -52,7 +52,12 @@ GraphicsContext GraphicsEngine::getGraphicsContext() noexcept
     return {*m_graphicsDevice, *m_shaders};
 }
 
-void GraphicsEngine::resizeFrameBuffers(uint32 width, uint32 height)
+Rect GraphicsEngine::getRenderResolution() const noexcept
+{
+    return m_primaryBuffer->getSize();
+}
+
+void GraphicsEngine::setRenderResolution(uint32 width, uint32 height)
 {
     m_primaryBuffer->resize(width, height);
     m_secondaryBuffer->resize(width, height);
@@ -123,7 +128,9 @@ void GraphicsEngine::render(UIManager& ui)
 
     try {
         m_spriteBatch->begin();
-        ui.render(*m_spriteBatch);
+        ui.forEach([&](UIElement& element) {
+            element.render(*m_spriteBatch);
+        });
         m_spriteBatch->end();
     }
     catch (const std::exception& e) {
