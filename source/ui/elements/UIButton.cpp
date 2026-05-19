@@ -18,18 +18,6 @@ UILabel* UIButton::getLabel() noexcept
 	return m_label.get();
 }
 
-void UIButton::centerLabel() noexcept
-{
-    Rect parentBounds = getBounds();
-    Rect labelBounds = m_label->getBounds();
-
-    int parentWidth = parentBounds.right - parentBounds.left;
-    int parentHeight = parentBounds.bottom - parentBounds.top;
-    int labelWidth = labelBounds.right - labelBounds.left;
-    int labelHeight = labelBounds.bottom - labelBounds.top;
-    m_label->setPosition({((parentWidth - labelWidth) / 2), ((parentHeight - labelHeight) / 2)});
-}
-
 void UIButton::onRender(SpriteBatch& batch)
 {
     batch.drawSolid(m_size, getGlobalPosition(), m_scale, m_color);

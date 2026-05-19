@@ -112,12 +112,12 @@ const Vector<Material::SamplerBinding>& Material::getSamplers() const noexcept
 	return m_samplers;
 }
 
-GraphicsPipelineState& Material::getGraphicsPipelineState() noexcept
+const GraphicsPipelineState& Material::getGraphicsPipelineState() const noexcept
 {
 	return *m_pipeline;
 }
 
-ConstantBuffer& Material::getProperties()
+const ConstantBuffer& Material::getProperties() const
 {
 	if (!hasProperties()) {
 		GENESIS_LOG_THROW_ERROR("Material \"{}\" has no properties buffer.", m_path.c_str());

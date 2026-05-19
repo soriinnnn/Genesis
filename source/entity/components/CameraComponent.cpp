@@ -14,7 +14,9 @@ CameraComponent::CameraComponent(const ComponentDesc& desc): Component(desc),
     m_aspectRatio{16.0f/9.0f},
     m_isDirty{true}
 {
-    m_entity.createComponent<TransformComponent>();
+    if (!m_entity.hasComponent<TransformComponent>()) {
+        m_entity.createComponent<TransformComponent>();
+    }
 }
 
 CameraComponent::~CameraComponent() {}

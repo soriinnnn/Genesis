@@ -19,9 +19,8 @@ namespace genesis
 		~Shader() override;
 
 		ShaderType getType() const noexcept;
-
-		ShaderBinary& getBinary() noexcept;
-		ShaderSignature& getSignature() noexcept;
+		const ShaderBinary& getBinary() const noexcept;
+		const ShaderSignature& getSignature() const noexcept;
 
 	private:
 		SharedPtr<ShaderBinary> m_binary;

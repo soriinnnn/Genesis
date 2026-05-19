@@ -52,12 +52,12 @@ Mesh::Mesh(const MeshDesc& desc): Resource(desc.resource)
 
 Mesh::~Mesh() {}
 
-VertexBuffer& Mesh::getVertexBuffer() noexcept
+const VertexBuffer& Mesh::getVertexBuffer() const noexcept
 {
     return *m_vertexBuffer;
 }
 
-IndexBuffer& Mesh::getIndexBuffer() noexcept
+const IndexBuffer& Mesh::getIndexBuffer() const noexcept
 {
     return *m_indexBuffer;
 }

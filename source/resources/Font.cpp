@@ -11,7 +11,7 @@ Font::Font(const FontDesc& desc): Resource(desc.resource)
 
 Font::~Font() {}
 
-FontAtlas& Font::getFontAtlas()
+const FontAtlas& Font::getFontAtlas() const
 {
 	return *m_font;
 }

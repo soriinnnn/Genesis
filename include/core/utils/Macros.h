@@ -2,8 +2,6 @@
 #define GENESIS_CORE_MACROS_H
 #include <cassert>
 
-#define GENESIS_INVALID_ENTITY -1
-
 #define GENESIS_ASSERT(condition, msg)\
 assert(condition && msg)
 

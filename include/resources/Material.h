@@ -31,9 +31,8 @@ namespace genesis
 		bool hasProperties() const noexcept;
 		const Vector<TextureBinding>& getTextures() const noexcept;
 		const Vector<SamplerBinding>& getSamplers() const noexcept;
-
-		GraphicsPipelineState& getGraphicsPipelineState() noexcept;
-		ConstantBuffer& getProperties();
+		const GraphicsPipelineState& getGraphicsPipelineState() const noexcept;
+		const ConstantBuffer& getProperties() const;
 	
 	private:
 		Vector<TextureBinding> m_textures;

@@ -17,11 +17,12 @@ namespace genesis
 		explicit Display(const DisplayDesc& desc);
 		~Display() override;
 
-		bool isBorderless() const noexcept;
-		Rect getWindowSize() const noexcept;
-		Rect getImageResolution() const noexcept;
 		Window& getWindow() noexcept;
 		SwapChain& getSwapChain() noexcept;
+
+		Rect getWindowSize() const noexcept;
+		Rect getImageResolution() const noexcept;
+		bool isBorderless() const noexcept;
 
 		void resizeWindow(uint32 width, uint32 height);
 		void toggleBorderless(uint32 width, uint32 height);

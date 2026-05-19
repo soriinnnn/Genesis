@@ -13,8 +13,8 @@ void Game::run()
     m_previousTime = steady_clock::now();
     m_isRunning = true;
 
-    if (m_mainCamera == GENESIS_INVALID_ENTITY) {
-        GENESIS_LOG_WARNING("Main camera is not set.");
+    if (!m_mainCamera) {
+        GENESIS_LOG_WARNING("The main camera has not been set.");
     }
 
     while (m_isRunning) {
@@ -23,11 +23,9 @@ void Game::run()
                 m_isRunning = false;
                 break;
             }
-
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-
         onInternalUpdate();
     }
 }

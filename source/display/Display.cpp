@@ -21,11 +21,6 @@ Display::Display(const DisplayDesc& desc): Base(desc.window.base), m_borderless{
 
 Display::~Display() {}
 
-bool Display::isBorderless() const noexcept
-{
-	return m_borderless;
-}
-
 Rect Display::getWindowSize() const noexcept
 {
 	return m_window->getSize();
@@ -34,6 +29,11 @@ Rect Display::getWindowSize() const noexcept
 Rect Display::getImageResolution() const noexcept
 {
 	return m_swapChain->getSize();
+}
+
+bool Display::isBorderless() const noexcept
+{
+	return m_borderless;
 }
 
 Window& Display::getWindow() noexcept

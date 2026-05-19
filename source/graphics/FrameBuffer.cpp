@@ -19,12 +19,12 @@ Rect FrameBuffer::getSize() const noexcept
 	return m_size;
 }
 
-RenderTargetTexture& FrameBuffer::getRenderTarget() noexcept
+const RenderTargetTexture& FrameBuffer::getRenderTarget() const noexcept
 {
 	return *m_renderTarget;
 }
 
-DepthStencilTexture& FrameBuffer::getDepthStencil() noexcept
+const DepthStencilTexture& FrameBuffer::getDepthStencil() const noexcept
 {
 	return *m_depthStencil;
 }

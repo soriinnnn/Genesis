@@ -1,11 +1,17 @@
 #include <ui/UIManager.h>
 #include <ui/elements/UIElement.h>
+#include <ui/elements/UICanvas.h>
 #include <graphics/GraphicsDevice.h>
 #include <algorithm>
 
 using namespace genesis;
+using namespace std;
 
-UIManager::UIManager(const UIManagerDesc& desc): Base(desc.base), m_pressedElement{nullptr}, m_isZDirty{false} {}
+UIManager::UIManager(const UIManagerDesc& desc): Base(desc.base), m_pressedElement{nullptr}, m_isZDirty{false} 
+{
+    m_canvas = make_unique<UICanvas>(UIElementDesc{m_logger});
+    m_canvas->setSize(desc.canvasSize);
+}
 
 UIManager::~UIManager() {}
 
@@ -40,6 +46,17 @@ void UIManager::destroyElement(const char* name)
         m_zOrdered.erase(newEnd, m_zOrdered.end());
         m_elements.erase(it);
     }
+}
+
+void UIManager::setCanvasSize(Rect size)
+{
+    if (size == m_canvas->getSize()) {
+        return;
+    }
+    m_canvas->setSize(size);
+    forEach([&](UIElement& element) {
+        element.updateRelativeLayout(size);
+    });
 }
 
 void UIManager::setZOrder(const char* name, int zOrder)

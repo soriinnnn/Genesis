@@ -9,11 +9,14 @@ namespace genesis
 
 		T* result = getElement<T>(name);
 		if (!result) {
-			UniquePtr<T> element = std::make_unique<T>(UIElementDesc{m_logger});
+			UniquePtr<T> element = std::make_unique<T>(UIElementDesc{m_logger, m_canvas.get()});
 			result = element.get();
 			auto [it, inserted] = m_elements.emplace(name, RootElement{std::move(element)});
 			m_zOrdered.push_back(&it->second);
 			m_isZDirty = true;
+		}
+		else {
+			GENESIS_LOG_WARNING("User interface element with name \"{}\" already exists. Returning existing element.", name);
 		}
 
 		return result;

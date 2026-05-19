@@ -77,17 +77,12 @@ bool PostProcess::isDirty() const noexcept
 	return m_isDirty;
 }
 
-void PostProcess::clearDirty() noexcept
-{
-	m_isDirty = false;
-}
-
-GraphicsPipelineState& PostProcess::getGraphicsPipelineState() noexcept
+const GraphicsPipelineState& PostProcess::getGraphicsPipelineState() const noexcept
 {
 	return *m_pipeline;
 }
 
-ConstantBuffer& PostProcess::getProperties()
+const ConstantBuffer& PostProcess::getProperties() const
 {
 	if (!hasProperties()) {
 		GENESIS_LOG_THROW_ERROR("Post processing effect \"{}\" has no properties buffer.", getPath());
@@ -95,9 +90,14 @@ ConstantBuffer& PostProcess::getProperties()
 	return *m_properties;
 }
 
-uint8* PostProcess::getData()
+const uint8* PostProcess::getData() const
 {
 	return m_data.data();
+}
+
+void PostProcess::clearDirty() noexcept
+{
+	m_isDirty = false;
 }
 
 void PostProcess::setProperty(const char* name, int value)

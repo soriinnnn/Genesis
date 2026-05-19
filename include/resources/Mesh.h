@@ -17,8 +17,8 @@ namespace genesis
 		explicit Mesh(const MeshDesc& desc);
 		~Mesh() override;
 
-		VertexBuffer& getVertexBuffer() noexcept;
-		IndexBuffer& getIndexBuffer() noexcept;
+		const VertexBuffer& getVertexBuffer() const noexcept;
+		const IndexBuffer& getIndexBuffer() const noexcept;
 
 	private:
 		SharedPtr<VertexBuffer> m_vertexBuffer;

@@ -14,7 +14,7 @@ Texture::Texture(const TextureDesc& desc): Resource(desc.resource)
 
 Texture::~Texture() {}
 
-ImageTexture& Texture::getImageTexture() noexcept
+const ImageTexture& Texture::getImageTexture() const noexcept
 {
 	return *m_texture;
 }

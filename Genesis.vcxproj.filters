@@ -228,6 +228,9 @@
     <ClCompile Include="source\physics\ContactListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\ui\elements\UICanvas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\core\Base.h">
@@ -476,7 +479,7 @@
     <ClInclude Include="source\physics\ContactListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="demo\src\Utils.h">
+    <ClInclude Include="source\ui\elements\UICanvas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -492,6 +495,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="source\ui\UIManager.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="source\resources\PostProcess.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

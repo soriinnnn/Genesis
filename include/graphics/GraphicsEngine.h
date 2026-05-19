@@ -25,6 +25,7 @@ namespace genesis
         ~GraphicsEngine() override;
 
         GraphicsContext getGraphicsContext() noexcept;
+
         Rect getRenderResolution() const noexcept;
         void setRenderResolution(uint32 width, uint32 height);
 

@@ -9,6 +9,7 @@
 #include <input/InputManager.h>
 #include <resources/ResourceManager.h>
 #include <entity/EntityManager.h>
+#include <entity/Entity.h>
 #include <ui/UIManager.h>
 #include <math/Rect.h>
 
@@ -36,11 +37,11 @@ namespace genesis
         virtual void onCreate();
         virtual void onUpdate(float deltaTime);
 
-        EntityId getMainCamera() const noexcept;
+        Entity* getMainCamera() const noexcept;
         Rect getRenderResolution() const noexcept;
         bool getVSync() const noexcept;
 
-        void setMainCamera(EntityId camera);
+        void setMainCamera(Entity* camera);
         void setRenderResolution(uint32 width, uint32 height);
         void setVSync(bool enabled);
 
@@ -64,7 +65,7 @@ namespace genesis
         UniquePtr<GraphicsEngine> m_graphicsEngine;
         Vector<SharedPtr<PostProcess>> m_effects;
         TimePoint m_previousTime;
-        EntityId m_mainCamera;
+        Entity* m_mainCamera;
         bool m_isRunning;
         bool m_vsync;
     };

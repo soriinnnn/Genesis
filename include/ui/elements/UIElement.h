@@ -9,18 +9,17 @@
 
 namespace genesis
 {
-	struct UIAnchor
-	{
-		enum class Horizontal {Left, Center, Right};
-		enum class Vertical {Top, Center, Bottom};
-
-		Horizontal horizontal = Horizontal::Left;
-		Vertical vertical = Vertical::Top;
-		Rect margin{};
-		float widthPercent = 0.0f;
-		float heightPercent = 0.0f;
-		float fixedWidth = 200.0f;
-		float fixedHeight = 100.0f;
+	enum class Anchor {
+		Absolute,
+		TopLeft,
+		TopCenter,
+		TopRight,
+		CenterLeft,
+		Center,
+		CenterRight,
+		BottomLeft,
+		BottomCenter,
+		BottomRight
 	};
 
 	struct UIElementDesc
@@ -45,15 +44,19 @@ namespace genesis
 		Vec4 getColor() const noexcept;
 		Rect getSize() const noexcept;
 		Rect getBounds() const noexcept;
+		Point getMargin() const noexcept;
+		Anchor getAnchor() const noexcept;
 		bool isVisible() const noexcept;
 		bool isEnabled() const noexcept;
 		bool isHovered() const noexcept;
 		bool isPressed() const noexcept;
 
-		void setPosition(const Point& position) noexcept;
-		void setScale(const Vec2& scale) noexcept;
-		void setColor(const Vec4& color) noexcept;
-		void setSize(const Rect& size) noexcept;
+		void setPosition(const Point& position);
+		void setScale(const Vec2& scale);
+		void setColor(const Vec4& color);
+		void setSize(const Rect& size);
+		void setMargin(const Point& margin);
+		void setAnchor(Anchor anchor);
 		void setVisible(bool visible);
 		void setEnabled(bool enabled);
 
@@ -77,12 +80,17 @@ namespace genesis
 		virtual void onMouseEnter();
 		virtual void onMouseOut();
 
+	private:
+		void updateRelativeLayout(const Rect& parentSize) noexcept;
+
 	protected:
 		UIElement* m_parent;
 		Point m_position;
+		Point m_margin;
 		Vec2 m_scale;
 		Vec4 m_color;
 		Rect m_size;
+		Anchor m_anchor;
 		bool m_visible;
 		bool m_enabled;
 		bool m_hovered;

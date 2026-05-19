@@ -18,10 +18,12 @@ namespace genesis
 
 		void update(float deltaTime);
 
+		bool hasEntity(EntityId id) const;
 		Entity* createEntity(const char* name = nullptr);
 		void destroyEntity(EntityId id);
 		Entity* getEntity(EntityId id);
-
+		
+		bool hasEntityByName(const char* name) const;
 		void destroyEntityByName(const char* name);
 		Entity* getEntityByName(const char* name);
 

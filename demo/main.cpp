@@ -1,8 +1,6 @@
 #include "src/Demo.h"
-#include "src/Utils.h"
 #include "src/components/PlayerControllerComponent.h"
 
-#include <entity/Entity.h>
 #include <entity/components/TransformComponent.h>
 #include <entity/components/MeshRendererComponent.h>
 #include <entity/components/CameraComponent.h>	
@@ -31,13 +29,13 @@ void createMenu(GameContext context)
 
 	UIPanel* menuPanel2 = context.ui.createElement<UIPanel>("menuPanel2");
 	menuPanel2->setSize({500, 600});
-	menuPanel2->setPosition(getCenteredPosition(*menuPanel2, windowSize));
+	menuPanel2->setAnchor(Anchor::Center);
 	menuPanel2->setColor({0.3f, 0.3f, 0.3f, 0.5f});
 
 	UILabel* title = context.ui.createElement<UILabel>("menuTitle");
 	title->setContent("Malo");
 	title->setFont(font);
-	title->setPosition(getCenteredPosition(*title, windowSize));
+	title->setAnchor(Anchor::Center);
 	title->setColor({0.0f, 0.0f, 0.0f, 1.0f});
 	title->setSize({60, 100});
 }

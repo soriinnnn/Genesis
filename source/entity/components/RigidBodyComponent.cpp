@@ -7,7 +7,9 @@ using namespace genesis;
 
 RigidBodyComponent::RigidBodyComponent(const ComponentDesc& desc): Component(desc) 
 {
-    m_entity.createComponent<TransformComponent>();
+    if (!m_entity.hasComponent<TransformComponent>()) {
+        m_entity.createComponent<TransformComponent>();
+    }
 }
 
 RigidBodyComponent::~RigidBodyComponent() {}
@@ -24,8 +26,8 @@ void RigidBodyComponent::setBody(const SharedPtr<RigidBody>& body)
         return;
     }
     if (m_body) {
-        m_body->setEntity(nullptr);
+        m_body->m_entity = nullptr;
     }
     m_body = body;
-    m_body->setEntity(&m_entity);
+    m_body->m_entity = &m_entity;
 }

@@ -10,8 +10,8 @@ namespace genesis
 		explicit MeshRendererComponent(const ComponentDesc& desc);
 		~MeshRendererComponent() override;
 
-		Mesh* getMesh();
-		Material* getMaterial();
+		const Mesh* getMesh() const;
+		const Material* getMaterial() const;
 
 		void setMesh(const SharedPtr<Mesh>& mesh);
 		void setMaterial(const SharedPtr<Material>& material);

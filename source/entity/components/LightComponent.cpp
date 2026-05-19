@@ -12,7 +12,9 @@ LightComponent::LightComponent(const ComponentDesc& desc):
 	m_radius{5.0f},
 	m_enabled{true}
 {
-	m_entity.createComponent<TransformComponent>();
+	if (!m_entity.hasComponent<TransformComponent>()) {
+		m_entity.createComponent<TransformComponent>();
+	}
 }
 
 LightComponent::~LightComponent() {}

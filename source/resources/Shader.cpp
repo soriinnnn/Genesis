@@ -32,12 +32,12 @@ ShaderType Shader::getType() const noexcept
 	return m_type;
 }
 
-ShaderBinary& Shader::getBinary() noexcept
+const ShaderBinary& Shader::getBinary() const noexcept
 {
 	return *m_binary;
 }
 
-ShaderSignature& Shader::getSignature() noexcept
+const ShaderSignature& Shader::getSignature() const noexcept
 {
 	return *m_signature;
 }

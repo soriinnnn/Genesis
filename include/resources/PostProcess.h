@@ -18,12 +18,11 @@ namespace genesis
 
 		bool hasProperties() const noexcept;
 		bool isDirty() const noexcept;
+		const GraphicsPipelineState& getGraphicsPipelineState() const noexcept;
+		const ConstantBuffer& getProperties() const;
+		const uint8* getData() const;
 
 		void clearDirty() noexcept;
-		GraphicsPipelineState& getGraphicsPipelineState() noexcept;
-		ConstantBuffer& getProperties();
-		uint8* getData();
-
 		void setProperty(const char* name, int value);
 		void setProperty(const char* name, float value);
 		void setProperty(const char* name, const Vec2& value);
@@ -32,20 +31,7 @@ namespace genesis
 
 	private:
 		template<typename T>
-		void setPropertyT(const char* name, const T& value) {
-			auto it = m_variables.find(name);
-			if (it == m_variables.end()) {
-				GENESIS_LOG_WARNING("Post processing effect \"{}\" has no property \"{}\".", getPath(), name);
-				return;
-			}
-			auto& variable = it->second;
-			if (sizeof(T) > variable.size) {
-				GENESIS_LOG_WARNING("Post processing effect \"{}\" property \"{}\" size mismatch.", getPath(), name);
-				return;
-			}
-			memcpy(m_data.data() + variable.offset, &value, sizeof(T));
-			m_isDirty = true;
-		}
+		void setPropertyT(const char* name, const T& value);
 
 	private:
 		SharedPtr<GraphicsPipelineState> m_pipeline;
@@ -56,4 +42,5 @@ namespace genesis
 	};
 }
 
+#include <resources/PostProcess.inl>
 #endif

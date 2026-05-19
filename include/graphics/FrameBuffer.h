@@ -20,8 +20,8 @@ namespace genesis
 		~FrameBuffer() override;
 
 		Rect getSize() const noexcept;
-		RenderTargetTexture& getRenderTarget() noexcept;
-		DepthStencilTexture& getDepthStencil() noexcept;
+		const RenderTargetTexture& getRenderTarget() const noexcept;
+		const DepthStencilTexture& getDepthStencil() const noexcept;
 
 		void setGraphicsDevice(GraphicsDevice& graphicsDevice);
 		void resize(uint32 width, uint32 height);

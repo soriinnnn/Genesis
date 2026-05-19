@@ -1,20 +1,27 @@
 #include <entity/components/MeshRendererComponent.h>
+#include <entity/components/TransformComponent.h>
 #include <graphics/resources/GraphicsPipelineState.h>
 #include <resources/Mesh.h>
+#include <entity/Entity.h>
 
 using namespace genesis;
 
-MeshRendererComponent::MeshRendererComponent(const ComponentDesc& desc): Component(desc) {}
+MeshRendererComponent::MeshRendererComponent(const ComponentDesc& desc): Component(desc) 
+{
+	if (!m_entity.hasComponent<TransformComponent>()) {
+		m_entity.createComponent<TransformComponent>();
+	}
+}
 
 MeshRendererComponent::~MeshRendererComponent() {}
 
-Mesh* MeshRendererComponent::getMesh()
+const Mesh* MeshRendererComponent::getMesh() const
 {
 	GENESIS_ASSERT(m_mesh.get() != nullptr, "Mesh is null.");
 	return m_mesh.get();
 }
 
-Material* MeshRendererComponent::getMaterial()
+const Material* MeshRendererComponent::getMaterial() const
 {
 	GENESIS_ASSERT(m_material.get() != nullptr, "Material is null.");
 	return m_material.get();

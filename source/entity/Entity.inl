@@ -8,7 +8,10 @@ namespace genesis
 	inline bool Entity::hasComponent() const
 	{
 		GENESIS_ASSERT((std::is_base_of<Component, T>::value), "T must derive from Component.");
-		return getComponent<T>() != nullptr;
+		TypeId id = typeid(T).hash_code();
+
+		auto it = m_components.find(id);
+		return it != m_components.end();
 	}
 
 	template<typename T>
@@ -21,10 +24,13 @@ namespace genesis
 		if (!result) {
 			UniquePtr<T> component = std::make_unique<T>(ComponentDesc{m_logger, *this});
 			result = component.get();
-
 			m_components.emplace(id, std::move(component));
 			m_manager.registerComponent(id, result);
 		}
+		else {
+			GENESIS_LOG_WARNING("Component of type \"{}\" already exists on entity \"{}\". Returning existing component.", typeid(T).name(), m_name.c_str());
+		}
+
 		return result;
 	}
 

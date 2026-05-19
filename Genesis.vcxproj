@@ -224,9 +224,9 @@
     <ClCompile Include="source\ui\elements\UIImage.cpp" />
     <ClCompile Include="source\ui\elements\UIButton.cpp" />
     <ClCompile Include="source\ui\elements\UIPanel.cpp" />
+    <ClCompile Include="source\ui\elements\UICanvas.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="demo\src\Utils.h" />
     <ClInclude Include="source\physics\ContactListener.h" />
     <ClInclude Include="source\physics\DebugRenderer.h" />
     <ClInclude Include="include\entity\components\RigidBodyComponent.h" />
@@ -309,11 +309,13 @@
     <ClInclude Include="include\ui\elements\UIImage.h" />
     <ClInclude Include="include\ui\elements\UIButton.h" />
     <ClInclude Include="include\ui\elements\UIPanel.h" />
+    <ClInclude Include="source\ui\elements\UICanvas.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="source\entity\Entity.inl" />
     <None Include="source\entity\EntityManager.inl" />
+    <None Include="source\resources\PostProcess.inl" />
     <None Include="source\resources\ResourceManager.inl" />
     <None Include="source\ui\UIManager.inl" />
   </ItemGroup>

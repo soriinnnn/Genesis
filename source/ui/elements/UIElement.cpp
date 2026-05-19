@@ -1,14 +1,20 @@
 #include <ui/elements/UIElement.h>
 #include <ui/UIManager.h>
+#include <cmath>
 
 using namespace genesis;
+using namespace std;
+
+static Point calculateRelativeCenter(const Rect& size, const Rect& parentSize);
 
 UIElement::UIElement(const UIElementDesc& desc): Base(desc.base), m_parent{desc.parent}
 {
 	m_position = Point{0, 0};
+	m_margin = Point{0, 0};
 	m_scale = Vec2{1.0f, 1.0f};
 	m_color = Vec4{1.0f, 1.0f, 1.0f, 1.0f};
 	m_size = Rect{0, 0};
+	m_anchor = Anchor::Absolute;
 	m_visible = true;
 	m_enabled = true;
 	m_hovered = false;
@@ -56,6 +62,11 @@ Point UIElement::getPosition() const noexcept
 	return m_position;
 }
 
+Point UIElement::getMargin() const noexcept
+{
+	return m_margin;
+}
+
 Vec2 UIElement::getScale() const noexcept
 {
 	return m_scale;
@@ -82,6 +93,11 @@ Rect UIElement::getBounds() const noexcept
 	};
 }
 
+Anchor UIElement::getAnchor() const noexcept
+{
+	return m_anchor;
+}
+
 bool UIElement::isVisible() const noexcept
 {
 	return m_visible;
@@ -102,16 +118,17 @@ bool UIElement::isPressed() const noexcept
 	return m_pressed;
 }
 
-void UIElement::setPosition(const Point& position) noexcept
+void UIElement::setPosition(const Point& position)
 {
 	if (m_position == position) {
 		return;
 	}
 	m_position = position;
+	m_anchor = Anchor::Absolute;
 	onPosition();
 }
 
-void UIElement::setScale(const Vec2& scale) noexcept
+void UIElement::setScale(const Vec2& scale)
 {
 	if (m_scale == scale) {
 		return;
@@ -120,22 +137,49 @@ void UIElement::setScale(const Vec2& scale) noexcept
 	onScale();
 }
 
-void UIElement::setColor(const Vec4& color) noexcept
+void UIElement::setColor(const Vec4& color)
 {
 	if (m_color == color) {
 		return;
 	}
 	m_color = color;
-	onScale();
+	onColor();
 }
 
-void UIElement::setSize(const Rect& size) noexcept
+void UIElement::setSize(const Rect& size)
 {
 	if (m_size == size) {
 		return;
 	}
 	m_size = size;
 	onSize();
+	if (m_parent) {
+		updateRelativeLayout(m_parent->getSize());
+	}
+}
+
+void UIElement::setMargin(const Point& margin)
+{
+	if (!m_parent) {
+		return;
+	}
+	if (m_margin == margin) {
+		return;
+	}
+	m_margin = margin;
+	updateRelativeLayout(m_parent->getSize());
+}
+
+void UIElement::setAnchor(Anchor anchor)
+{
+	if (!m_parent) {
+		return;
+	}
+	if (m_anchor == anchor) {
+		return;
+	}
+	m_anchor = anchor;
+	updateRelativeLayout(m_parent->getSize());
 }
 
 void UIElement::setVisible(bool visible)
@@ -234,4 +278,94 @@ void UIElement::setOnMouseEnterCallback(std::function<void()> callback) noexcept
 void UIElement::setOnMouseOutCallback(std::function<void()> callback) noexcept
 {
 	m_onMouseOut = callback;
+}
+
+void UIElement::updateRelativeLayout(const Rect& parentSize) noexcept
+{
+	if (m_anchor == Anchor::Absolute) {
+		return;
+	}
+
+	switch (m_anchor) {
+		case Anchor::TopLeft: {
+			m_position = Point{
+				m_margin.x,
+				m_margin.y
+			};
+			break;
+		}
+		case Anchor::TopCenter: {
+			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
+			m_position = Point{
+				relativeCenter.x + m_margin.x,
+				m_margin.y
+			};
+			break;
+		}
+		case Anchor::TopRight: {
+			m_position = Point{
+				parentSize.width() - m_size.width() - m_margin.x,
+				m_margin.y
+			};
+			break;
+		}
+		case Anchor::CenterLeft: {
+			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
+			m_position = Point{
+				m_margin.x,
+				relativeCenter.y + m_margin.y
+			};
+			break;
+		}
+		case Anchor::Center: {
+			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
+			m_position = Point{
+				relativeCenter.x + m_margin.x,
+				relativeCenter.y + m_margin.y
+			};
+			break;
+		}
+		case Anchor::CenterRight: {
+			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
+			m_position = Point{
+				parentSize.width() - m_size.width() - m_margin.x,
+				relativeCenter.y + m_margin.y
+			};
+			break;
+		}
+		case Anchor::BottomLeft: {
+			m_position = Point{
+				m_margin.x,
+				parentSize.height() - m_size.height() - m_margin.y
+			};
+			break;
+		}
+		case Anchor::BottomCenter: {
+			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
+			m_position = Point{
+				relativeCenter.x + m_margin.x,
+				parentSize.height() - m_size.height() - m_margin.y
+			};
+			break;
+		}
+		case Anchor::BottomRight: {
+			m_position = Point{
+				parentSize.width() - m_size.width() - m_margin.x,
+				parentSize.height() - m_size.height() - m_margin.y
+			};
+			break;
+		}
+	}
+
+	onPosition();
+}
+
+/* STATIC FUNCTION DEFINITIONS */
+
+Point calculateRelativeCenter(const Rect& size, const Rect& parentSize)
+{
+	return Point{
+		(parentSize.width() - size.width()) / 2,
+		(parentSize.height() - size.height()) / 2
+	};
 }

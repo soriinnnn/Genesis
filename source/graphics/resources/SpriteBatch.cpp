@@ -22,7 +22,7 @@ SpriteBatch::SpriteBatch(const SpriteBatchDesc& sdesc, const GraphicsResourceDes
 
 SpriteBatch::~SpriteBatch() {}
 
-void SpriteBatch::begin(SamplerState* samplerState)
+void SpriteBatch::begin(const SamplerState* samplerState)
 {
 	ID3D11SamplerState* dxSamplerState = samplerState ? samplerState->m_samplerState.Get() : nullptr;
 
@@ -37,7 +37,7 @@ void SpriteBatch::begin(SamplerState* samplerState)
 	);
 }
 
-void SpriteBatch::drawText(FontAtlas& font, const wchar_t* text, Point pos, Vec2 scale, Vec4 color)
+void SpriteBatch::drawText(const FontAtlas& font, const wchar_t* text, const Point& pos, const Vec2& scale, const Vec4& color)
 {
 	DirectX::XMFLOAT2 dxPosition = DirectX::XMFLOAT2(static_cast<float>(pos.x), static_cast<float>(pos.y));
 	DirectX::XMFLOAT2 dxScale = DirectX::XMFLOAT2(scale.toArray());
@@ -56,7 +56,7 @@ void SpriteBatch::drawText(FontAtlas& font, const wchar_t* text, Point pos, Vec2
 	);
 }
 
-void SpriteBatch::drawImage(ImageTexture& image, Rect sourceRect, Point pos, Vec2 scale, Vec4 color)
+void SpriteBatch::drawImage(const ImageTexture& image, const Rect& sourceRect, const Point& pos, const Vec2& scale, const Vec4& color)
 {
 	ID3D11ShaderResourceView* resourceView = image.m_resourceView.Get();
 	RECT dxSourceRect = RECT{static_cast<LONG>(sourceRect.left), static_cast<LONG>(sourceRect.top), static_cast<LONG>(sourceRect.right), static_cast<LONG>(sourceRect.bottom)};
@@ -77,7 +77,7 @@ void SpriteBatch::drawImage(ImageTexture& image, Rect sourceRect, Point pos, Vec
 	);
 }
 
-void SpriteBatch::drawSolid(Rect size, Point pos, Vec2 scale, Vec4 color)
+void SpriteBatch::drawSolid(const Rect& size, const Point& pos, const Vec2& scale, const Vec4& color)
 {
 	ID3D11ShaderResourceView* resourceView = m_whiteTexture->m_resourceView.Get();
 	DirectX::XMFLOAT2 dxPosition = DirectX::XMFLOAT2(static_cast<float>(pos.x), static_cast<float>(pos.y));

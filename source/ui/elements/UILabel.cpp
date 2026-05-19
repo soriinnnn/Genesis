@@ -9,10 +9,10 @@ using namespace std;
 
 static float getCharAdvance(const FontAtlas::Glyph& glyph);
 static float getCharWidth(const FontAtlas::Glyph& glyph);
-static void flushWord(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, FontAtlas& atlas, float maxWidth);
-static void handleLineBreak(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, FontAtlas& atlas, float maxWidth);
-static void handleWhiteSpace(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, FontAtlas& atlas, float maxWidth);
-static void handleWordOverflow(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, FontAtlas& atlas, float maxWidth);
+static void flushWord(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, const FontAtlas& atlas, float maxWidth);
+static void handleLineBreak(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, const FontAtlas& atlas, float maxWidth);
+static void handleWhiteSpace(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, const FontAtlas& atlas, float maxWidth);
+static void handleWordOverflow(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, const FontAtlas& atlas, float maxWidth);
 
 UILabel::UILabel(const UIElementDesc& desc): UIElement(desc) {}
 
@@ -48,7 +48,7 @@ void UILabel::adjustContent()
 	float lineWidth = 0.0f;
 	float wordWidth = 0.0f;
 	bool lineStart = true;
-	FontAtlas& atlas = m_font->getFontAtlas();
+	const FontAtlas& atlas = m_font->getFontAtlas();
 	float maxWidth = static_cast<float>(m_size.width());
 
 	for (int i = 0; i < m_content.size(); i++) {
@@ -110,7 +110,7 @@ float getCharWidth(const FontAtlas::Glyph& glyph)
  * - Permet el desbordament d’un sol caràcter quan aquest excedeix l’amplada màxima.
  * 
  */
-void flushWord(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, FontAtlas& atlas, float maxWidth)
+void flushWord(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, const FontAtlas& atlas, float maxWidth)
 {
 	if (currentWord.empty()) {
 		return;
@@ -146,7 +146,7 @@ void flushWord(WString& result, WString& currentWord, float& lineWidth, float& w
 	wordWidth = 0.0f;
 }
 
-void handleLineBreak(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, FontAtlas& atlas, float maxWidth)
+void handleLineBreak(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, const FontAtlas& atlas, float maxWidth)
 {
 	flushWord(result, currentWord, lineWidth, wordWidth, lineStart, atlas, maxWidth);
 	result += L'\n';
@@ -154,7 +154,7 @@ void handleLineBreak(WString& result, WString& currentWord, float& lineWidth, fl
 	lineStart = true;
 }
 
-void handleWhiteSpace(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, FontAtlas& atlas, float maxWidth)
+void handleWhiteSpace(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, const FontAtlas& atlas, float maxWidth)
 {
 	flushWord(result, currentWord, lineWidth, wordWidth, lineStart, atlas, maxWidth);
 
@@ -176,7 +176,7 @@ void handleWhiteSpace(WString& result, WString& currentWord, float& lineWidth, f
 /* 
  * Permet desbordament de caràcters quan un sol caràcter és més gran que la mida de l'element.
  */
-void handleWordOverflow(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, FontAtlas& atlas, float maxWidth)
+void handleWordOverflow(WString& result, WString& currentWord, float& lineWidth, float& wordWidth, bool& lineStart, const FontAtlas& atlas, float maxWidth)
 {
 	for (wchar_t wc : currentWord) {
 		FontAtlas::Glyph glyph = atlas.getGlyph(wc);

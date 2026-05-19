@@ -11,7 +11,6 @@ namespace genesis
 		~UIButton() override;
 		
 		UILabel* getLabel() noexcept;
-		void centerLabel() noexcept;
 
 	private:
 		void onRender(SpriteBatch& batch) override;

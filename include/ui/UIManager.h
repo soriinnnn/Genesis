@@ -11,6 +11,7 @@ namespace genesis
 	struct UIManagerDesc
 	{
 		BaseDesc base;
+		Rect canvasSize;
 	};
 
 	class UIManager final: public Base, public InputListener
@@ -21,6 +22,9 @@ namespace genesis
 
 		void update(float deltaTime);
 
+		void setCanvasSize(Rect size);
+		void setZOrder(const char* name, int zOrder);
+
 		template<typename T>
 		T* createElement(const char* name);
 
@@ -28,8 +32,7 @@ namespace genesis
 		T* getElement(const char* name);
 
 		void destroyElement(const char* name);
-		void setZOrder(const char* name, int zOrder);
-
+		
 		template<typename F>
 		void forEach(F&& callback) const;
 		
@@ -51,6 +54,7 @@ namespace genesis
 		};
 
 	private:
+		UniquePtr<UIElement> m_canvas;
 		HashMap<String, RootElement> m_elements;
 		UIElement* m_pressedElement;
 		Vector<RootElement*> m_zOrdered;

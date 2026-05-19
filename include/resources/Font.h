@@ -15,7 +15,7 @@ namespace genesis
 		explicit Font(const FontDesc& desc);
 		~Font() override;
 
-		FontAtlas& getFontAtlas();
+		const FontAtlas& getFontAtlas() const;
 
 	private:
 		SharedPtr<FontAtlas> m_font;

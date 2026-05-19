@@ -17,11 +17,11 @@ Game::Game(const GameDesc& desc)
     m_display = make_unique<Display>(DisplayDesc{*m_logger, desc.windowSize, desc.windowTitle, WindowStyle::Windowed, m_graphicsEngine->getGraphicsContext()});
     m_inputManager = InputManager::create({*m_logger, m_display->getWindow()});
     m_entityManager = make_unique<EntityManager>(EntityManagerDesc{*m_logger});
-    m_uiManager = make_unique<UIManager>(UIManagerDesc{*m_logger});
+    m_uiManager = make_unique<UIManager>(UIManagerDesc{*m_logger, m_display->getWindowSize()});
     m_physicsEngine = make_unique<PhysicsEngine>(PhysicsEngineDesc{*m_logger, m_graphicsEngine->getGraphicsContext()});
     m_isRunning = false;
     m_vsync = false;
-    m_mainCamera = GENESIS_INVALID_ENTITY;
+    m_mainCamera = nullptr;
     m_inputManager->addListener(m_uiManager.get());
     GENESIS_LOG_INFO("Game initialized.");
 }
@@ -52,18 +52,15 @@ void Game::onInternalUpdate()
     m_physicsEngine->update(*m_entityManager, deltaTime);
 
     m_graphicsEngine->clear();
-
-    Entity* camera = m_entityManager->getEntity(m_mainCamera);
-    if (camera) {
-        m_graphicsEngine->render(*m_entityManager, *camera, deltaTime);
+    if (m_mainCamera) {
+        m_graphicsEngine->render(*m_entityManager, *m_mainCamera, deltaTime);
 #ifdef _DEBUG
-        m_graphicsEngine->render(m_physicsEngine->getDebugRenderer(), *camera);
+        m_graphicsEngine->render(m_physicsEngine->getDebugRenderer(), *m_mainCamera);
 #endif
         for (auto& effect : m_effects) {
             m_graphicsEngine->postProcess(*effect);
         }
     }
-
     m_graphicsEngine->render(*m_uiManager);
     m_graphicsEngine->present(m_display->getSwapChain(), m_vsync);
 }
@@ -80,7 +77,7 @@ void Game::onCreate() {}
 
 void Game::onUpdate(float deltaTime) {}
 
-EntityId Game::getMainCamera() const noexcept
+Entity* Game::getMainCamera() const noexcept
 {
     return m_mainCamera;
 }
@@ -95,15 +92,19 @@ bool Game::getVSync() const noexcept
     return m_vsync;
 }
 
-void Game::setMainCamera(EntityId camera)
+void Game::setMainCamera(Entity* camera)
 {
-    Entity* entity = m_entityManager->getEntity(camera);
-    if (!entity) {
-        GENESIS_LOG_WARNING("Trying to set main camera with nonexistent entity ID.");
+    if (!camera) {
+        GENESIS_LOG_WARNING("Failed to set main camera: Entity is null.");
         return;
     }
-    if (!entity->getComponent<CameraComponent>()) {
-        GENESIS_LOG_WARNING("Entity has no camera component.");
+    if (!m_entityManager->hasEntity(camera->getId())) {
+        GENESIS_LOG_WARNING("Failed to set main camera: Entity does not exist.", camera->getId());
+        return;
+    }
+    if (!camera->getComponent<CameraComponent>()) {
+        GENESIS_LOG_WARNING("Failed to set main camera: Entity is missing a CameraComponent.");
+        return;
     }
     m_mainCamera = camera;
 }

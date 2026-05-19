@@ -21,10 +21,10 @@ namespace genesis
 		SpriteBatch(const SpriteBatchDesc& sdesc, const GraphicsResourceDesc& gdesc);
 		~SpriteBatch() override;
 
-		void begin(SamplerState* samplerState = nullptr);
-		void drawText(FontAtlas& font, const wchar_t* text, Point pos, Vec2 scale, Vec4 color);
-		void drawImage(ImageTexture& image, Rect sourceRect, Point pos, Vec2 scale, Vec4 color);
-		void drawSolid(Rect size, Point pos, Vec2 scale, Vec4 color);
+		void begin(const SamplerState* samplerState = nullptr);
+		void drawText(const FontAtlas& font, const wchar_t* text, const Point& pos, const Vec2& scale, const Vec4& color);
+		void drawImage(const ImageTexture& image, const Rect& sourceRect, const Point& pos, const Vec2& scale, const Vec4& color);
+		void drawSolid(const Rect& size, const Point& pos, const Vec2& scale, const Vec4& color);
 		void end();
 
 	private:

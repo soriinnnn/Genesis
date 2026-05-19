@@ -204,7 +204,7 @@ void GraphicsEngine::renderEntities(EntityManager& entities)
         m_deviceContext->updateConstantBuffer(*m_objectBuffer, &objectData);
         m_deviceContext->setConstantBuffer(*m_objectBuffer, OBJECT_CONSTANT_BUFFER_SLOT);
 
-        Material* material = meshComponent.getMaterial();
+        const Material* material = meshComponent.getMaterial();
         if (material->hasProperties()) {
             m_deviceContext->setConstantBuffer(material->getProperties(), MATERIAL_CONSTANT_BUFFER_SLOT);
         }
@@ -216,7 +216,7 @@ void GraphicsEngine::renderEntities(EntityManager& entities)
         }
         m_deviceContext->setGraphicsPipelineState(material->getGraphicsPipelineState());
 
-        Mesh* mesh = meshComponent.getMesh();
+        const Mesh* mesh = meshComponent.getMesh();
         m_deviceContext->setVertexBuffer(mesh->getVertexBuffer());
         m_deviceContext->setIndexBuffer(mesh->getIndexBuffer());
         m_deviceContext->drawIndexed(mesh->getIndexBuffer().getIndexCount());

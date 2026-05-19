@@ -48,7 +48,6 @@ namespace genesis
 		Vec3 getAngularVelocity() const;
 		bool isActive() const;
 
-		void setEntity(Entity* entity);
 		void setPosition(const Vec3& position);
 		void setRotation(const Vec3& rotation);
 		void setLinearVelocity(const Vec3& velocity);
@@ -79,6 +78,7 @@ namespace genesis
 		std::function<void(const ContactRemovedData&)> m_onContactRemoved;
 
 		friend class ContactListener;
+		friend class RigidBodyComponent;
 	};
 }
 

@@ -35,16 +35,28 @@ void EntityManager::update(float deltaTime)
 	}
 }
 
+bool EntityManager::hasEntity(EntityId id) const
+{
+	return m_entities.contains(id) || m_pendingEntities.contains(id);
+}
+
 Entity* EntityManager::createEntity(const char* name)
 {
-	EntityId id = getAvailableEntityId();
-	UniquePtr<Entity> entity = make_unique<Entity>(EntityDesc{m_logger, id, name, *this});
-	Entity* result = entity.get();
+	Entity* result = getEntityByName(name);
 
-	m_pendingEntities.emplace(id, move(entity));
-	m_events.push_back({EventType::Create, id});
-	if (name) {
-		m_nameToId.emplace(name, id);
+	if (!result) {
+		EntityId id = getAvailableEntityId();
+		UniquePtr<Entity> entity = make_unique<Entity>(EntityDesc{m_logger, id, name, *this});
+		result = entity.get();
+
+		m_pendingEntities.emplace(id, move(entity));
+		m_events.push_back({EventType::Create, id});
+		if (name) {
+			m_nameToId.emplace(name, id);
+		}
+	}
+	else {
+		GENESIS_LOG_WARNING("Entity with name \"{}\" already exists. Returning existing entity.", name);
 	}
 
 	return result;
@@ -76,8 +88,20 @@ Entity* EntityManager::getEntity(EntityId id)
 	return nullptr;
 }
 
+bool EntityManager::hasEntityByName(const char* name) const
+{
+	if (!name) {
+		return false;
+	}
+	return m_nameToId.contains(name);
+}
+
 void EntityManager::destroyEntityByName(const char* name)
 {
+	if (!name) {
+		return;
+	}
+
 	auto it = m_nameToId.find(name);
 	if (it == m_nameToId.end()) {
 		GENESIS_LOG_WARNING("Trying to destroy nonexistent entity.");
@@ -89,6 +113,10 @@ void EntityManager::destroyEntityByName(const char* name)
 
 Entity* EntityManager::getEntityByName(const char* name)
 {
+	if (!name) {
+		return nullptr;
+	}
+
 	auto id = m_nameToId.find(name);
 	if (id == m_nameToId.end()) {
 		return nullptr;

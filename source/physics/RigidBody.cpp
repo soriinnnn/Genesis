@@ -47,11 +47,6 @@ bool RigidBody::isActive() const
 	return m_bodyInterface.IsActive(m_body);
 }
 
-void RigidBody::setEntity(Entity* entity)
-{
-	m_entity = entity;
-}
-
 void RigidBody::setPosition(const Vec3& position)
 {
 	m_bodyInterface.SetPosition(m_body, JPH::Vec3(position.x, position.y, position.z), JPH::EActivation::DontActivate);
