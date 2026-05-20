@@ -65,12 +65,12 @@ bool Window::hasFocus() const noexcept
 
 void Window::onResize(function<void(Rect)> callback)
 {
-	m_onResize = callback;
+	m_onResize = move(callback);
 }
 
-void Window::onFocusChanged(std::function<void(bool)> callback)
+void Window::onFocusChanged(function<void(bool)> callback)
 {
-	m_onFocusChanged = callback;
+	m_onFocusChanged = move(callback);
 }
 
 UniquePtr<Window> Window::create(const WindowDesc& desc)

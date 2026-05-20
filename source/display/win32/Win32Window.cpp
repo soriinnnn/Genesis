@@ -13,14 +13,14 @@ static WNDCLASSEX getWindowClass(HINSTANCE instance, LPCTSTR className, WNDPROC 
 static RECT createWindowRect(UINT width, UINT height, DWORD style);
 static DWORD getWindowStyle(WindowStyle style);
 
-Win32Window::Win32Window(const WindowDesc& desc): Window(desc), m_instance{GetModuleHandle(nullptr)}
+Win32Window::Win32Window(const WindowDesc& desc): Window(desc), m_instance{GetModuleHandle(nullptr)}, m_cursor{LoadCursor(nullptr, IDC_ARROW)}
 {
     WNDCLASSEX wndClass;
     if (GetClassInfoEx(m_instance, WINDOW_CLASS_NAME, &wndClass)) {
         return;
     }
 
-    wndClass = getWindowClass(m_instance, WINDOW_CLASS_NAME, wndProc);
+    wndClass = getWindowClass(m_instance, WINDOW_CLASS_NAME, windowProc);
     if (!RegisterClassEx(&wndClass)) {
         GENESIS_LOG_THROW_ERROR("RegisterClassEx failed.\nError code: 0x{:08X}", GetLastError());
     }
@@ -189,65 +189,136 @@ void Win32Window::center()
     });
 }
 
-LRESULT CALLBACK Win32Window::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK Win32Window::windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     switch (msg) {
         case WM_CREATE: 
-        {
-            CREATESTRUCT* cs = reinterpret_cast<CREATESTRUCT*>(lparam);
-            Win32Window* wnd = static_cast<Win32Window*>(cs->lpCreateParams);
-            SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(wnd));
-            break;
-        }
-        case WM_DESTROY: 
-        {
-            PostQuitMessage(0);
-            break;
-        }
+            return onCreate(hwnd, msg, wparam, lparam);
+        case WM_DESTROY:
+            return onDestroy(hwnd, msg, wparam, lparam);
         case WM_CLOSE: 
-        {
-            PostQuitMessage(0);
-            break;
-        }
-        case WM_SIZE: 
-        {
-            Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-            UINT width = LOWORD(lparam);
-            UINT height = HIWORD(lparam);
-
-            wnd->m_size = Rect{static_cast<int32>(width), static_cast<int32>(height)};
-            if (wnd->m_onResize) {
-                wnd->m_onResize(wnd->m_size);
-            }
-            break;
-        }
-        case WM_ACTIVATE: 
-        {
-            Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-            WORD state = LOWORD(wparam);
-            bool isFocused = (state != WA_INACTIVE);
-
-            wnd->m_hasFocus = isFocused;
-            if (wnd->m_onFocusChanged) {
-                wnd->m_onFocusChanged(isFocused);
-            }
-            break;
-        }
-        case WM_SETCURSOR: 
-        {
-            WORD hitTest = LOWORD(lparam);
-            if (hitTest == HTCLIENT) {
-                SetCursor(LoadCursor(nullptr, IDC_ARROW));
-                return TRUE;
-            }
-            return DefWindowProc(hwnd, msg, wparam, lparam);
-        }
+            return onClose(hwnd, msg, wparam, lparam);
+        case WM_SIZE:
+            return onSize(hwnd, msg, wparam, lparam);  
+        case WM_SHOWWINDOW:
+            return onShowWindow(hwnd, msg, wparam, lparam);
+        case WM_ACTIVATE:
+            return onActivate(hwnd, msg, wparam, lparam);
+        case WM_SETCURSOR:
+            return onSetCursor(hwnd, msg, wparam, lparam);
         default: 
-        {
             return DefWindowProc(hwnd, msg, wparam, lparam);
+    }
+}
+
+LRESULT Win32Window::onCreate(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    CREATESTRUCT* cs = reinterpret_cast<CREATESTRUCT*>(lparam);
+    Win32Window* wnd = static_cast<Win32Window*>(cs->lpCreateParams);
+    SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(wnd));
+    return 0;
+}
+
+LRESULT Win32Window::onDestroy(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    PostQuitMessage(0);
+    return 0;
+}
+
+LRESULT Win32Window::onClose(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    wnd->close();
+    return 0;
+}
+
+LRESULT Win32Window::onSize(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    UINT width = LOWORD(lparam);
+    UINT height = HIWORD(lparam);
+
+    switch (wparam) {
+        case SIZE_RESTORED: {
+            wnd->m_isVisible = true;
+            break;
+        }
+        case SIZE_MINIMIZED: {
+            wnd->m_isVisible = false;
+            break;
+        }
+        case SIZE_MAXIMIZED: {
+            wnd->m_isVisible = true;
+            break;
+        }/*
+        case SIZE_MAXHIDE: {
+            break;
+        }
+        case SIZE_MAXSHOW: {
+            break;
+        }*/
+    }
+
+    if (wparam != SIZE_MINIMIZED) {
+        wnd->m_size = Rect{static_cast<int32>(width), static_cast<int32>(height)};
+        if (wnd->m_onResize) {
+            wnd->m_onResize(wnd->m_size);
         }
     }
+    
     return 0;
+}
+
+LRESULT Win32Window::onShowWindow(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    bool visible = (wparam == TRUE);
+    
+   /*switch (lparam) {
+        case SW_PARENTCLOSING: {
+            break;
+        }
+        case SW_PARENTOPENING: {
+            break;
+        }
+        case SW_OTHERZOOM: {
+            break;
+        }
+        case SW_OTHERUNZOOM: {
+            break;
+        }
+    }*/
+
+    wnd->m_isVisible = visible;
+
+    return 0;
+}
+
+LRESULT Win32Window::onActivate(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    WORD state = LOWORD(wparam);
+    bool hasFocus = (state != WA_INACTIVE);
+
+    wnd->m_hasFocus = hasFocus;
+    if (wnd->m_onFocusChanged) {
+        wnd->m_onFocusChanged(hasFocus);
+    }
+
+    return 0;
+}
+
+LRESULT Win32Window::onSetCursor(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    WORD hitTest = LOWORD(lparam);
+
+    if (hitTest == HTCLIENT) {
+        SetCursor(wnd->m_cursor);
+        return TRUE;
+    }
+
+    return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
 /* STATIC FUNCTION DEFINITIONS */

@@ -342,24 +342,24 @@ void UIElement::onMouseOut()
 	}
 }
 
-void UIElement::setOnMouseDownCallback(std::function<void(MouseButton)> callback) noexcept
+void UIElement::setOnMouseDownCallback(function<void(MouseButton)> callback) noexcept
 {
-	m_onMouseDown = callback;
+	m_onMouseDown = move(callback);
 }
 
-void UIElement::setOnMouseUpCallback(std::function<void(MouseButton)> callback) noexcept
+void UIElement::setOnMouseUpCallback(function<void(MouseButton)> callback) noexcept
 {
-	m_onMouseUp = callback;
+	m_onMouseUp = move(callback);
 }
 
-void UIElement::setOnMouseEnterCallback(std::function<void()> callback) noexcept
+void UIElement::setOnMouseEnterCallback(function<void()> callback) noexcept
 {
-	m_onMouseEnter = callback;
+	m_onMouseEnter = move(callback);
 }
 
-void UIElement::setOnMouseOutCallback(std::function<void()> callback) noexcept
+void UIElement::setOnMouseOutCallback(function<void()> callback) noexcept
 {
-	m_onMouseOut = callback;
+	m_onMouseOut = move(callback);
 }
 
 /* STATIC FUNCTION DEFINITIONS */

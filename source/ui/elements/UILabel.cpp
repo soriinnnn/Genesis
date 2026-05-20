@@ -21,23 +21,23 @@ UILabel::~UILabel() {}
 void UILabel::setContent(const char* content)
 {
 	m_content = WString{content, content + strlen(content)};
-	adjustContent();
+	adjustContent(m_size);
 }
 
 void UILabel::setFont(const SharedPtr<Font>& font)
 {
 	m_font = font;
-	adjustContent();
+	adjustContent(m_size);
 }
 
-void UILabel::adjustContent()
+void UILabel::adjustContent(const Rect& size)
 {
 	if (!m_font) {
 		return;
 	}
 
 	Rect contentSize = m_font->getFontAtlas().getSize(m_content.c_str());
-	if (m_size.width() >= contentSize.width()) {
+	if (size.width() >= contentSize.width()) {
 		m_adjustedContent = m_content;
 		return;
 	}
@@ -48,7 +48,7 @@ void UILabel::adjustContent()
 	float wordWidth = 0.0f;
 	bool lineStart = true;
 	const FontAtlas& atlas = m_font->getFontAtlas();
-	float maxWidth = static_cast<float>(m_size.width());
+	float maxWidth = static_cast<float>(size.width());
 
 	for (int i = 0; i < m_content.size(); i++) {
 		wchar_t wc = m_content[i];
@@ -83,7 +83,7 @@ void UILabel::onRender(SpriteBatch& batch)
 
 void UILabel::onSize()
 {
-	adjustContent();
+	adjustContent(m_size);
 }
 
 /* STATIC FUNCTION DEFINITIONS */

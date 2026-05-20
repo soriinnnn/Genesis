@@ -15,7 +15,7 @@ namespace genesis
 		void setFont(const SharedPtr<Font>& font);
 
 	private:
-		void adjustContent();
+		void adjustContent(const Rect& size);
 
 		void onRender(SpriteBatch& batch) override;
 		void onSize() override;

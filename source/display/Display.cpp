@@ -59,7 +59,7 @@ Rect Display::getResolution() const noexcept
 void Display::setSize(const Rect& size)
 {
 	if (isBorderless()) {
-		GENESIS_LOG_WARNING("");
+		GENESIS_LOG_WARNING("Cannot change window size while in borderless mode.");
 		return;
 	}
 	m_window.setSize(size);

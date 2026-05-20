@@ -42,7 +42,6 @@ namespace genesis
 
         void setMainCamera(Entity* camera);
         void setRenderResolution(const Rect& resolution);
-
         void addEffect(SharedPtr<PostProcess> effect);
         void clearEffects();
 

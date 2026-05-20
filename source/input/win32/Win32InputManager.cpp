@@ -1,6 +1,11 @@
 #include <input/win32/Win32InputManager.h>
 #include <windows.h>
 
+#define IGNORE_INVALID_CODE(code) \
+if (code == 0) {\
+    return false;\
+}
+
 using namespace genesis;
 
 static Key mapWin32ToGenesisKey(int vkCode);
@@ -38,80 +43,56 @@ void Win32InputManager::update()
 bool Win32InputManager::isKeyDown(Key key) const noexcept
 {
     int vkCode = mapGenesisKeyToWin32(key);
-    if (vkCode == 0) {
-        return false;
-    }
-
+    IGNORE_INVALID_CODE(vkCode);
     return m_currentKeys[vkCode] & 0x80;
 }
 
 bool Win32InputManager::isKeyUp(Key key) const noexcept
 {
     int vkCode = mapGenesisKeyToWin32(key);
-    if (vkCode == 0) {
-        return false;
-    }
-
+    IGNORE_INVALID_CODE(vkCode);
     return !(m_currentKeys[vkCode] & 0x80);
 }
 
 bool Win32InputManager::isKeyPressed(Key key) const noexcept
 {
     int vkCode = mapGenesisKeyToWin32(key);
-    if (vkCode == 0) {
-        return false;
-    }
-
+    IGNORE_INVALID_CODE(vkCode);
     return (m_currentKeys[vkCode] & 0x80) && !(m_previousKeys[vkCode] & 0x80);
 }
 
 bool Win32InputManager::isKeyReleased(Key key) const noexcept
 {
     int vkCode = mapGenesisKeyToWin32(key);
-    if (vkCode == 0) {
-        return false;
-    }
-
+    IGNORE_INVALID_CODE(vkCode);
     return !(m_currentKeys[vkCode] & 0x80) && (m_previousKeys[vkCode] & 0x80);
 }
 
 bool Win32InputManager::isMouseDown(MouseButton button) const noexcept
 {
     int vkCode = mapGenesisMouseToWin32(button);
-    if (vkCode == 0) {
-        return false;
-    }
-
+    IGNORE_INVALID_CODE(vkCode);
     return m_currentKeys[vkCode] & 0x80;
 }
 
 bool Win32InputManager::isMouseUp(MouseButton button) const noexcept
 {
     int vkCode = mapGenesisMouseToWin32(button);
-    if (vkCode == 0) {
-        return false;
-    }
-
+    IGNORE_INVALID_CODE(vkCode);
     return !(m_currentKeys[vkCode] & 0x80);
 }
 
 bool Win32InputManager::isMousePressed(MouseButton button) const noexcept
 {
     int vkCode = mapGenesisMouseToWin32(button);
-    if (vkCode == 0) {
-        return false;
-    }
-
+    IGNORE_INVALID_CODE(vkCode);
     return (m_currentKeys[vkCode] & 0x80) && !(m_previousKeys[vkCode] & 0x80);
 }
 
 bool Win32InputManager::isMouseReleased(MouseButton button) const noexcept
 {
     int vkCode = mapGenesisMouseToWin32(button);
-    if (vkCode == 0) {
-        return false;
-    }
-
+    IGNORE_INVALID_CODE(vkCode);
     return !(m_currentKeys[vkCode] & 0x80) && (m_previousKeys[vkCode] & 0x80);
 }
 

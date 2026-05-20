@@ -25,10 +25,19 @@ namespace genesis
 		void center() override;
 
 	private:
-		static LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+		static LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
+		static LRESULT onCreate(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+		static LRESULT onDestroy(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+		static LRESULT onClose(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+		static LRESULT onSize(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+		static LRESULT onShowWindow(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+		static LRESULT onActivate(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+		static LRESULT onSetCursor(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 	private:
 		HINSTANCE m_instance;
+		HCURSOR m_cursor;
 	};
 }
 
