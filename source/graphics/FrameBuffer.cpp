@@ -35,12 +35,15 @@ void FrameBuffer::setGraphicsDevice(GraphicsDevice& graphicsDevice)
 	updateTextures();
 }
 
-void FrameBuffer::resize(uint32 width, uint32 height)
+void FrameBuffer::setSize(const Rect& size)
 {
-	if (width == 0 || height == 0) {
+	if (size.width() <= 0 || size.height() <= 0) {
 		return;
 	}
-	m_size = Rect{static_cast<int32>(width), static_cast<int32>(height)};
+	if (m_size == size) {
+		return;
+	}
+	m_size = size;
 	updateTextures();
 }
 

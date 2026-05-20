@@ -24,7 +24,6 @@ SwapChain::SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gde
 		"CreateSwapChain failed."
 	);
 	updateRenderTargetView();
-
 	m_depthStencil = m_graphicsDevice->createDepthStencilTexture({m_size});
 }
 
@@ -35,31 +34,29 @@ Rect SwapChain::getSize() const noexcept
 	return m_size;
 }
 
-void SwapChain::resize(uint32 width, uint32 height)
+void SwapChain::setSize(const Rect& size)
 {
-	if (width == 0 || height == 0) {
+	if (size.width() == 0 || size.height() == 0) {
 		return;
 	}
-	if (m_size.width() == static_cast<int32>(width) && m_size.height() == static_cast<int32>(height)) {
+	if (m_size == size) {
 		return;
 	}
-	m_size = Rect{static_cast<int32>(width), static_cast<int32>(height)};
+	m_size = size;
 
 	m_renderTarget.Reset();
 	m_depthStencil.reset();
-
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_swapChain->ResizeBuffers(
 			0, 
-			width, 
-			height, 
+			static_cast<uint32>(size.width()),
+			static_cast<uint32>(size.height()),
 			DXGI_FORMAT_UNKNOWN, 
 			DXGI_SWAP_CHAIN_FLAGS
 		),
 		"ResizeBuffers failed."
 	);
 	updateRenderTargetView();
-
 	m_depthStencil = m_graphicsDevice->createDepthStencilTexture({m_size});
 }
 
@@ -95,6 +92,7 @@ void SwapChain::updateRenderTargetView()
 
 static DXGI_SWAP_CHAIN_DESC createSwapChainDesc(const SwapChainDesc& desc) {
 	DXGI_SWAP_CHAIN_DESC dxgiDesc{};
+
 	dxgiDesc.BufferDesc.Width = desc.windowSize.width();
 	dxgiDesc.BufferDesc.Height = desc.windowSize.height();
 	dxgiDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;

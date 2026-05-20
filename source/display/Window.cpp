@@ -7,16 +7,30 @@ using namespace std;
 Window::Window(const WindowDesc& desc): Base(desc.base)
 {
 	m_handle = nullptr;
+	m_position = Point{0, 0};
 	m_size = desc.size;
 	m_style = desc.style;
-	m_hasFocus = true;
+	m_title = String{desc.title};
+	m_isOpen = false;
+	m_isVisible = false;
+	m_hasFocus = false;
 }
 
 Window::~Window() {}
 
-void* Window::getHandle() const noexcept
+const void* Window::getHandle() const noexcept
 {
 	return m_handle;
+}
+
+void* Window::getHandle() noexcept
+{
+	return m_handle;
+}
+
+Point Window::getPosition() const noexcept
+{
+	return m_position;
 }
 
 Rect Window::getSize() const noexcept
@@ -24,12 +38,32 @@ Rect Window::getSize() const noexcept
 	return m_size;
 }
 
+WindowStyle Window::getStyle() const noexcept
+{
+	return m_style;
+}
+
+const char* Window::getTitle() const noexcept
+{
+	return m_title.c_str();
+}
+
+bool Window::isOpen() const noexcept
+{
+	return m_isOpen;
+}
+
+bool Window::isVisible() const noexcept
+{
+	return m_isVisible;
+}
+
 bool Window::hasFocus() const noexcept
 {
 	return m_hasFocus;
 }
 
-void Window::onResize(function<void(uint32, uint32)> callback)
+void Window::onResize(function<void(Rect)> callback)
 {
 	m_onResize = callback;
 }

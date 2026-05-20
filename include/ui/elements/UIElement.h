@@ -59,6 +59,7 @@ namespace genesis
 		void setAnchor(Anchor anchor);
 		void setVisible(bool visible);
 		void setEnabled(bool enabled);
+		void updateRelativeLayout();
 
 		void setOnMouseDownCallback(std::function<void(MouseButton)> callback) noexcept;
 		void setOnMouseUpCallback(std::function<void(MouseButton)> callback) noexcept;
@@ -79,9 +80,6 @@ namespace genesis
 		virtual void onMouseUp(MouseButton button);
 		virtual void onMouseEnter();
 		virtual void onMouseOut();
-
-	private:
-		void updateRelativeLayout(const Rect& parentSize) noexcept;
 
 	protected:
 		UIElement* m_parent;

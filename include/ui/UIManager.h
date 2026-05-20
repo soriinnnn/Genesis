@@ -22,7 +22,7 @@ namespace genesis
 
 		void update(float deltaTime);
 
-		void setCanvasSize(Rect size);
+		void setCanvasSize(const Rect& size);
 		void setZOrder(const char* name, int zOrder);
 
 		template<typename T>

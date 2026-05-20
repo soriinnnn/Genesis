@@ -39,11 +39,9 @@ namespace genesis
 
         Entity* getMainCamera() const noexcept;
         Rect getRenderResolution() const noexcept;
-        bool getVSync() const noexcept;
 
         void setMainCamera(Entity* camera);
-        void setRenderResolution(uint32 width, uint32 height);
-        void setVSync(bool enabled);
+        void setRenderResolution(const Rect& resolution);
 
         void addEffect(SharedPtr<PostProcess> effect);
         void clearEffects();
@@ -53,21 +51,23 @@ namespace genesis
         float getDeltaTime();
 
     protected:
-        UniquePtr<Logger> m_logger;
         UniquePtr<Display> m_display;
         UniquePtr<PhysicsEngine> m_physicsEngine;
-        UniquePtr<ResourceManager> m_resourceManager;
         UniquePtr<InputManager> m_inputManager;
-        UniquePtr<UIManager> m_uiManager;
+        UniquePtr<ResourceManager> m_resourceManager;
         UniquePtr<EntityManager> m_entityManager;
+        UniquePtr<UIManager> m_uiManager;
+
+    private:
+        UniquePtr<Logger> m_logger;
+        UniquePtr<GraphicsEngine> m_graphicsEngine;
+        UniquePtr<Window> m_window;
         
     private:
-        UniquePtr<GraphicsEngine> m_graphicsEngine;
         Vector<SharedPtr<PostProcess>> m_effects;
         TimePoint m_previousTime;
         Entity* m_mainCamera;
         bool m_isRunning;
-        bool m_vsync;
     };
 }
 

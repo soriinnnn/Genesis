@@ -1,7 +1,7 @@
 #ifndef GENESIS_WIN32_WINDOW_H
 #define GENESIS_WIN32_WINDOW_H
 #include <display/Window.h>
-#include <windows.h>
+#include <Windows.h>
 
 namespace genesis
 {
@@ -11,13 +11,24 @@ namespace genesis
 		explicit Win32Window(const WindowDesc& desc);
 		~Win32Window() override;
 
-		void resize(uint32 width, uint32 height) override;
-		void centerOnScreen() override;
-		void setPosition(uint32 x, uint32 y) override;
+		Rect getScreenSize() const override;
+		
+		void setPosition(const Point& position) override;
+		void setSize(const Rect& size) override;
 		void setStyle(WindowStyle style) override;
+		void setTitle(const char* title) override;
+		
+		void open() override;
+		void close() override;
+		void show() override;
+		void hide() override;
+		void center() override;
 
 	private:
 		static LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
+	private:
+		HINSTANCE m_instance;
 	};
 }
 

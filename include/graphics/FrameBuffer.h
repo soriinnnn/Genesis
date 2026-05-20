@@ -24,7 +24,7 @@ namespace genesis
 		const DepthStencilTexture& getDepthStencil() const noexcept;
 
 		void setGraphicsDevice(GraphicsDevice& graphicsDevice);
-		void resize(uint32 width, uint32 height);
+		void setSize(const Rect& size);
 
 	private:
 		void updateTextures();

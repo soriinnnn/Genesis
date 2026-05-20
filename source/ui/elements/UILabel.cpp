@@ -20,8 +20,7 @@ UILabel::~UILabel() {}
 
 void UILabel::setContent(const char* content)
 {
-	String temp{content};
-	m_content = WString{temp.begin(), temp.end()};
+	m_content = WString{content, content + strlen(content)};
 	adjustContent();
 }
 

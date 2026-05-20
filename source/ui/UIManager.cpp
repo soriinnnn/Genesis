@@ -48,14 +48,14 @@ void UIManager::destroyElement(const char* name)
     }
 }
 
-void UIManager::setCanvasSize(Rect size)
+void UIManager::setCanvasSize(const Rect& size)
 {
     if (size == m_canvas->getSize()) {
         return;
     }
     m_canvas->setSize(size);
     forEach([&](UIElement& element) {
-        element.updateRelativeLayout(size);
+        element.updateRelativeLayout();
     });
 }
 

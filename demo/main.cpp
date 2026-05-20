@@ -19,7 +19,7 @@ using namespace genesis;
 
 void createMenu(GameContext context)
 {
-	Rect windowSize = context.display.getWindowSize();
+	Rect windowSize = context.display.getSize();
 	SharedPtr<Font> font = context.resources.getFont("demo/assets/fonts/arial_16.spritefont");
 
 	UIPanel* menuPanel1 = context.ui.createElement<UIPanel>("menuPanel1");

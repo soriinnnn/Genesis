@@ -12,16 +12,17 @@ using namespace chrono;
 Game::Game(const GameDesc& desc)
 {
     m_logger = make_unique<Logger>(desc.logLevel);
-    m_graphicsEngine = make_unique<GraphicsEngine>(GraphicsEngineDesc{*m_logger, desc.windowSize});
-    m_resourceManager = make_unique<ResourceManager>(ResourceManagerDesc{*m_logger, m_graphicsEngine->getGraphicsContext()});
-    m_display = make_unique<Display>(DisplayDesc{*m_logger, desc.windowSize, desc.windowTitle, WindowStyle::Windowed, m_graphicsEngine->getGraphicsContext()});
-    m_inputManager = InputManager::create({*m_logger, m_display->getWindow()});
-    m_entityManager = make_unique<EntityManager>(EntityManagerDesc{*m_logger});
-    m_uiManager = make_unique<UIManager>(UIManagerDesc{*m_logger, m_display->getWindowSize()});
-    m_physicsEngine = make_unique<PhysicsEngine>(PhysicsEngineDesc{*m_logger, m_graphicsEngine->getGraphicsContext()});
+    m_window = Window::create({getLogger(), desc.windowSize, desc.windowTitle});
+    m_graphicsEngine = make_unique<GraphicsEngine>(GraphicsEngineDesc{getLogger(), desc.windowSize});
+    m_physicsEngine = make_unique<PhysicsEngine>(PhysicsEngineDesc{getLogger(), m_graphicsEngine->getGraphicsContext()});
+    m_resourceManager = make_unique<ResourceManager>(ResourceManagerDesc{getLogger(), m_graphicsEngine->getGraphicsContext()});
+    m_display = make_unique<Display>(DisplayDesc{getLogger(), *m_window, m_graphicsEngine->getGraphicsContext()});
+    m_uiManager = make_unique<UIManager>(UIManagerDesc{getLogger(), m_display->getSize()});
+    m_inputManager = InputManager::create({getLogger(), *m_window});
+    m_entityManager = make_unique<EntityManager>(EntityManagerDesc{getLogger()});
     m_isRunning = false;
-    m_vsync = false;
     m_mainCamera = nullptr;
+
     m_inputManager->addListener(m_uiManager.get());
     GENESIS_LOG_INFO("Game initialized.");
 }
@@ -29,6 +30,15 @@ Game::Game(const GameDesc& desc)
 Game::~Game() 
 {
     GENESIS_LOG_INFO("Game is shutting down...");
+    m_display.reset();
+    m_uiManager.reset();
+    m_entityManager.reset();
+    m_inputManager.reset();
+    m_resourceManager.reset();
+    m_physicsEngine.reset();
+    m_graphicsEngine.reset();
+    m_window.reset();
+    m_logger.reset();
 }
 
 Logger& Game::getLogger() noexcept
@@ -62,7 +72,7 @@ void Game::onInternalUpdate()
         }
     }
     m_graphicsEngine->render(*m_uiManager);
-    m_graphicsEngine->present(m_display->getSwapChain(), m_vsync);
+    m_graphicsEngine->present(*m_display);
 }
 
 float Game::getDeltaTime()
@@ -87,11 +97,6 @@ Rect Game::getRenderResolution() const noexcept
     return m_graphicsEngine->getRenderResolution();
 }
 
-bool Game::getVSync() const noexcept
-{
-    return m_vsync;
-}
-
 void Game::setMainCamera(Entity* camera)
 {
     if (!camera) {
@@ -109,14 +114,9 @@ void Game::setMainCamera(Entity* camera)
     m_mainCamera = camera;
 }
 
-void Game::setRenderResolution(uint32 width, uint32 height)
+void Game::setRenderResolution(const Rect& resolution)
 {
-    m_graphicsEngine->setRenderResolution(width, height);
-}
-
-void Game::setVSync(bool enabled)
-{
-    m_vsync = enabled;
+    m_graphicsEngine->setRenderResolution(resolution);
 }
 
 void Game::addEffect(SharedPtr<PostProcess> effect)

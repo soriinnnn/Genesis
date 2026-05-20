@@ -15,6 +15,7 @@
 #include <entity/components/CameraComponent.h>
 #include <entity/components/TransformComponent.h>
 #include <entity/components/MeshRendererComponent.h>
+#include <display/Display.h>
 #include <ui/UIManager.h>
 
 #define FULLSCREEN_TRIANGLE_VERTEX_COUNT 3
@@ -57,10 +58,10 @@ Rect GraphicsEngine::getRenderResolution() const noexcept
     return m_primaryBuffer->getSize();
 }
 
-void GraphicsEngine::setRenderResolution(uint32 width, uint32 height)
+void GraphicsEngine::setRenderResolution(const Rect& resolution)
 {
-    m_primaryBuffer->resize(width, height);
-    m_secondaryBuffer->resize(width, height);
+    m_primaryBuffer->setSize(resolution);
+    m_secondaryBuffer->setSize(resolution);
 }
 
 void GraphicsEngine::clear(const Vec4& color)
@@ -144,8 +145,9 @@ void GraphicsEngine::postProcess(PostProcess& effect)
     std::swap(m_primaryBuffer, m_secondaryBuffer);
 }
 
-void GraphicsEngine::present(SwapChain& swapChain, bool vsync)
+void GraphicsEngine::present(Display& display)
 {
+    SwapChain& swapChain = display.getSwapChain();
     m_deviceContext->clearAndSetBackBuffer(swapChain, Vec4{1.0f, 1.0f, 1.0f, 1.0f});
     m_deviceContext->setViewport(swapChain.getSize());
     m_deviceContext->setGraphicsPipelineState(*m_frameBufferPipeline);
@@ -153,7 +155,7 @@ void GraphicsEngine::present(SwapChain& swapChain, bool vsync)
     m_deviceContext->setSamplerState(m_states->getPointClamp());
     m_deviceContext->draw(FULLSCREEN_TRIANGLE_VERTEX_COUNT);
     m_graphicsDevice->executeCommandList(*m_deviceContext);
-    swapChain.present(vsync);
+    swapChain.present(display.getVSync());
 }
 
 uint32 GraphicsEngine::getLights(EntityManager& entities)

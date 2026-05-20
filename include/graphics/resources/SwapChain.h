@@ -19,8 +19,7 @@ namespace genesis
 		~SwapChain() override;
 
 		Rect getSize() const noexcept;
-
-		void resize(uint32 width, uint32 height);
+		void setSize(const Rect& size);
 		void present(bool vsync = false);
 
 	private:

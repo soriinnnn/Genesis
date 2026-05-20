@@ -23,3 +23,8 @@ void UIButton::onRender(SpriteBatch& batch)
     batch.drawSolid(m_size, getGlobalPosition(), m_scale, m_color);
     m_label->render(batch);
 }
+
+void UIButton::onPosition()
+{
+	m_label->updateRelativeLayout();
+}

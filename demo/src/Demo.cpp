@@ -21,18 +21,12 @@ void Demo::onKeyUp(Key key)
         }
         case Key::V:
         {
-            bool vsync = getVSync();
-            setVSync(!vsync);
+            m_display->setVSync(!m_display->getVSync());
             break;
         }
         case Key::F11:
         {
-            if (!m_display->isBorderless()) {
-                m_display->toggleBorderless(1920, 1080);
-            }
-            else {
-                m_display->toggleBorderless(1280, 720);
-            }
+            m_display->setBorderless(!m_display->isBorderless());
             m_inputManager->ignoreNextMouseMove();
             break;
         }
@@ -47,15 +41,14 @@ void Demo::onMouseUp(MouseButton button, Point pos) {}
 
 void Demo::onCreate()
 {
-    setVSync(true);
+    m_display->setVSync(true);
     setMainCamera(m_entityManager->getEntityByName("camera"));
     m_inputManager->addListener(this);
 
-    m_display->onResizeWindow([this](uint32 width, uint32 height) {
-        setRenderResolution(width, height);
-
-        m_uiManager->setCanvasSize(Rect{static_cast<int32>(width), static_cast<int32>(height)});
-        m_uiManager->getElement<UIPanel>("menuPanel1")->setSize({static_cast<int32>(width), static_cast<int32>(height)});
+    m_display->onResize([this](Rect size) {
+        setRenderResolution(size);
+        m_uiManager->setCanvasSize(size);
+        m_uiManager->getElement<UIPanel>("menuPanel1")->setSize(size);
     });
 }
 

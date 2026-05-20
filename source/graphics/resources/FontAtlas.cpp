@@ -9,8 +9,7 @@ using namespace DirectX::DX11;
 FontAtlas::FontAtlas(const FontAtlasDesc& fdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
 	try {
-		String temp{fdesc.path};
-		WString path{temp.begin(), temp.end()};
+		WString path{fdesc.path, fdesc.path + strlen(fdesc.path)};
 		m_font = make_unique<SpriteFont>(&m_device, path.c_str());
 	}
 	catch (const std::exception&) {

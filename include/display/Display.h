@@ -7,7 +7,8 @@ namespace genesis
 {
 	struct DisplayDesc
 	{
-		WindowDesc window;
+		BaseDesc base;
+		Window& window;
 		GraphicsContext graphicsContext;
 	};
 
@@ -17,27 +18,31 @@ namespace genesis
 		explicit Display(const DisplayDesc& desc);
 		~Display() override;
 
-		Window& getWindow() noexcept;
 		SwapChain& getSwapChain() noexcept;
 
-		Rect getWindowSize() const noexcept;
-		Rect getImageResolution() const noexcept;
+		Rect getSize() const noexcept;
+		Rect getResolution() const noexcept;
 		bool isBorderless() const noexcept;
+		bool getVSync() const noexcept;
 
-		void resizeWindow(uint32 width, uint32 height);
-		void toggleBorderless(uint32 width, uint32 height);
-		void setMatchWindowResolution(bool matchWindowResolution);
+		void setSize(const Rect& size);
+		void setResolution(const Rect& resolution);
+		void setBorderless(bool enable);
+		void setVSync(bool enable);
+		void setMatchWindowResolution(bool enable);
 
-		void onResizeWindow(std::function<void(uint32, uint32)> callback);
+		void onResize(std::function<void(Rect)> callback);
 
 	private:
-		UniquePtr<Window> m_window;
+		Window& m_window;
 		SharedPtr<SwapChain> m_swapChain;
-		bool m_borderless;
+		Rect m_windowedSize;
+		bool m_vsync;
+		bool m_isBorderless;
 		bool m_matchWindowResolution;
 
 	private:
-		std::function<void(uint32, uint32)> m_onResizeWindow;
+		std::function<void(Rect)> m_onResize;
 	};
 }
 

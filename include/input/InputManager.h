@@ -10,7 +10,7 @@ namespace genesis
 	struct InputManagerDesc
 	{
 		BaseDesc base;
-		Window& wnd;
+		Window& window;
 	};
 
 	class InputManager: public Base

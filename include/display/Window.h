@@ -3,6 +3,7 @@
 #include <core/Base.h>
 #include <core/Core.h>
 #include <math/Rect.h>
+#include <math/Point.h>
 
 namespace genesis
 {
@@ -25,16 +26,31 @@ namespace genesis
     public:
         virtual ~Window() override;
 
-        bool hasFocus() const noexcept;
-        void* getHandle() const noexcept;
+        const void* getHandle() const noexcept;
+        void* getHandle() noexcept;
+
+        Point getPosition() const noexcept;
         Rect getSize() const noexcept;
+        WindowStyle getStyle() const noexcept;
+        const char* getTitle() const noexcept;
+        virtual Rect getScreenSize() const = 0;
 
-        virtual void resize(uint32 width, uint32 height) = 0;
-        virtual void centerOnScreen() = 0;
-        virtual void setPosition(uint32 x, uint32 y) = 0;
+        virtual void setPosition(const Point& position) = 0;
+        virtual void setSize(const Rect& size) = 0;
         virtual void setStyle(WindowStyle style) = 0;
+        virtual void setTitle(const char* title) = 0;
 
-        void onResize(std::function<void(uint32, uint32)> callback);
+        bool isOpen() const noexcept;
+        bool isVisible() const noexcept;
+        bool hasFocus() const noexcept;
+
+        virtual void open() = 0;
+        virtual void close() = 0;
+        virtual void show() = 0;
+        virtual void hide() = 0;
+        virtual void center() = 0;
+
+        void onResize(std::function<void(Rect)> callback);
         void onFocusChanged(std::function<void(bool)> callback);
 
         static UniquePtr<Window> create(const WindowDesc& desc);
@@ -44,12 +60,16 @@ namespace genesis
 
     protected:
         void* m_handle;
+        Point m_position;
         Rect m_size;
-        bool m_hasFocus;
         WindowStyle m_style;
+        String m_title;
+        bool m_isOpen;
+        bool m_isVisible;
+        bool m_hasFocus;
 
     protected:
-        std::function<void(uint32, uint32)> m_onResize;
+        std::function<void(Rect)> m_onResize;
         std::function<void(bool)> m_onFocusChanged;
     };
 }

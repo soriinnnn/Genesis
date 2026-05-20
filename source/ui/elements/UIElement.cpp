@@ -153,9 +153,7 @@ void UIElement::setSize(const Rect& size)
 	}
 	m_size = size;
 	onSize();
-	if (m_parent) {
-		updateRelativeLayout(m_parent->getSize());
-	}
+	updateRelativeLayout();
 }
 
 void UIElement::setMargin(const Point& margin)
@@ -167,7 +165,7 @@ void UIElement::setMargin(const Point& margin)
 		return;
 	}
 	m_margin = margin;
-	updateRelativeLayout(m_parent->getSize());
+	updateRelativeLayout();
 }
 
 void UIElement::setAnchor(Anchor anchor)
@@ -179,7 +177,7 @@ void UIElement::setAnchor(Anchor anchor)
 		return;
 	}
 	m_anchor = anchor;
-	updateRelativeLayout(m_parent->getSize());
+	updateRelativeLayout();
 }
 
 void UIElement::setVisible(bool visible)
@@ -202,6 +200,90 @@ void UIElement::setEnabled(bool enabled)
 	if (!isEnabled() && isHovered()) {
 		onMouseOut();
 	}
+}
+
+void UIElement::updateRelativeLayout()
+{
+	if (m_anchor == Anchor::Absolute) {
+		return;
+	}
+	if (!m_parent) {
+		return;
+	}
+	Rect parentSize = m_parent->getSize();
+
+	switch (m_anchor) {
+		case Anchor::TopLeft: {
+			m_position = Point{
+				m_margin.x,
+				m_margin.y
+			};
+			break;
+		}
+		case Anchor::TopCenter: {
+			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
+			m_position = Point{
+				relativeCenter.x + m_margin.x,
+				m_margin.y
+			};
+			break;
+		}
+		case Anchor::TopRight: {
+			m_position = Point{
+				parentSize.width() - m_size.width() - m_margin.x,
+				m_margin.y
+			};
+			break;
+		}
+		case Anchor::CenterLeft: {
+			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
+			m_position = Point{
+				m_margin.x,
+				relativeCenter.y + m_margin.y
+			};
+			break;
+		}
+		case Anchor::Center: {
+			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
+			m_position = Point{
+				relativeCenter.x + m_margin.x,
+				relativeCenter.y + m_margin.y
+			};
+			break;
+		}
+		case Anchor::CenterRight: {
+			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
+			m_position = Point{
+				parentSize.width() - m_size.width() - m_margin.x,
+				relativeCenter.y + m_margin.y
+			};
+			break;
+		}
+		case Anchor::BottomLeft: {
+			m_position = Point{
+				m_margin.x,
+				parentSize.height() - m_size.height() - m_margin.y
+			};
+			break;
+		}
+		case Anchor::BottomCenter: {
+			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
+			m_position = Point{
+				relativeCenter.x + m_margin.x,
+				parentSize.height() - m_size.height() - m_margin.y
+			};
+			break;
+		}
+		case Anchor::BottomRight: {
+			m_position = Point{
+				parentSize.width() - m_size.width() - m_margin.x,
+				parentSize.height() - m_size.height() - m_margin.y
+			};
+			break;
+		}
+	}
+
+	onPosition();
 }
 
 void UIElement::onUpdate(float deltaTime) {}
@@ -278,86 +360,6 @@ void UIElement::setOnMouseEnterCallback(std::function<void()> callback) noexcept
 void UIElement::setOnMouseOutCallback(std::function<void()> callback) noexcept
 {
 	m_onMouseOut = callback;
-}
-
-void UIElement::updateRelativeLayout(const Rect& parentSize) noexcept
-{
-	if (m_anchor == Anchor::Absolute) {
-		return;
-	}
-
-	switch (m_anchor) {
-		case Anchor::TopLeft: {
-			m_position = Point{
-				m_margin.x,
-				m_margin.y
-			};
-			break;
-		}
-		case Anchor::TopCenter: {
-			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
-			m_position = Point{
-				relativeCenter.x + m_margin.x,
-				m_margin.y
-			};
-			break;
-		}
-		case Anchor::TopRight: {
-			m_position = Point{
-				parentSize.width() - m_size.width() - m_margin.x,
-				m_margin.y
-			};
-			break;
-		}
-		case Anchor::CenterLeft: {
-			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
-			m_position = Point{
-				m_margin.x,
-				relativeCenter.y + m_margin.y
-			};
-			break;
-		}
-		case Anchor::Center: {
-			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
-			m_position = Point{
-				relativeCenter.x + m_margin.x,
-				relativeCenter.y + m_margin.y
-			};
-			break;
-		}
-		case Anchor::CenterRight: {
-			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
-			m_position = Point{
-				parentSize.width() - m_size.width() - m_margin.x,
-				relativeCenter.y + m_margin.y
-			};
-			break;
-		}
-		case Anchor::BottomLeft: {
-			m_position = Point{
-				m_margin.x,
-				parentSize.height() - m_size.height() - m_margin.y
-			};
-			break;
-		}
-		case Anchor::BottomCenter: {
-			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
-			m_position = Point{
-				relativeCenter.x + m_margin.x,
-				parentSize.height() - m_size.height() - m_margin.y
-			};
-			break;
-		}
-		case Anchor::BottomRight: {
-			m_position = Point{
-				parentSize.width() - m_size.width() - m_margin.x,
-				parentSize.height() - m_size.height() - m_margin.y
-			};
-			break;
-		}
-	}
-
-	onPosition();
 }
 
 /* STATIC FUNCTION DEFINITIONS */

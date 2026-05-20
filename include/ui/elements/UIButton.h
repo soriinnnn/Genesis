@@ -14,6 +14,7 @@ namespace genesis
 
 	private:
 		void onRender(SpriteBatch& batch) override;
+		void onPosition() override;
 
 	private:
 		UniquePtr<UILabel> m_label;
