@@ -24,21 +24,16 @@ namespace genesis
 
 		virtual bool isKeyDown(Key key) const = 0;
 		virtual bool isKeyUp(Key key) const = 0;
-		virtual bool isKeyPressed(Key key) const = 0;
-		virtual bool isKeyReleased(Key key) const = 0;
 		virtual bool isMouseDown(MouseButton button) const = 0;
 		virtual bool isMouseUp(MouseButton button) const = 0;
-		virtual bool isMousePressed(MouseButton button) const = 0;
-		virtual bool isMouseReleased(MouseButton button) const = 0;
 		virtual Point getMousePosition() const = 0;
 		virtual Point getMouseDelta() const = 0;
 		bool isMouseVisible() const noexcept;
 		bool isMouseLocked() const noexcept;
 
 		virtual void setMousePosition(Point pos) = 0;
-		virtual void setMouseVisibility(bool visible) = 0;
-		virtual void setMouseLock(bool lock) = 0;
-		void ignoreNextMouseMove() noexcept;
+		virtual void setMouseVisibility(bool enable) = 0;
+		virtual void setMouseLock(bool enable) = 0;
 
 		static UniquePtr<InputManager> create(const InputManagerDesc& desc);
 
@@ -50,7 +45,6 @@ namespace genesis
 		Vector<InputListener*> m_listeners;
 		bool m_mouseVisible;
 		bool m_mouseLocked;
-		bool m_ignoreNextMouseMove;
 	};
 }
 

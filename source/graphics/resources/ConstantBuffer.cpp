@@ -19,7 +19,7 @@ ConstantBuffer::ConstantBuffer(const ConstantBufferDesc& cdesc, const GraphicsRe
 		"CreateBuffer failed."
 	);
 
-	m_size = cdesc.bufferSize;
+	m_size = cdesc.size;
 }
 
 ConstantBuffer::~ConstantBuffer() {}
@@ -30,7 +30,7 @@ D3D11_BUFFER_DESC createBufferDesc(const ConstantBufferDesc& desc) {
 	D3D11_BUFFER_DESC buffDesc{};
 
 	buffDesc.Usage = D3D11_USAGE_DYNAMIC;
-	buffDesc.ByteWidth = desc.bufferSize;
+	buffDesc.ByteWidth = desc.size;
 	buffDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	buffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	buffDesc.MiscFlags = 0;

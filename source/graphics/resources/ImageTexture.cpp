@@ -13,7 +13,7 @@ ImageTexture::ImageTexture(const ImageTextureFileDesc& tdesc, const GraphicsReso
 	DirectX::ScratchImage imageData{};
 
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
-		LoadFromWICFile(
+		DirectX::LoadFromWICFile(
 			tdesc.path,
 			DirectX::WIC_FLAGS_NONE,
 			nullptr,
@@ -22,19 +22,32 @@ ImageTexture::ImageTexture(const ImageTextureFileDesc& tdesc, const GraphicsReso
 		"LoadFromWICFile failed."
 	);
 
-	Microsoft::WRL::ComPtr<ID3D11Resource> texture;
+	DirectX::ScratchImage mipMappedImage;
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
-		CreateTexture(
-			&m_device,
+		DirectX::GenerateMipMaps(
 			imageData.GetImages(),
 			imageData.GetImageCount(),
 			imageData.GetMetadata(),
+			DirectX::TEX_FILTER_DEFAULT,
+			0,
+			mipMappedImage
+		),
+		"GenerateMipMaps failed."
+	);
+
+	Microsoft::WRL::ComPtr<ID3D11Resource> texture;
+	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
+		DirectX::CreateTexture(
+			&m_device,
+			mipMappedImage.GetImages(),
+			mipMappedImage.GetImageCount(),
+			mipMappedImage.GetMetadata(),
 			&texture
 		),
 		"CreateTexture failed."
 	);
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC resourceViewDesc = getShaderResourceViewDesc(imageData);
+	D3D11_SHADER_RESOURCE_VIEW_DESC resourceViewDesc = getShaderResourceViewDesc(mipMappedImage);
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateShaderResourceView(
 			texture.Get(),
@@ -89,9 +102,22 @@ Rect ImageTexture::getSize() const noexcept
 
 /* STATIC FUNCTION DEFINITIONS */
 
+D3D11_SHADER_RESOURCE_VIEW_DESC getShaderResourceViewDesc(const DirectX::ScratchImage& imageData)
+{
+	D3D11_SHADER_RESOURCE_VIEW_DESC desc{};
+
+	desc.Format = imageData.GetMetadata().format;
+	desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	desc.Texture2D.MipLevels = static_cast<UINT>(imageData.GetMetadata().mipLevels);
+	desc.Texture2D.MostDetailedMip = 0;
+
+	return desc;
+}
+
 D3D11_TEXTURE2D_DESC getTextureDesc(const ImageTextureSolidDesc& desc)
 {
 	D3D11_TEXTURE2D_DESC textureDesc = {};
+
 	textureDesc.Width = static_cast<UINT>(desc.size.width());
 	textureDesc.Height = static_cast<UINT>(desc.size.height());
 	textureDesc.MipLevels = 1;
@@ -102,15 +128,4 @@ D3D11_TEXTURE2D_DESC getTextureDesc(const ImageTextureSolidDesc& desc)
 	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
 	return textureDesc;
-}
-
-D3D11_SHADER_RESOURCE_VIEW_DESC getShaderResourceViewDesc(const DirectX::ScratchImage& imageData)
-{
-	D3D11_SHADER_RESOURCE_VIEW_DESC desc{};
-	desc.Format = imageData.GetMetadata().format;
-	desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	desc.Texture2D.MipLevels = static_cast<UINT>(imageData.GetMetadata().mipLevels);
-	desc.Texture2D.MostDetailedMip = 0;
-
-	return desc;
 }

@@ -27,7 +27,6 @@ void Demo::onKeyUp(Key key)
         case Key::F11:
         {
             m_display->setBorderless(!m_display->isBorderless());
-            m_inputManager->ignoreNextMouseMove();
             break;
         }
     }
@@ -48,7 +47,7 @@ void Demo::onCreate()
     m_display->onResize([this](Rect size) {
         setRenderResolution(size);
         m_uiManager->setCanvasSize(size);
-        m_uiManager->getElement<UIPanel>("menuPanel1")->setSize(size);
+        //m_uiManager->getElement<UIPanel>("menuPanel1")->setSize(size);
     });
 }
 

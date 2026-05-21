@@ -11,7 +11,6 @@ Window::Window(const WindowDesc& desc): Base(desc.base)
 	m_size = desc.size;
 	m_style = desc.style;
 	m_title = String{desc.title};
-	m_isOpen = false;
 	m_isVisible = false;
 	m_hasFocus = false;
 }
@@ -46,11 +45,6 @@ WindowStyle Window::getStyle() const noexcept
 const char* Window::getTitle() const noexcept
 {
 	return m_title.c_str();
-}
-
-bool Window::isOpen() const noexcept
-{
-	return m_isOpen;
 }
 
 bool Window::isVisible() const noexcept

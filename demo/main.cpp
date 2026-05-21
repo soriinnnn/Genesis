@@ -96,6 +96,7 @@ void createCamera(GameContext context)
 {
 	Entity* camera = context.entities.createEntity("camera");
 	camera->createComponent<CameraComponent>();
+	camera->createComponent<PlayerControllerComponent>()->setInputManager(context.input);
 }
 
 void setupScene(Game& game) 
@@ -103,7 +104,7 @@ void setupScene(Game& game)
 	GameContext context = game.getContext();
 
 	createCamera(context);
-	createMenu(context);
+	//createMenu(context);
 	createLights(context);
 	createWorld(context);
 }

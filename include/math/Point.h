@@ -10,6 +10,7 @@ namespace genesis
 		Point();
 		Point(int32 x, int32 y);
 
+		Point operator-(const Point& rhs) const noexcept;
 		bool operator==(const Point& rhs) const noexcept;
 
 	public:

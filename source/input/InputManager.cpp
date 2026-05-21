@@ -9,7 +9,6 @@ InputManager::InputManager(const InputManagerDesc& desc): Base(desc.base), m_win
 {
 	m_mouseVisible = true;
 	m_mouseLocked = false;
-	m_ignoreNextMouseMove = false;
 }
 
 InputManager::~InputManager() {}
@@ -39,11 +38,6 @@ bool InputManager::isMouseVisible() const noexcept
 bool InputManager::isMouseLocked() const noexcept
 {
 	return m_mouseLocked;
-}
-
-void InputManager::ignoreNextMouseMove() noexcept
-{
-	m_ignoreNextMouseMove = true;
 }
 
 UniquePtr<InputManager> InputManager::create(const InputManagerDesc& desc)

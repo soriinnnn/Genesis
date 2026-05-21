@@ -1,8 +1,11 @@
 #include <input/win32/Win32InputManager.h>
 #include <windows.h>
 
+#define INVALID_CODE 0
+#define KEY_DOWN_MASK 0x80
+
 #define IGNORE_INVALID_CODE(code) \
-if (code == 0) {\
+if ((code) == INVALID_CODE) {\
     return false;\
 }
 
@@ -13,8 +16,9 @@ static int mapGenesisKeyToWin32(Key key);
 static MouseButton mapWin32ToGenesisMouse(int vkCode);
 static int mapGenesisMouseToWin32(MouseButton button);
 
-Win32InputManager::Win32InputManager(const InputManagerDesc& desc): InputManager(desc), m_currentKeys({}), m_previousKeys({}) 
+Win32InputManager::Win32InputManager(const InputManagerDesc & desc): InputManager(desc), m_currentKeys({}), m_previousKeys({})
 {
+    m_previousWindowSize = desc.window.getSize();
     m_lostFocus = true;
 }
 
@@ -28,7 +32,6 @@ void Win32InputManager::update()
             memset(m_previousKeys, 0, sizeof(uint8) * KEYBOARD_STATE_SIZE);
             m_previousMousePos = m_currentMousePos;
             m_lostFocus = true;
-
             if (!m_mouseVisible) {
                 ShowCursor(true);
             }
@@ -36,6 +39,7 @@ void Win32InputManager::update()
         return;
     }
 
+    getKeyState();
     updateKeyboard();
     updateMouse();
 }
@@ -54,20 +58,6 @@ bool Win32InputManager::isKeyUp(Key key) const noexcept
     return !(m_currentKeys[vkCode] & 0x80);
 }
 
-bool Win32InputManager::isKeyPressed(Key key) const noexcept
-{
-    int vkCode = mapGenesisKeyToWin32(key);
-    IGNORE_INVALID_CODE(vkCode);
-    return (m_currentKeys[vkCode] & 0x80) && !(m_previousKeys[vkCode] & 0x80);
-}
-
-bool Win32InputManager::isKeyReleased(Key key) const noexcept
-{
-    int vkCode = mapGenesisKeyToWin32(key);
-    IGNORE_INVALID_CODE(vkCode);
-    return !(m_currentKeys[vkCode] & 0x80) && (m_previousKeys[vkCode] & 0x80);
-}
-
 bool Win32InputManager::isMouseDown(MouseButton button) const noexcept
 {
     int vkCode = mapGenesisMouseToWin32(button);
@@ -82,20 +72,6 @@ bool Win32InputManager::isMouseUp(MouseButton button) const noexcept
     return !(m_currentKeys[vkCode] & 0x80);
 }
 
-bool Win32InputManager::isMousePressed(MouseButton button) const noexcept
-{
-    int vkCode = mapGenesisMouseToWin32(button);
-    IGNORE_INVALID_CODE(vkCode);
-    return (m_currentKeys[vkCode] & 0x80) && !(m_previousKeys[vkCode] & 0x80);
-}
-
-bool Win32InputManager::isMouseReleased(MouseButton button) const noexcept
-{
-    int vkCode = mapGenesisMouseToWin32(button);
-    IGNORE_INVALID_CODE(vkCode);
-    return !(m_currentKeys[vkCode] & 0x80) && (m_previousKeys[vkCode] & 0x80);
-}
-
 Point Win32InputManager::getMousePosition() const noexcept
 {
     return m_currentMousePos;
@@ -103,12 +79,15 @@ Point Win32InputManager::getMousePosition() const noexcept
 
 Point Win32InputManager::getMouseDelta() const noexcept
 {
-    return Point{m_currentMousePos.x - m_previousMousePos.x, m_currentMousePos.y - m_previousMousePos.y};
+    return m_currentMousePos - m_previousMousePos;
 }
 
 void Win32InputManager::setMousePosition(Point pos)
 {
     if (m_lostFocus) {
+        return;
+    }
+    if (m_currentMousePos == pos) {
         return;
     }
 
@@ -117,60 +96,72 @@ void Win32InputManager::setMousePosition(Point pos)
         GENESIS_LOG_WARNING("ClientToScreen failed.\nError code: 0x{:08X}", GetLastError());
         return;
     }
-
     if (!SetCursorPos(cursorPos.x, cursorPos.y)) {
         GENESIS_LOG_WARNING("SetCursorPos failed.\nError code: 0x{:08X}", GetLastError());
+        return;
     }
-
     m_currentMousePos = pos;
 }
 
-void Win32InputManager::setMouseVisibility(bool visible)
+void Win32InputManager::setMouseVisibility(bool enable)
 {
-    if (m_lostFocus || m_mouseVisible == visible) {
+    if (m_lostFocus) {
+        return;
+    }
+    if (m_mouseVisible == enable) {
         return;
     }
 
-    ShowCursor(visible);
-    m_mouseVisible = visible;
+    ShowCursor(enable);
+    m_mouseVisible = enable;
 }
 
-void Win32InputManager::setMouseLock(bool lock)
+void Win32InputManager::setMouseLock(bool enable)
 {
-    if (m_mouseLocked == lock) {
+    if (m_lostFocus) {
+        return;
+    }
+    if (m_mouseLocked == enable) {
         return;
     }
 
-    m_mouseLocked = lock;
+    m_mouseLocked = enable;
     if (m_mouseLocked) {
         Rect size = m_window.getSize();
         setMousePosition({size.width() / 2, size.height() / 2});
     }
 }
 
-void Win32InputManager::updateKeyboard()
+void Win32InputManager::getKeyState()
 {
     memcpy(m_previousKeys, m_currentKeys, sizeof(uint8) * KEYBOARD_STATE_SIZE);
     if (!GetKeyboardState(m_currentKeys)) {
         GENESIS_LOG_WARNING("GetKeyboardState failed.\nError code: 0x{:08X}", GetLastError());
         return;
     }
+}
 
-    for (int i = 0; i < KEYBOARD_STATE_SIZE; i++) {
-        bool isDown = (m_currentKeys[i] & 0x80);
-        bool wasDown = (m_previousKeys[i] & 0x80);
+void Win32InputManager::updateKeyboard()
+{
+    int keyCount = static_cast<int>(Key::Count);
 
-        Key key = mapWin32ToGenesisKey(i);
-        if (key == Key::Unknown) {
+    for (int i = 0; i < keyCount; i++) {
+        Key key = static_cast<Key>(i);
+
+        int vkCode = mapGenesisKeyToWin32(key);
+        if (vkCode == INVALID_CODE) {
             continue;
         }
 
-        if (isDown) {
+        bool isDown = (m_currentKeys[vkCode] & KEY_DOWN_MASK);
+        bool wasDown = (m_previousKeys[vkCode] & KEY_DOWN_MASK);
+
+        if (isDown && !wasDown) {
             for (auto listener : m_listeners) {
                 listener->onKeyDown(key);
             }
         }
-        else if (wasDown) {
+        else if (!isDown && wasDown) {
             for (auto listener : m_listeners) {
                 listener->onKeyUp(key);
             }
@@ -180,18 +171,19 @@ void Win32InputManager::updateKeyboard()
 
 void Win32InputManager::updateMouse()
 {
+    int buttonCount = static_cast<int>(MouseButton::Count);
+
     updateMousePosition();
-    
-    for (int i = 1; i < static_cast<int>(MouseButton::Count); i++) {
+    for (int i = 0; i < buttonCount; i++) {
         MouseButton button = static_cast<MouseButton>(i);
 
         int vkCode = mapGenesisMouseToWin32(button);
-        if (vkCode == 0) {
+        if (vkCode == INVALID_CODE) {
             continue;
         }
 
-        bool isDown = (m_currentKeys[vkCode] & 0x80);
-        bool wasDown = (m_previousKeys[vkCode] & 0x80);
+        bool isDown = (m_currentKeys[vkCode] & KEY_DOWN_MASK);
+        bool wasDown = (m_previousKeys[vkCode] & KEY_DOWN_MASK);
 
         if (isDown && !wasDown) {
             for (auto listener : m_listeners) {
@@ -208,44 +200,45 @@ void Win32InputManager::updateMouse()
 
 void Win32InputManager::updateMousePosition()
 {
-    POINT pos{};
-    if (!GetCursorPos(&pos)) {
+    POINT cursorPos{};
+    if (!GetCursorPos(&cursorPos)) {
         GENESIS_LOG_WARNING("GetCursorPos failed.\nError code: 0x{:08x}", GetLastError());
         return;
     }
-    if (!ScreenToClient(static_cast<HWND>(m_window.getHandle()), &pos)) {
+    if (!ScreenToClient(static_cast<HWND>(m_window.getHandle()), &cursorPos)) {
         GENESIS_LOG_WARNING("ScreenToClient failed.\nError code: 0x{:08x}", GetLastError());
         return;
     }
 
     if (m_mouseLocked) {
         Rect size = m_window.getSize();
-        setMousePosition({size.width() / 2, size.height() / 2});
+        setMousePosition(Point{size.width() / 2, size.height() / 2});
     }
 
+    Point newMousePos = Point{cursorPos.x, cursorPos.y};
     m_previousMousePos = m_currentMousePos;
-    m_currentMousePos = Point{pos.x, pos.y};
+    m_currentMousePos = newMousePos;
+
+    // Per evitar salts bruscos en la delta.
+    Rect currentSize = m_window.getSize();
+    if (m_previousWindowSize != currentSize) {
+        m_previousMousePos = newMousePos;
+        m_previousWindowSize = currentSize;
+    }
 
     if (m_lostFocus) {
-        m_previousMousePos = m_currentMousePos;
+        m_previousMousePos = newMousePos;
         m_lostFocus = false;
-
         if (!m_mouseVisible) {
             ShowCursor(false);
         }
     }
 
-    if (!m_ignoreNextMouseMove) {
-        if (m_currentMousePos.x != m_previousMousePos.x || m_currentMousePos.y != m_previousMousePos.y) {
-            Point delta = getMouseDelta();
-            for (auto listener : m_listeners) {
-                listener->onMouseMove(delta, m_currentMousePos);
-            }
+    if (m_currentMousePos != m_previousMousePos) {
+        Point delta = getMouseDelta();
+        for (auto listener : m_listeners) {
+            listener->onMouseMove(delta, m_currentMousePos);
         }
-    }
-    else {
-        m_previousMousePos = m_currentMousePos;
-        m_ignoreNextMouseMove = false;
     }
 }
 

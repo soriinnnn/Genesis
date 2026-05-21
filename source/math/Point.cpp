@@ -14,6 +14,11 @@ Point::Point(int32 x, int32 y)
 	this->y = y;
 }
 
+Point Point::operator-(const Point& rhs) const noexcept
+{
+	return Point{this->x - rhs.x, this->y - rhs.y};
+}
+
 bool Point::operator==(const Point& rhs) const noexcept
 {
 	return this->x == rhs.x && this->y == rhs.y;

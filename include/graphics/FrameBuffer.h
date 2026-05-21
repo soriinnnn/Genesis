@@ -23,7 +23,6 @@ namespace genesis
 		const RenderTargetTexture& getRenderTarget() const noexcept;
 		const DepthStencilTexture& getDepthStencil() const noexcept;
 
-		void setGraphicsDevice(GraphicsDevice& graphicsDevice);
 		void setSize(const Rect& size);
 
 	private:
@@ -33,7 +32,7 @@ namespace genesis
 		SharedPtr<RenderTargetTexture> m_renderTarget;
 		SharedPtr<DepthStencilTexture> m_depthStencil;
 		Rect m_size;
-		GraphicsDevice* m_graphicsDevice;
+		GraphicsDevice& m_graphicsDevice;
 	};
 }
 

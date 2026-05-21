@@ -18,11 +18,13 @@ namespace genesis
 		void setStyle(WindowStyle style) override;
 		void setTitle(const char* title) override;
 		
-		void open() override;
-		void close() override;
 		void show() override;
 		void hide() override;
 		void center() override;
+
+	private:
+		void open();
+		void close();
 
 	private:
 		static LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
@@ -30,6 +32,7 @@ namespace genesis
 		static LRESULT onCreate(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 		static LRESULT onDestroy(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 		static LRESULT onClose(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+		static LRESULT onMove(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 		static LRESULT onSize(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 		static LRESULT onShowWindow(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 		static LRESULT onActivate(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);

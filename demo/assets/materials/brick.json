@@ -22,15 +22,17 @@
   "samplers": [
     {
       "slot": 0,
-      "filter": "Linear",
+      "filter": "Anisotropic",
       "addressU": "Wrap",
-      "addressV": "Wrap"
+      "addressV": "Wrap",
+      "addressW": "Wrap"
     },
     {
       "slot": 1,
-      "filter": "Linear",
+      "filter": "Anisotropic",
       "addressU": "Wrap",
-      "addressV": "Wrap"
+      "addressV": "Wrap",
+      "addressW": "Wrap"
     }
   ],
   "properties": {

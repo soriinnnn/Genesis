@@ -40,12 +40,9 @@ namespace genesis
         virtual void setStyle(WindowStyle style) = 0;
         virtual void setTitle(const char* title) = 0;
 
-        bool isOpen() const noexcept;
         bool isVisible() const noexcept;
         bool hasFocus() const noexcept;
 
-        virtual void open() = 0;
-        virtual void close() = 0;
         virtual void show() = 0;
         virtual void hide() = 0;
         virtual void center() = 0;
@@ -64,7 +61,6 @@ namespace genesis
         Rect m_size;
         WindowStyle m_style;
         String m_title;
-        bool m_isOpen;
         bool m_isVisible;
         bool m_hasFocus;
 

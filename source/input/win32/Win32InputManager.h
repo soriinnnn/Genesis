@@ -16,20 +16,17 @@ namespace genesis
 
 		bool isKeyDown(Key key) const noexcept override;
 		bool isKeyUp(Key key) const noexcept override;
-		bool isKeyPressed(Key key) const noexcept override;
-		bool isKeyReleased(Key key) const noexcept override;
 		bool isMouseDown(MouseButton button) const noexcept override;
 		bool isMouseUp(MouseButton button) const noexcept override;
-		bool isMousePressed(MouseButton button) const noexcept override;
-		bool isMouseReleased(MouseButton button) const noexcept override;
 		Point getMousePosition() const noexcept override;
 		Point getMouseDelta() const noexcept override;
 
 		void setMousePosition(Point pos) override;
-		void setMouseVisibility(bool visible) override;
-		void setMouseLock(bool lock) override;
+		void setMouseVisibility(bool enable) override;
+		void setMouseLock(bool enable) override;
  
 	private:
+		void getKeyState();
 		void updateKeyboard();
 		void updateMouse();
 		void updateMousePosition();
@@ -39,6 +36,7 @@ namespace genesis
 		uint8 m_previousKeys[KEYBOARD_STATE_SIZE];
 		Point m_currentMousePos;
 		Point m_previousMousePos;
+		Rect m_previousWindowSize;
 		bool m_lostFocus;
 	};
 }

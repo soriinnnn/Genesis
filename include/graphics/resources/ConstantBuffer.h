@@ -7,7 +7,7 @@ namespace genesis
 	struct ConstantBufferDesc
 	{
 		const void* buffer{};
-		uint32 bufferSize;
+		uint32 size;
 	};
 
 	class ConstantBuffer final: public GraphicsResource

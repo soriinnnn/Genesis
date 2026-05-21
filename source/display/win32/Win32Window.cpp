@@ -1,9 +1,9 @@
 #include <display/win32/Win32Window.h>
 
-#define WINDOW_CLASS_NAME L"GENESIS_WINDOWS"
-#define REQUIRE_WINDOW()\
-if (!isOpen()) {\
-    return;\
+#define WINDOW_CLASS_NAME L"GENESIS_WINDOW_CLASS"
+#define CHECK_INVALID_WINDOW_POINTER(wnd, hwnd, msg, wparam, lparam) \
+if (!(wnd)) {\
+    return DefWindowProc((hwnd), (msg), (wparam), (lparam));\
 }
 
 using namespace genesis;
@@ -16,16 +16,13 @@ static DWORD getWindowStyle(WindowStyle style);
 Win32Window::Win32Window(const WindowDesc& desc): Window(desc), m_instance{GetModuleHandle(nullptr)}, m_cursor{LoadCursor(nullptr, IDC_ARROW)}
 {
     WNDCLASSEX wndClass;
-    if (GetClassInfoEx(m_instance, WINDOW_CLASS_NAME, &wndClass)) {
-        return;
-    }
-
-    wndClass = getWindowClass(m_instance, WINDOW_CLASS_NAME, windowProc);
-    if (!RegisterClassEx(&wndClass)) {
-        GENESIS_LOG_THROW_ERROR("RegisterClassEx failed.\nError code: 0x{:08X}", GetLastError());
+    if (!GetClassInfoEx(m_instance, WINDOW_CLASS_NAME, &wndClass)) {
+        wndClass = getWindowClass(m_instance, WINDOW_CLASS_NAME, windowProc);
+        if (!RegisterClassEx(&wndClass)) {
+            GENESIS_LOG_THROW_ERROR("RegisterClassEx failed.\nError code: 0x{:08X}", GetLastError());
+        }
     }
     open();
-    center();
 }
 
 Win32Window::~Win32Window()
@@ -43,9 +40,6 @@ Rect Win32Window::getScreenSize() const
 
 void Win32Window::setPosition(const Point& position)
 {
-    REQUIRE_WINDOW();
-    m_position = position;
-    
     BOOL result = SetWindowPos(
         static_cast<HWND>(m_handle),
         nullptr,
@@ -63,13 +57,10 @@ void Win32Window::setPosition(const Point& position)
 
 void Win32Window::setSize(const Rect& size)
 {
-    REQUIRE_WINDOW();
-    m_size = size;
-
     RECT wndRect = createWindowRect(size.width(), size.height(), getWindowStyle(m_style));
     BOOL result = SetWindowPos(
         static_cast<HWND>(m_handle),
-        HWND_TOP,
+        nullptr,
         0,
         0,
         wndRect.right - wndRect.left,
@@ -84,9 +75,6 @@ void Win32Window::setSize(const Rect& size)
 
 void Win32Window::setStyle(WindowStyle style)
 {
-    REQUIRE_WINDOW();
-    m_style = style;
-
     HWND hwnd = static_cast<HWND>(m_handle);
     DWORD wndStyle = getWindowStyle(style);
     RECT wndRect = createWindowRect(m_size.width(), m_size.height(), wndStyle);
@@ -105,25 +93,45 @@ void Win32Window::setStyle(WindowStyle style)
         GENESIS_LOG_ERROR("SetWindowPos failed.\nError code: 0x{:08X}", GetLastError());
         return;
     }
+    m_style = style;
 }
 
 void Win32Window::setTitle(const char* title)
 {
-    REQUIRE_WINDOW();
-    m_title = String{title};
-
-    WString wndTitle = WString(m_title.begin(), m_title.end());
+    WString wndTitle = WString(title, title + strlen(title));
     if (!SetWindowText(static_cast<HWND>(m_handle), wndTitle.c_str())) {
         GENESIS_LOG_ERROR("SetWindowText failed. Error: 0x{:08X}", GetLastError());
     }
+    m_title = String{title};
+}
+
+void Win32Window::show()
+{
+    if (isVisible()) {
+        return;
+    }
+    ShowWindow(static_cast<HWND>(m_handle), SW_SHOW);
+}
+
+void Win32Window::hide()
+{
+    if (!isVisible()) {
+        return;
+    }
+    ShowWindow(static_cast<HWND>(m_handle), SW_HIDE);
+}
+
+void Win32Window::center()
+{
+    Rect screen = getScreenSize();
+    setPosition(Point{
+        (screen.width() - m_size.width()) / 2, 
+        (screen.height() - m_size.height()) / 2
+    });
 }
 
 void Win32Window::open()
 {
-    if (isOpen()) {
-        return;
-    }
-
     WString title{m_title.begin(), m_title.end()};
     DWORD style = getWindowStyle(m_style);
     RECT size = createWindowRect(m_size.width(), m_size.height(), style);
@@ -145,48 +153,17 @@ void Win32Window::open()
     if (!m_handle) {
         GENESIS_LOG_THROW_ERROR("CreateWindowEx failed.\nError code: 0x{:08X}", GetLastError());
     }
-    m_isOpen = true;
-    show();
 }
 
 void Win32Window::close()
 {
-    REQUIRE_WINDOW();
+    if (!m_handle) {
+        return;
+    }
     if (!DestroyWindow(static_cast<HWND>(m_handle))) {
         GENESIS_LOG_THROW_ERROR("DestroyWindow failed.\nError code: 0x{:08X}", GetLastError());
     }
     m_handle = nullptr;
-    m_isOpen = false;
-    m_isVisible = false;
-}
-
-void Win32Window::show()
-{
-    REQUIRE_WINDOW();
-    if (isVisible()) {
-        return;
-    }
-    ShowWindow(static_cast<HWND>(m_handle), SW_SHOW);
-    m_isVisible = true;
-}
-
-void Win32Window::hide()
-{
-    REQUIRE_WINDOW();
-    if (!isVisible()) {
-        return;
-    }
-    ShowWindow(static_cast<HWND>(m_handle), SW_HIDE);
-    m_isVisible = false;
-}
-
-void Win32Window::center()
-{
-    Rect screen = getScreenSize();
-    setPosition(Point{
-        (screen.width() - m_size.width()) / 2, 
-        (screen.height() - m_size.height()) / 2
-    });
 }
 
 LRESULT CALLBACK Win32Window::windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -198,6 +175,8 @@ LRESULT CALLBACK Win32Window::windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPA
             return onDestroy(hwnd, msg, wparam, lparam);
         case WM_CLOSE: 
             return onClose(hwnd, msg, wparam, lparam);
+        case WM_MOVE:
+            return onMove(hwnd, msg, wparam, lparam);
         case WM_SIZE:
             return onSize(hwnd, msg, wparam, lparam);  
         case WM_SHOWWINDOW:
@@ -228,13 +207,29 @@ LRESULT Win32Window::onDestroy(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
 LRESULT Win32Window::onClose(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    CHECK_INVALID_WINDOW_POINTER(wnd, hwnd, msg, wparam, lparam);
     wnd->close();
+    return 0;
+}
+
+LRESULT Win32Window::onMove(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    CHECK_INVALID_WINDOW_POINTER(wnd, hwnd, msg, wparam, lparam);
+
+    RECT rect;
+    if (GetWindowRect(hwnd, &rect)) {
+        wnd->m_position = Point{rect.left, rect.top};
+    }
+
     return 0;
 }
 
 LRESULT Win32Window::onSize(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    CHECK_INVALID_WINDOW_POINTER(wnd, hwnd, msg, wparam, lparam);
+
     UINT width = LOWORD(lparam);
     UINT height = HIWORD(lparam);
 
@@ -272,7 +267,10 @@ LRESULT Win32Window::onSize(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 LRESULT Win32Window::onShowWindow(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    CHECK_INVALID_WINDOW_POINTER(wnd, hwnd, msg, wparam, lparam);
+
     bool visible = (wparam == TRUE);
+    wnd->m_isVisible = visible;
     
    /*switch (lparam) {
         case SW_PARENTCLOSING: {
@@ -289,14 +287,14 @@ LRESULT Win32Window::onShowWindow(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpa
         }
     }*/
 
-    wnd->m_isVisible = visible;
-
     return 0;
 }
 
 LRESULT Win32Window::onActivate(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    CHECK_INVALID_WINDOW_POINTER(wnd, hwnd, msg, wparam, lparam);
+
     WORD state = LOWORD(wparam);
     bool hasFocus = (state != WA_INACTIVE);
 
@@ -311,8 +309,9 @@ LRESULT Win32Window::onActivate(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 LRESULT Win32Window::onSetCursor(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     Win32Window* wnd = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-    WORD hitTest = LOWORD(lparam);
+    CHECK_INVALID_WINDOW_POINTER(wnd, hwnd, msg, wparam, lparam);
 
+    WORD hitTest = LOWORD(lparam);
     if (hitTest == HTCLIENT) {
         SetCursor(wnd->m_cursor);
         return TRUE;
@@ -346,7 +345,6 @@ RECT createWindowRect(UINT width, UINT height, DWORD style)
 {
     RECT wndRect = {0, 0, static_cast<LONG>(width), static_cast<LONG>(height)};
     AdjustWindowRect(&wndRect, style, false);
-
     return wndRect;
 }
 
