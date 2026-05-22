@@ -168,9 +168,9 @@
     <ClCompile Include="source\entity\components\LightComponent.cpp" />
     <ClCompile Include="source\resources\PostProcess.cpp" />
     <ClCompile Include="source\graphics\EngineShaders.cpp" />
-    <ClCompile Include="source\graphics\SamplerStateCache.cpp" />
-    <ClCompile Include="source\graphics\PipelineStateCache.cpp" />
-    <ClCompile Include="source\graphics\GraphicsCache.cpp" />
+    <ClCompile Include="source\graphics\cache\SamplerStateCache.cpp" />
+    <ClCompile Include="source\graphics\cache\PipelineStateCache.cpp" />
+    <ClCompile Include="source\graphics\cache\GraphicsCache.cpp" />
     <ClCompile Include="source\graphics\FrameBuffer.cpp" />
     <ClCompile Include="source\graphics\resources\DepthStencilTexture.cpp" />
     <ClCompile Include="source\graphics\resources\ImageTexture.cpp" />
@@ -241,7 +241,7 @@
     <ClInclude Include="include\resources\Font.h" />
     <ClInclude Include="include\graphics\resources\FontAtlas.h" />
     <ClInclude Include="include\graphics\EngineShaders.h" />
-    <ClInclude Include="include\graphics\GraphicsCache.h" />
+    <ClInclude Include="include\graphics\cache\GraphicsCache.h" />
     <ClInclude Include="include\graphics\FrameBuffer.h" />
     <ClInclude Include="include\graphics\resources\DepthStencilTexture.h" />
     <ClInclude Include="include\graphics\resources\ImageTexture.h" />
@@ -261,7 +261,6 @@
     <ClInclude Include="include\resources\ResourceManager.h" />
     <ClInclude Include="include\graphics\resources\IndexBuffer.h" />
     <ClInclude Include="include\graphics\resources\ConstantBuffer.h" />
-    <ClInclude Include="include\core\utils\PlatformUtils.h" />
     <ClInclude Include="include\graphics\utils\GraphicsTypes.h" />
     <ClInclude Include="include\graphics\resources\GraphicsPipelineState.h" />
     <ClInclude Include="include\graphics\utils\GraphicsUtils.h" />
@@ -290,8 +289,8 @@
     <ClInclude Include="include\resources\Shader.h" />
     <ClInclude Include="include\graphics\resources\SamplerState.h" />
     <ClInclude Include="include\graphics\resources\RenderTargetTexture.h" />
-    <ClInclude Include="include\graphics\PipelineStateCache.h" />
-    <ClInclude Include="include\graphics\SamplerStateCache.h" />
+    <ClInclude Include="include\graphics\cache\PipelineStateCache.h" />
+    <ClInclude Include="include\graphics\cache\SamplerStateCache.h" />
     <ClInclude Include="include\resources\PostProcess.h" />
     <ClInclude Include="include\entity\components\LightComponent.h" />
     <ClInclude Include="include\physics\PhysicsEngine.h" />

@@ -1,6 +1,6 @@
 #ifndef GENESIS_PIPELINE_STATE_CACHE_H
 #define GENESIS_PIPELINE_STATE_CACHE_H
-#include <graphics/GraphicsCache.h>
+#include <graphics/cache/GraphicsCache.h>
 
 namespace genesis
 {

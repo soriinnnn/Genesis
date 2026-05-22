@@ -1,6 +1,6 @@
 #ifndef GENESIS_SAMPLER_STATE_CACHE_H
 #define GENESIS_SAMPLER_STATE_CACHE_H
-#include <graphics/GraphicsCache.h>
+#include <graphics/cache/GraphicsCache.h>
 
 namespace genesis
 {

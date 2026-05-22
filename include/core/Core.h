@@ -54,9 +54,10 @@ namespace genesis
 
     class GraphicsEngine;
     class GraphicsDevice;
+    class FrameBuffer;
     class EngineShaders;
     class EngineStates;
-    class FrameBuffer;
+
     class GraphicsCache;
     class PipelineStateCache;
     class SamplerStateCache;

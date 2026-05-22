@@ -1,6 +1,6 @@
 #include <graphics/GraphicsDevice.h>
-#include <graphics/PipelineStateCache.h>
-#include <graphics/SamplerStateCache.h>
+#include <graphics/cache/PipelineStateCache.h>
+#include <graphics/cache/SamplerStateCache.h>
 #include <graphics/utils/GraphicsLogUtils.h>
 
 using namespace genesis;

@@ -33,7 +33,6 @@ namespace genesis
 		constexpr const char* getFilename(const char* path)
 		{
 			const char* file = path;
-
 			while (*path) {
 				if (*path == '/' || *path == '\\') {
 					file = path + 1;

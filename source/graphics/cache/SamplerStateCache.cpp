@@ -1,4 +1,4 @@
-#include <graphics/SamplerStateCache.h>
+#include <graphics/cache/SamplerStateCache.h>
 
 #define XXH_STATIC_LINKING_ONLY
 #define XXH_INLINE_ALL

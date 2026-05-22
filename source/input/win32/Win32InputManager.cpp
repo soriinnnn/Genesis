@@ -28,8 +28,8 @@ void Win32InputManager::update()
 {
     if (!m_window.hasFocus()) {
         if (!m_lostFocus) {
-            memset(m_currentKeys, 0, sizeof(uint8) * KEYBOARD_STATE_SIZE);
-            memset(m_previousKeys, 0, sizeof(uint8) * KEYBOARD_STATE_SIZE);
+            memset(m_currentKeys, 0, sizeof(uint8) * KEY_STATE_SIZE);
+            memset(m_previousKeys, 0, sizeof(uint8) * KEY_STATE_SIZE);
             m_previousMousePos = m_currentMousePos;
             m_lostFocus = true;
             if (!m_mouseVisible) {
@@ -134,7 +134,7 @@ void Win32InputManager::setMouseLock(bool enable)
 
 void Win32InputManager::getKeyState()
 {
-    memcpy(m_previousKeys, m_currentKeys, sizeof(uint8) * KEYBOARD_STATE_SIZE);
+    memcpy(m_previousKeys, m_currentKeys, sizeof(uint8) * KEY_STATE_SIZE);
     if (!GetKeyboardState(m_currentKeys)) {
         GENESIS_LOG_WARNING("GetKeyboardState failed.\nError code: 0x{:08X}", GetLastError());
         return;

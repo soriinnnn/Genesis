@@ -1,4 +1,4 @@
-#include <graphics/GraphicsCache.h>
+#include <graphics/cache/GraphicsCache.h>
 
 using namespace genesis;
 

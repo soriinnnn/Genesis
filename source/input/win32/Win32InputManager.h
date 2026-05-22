@@ -2,7 +2,7 @@
 #define GENESIS_WIN32_INPUT_MANAGER_H
 #include <input/InputManager.h>
 
-#define KEYBOARD_STATE_SIZE 256
+#define KEY_STATE_SIZE 256
 
 namespace genesis
 {
@@ -32,8 +32,8 @@ namespace genesis
 		void updateMousePosition();
 
 	private:
-		uint8 m_currentKeys[KEYBOARD_STATE_SIZE];
-		uint8 m_previousKeys[KEYBOARD_STATE_SIZE];
+		uint8 m_currentKeys[KEY_STATE_SIZE];
+		uint8 m_previousKeys[KEY_STATE_SIZE];
 		Point m_currentMousePos;
 		Point m_previousMousePos;
 		Rect m_previousWindowSize;
