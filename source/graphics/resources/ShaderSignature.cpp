@@ -13,7 +13,7 @@ ShaderSignature::ShaderSignature(const ShaderSignatureDesc& sdesc, const Graphic
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		D3DReflect(
 			shaderData.data,
-			shaderData.dataSize,
+			shaderData.size,
 			IID_PPV_ARGS(&m_shaderReflection)
 		),
 		"D3DReflect failed."

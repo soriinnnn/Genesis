@@ -8,6 +8,10 @@ using namespace std;
 
 ShaderBinary::ShaderBinary(const ShaderBinaryDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
+	if (!sdesc.binaryCode || !sdesc.binaryCodeSize) {
+		GENESIS_LOG_THROW_INVALID_ARG("Invalid shader binary data.");
+	}
+		
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		D3DCreateBlob(sdesc.binaryCodeSize, &m_binary),
 		"D3DCreateBlob failed."
@@ -17,36 +21,36 @@ ShaderBinary::ShaderBinary(const ShaderBinaryDesc& sdesc, const GraphicsResource
 
 ShaderBinary::ShaderBinary(const ShaderCompileDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
-	if (!sdesc.sourceName) {
-		GENESIS_LOG_THROW_INVALID_ARG("No shader source name provided.");
+	if (!sdesc.name) {
+		GENESIS_LOG_THROW_INVALID_ARG("Invalid shader source name.");
 	}
-	if (!sdesc.sourceCode) {
-		GENESIS_LOG_THROW_INVALID_ARG("No shader source code provided.");
+	if (!sdesc.code) {
+		GENESIS_LOG_THROW_INVALID_ARG("Invalid shader source code.");
 	}
-	if (!sdesc.sourceCodeSize) {
-		GENESIS_LOG_THROW_INVALID_ARG("No shader source code size provided.");
+	if (!sdesc.codeSize) {
+		GENESIS_LOG_THROW_INVALID_ARG("Invalid shader source code size.");
 	}
 	if (!sdesc.entryPoint) {
-		GENESIS_LOG_THROW_INVALID_ARG("No shader entry point provided.");
+		GENESIS_LOG_THROW_INVALID_ARG("Invalid shader entry point.");
 	}
 
-	UINT compileFlags = 0;
+	UINT flags = 0;
 	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob;
 
 #ifdef _DEBUG
-	compileFlags |= D3DCOMPILE_DEBUG;
+	flags |= D3DCOMPILE_DEBUG;
 #endif
 
 	GENESIS_GRAPHICS_CHECK_SHADER_COMPILE(
 		D3DCompile(
-			sdesc.sourceCode,
-			sdesc.sourceCodeSize,
-			sdesc.sourceName,
+			sdesc.code,
+			sdesc.codeSize,
+			sdesc.name,
 			nullptr,
 			nullptr,
 			sdesc.entryPoint,
 			graphicsUtils::getShaderModelTarget(sdesc.type),
-			compileFlags,
+			flags,
 			0,
 			&m_binary,
 			&errorBlob

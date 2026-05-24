@@ -1,5 +1,4 @@
 #include "Demo.h"
-#include <ui/elements/UIPanel.h>
 
 using namespace std;
 
@@ -26,7 +25,12 @@ void Demo::onKeyUp(Key key)
         }
         case Key::F11:
         {
-            m_display->setBorderless(!m_display->isBorderless());
+            if (m_display->getMode() == DisplayMode::Windowed) {
+                m_display->setMode(DisplayMode::Fullscreen);
+            }
+            else {
+                m_display->setMode(DisplayMode::Windowed);
+            }
             break;
         }
     }

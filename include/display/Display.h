@@ -5,6 +5,13 @@
 
 namespace genesis 
 {
+	enum class DisplayMode
+	{
+		Windowed,
+		Borderless,
+		Fullscreen
+	};
+
 	struct DisplayDesc
 	{
 		BaseDesc base;
@@ -18,28 +25,30 @@ namespace genesis
 		explicit Display(const DisplayDesc& desc);
 		~Display() override;
 
-		SwapChain& getSwapChain() noexcept;
+		const SwapChain& getSwapChain() noexcept;
 
 		Rect getSize() const noexcept;
 		Rect getResolution() const noexcept;
-		bool isBorderless() const noexcept;
+		DisplayMode getMode() const noexcept;
 		bool getVSync() const noexcept;
 
 		void setSize(const Rect& size);
 		void setResolution(const Rect& resolution);
-		void setBorderless(bool enable);
+		void setMode(DisplayMode mode);
 		void setVSync(bool enable);
-		void setMatchWindowResolution(bool enable);
+		void setSyncResolution(bool enable);
+		void present();
 
 		void onResize(std::function<void(Rect)> callback);
 
 	private:
 		Window& m_window;
 		SharedPtr<SwapChain> m_swapChain;
+		DisplayMode m_mode;
+		Rect m_screenSize;
 		Rect m_windowedSize;
 		bool m_vsync;
-		bool m_isBorderless;
-		bool m_matchWindowResolution;
+		bool m_syncResolution;
 
 	private:
 		std::function<void(Rect)> m_onResize;

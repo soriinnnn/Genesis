@@ -7,18 +7,18 @@ namespace genesis
 	struct BinaryData
 	{
 		const void* data{};
-		size_t dataSize{};
+		size_t size{};
 	};
 
-	struct GameContext
-	{
-		EntityManager& entities;
-		InputManager& input;
-		ResourceManager& resources;
-		UIManager& ui;
-		PhysicsEngine& physics;
-		Display& display;
-	};
+    struct GameContext
+    {
+        EntityManager& entities;
+        InputManager& input;
+        ResourceManager& resources;
+        UIManager& ui;
+        PhysicsEngine& physics;
+        Display& display;
+    };
 }
 
 #endif

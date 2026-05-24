@@ -18,7 +18,7 @@ DebugRenderer::DebugRenderer(const DebugRendererDesc& desc): m_graphicsDevice{de
 		PrimitiveTopology::Lines,
 		false
 	});
-	m_buffer = m_graphicsDevice.createVertexBuffer({nullptr, INITIAL_VERTEX_BUFFER_SIZE, sizeof(Vertex)});
+	m_buffer = m_graphicsDevice.createVertexBuffer({nullptr, INITIAL_VERTEX_BUFFER_SIZE, sizeof(Vertex), ResourceUsage::Dynamic});
 	m_vertices.reserve(INITIAL_VERTEX_BUFFER_SIZE);
 	Initialize();
 }
@@ -44,7 +44,7 @@ void DebugRenderer::DrawTriangle(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, JPH::RV
 
 void DebugRenderer::DrawText3D(JPH::RVec3Arg inPosition, const JPH::string_view& inString, JPH::ColorArg inColor, float inHeight)
 {
-	printf("HOLA3");
+	//printf("HOLA3");
 }
 
 /*
@@ -69,7 +69,7 @@ void DebugRenderer::render(DeviceContext& context)
 
 	uint32 vertexCount = static_cast<uint32>(m_vertices.size());
 	if (vertexCount > m_buffer->getVertexCount()) {
-		m_buffer = m_graphicsDevice.createVertexBuffer({nullptr, vertexCount * 2, sizeof(Vertex)});
+		m_buffer = m_graphicsDevice.createVertexBuffer({nullptr, vertexCount * 2, sizeof(Vertex), ResourceUsage::Dynamic});
 	}
 	context.updateVertexBuffer(*m_buffer, m_vertices.data(), vertexCount * sizeof(Vertex));
 	context.setVertexBuffer(*m_buffer);

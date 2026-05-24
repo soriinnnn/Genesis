@@ -90,9 +90,9 @@ const ConstantBuffer& PostProcess::getProperties() const
 	return *m_properties;
 }
 
-const uint8* PostProcess::getData() const
+BinaryData PostProcess::getData() const noexcept
 {
-	return m_data.data();
+	return BinaryData{m_data.data(), m_data.size()};
 }
 
 void PostProcess::clearDirty() noexcept

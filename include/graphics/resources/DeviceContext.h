@@ -16,10 +16,12 @@ namespace genesis
 		void clearAndSetBackBuffer(const SwapChain& swapChain, const Vec4& color);
 		void clearRenderTarget(const RenderTargetTexture& renderTarget, const Vec4& color);
 		void clearDepthStencil(const DepthStencilTexture& depthStencil);
+
+		void updateVertexBuffer(const VertexBuffer& buffer, const void* data, uint32 size);
+		void updateConstantBuffer(const ConstantBuffer& buffer, const void* data, uint32 size);
+		void updateStructuredBuffer(const StructuredBuffer& buffer, const void* data, uint32 size);
+
 		void setRenderTarget(const RenderTargetTexture& renderTarget, const DepthStencilTexture& depthStencil);
-		void updateVertexBuffer(const VertexBuffer& buffer, const void* data, uint32 dataSize);
-		void updateConstantBuffer(const ConstantBuffer& buffer, const void* data);
-		void updateStructuredBuffer(const StructuredBuffer& buffer, const void* data, uint32 dataSize);
 		void setGraphicsPipelineState(const GraphicsPipelineState& graphicsPipeline);
 		void setViewport(const Rect& size);
 		void setVertexBuffer(const VertexBuffer& buffer);
@@ -29,6 +31,7 @@ namespace genesis
 		void setTexture(const ImageTexture& texture, uint32 slot = 0);
 		void setTexture(const RenderTargetTexture& texture, uint32 slot = 0);
 		void setSamplerState(const SamplerState& sampler, uint32 slot = 0);
+
 		void draw(uint32 vertexCount, uint32 startVertexLocation = 0);
 		void drawIndexed(uint32 indexCount, uint32 startIndexLocation = 0, int32 baseVertexLocation = 0);
 

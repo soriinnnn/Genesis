@@ -14,9 +14,9 @@ namespace genesis
 
 	struct ShaderCompileDesc
 	{
-		const char* sourceName{};
-		const void* sourceCode{};
-		size_t sourceCodeSize{};
+		const char* name{};
+		const void* code{};
+		size_t codeSize{};
 		const char* entryPoint{};
 		ShaderType type{};
 	};

@@ -7,10 +7,10 @@ namespace genesis
 {
 	struct GraphicsPipelineStateDesc
 	{
-		const ShaderBinary& vertexShaderBinary;
-		const ShaderBinary& pixelShaderBinary;
-		const ShaderSignature& vertexShaderSignature;
-		const ShaderSignature& pixelShaderSignature;
+		const ShaderBinary& vsBinary;
+		const ShaderBinary& psBinary;
+		const ShaderSignature& vsSignature;
+		const ShaderSignature& psSignature;
 		PrimitiveTopology primitive = PrimitiveTopology::Triangles;
 		bool depthEnable = true;
 		ComparisonFunction depthComparison = ComparisonFunction::Less;

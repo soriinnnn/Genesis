@@ -50,7 +50,7 @@ GraphicsEngine::~GraphicsEngine() {}
 
 GraphicsContext GraphicsEngine::getGraphicsContext() noexcept
 {
-    return {*m_graphicsDevice, *m_shaders};
+    return {*m_graphicsDevice, *m_shaders, *m_states};
 }
 
 Rect GraphicsEngine::getRenderResolution() const noexcept
@@ -85,7 +85,7 @@ void GraphicsEngine::render(EntityManager& entities, Entity& camera, float delta
         cameraComponent->getProjectionMatrix(),
         Vec4{camera.getComponent<TransformComponent>()->getPosition()}
     };
-    m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData);
+    m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData, sizeof(CameraData));
     m_deviceContext->setConstantBuffer(*m_cameraBuffer, CAMERA_CONSTANT_BUFFER_SLOT);
 
     uint32 lightCount = getLights(entities);
@@ -93,7 +93,7 @@ void GraphicsEngine::render(EntityManager& entities, Entity& camera, float delta
         deltaTime,
         lightCount
     };
-    m_deviceContext->updateConstantBuffer(*m_sceneBuffer, &sceneData);
+    m_deviceContext->updateConstantBuffer(*m_sceneBuffer, &sceneData, sizeof(SceneData));
     m_deviceContext->setConstantBuffer(*m_sceneBuffer, SCENE_CONSTANT_BUFFER_SLOT);
 
     renderEntities(entities);
@@ -115,7 +115,7 @@ void GraphicsEngine::render(DebugRenderer& debug, Entity& camera)
         cameraComponent->getProjectionMatrix(),
         Vec4{camera.getComponent<TransformComponent>()->getPosition()}
     };
-    m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData);
+    m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData, sizeof(CameraData));
     m_deviceContext->setConstantBuffer(*m_cameraBuffer, CAMERA_CONSTANT_BUFFER_SLOT);
 
     debug.render(*m_deviceContext);
@@ -147,7 +147,7 @@ void GraphicsEngine::postProcess(PostProcess& effect)
 
 void GraphicsEngine::present(Display& display)
 {
-    SwapChain& swapChain = display.getSwapChain();
+    const SwapChain& swapChain = display.getSwapChain();
     m_deviceContext->clearAndSetBackBuffer(swapChain, Vec4{1.0f, 1.0f, 1.0f, 1.0f});
     m_deviceContext->setViewport(swapChain.getSize());
     m_deviceContext->setGraphicsPipelineState(*m_frameBufferPipeline);
@@ -155,7 +155,7 @@ void GraphicsEngine::present(Display& display)
     m_deviceContext->setSamplerState(m_states->getPointClamp());
     m_deviceContext->draw(FULLSCREEN_TRIANGLE_VERTEX_COUNT);
     m_graphicsDevice->executeCommandList(*m_deviceContext);
-    swapChain.present(display.getVSync());
+    display.present();
 }
 
 uint32 GraphicsEngine::getLights(EntityManager& entities)
@@ -203,7 +203,7 @@ void GraphicsEngine::renderEntities(EntityManager& entities)
         ObjectData objectData{
            transformComponent->getWorldMatrix()
         };
-        m_deviceContext->updateConstantBuffer(*m_objectBuffer, &objectData);
+        m_deviceContext->updateConstantBuffer(*m_objectBuffer, &objectData, sizeof(ObjectData));
         m_deviceContext->setConstantBuffer(*m_objectBuffer, OBJECT_CONSTANT_BUFFER_SLOT);
 
         const Material* material = meshComponent.getMaterial();
@@ -234,7 +234,8 @@ void GraphicsEngine::applyPostProcess(PostProcess& effect, FrameBuffer& input, F
     m_deviceContext->setSamplerState(m_states->getPointClamp());
     if (effect.hasProperties()) {
         if (effect.isDirty()) {
-            m_deviceContext->updateConstantBuffer(effect.getProperties(), effect.getData());
+            BinaryData data = effect.getData();
+            m_deviceContext->updateConstantBuffer(effect.getProperties(), data.data, static_cast<uint32>(data.size));
             effect.clearDirty();
         }
         m_deviceContext->setConstantBuffer(effect.getProperties(), POST_PROCESSING_EFFECT_CONSTANT_BUFFER_SLOT);

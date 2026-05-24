@@ -14,10 +14,10 @@ struct hash<GraphicsPipelineStateDesc>
     {
         XXH64_state_t state{};
         XXH64_reset(&state, 0);
-        XXH64_update(&state, &desc.vertexShaderBinary, sizeof(desc.vertexShaderBinary));
-        XXH64_update(&state, &desc.pixelShaderBinary, sizeof(desc.pixelShaderBinary));
-        XXH64_update(&state, &desc.vertexShaderSignature, sizeof(desc.vertexShaderSignature));
-        XXH64_update(&state, &desc.pixelShaderSignature, sizeof(desc.pixelShaderSignature));
+        XXH64_update(&state, &desc.vsBinary, sizeof(desc.vsBinary));
+        XXH64_update(&state, &desc.psBinary, sizeof(desc.psBinary));
+        XXH64_update(&state, &desc.vsSignature, sizeof(desc.vsSignature));
+        XXH64_update(&state, &desc.psSignature, sizeof(desc.psSignature));
         XXH64_update(&state, &desc.primitive, sizeof(desc.primitive));
         XXH64_update(&state, &desc.depthEnable, sizeof(desc.depthEnable));
         XXH64_update(&state, &desc.depthComparison, sizeof(desc.depthComparison));

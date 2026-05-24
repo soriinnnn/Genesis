@@ -35,20 +35,25 @@ namespace genesis
         virtual ~GraphicsDevice() override;
 
         SharedPtr<DeviceContext> createDeviceContext();
+        SharedPtr<SwapChain> createSwapChain(const SwapChainDesc& desc);
+
+        SharedPtr<ShaderBinary> createShaderBinary(const ShaderBinaryDesc& desc);
         SharedPtr<ShaderBinary> compileShader(const ShaderCompileDesc& desc);
         SharedPtr<ShaderSignature> reflectShader(const ShaderSignatureDesc& desc);
-        SharedPtr<ShaderBinary> createShaderBinary(const ShaderBinaryDesc& desc);
-        SharedPtr<SwapChain> createSwapChain(const SwapChainDesc& desc);
-        SharedPtr<GraphicsPipelineState> createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc);
+       
         SharedPtr<VertexBuffer> createVertexBuffer(const VertexBufferDesc& desc);
         SharedPtr<IndexBuffer> createIndexBuffer(const IndexBufferDesc& desc);
         SharedPtr<ConstantBuffer> createConstantBuffer(const ConstantBufferDesc& desc);
         SharedPtr<StructuredBuffer> createStructuredBuffer(const StructuredBufferDesc& desc);
+        
+        SharedPtr<GraphicsPipelineState> createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc);
         SharedPtr<SamplerState> createSamplerState(const SamplerStateDesc& desc);
+        
         SharedPtr<ImageTexture> createImageTexture(const ImageTextureFileDesc& desc);
         SharedPtr<ImageTexture> createImageTexture(const ImageTextureSolidDesc& desc);
         SharedPtr<DepthStencilTexture> createDepthStencilTexture(const DepthStencilTextureDesc& desc);
         SharedPtr<RenderTargetTexture> createRenderTargetTexture(const RenderTargetTextureDesc& desc);
+        
         SharedPtr<SpriteBatch> createSpriteBatch(const SpriteBatchDesc& desc);
         SharedPtr<FontAtlas> createFontAtlas(const FontAtlasDesc& desc);
 

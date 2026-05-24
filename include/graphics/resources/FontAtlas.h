@@ -33,6 +33,7 @@ namespace genesis
 		Rect getSize(const wchar_t* text) const;
 		Glyph getGlyph(wchar_t character) const;
 		float getLineSpacing() const;
+		wchar_t getDefaultCharacter() const;
 
 		void setPixelAlignment(bool enable);
 		void setLineSpacing(float spacing);

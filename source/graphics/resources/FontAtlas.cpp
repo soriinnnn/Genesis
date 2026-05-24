@@ -54,6 +54,11 @@ float FontAtlas::getLineSpacing() const
 	return m_font->GetLineSpacing();
 }
 
+wchar_t FontAtlas::getDefaultCharacter() const
+{
+	return m_font->GetDefaultCharacter();
+}
+
 void FontAtlas::setPixelAlignment(bool enable)
 {
 	m_font->SetPixelAlignment(enable);

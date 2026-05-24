@@ -17,9 +17,9 @@ namespace genesis
 		~RenderTargetTexture() override;
 
 	private:
-		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_resourceView;
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_renderTargetView;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_targetView;
+		Rect m_size;
 
 		friend class DeviceContext;
 	};

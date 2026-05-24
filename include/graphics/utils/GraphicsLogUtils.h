@@ -7,7 +7,7 @@
 {\
 	HRESULT result = (res);\
 	if (FAILED(result)) {\
-		GENESIS_LOG_THROW_ERROR(msg "\nError code: 0x{:08X}", __VA_OPT__(__VA_ARGS__,) (uint32_t)result);\
+		GENESIS_LOG_THROW_ERROR(msg "\nError code: 0x{:08X}", __VA_OPT__(__VA_ARGS__,) static_cast<uint32>(result));\
 	}\
 }
 

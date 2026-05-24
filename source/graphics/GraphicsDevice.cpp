@@ -57,6 +57,16 @@ SharedPtr<DeviceContext> GraphicsDevice::createDeviceContext()
     return make_shared<DeviceContext>(getGraphicsResourceDesc());
 }
 
+SharedPtr<SwapChain> GraphicsDevice::createSwapChain(const SwapChainDesc& desc)
+{
+    return make_shared<SwapChain>(desc, getGraphicsResourceDesc());
+}
+
+SharedPtr<ShaderBinary> GraphicsDevice::createShaderBinary(const ShaderBinaryDesc& desc)
+{
+    return make_shared<ShaderBinary>(desc, getGraphicsResourceDesc());
+}
+
 SharedPtr<ShaderBinary> GraphicsDevice::compileShader(const ShaderCompileDesc& desc)
 {
     return make_shared<ShaderBinary>(desc, getGraphicsResourceDesc());
@@ -65,21 +75,6 @@ SharedPtr<ShaderBinary> GraphicsDevice::compileShader(const ShaderCompileDesc& d
 SharedPtr<ShaderSignature> GraphicsDevice::reflectShader(const ShaderSignatureDesc& desc)
 {
     return make_shared<ShaderSignature>(desc, getGraphicsResourceDesc());
-}
-
-SharedPtr<ShaderBinary> GraphicsDevice::createShaderBinary(const ShaderBinaryDesc& desc)
-{
-    return make_shared<ShaderBinary>(desc, getGraphicsResourceDesc());
-}
-
-SharedPtr<SwapChain> GraphicsDevice::createSwapChain(const SwapChainDesc& desc)
-{
-    return make_shared<SwapChain>(desc, getGraphicsResourceDesc());
-}
-
-SharedPtr<GraphicsPipelineState> GraphicsDevice::createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc)
-{
-    return m_pipelineCache->get(desc);
 }
 
 SharedPtr<VertexBuffer> GraphicsDevice::createVertexBuffer(const VertexBufferDesc& desc)
@@ -100,6 +95,11 @@ SharedPtr<ConstantBuffer> GraphicsDevice::createConstantBuffer(const ConstantBuf
 SharedPtr<StructuredBuffer> GraphicsDevice::createStructuredBuffer(const StructuredBufferDesc& desc)
 {
     return make_shared<StructuredBuffer>(desc, getGraphicsResourceDesc());
+}
+
+SharedPtr<GraphicsPipelineState> GraphicsDevice::createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc)
+{
+    return m_pipelineCache->get(desc);
 }
 
 SharedPtr<SamplerState> GraphicsDevice::createSamplerState(const SamplerStateDesc& desc)
@@ -156,7 +156,6 @@ void GraphicsDevice::clearCommandList(DeviceContext& context)
 void GraphicsDevice::executeCommandList(DeviceContext& context)
 {
     Microsoft::WRL::ComPtr<ID3D11CommandList> list;
-
     GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
         context.m_context->FinishCommandList(false, &list),
         "FinishCommandList failed."

@@ -3,13 +3,23 @@
 
 using namespace genesis;
 
-static D3D11_BUFFER_DESC createBufferDesc(const ConstantBufferDesc& desc);
-static D3D11_SUBRESOURCE_DATA createSubResourceData(const ConstantBufferDesc& desc);
+static constexpr uint32 ELEMENT_SIZE = 16;
+static constexpr uint32 CONSTANT_BUFFER_MAX_SIZE = ELEMENT_SIZE * D3D11_REQ_CONSTANT_BUFFER_ELEMENT_COUNT;
 
-ConstantBuffer::ConstantBuffer(const ConstantBufferDesc& cdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
+static D3D11_BUFFER_DESC getD3D11BufferDesc(uint32 size);
+static D3D11_SUBRESOURCE_DATA getD3D11SubResourceData(const void* buffer);
+
+ConstantBuffer::ConstantBuffer(const ConstantBufferDesc& cdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc), m_size{cdesc.size}
 {
-	D3D11_BUFFER_DESC buffDesc = createBufferDesc(cdesc);
-	D3D11_SUBRESOURCE_DATA initData = createSubResourceData(cdesc);
+	if (m_size % ELEMENT_SIZE != 0) {
+		GENESIS_LOG_THROW_INVALID_ARG("Buffer size must be a multiple of {} bytes. Provided size: {} bytes.", ELEMENT_SIZE, m_size);
+	}
+	if (m_size > CONSTANT_BUFFER_MAX_SIZE) {
+		GENESIS_LOG_THROW_INVALID_ARG("Buffer size exceeds maximum allowed ({} bytes). Provided size: {} bytes.", CONSTANT_BUFFER_MAX_SIZE, m_size);
+	}
+
+	D3D11_BUFFER_DESC buffDesc = getD3D11BufferDesc(m_size);
+	D3D11_SUBRESOURCE_DATA initData = getD3D11SubResourceData(cdesc.buffer);
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateBuffer(
 			&buffDesc, 
@@ -18,29 +28,32 @@ ConstantBuffer::ConstantBuffer(const ConstantBufferDesc& cdesc, const GraphicsRe
 		),
 		"CreateBuffer failed."
 	);
-
-	m_size = cdesc.size;
 }
 
 ConstantBuffer::~ConstantBuffer() {}
 
 /* STATIC FUNCTION DEFINITIONS */
 
-D3D11_BUFFER_DESC createBufferDesc(const ConstantBufferDesc& desc) {
-	D3D11_BUFFER_DESC buffDesc{};
+D3D11_BUFFER_DESC getD3D11BufferDesc(uint32 size) {
+	D3D11_BUFFER_DESC desc{};
 
-	buffDesc.Usage = D3D11_USAGE_DYNAMIC;
-	buffDesc.ByteWidth = desc.size;
-	buffDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	buffDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	buffDesc.MiscFlags = 0;
+	desc.ByteWidth = static_cast<UINT>(size);
+	desc.Usage = D3D11_USAGE_DYNAMIC;
+	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	desc.MiscFlags = 0;
+	desc.StructureByteStride = 0;
 
-	return buffDesc;
+	return desc;
 }
 
-D3D11_SUBRESOURCE_DATA createSubResourceData(const ConstantBufferDesc& desc)
+D3D11_SUBRESOURCE_DATA getD3D11SubResourceData(const void* buffer)
 {
 	D3D11_SUBRESOURCE_DATA data{};
-	data.pSysMem = desc.buffer;
+
+	data.pSysMem = buffer;
+	data.SysMemPitch = 0;
+	data.SysMemSlicePitch = 0;
+
 	return data;
 }

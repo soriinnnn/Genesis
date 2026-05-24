@@ -11,13 +11,20 @@
 #include <graphics/resources/RenderTargetTexture.h>
 #include <graphics/utils/GraphicsLogUtils.h>
 
+#define DEFAULT_CONTEXT_FLAGS 0
+#define DEFAULT_CLEAR_DEPTH 1.0f
+#define DEFAULT_CLEAR_STENCIL 0
+#define DEFAULT_MAP_FLAGS 0
+#define DEFAULT_MIN_DEPTH 0.0f
+#define DEFAULT_MAX_DEPTH 1.0f
+
 using namespace genesis;
 using namespace std;
 
 DeviceContext::DeviceContext(const GraphicsResourceDesc& desc): GraphicsResource(desc)
 {
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
-		m_device.CreateDeferredContext(0, &m_context),
+		m_device.CreateDeferredContext(DEFAULT_CONTEXT_FLAGS, &m_context),
 		"CreateDeferredContext failed."
 	);
 }
@@ -26,100 +33,111 @@ DeviceContext::~DeviceContext() {}
 
 void DeviceContext::clearAndSetBackBuffer(const SwapChain& swapChain, const Vec4& color)
 {
-	ID3D11RenderTargetView* renderView = swapChain.m_renderTarget.Get();
+	ID3D11RenderTargetView* renderView = swapChain.m_targetView.Get();
 	ID3D11DepthStencilView* depthView = swapChain.m_depthStencil->m_depthStencilView.Get();
-
 	m_context->ClearRenderTargetView(renderView, color.toArray());
-	m_context->ClearDepthStencilView(depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_context->ClearDepthStencilView(depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, DEFAULT_CLEAR_DEPTH, DEFAULT_CLEAR_STENCIL);
 	m_context->OMSetRenderTargets(1, &renderView, depthView);
 }
 
 void DeviceContext::clearRenderTarget(const RenderTargetTexture& renderTarget, const Vec4& color)
 {
-	ID3D11RenderTargetView* renderView = renderTarget.m_renderTargetView.Get();
+	ID3D11RenderTargetView* renderView = renderTarget.m_targetView.Get();
 	m_context->ClearRenderTargetView(renderView, color.toArray());
 }
 
 void DeviceContext::clearDepthStencil(const DepthStencilTexture& depthStencil)
 {
 	ID3D11DepthStencilView* depthView = depthStencil.m_depthStencilView.Get();
-	m_context->ClearDepthStencilView(depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_context->ClearDepthStencilView(depthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, DEFAULT_CLEAR_DEPTH, DEFAULT_CLEAR_STENCIL);
+}
+
+void DeviceContext::updateVertexBuffer(const VertexBuffer& buffer, const void* data, uint32 size)
+{
+	if (!data) {
+		GENESIS_LOG_THROW_INVALID_ARG("Null data pointer.");
+	}
+	if (buffer.m_usage != ResourceUsage::Dynamic) {
+		GENESIS_LOG_THROW_ERROR("Cannot update vertex buffer. Only Dynamic buffers can be mapped.");
+	}
+	if (size > buffer.getVertexCount() * buffer.getVertexSize()) {
+		GENESIS_LOG_THROW_ERROR("Data size {} exceeds vertex buffer capacity ({} bytes).", size, buffer.getVertexCount() * buffer.getVertexSize());
+	}
+
+	ID3D11Buffer* buff = buffer.m_buffer.Get();
+	D3D11_MAPPED_SUBRESOURCE mapped{};
+	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
+		m_context->Map(
+			buff,
+			0,
+			D3D11_MAP_WRITE_DISCARD,
+			DEFAULT_MAP_FLAGS,
+			&mapped
+		),
+		"ID3D11DeviceContext::Map failed."
+	);
+
+	memcpy(mapped.pData, data, size);
+	m_context->Unmap(buff, 0);
+}
+
+void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const void* data, uint32 size)
+{
+	if (!data) {
+		GENESIS_LOG_THROW_INVALID_ARG("Null data pointer.");
+	}
+	if (size != buffer.m_size) {
+		GENESIS_LOG_THROW_INVALID_ARG("Data size {} does not match constant buffer size ({} bytes).", size, buffer.m_size);
+	}
+
+	ID3D11Buffer* buff = buffer.m_buffer.Get();
+	D3D11_MAPPED_SUBRESOURCE mapped{};
+	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
+		m_context->Map(
+			buff,
+			0,
+			D3D11_MAP_WRITE_DISCARD,
+			DEFAULT_MAP_FLAGS,
+			&mapped
+		),
+		"ID3D11DeviceContext::Map failed."
+	);
+
+	memcpy(mapped.pData, data, size);
+	m_context->Unmap(buff, 0);
+}
+
+void DeviceContext::updateStructuredBuffer(const StructuredBuffer& buffer, const void* data, uint32 size)
+{
+	if (!data) {
+		GENESIS_LOG_THROW_INVALID_ARG("Null data pointer.");
+	}
+	if (size > buffer.m_size) {
+		GENESIS_LOG_THROW_ERROR("Data size {} exceeds structured buffer capacity ({} bytes).", size, buffer.m_size);
+	}
+
+	ID3D11Buffer* buff = buffer.m_buffer.Get();
+	D3D11_MAPPED_SUBRESOURCE mapped{};
+	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
+		m_context->Map(
+			buff,
+			0,
+			D3D11_MAP_WRITE_DISCARD,
+			DEFAULT_MAP_FLAGS,
+			&mapped
+		),
+		"ID3D11DeviceContext::Map failed."
+	);
+
+	memcpy(mapped.pData, data, size);
+	m_context->Unmap(buff, 0);
 }
 
 void DeviceContext::setRenderTarget(const RenderTargetTexture& renderTarget, const DepthStencilTexture& depthStencil)
 {
-	ID3D11RenderTargetView* renderView = renderTarget.m_renderTargetView.Get();
+	ID3D11RenderTargetView* renderView = renderTarget.m_targetView.Get();
 	ID3D11DepthStencilView* depthView = depthStencil.m_depthStencilView.Get();
 	m_context->OMSetRenderTargets(1, &renderView, depthView);
-}
-
-void DeviceContext::updateVertexBuffer(const VertexBuffer& buffer, const void* data, uint32 dataSize)
-{
-	if (!data) {
-		GENESIS_LOG_THROW_ERROR("Null data pointer.");
-	}
-
-	ID3D11Buffer* buff = buffer.m_buffer.Get();
-	D3D11_MAPPED_SUBRESOURCE mapped{};
-	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
-		m_context->Map(
-			buff,
-			0,
-			D3D11_MAP_WRITE_DISCARD,
-			0,
-			&mapped
-		),
-		"ID3D11DeviceContext::Map failed."
-	);
-	memcpy(mapped.pData, data, dataSize);
-	m_context->Unmap(buff, 0);
-}
-
-void DeviceContext::updateConstantBuffer(const ConstantBuffer& buffer, const void* data)
-{
-	if (!data) {
-		GENESIS_LOG_THROW_ERROR("Null data pointer.");
-	}
-
-	ID3D11Buffer* buff = buffer.m_buffer.Get();
-	D3D11_MAPPED_SUBRESOURCE mapped{};
-	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
-		m_context->Map(
-			buff,
-			0,
-			D3D11_MAP_WRITE_DISCARD,
-			0,
-			&mapped
-		),
-		"ID3D11DeviceContext::Map failed."
-	);
-	memcpy(mapped.pData, data, buffer.m_size);
-	m_context->Unmap(buff, 0);
-}
-
-void DeviceContext::updateStructuredBuffer(const StructuredBuffer& buffer, const void* data, uint32 dataSize)
-{
-	if (!data) {
-		GENESIS_LOG_THROW_ERROR("Null data pointer.");
-	}
-	if (dataSize > buffer.m_size) {
-		GENESIS_LOG_THROW_ERROR("Data size exceeds buffer capacity.");
-	}
-
-	ID3D11Buffer* buff = buffer.m_buffer.Get();
-	D3D11_MAPPED_SUBRESOURCE mapped{};
-	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
-		m_context->Map(
-			buff,
-			0,
-			D3D11_MAP_WRITE_DISCARD,
-			0,
-			&mapped
-		),
-		"ID3D11DeviceContext::Map failed."
-	);
-	memcpy(mapped.pData, data, dataSize);
-	m_context->Unmap(buff, 0);
 }
 
 void DeviceContext::setGraphicsPipelineState(const GraphicsPipelineState& graphicsPipeline)
@@ -136,9 +154,8 @@ void DeviceContext::setViewport(const Rect& size)
 	D3D11_VIEWPORT viewport{};
 	viewport.Width = static_cast<float>(size.width());
 	viewport.Height = static_cast<float>(size.height());
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-
+	viewport.MinDepth = DEFAULT_MIN_DEPTH;
+	viewport.MaxDepth = DEFAULT_MAX_DEPTH;
 	m_context->RSSetViewports(1, &viewport);
 }
 
@@ -147,7 +164,6 @@ void DeviceContext::setVertexBuffer(const VertexBuffer& buffer)
 	ID3D11Buffer* buff = buffer.m_buffer.Get();
 	uint32 stride = buffer.m_vertexSize;
 	uint32 offset = 0;
-
 	m_context->IASetVertexBuffers(0, 1, &buff, &stride, &offset);
 }
 

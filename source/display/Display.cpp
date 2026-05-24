@@ -8,22 +8,26 @@ using namespace std;
 Display::Display(const DisplayDesc& desc): Base(desc.base), m_window{desc.window}
 {
 	m_swapChain = desc.graphicsContext.graphicsDevice.createSwapChain({m_window.getHandle(), m_window.getSize()});
+	m_mode = DisplayMode::Windowed;
+	m_screenSize = m_window.getScreenSize();
+	m_windowedSize = m_window.getSize();
+	m_vsync = true;
+	m_syncResolution = true;
+	m_onResize = nullptr;
 	m_window.onResize([this](Rect size) {
-		if (!isBorderless()) {
+		if (m_mode == DisplayMode::Windowed) {
 			m_windowedSize = size;
 		}
-		if (m_matchWindowResolution) {
+		else if (m_mode == DisplayMode::Fullscreen && size != m_screenSize) {
+			setMode(DisplayMode::Windowed);
+		}
+		if (m_syncResolution) {
 			m_swapChain->setSize(size);
 		}
 		if (m_onResize) {
 			m_onResize(size);
 		}
 	});
-	m_windowedSize = m_window.getSize();
-	m_vsync = true;
-	m_isBorderless = false;
-	m_matchWindowResolution = true;
-	m_onResize = nullptr;
 }
 
 Display::~Display() 
@@ -31,14 +35,9 @@ Display::~Display()
 	m_window.onResize(nullptr);
 }
 
-SwapChain& Display::getSwapChain() noexcept
+const SwapChain& Display::getSwapChain() noexcept
 {
 	return *m_swapChain;
-}
-
-bool Display::isBorderless() const noexcept
-{
-	return m_isBorderless;
 }
 
 bool Display::getVSync() const noexcept
@@ -56,10 +55,15 @@ Rect Display::getResolution() const noexcept
 	return m_swapChain->getSize();
 }
 
+DisplayMode Display::getMode() const noexcept
+{
+	return m_mode;
+}
+
 void Display::setSize(const Rect& size)
 {
-	if (isBorderless()) {
-		GENESIS_LOG_WARNING("Cannot change window size while in borderless mode.");
+	if (m_mode != DisplayMode::Windowed) {
+		GENESIS_LOG_WARNING("Cannot set size in current display mode. Only allowed in Windowed mode.");
 		return;
 	}
 	m_window.setSize(size);
@@ -70,21 +74,42 @@ void Display::setResolution(const Rect& resolution)
 	m_swapChain->setSize(resolution);
 }
 
-void Display::setBorderless(bool enable)
+void Display::setMode(DisplayMode mode)
 {
-	if (m_isBorderless == enable) {
+	if (m_mode == mode) {
 		return;
 	}
-	m_isBorderless = enable;
-	if (enable) {
-		m_window.setSize(m_window.getScreenSize());
-		m_window.setStyle(WindowStyle::Borderless);
-		m_window.setPosition(Point{0, 0});
+	if (m_mode == DisplayMode::Fullscreen) {
+		if (!m_swapChain->setFullscreen(false)) {
+			return;
+		}
 	}
-	else {
-		m_window.setSize(m_windowedSize);
-		m_window.setStyle(WindowStyle::Windowed);
-		m_window.center();
+
+	switch (mode) {
+		case DisplayMode::Windowed: {
+			m_window.setStyle(WindowStyle::Windowed);
+			m_window.setSize(m_windowedSize);
+			m_window.center();
+			m_mode = mode;
+			break;
+		}
+		case DisplayMode::Borderless: {
+			m_mode = mode;
+			m_window.setStyle(WindowStyle::Borderless);
+			m_window.setSize(m_screenSize);
+			m_window.setPosition({0, 0});
+			break;
+		}
+		case DisplayMode::Fullscreen: {
+			DisplayMode lastMode = m_mode;
+			m_mode = mode;
+			if (!m_swapChain->setFullscreen(true)) {
+				m_mode = lastMode;
+			};
+			break;
+		}
+		default:
+			GENESIS_LOG_THROW_INVALID_ARG("Invalid display mode.");
 	}
 }
 
@@ -93,15 +118,20 @@ void Display::setVSync(bool enable)
 	m_vsync = enable;
 }
 
-void Display::setMatchWindowResolution(bool enable)
+void Display::setSyncResolution(bool enable)
 {
-	if (m_matchWindowResolution == enable) {
+	if (m_syncResolution == enable) {
 		return;
 	}
-	m_matchWindowResolution = enable;
+	m_syncResolution = enable;
 	if (enable) {
 		m_swapChain->setSize(m_windowedSize);
 	}
+}
+
+void Display::present()
+{
+	m_swapChain->present(m_vsync);
 }
 
 void Display::onResize(function<void(Rect)> callback)

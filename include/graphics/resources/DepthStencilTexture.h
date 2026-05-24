@@ -16,9 +16,12 @@ namespace genesis
 		DepthStencilTexture(const DepthStencilTextureDesc& tdesc, const GraphicsResourceDesc& gdesc);
 		~DepthStencilTexture() override;
 
+		Rect getSize() const noexcept;
+
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_depthStencilView;
+		Rect m_size;
 
 		friend class DeviceContext;
 	};

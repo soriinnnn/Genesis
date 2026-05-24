@@ -3,35 +3,31 @@
 
 using namespace genesis;
 
-static D3D11_TEXTURE2D_DESC getTextureDesc(const RenderTargetTextureDesc& desc);
+static D3D11_TEXTURE2D_DESC getD3D11TextureDesc(const Rect& size);
 
-RenderTargetTexture::RenderTargetTexture(const RenderTargetTextureDesc& tdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
+RenderTargetTexture::RenderTargetTexture(const RenderTargetTextureDesc& tdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc), m_size{tdesc.size}
 {
-	D3D11_TEXTURE2D_DESC textureDesc = getTextureDesc(tdesc);
+	if (m_size.width() <= 0 || m_size.width() > D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION) {
+		GENESIS_LOG_THROW_INVALID_ARG("Texture width {} out of valid range (1..{}).", m_size.width(), D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION);
+	}
+	if (m_size.height() <= 0 || m_size.height() > D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION) {
+		GENESIS_LOG_THROW_INVALID_ARG("Texture height {} out of valid range (1..{}).", m_size.height(), D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION);
+	}
+
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> texture;
+	D3D11_TEXTURE2D_DESC textureDesc = getD3D11TextureDesc(m_size);
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
-		m_device.CreateTexture2D(
-			&textureDesc,
-			nullptr,
-			&m_texture
-		),
+		m_device.CreateTexture2D(&textureDesc, nullptr, &texture),
 		"CreateTexture2D failed."
 	);
 
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
-		m_device.CreateShaderResourceView(
-			m_texture.Get(),
-			nullptr,
-			&m_resourceView
-		),
+		m_device.CreateShaderResourceView(texture.Get(), nullptr, &m_resourceView),
 		"CreateShaderResourceView failed."
 	);
 
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
-		m_device.CreateRenderTargetView(
-			m_texture.Get(),
-			nullptr,
-			&m_renderTargetView
-		),
+		m_device.CreateRenderTargetView(texture.Get(), nullptr, &m_targetView),
 		"CreateRenderTargetView failed."
 	);
 }
@@ -40,18 +36,21 @@ RenderTargetTexture::~RenderTargetTexture() {}
 
 /* STATIC FUNCTION DEFINITIONS */
 
-D3D11_TEXTURE2D_DESC getTextureDesc(const RenderTargetTextureDesc& desc)
+D3D11_TEXTURE2D_DESC getD3D11TextureDesc(const Rect& size)
 {
-	D3D11_TEXTURE2D_DESC textureDesc{};
+	D3D11_TEXTURE2D_DESC desc{};
 
-	textureDesc.Width = static_cast<UINT>(desc.size.width());
-	textureDesc.Height = static_cast<UINT>(desc.size.height());
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	desc.Width = static_cast<UINT>(size.width());
+	desc.Height = static_cast<UINT>(size.height());
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
 
-	return textureDesc;
+	return desc;
 }

@@ -2,6 +2,7 @@
 #define GENESIS_POST_PROCESS_H
 #include <resources/Resource.h>
 #include <graphics/utils/GraphicsTypes.h>
+#include <core/utils/Types.h>
 
 namespace genesis
 {
@@ -20,7 +21,7 @@ namespace genesis
 		bool isDirty() const noexcept;
 		const GraphicsPipelineState& getGraphicsPipelineState() const noexcept;
 		const ConstantBuffer& getProperties() const;
-		const uint8* getData() const;
+		BinaryData getData() const noexcept;
 
 		void clearDirty() noexcept;
 		void setProperty(const char* name, int value);

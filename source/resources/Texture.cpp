@@ -7,9 +7,7 @@ using namespace std;
 Texture::Texture(const TextureDesc& desc): Resource(desc.resource)
 {
 	auto& graphicsContext = desc.resource.graphicsContext;
-
-	WString path{m_path.begin(), m_path.end()};
-	m_texture = graphicsContext.graphicsDevice.createImageTexture({path.c_str()});
+	m_texture = graphicsContext.graphicsDevice.createImageTexture({m_path.c_str()});
 }
 
 Texture::~Texture() {}

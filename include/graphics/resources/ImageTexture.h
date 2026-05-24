@@ -8,7 +8,8 @@ namespace genesis
 {
 	struct ImageTextureFileDesc
 	{
-		const wchar_t* path{};
+		const char* path{};
+		bool generateMipMaps{true};
 	};
 
 	struct ImageTextureSolidDesc

@@ -221,7 +221,8 @@ void Win32InputManager::updateMousePosition()
     m_previousMousePos = m_currentMousePos;
     m_currentMousePos = newMousePos;
 
-    // Per evitar salts bruscos en la delta.
+    // Per evitar salts bruscos en la delta al canviar la mida de la finestra.
+    // En un futur, intentaré optimitzar-lo per evitar comparar Rect en cada frame.
     Rect currentSize = m_window.getSize();
     if (m_previousWindowSize != currentSize) {
         m_previousMousePos = newMousePos;

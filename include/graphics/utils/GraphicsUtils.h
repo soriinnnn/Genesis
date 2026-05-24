@@ -49,6 +49,22 @@ namespace genesis
 			return formatTable[typeIndex][componentCount-1];
 		}
 
+		inline D3D11_USAGE getD3D11Usage(ResourceUsage usage)
+		{
+			switch (usage) {
+			case ResourceUsage::Default:
+				return D3D11_USAGE_DEFAULT;
+			case ResourceUsage::Immutable:
+				return D3D11_USAGE_IMMUTABLE;
+			case ResourceUsage::Dynamic:
+				return D3D11_USAGE_DYNAMIC;
+			case ResourceUsage::Staging:
+				return D3D11_USAGE_STAGING;
+			default:
+				return D3D11_USAGE_DEFAULT;
+			}
+		}
+
 		inline D3D_PRIMITIVE_TOPOLOGY getD3DPrimitiveTopology(PrimitiveTopology primitive)
 		{
 			switch (primitive) {
@@ -116,6 +132,30 @@ namespace genesis
 				return D3D11_COMPARISON_ALWAYS;
 			default:
 				return D3D11_COMPARISON_LESS;
+			}
+		}
+
+		inline DXGI_FORMAT getDXGIIndexFormat(IndexFormat format)
+		{
+			switch (format) {
+			case IndexFormat::UnsignedInt16:
+				return DXGI_FORMAT_R16_UINT;
+			case IndexFormat::UnsignedInt32:
+				return DXGI_FORMAT_R32_UINT;
+			default:
+				return DXGI_FORMAT_UNKNOWN;
+			}
+		}
+
+		inline uint32 getIndexSize(IndexFormat format)
+		{
+			switch (format) {
+			case IndexFormat::UnsignedInt16:
+				return sizeof(uint16);
+			case IndexFormat::UnsignedInt32:
+				return sizeof(uint32);
+			default:
+				return 0;
 			}
 		}
 	}

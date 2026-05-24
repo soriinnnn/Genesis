@@ -28,6 +28,15 @@ namespace genesis
 	{
 		GraphicsDevice& graphicsDevice;
 		EngineShaders& engineShaders;
+		EngineStates& engineStates;
+	};
+
+	enum class ResourceUsage
+	{
+		Default,
+		Immutable,
+		Dynamic,
+		Staging
 	};
 
 	enum class IndexFormat
