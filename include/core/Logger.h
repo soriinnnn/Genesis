@@ -23,11 +23,11 @@ namespace genesis
 		void log(LogLevel level, std::format_string<Args...> format, Args&&... args) const
 		{
 			std::string msg = std::format(format, std::forward<Args>(args)...);
-			_log(level, msg.c_str());
+			internalLog(level, msg.c_str());
 		}
 
 	private:
-		void _log(LogLevel level, const char* msg) const;
+		void internalLog(LogLevel level, const char* msg) const;
 
 	private:
 		LogLevel m_level;

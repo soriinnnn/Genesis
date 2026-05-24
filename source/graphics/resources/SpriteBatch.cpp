@@ -43,7 +43,7 @@ void SpriteBatch::drawText(const FontAtlas& font, const wchar_t* text, const Poi
 	DirectX::XMFLOAT2 dxScale = DirectX::XMFLOAT2(scale.toArray());
 	DirectX::XMFLOAT4 dxColor = DirectX::XMFLOAT4(color.toArray());
 	
-	font.m_font->DrawString(
+	font.m_spriteFont->DrawString(
 		m_batch.get(), 
 		text, 
 		dxPosition,

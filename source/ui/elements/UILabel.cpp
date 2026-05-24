@@ -36,7 +36,7 @@ void UILabel::adjustContent(const Rect& size)
 		return;
 	}
 
-	Rect contentSize = m_font->getFontAtlas().getSize(m_content.c_str());
+	Rect contentSize = m_font->getAtlas().getSize(m_content.c_str());
 	if (size.width() >= contentSize.width()) {
 		m_adjustedContent = m_content;
 		return;
@@ -47,7 +47,7 @@ void UILabel::adjustContent(const Rect& size)
 	float lineWidth = 0.0f;
 	float wordWidth = 0.0f;
 	bool lineStart = true;
-	const FontAtlas& atlas = m_font->getFontAtlas();
+	const FontAtlas& atlas = m_font->getAtlas();
 	float maxWidth = static_cast<float>(size.width());
 
 	for (int i = 0; i < m_content.size(); i++) {
@@ -78,7 +78,7 @@ void UILabel::onRender(SpriteBatch& batch)
 		return;
 	}
 	batch.drawSolid(m_size, m_position, m_scale, {1.0f, 0.0f, 0.0f, 1.0f});
-	batch.drawText(m_font->getFontAtlas(), m_adjustedContent.c_str(), getGlobalPosition(), m_scale, m_color);
+	batch.drawText(m_font->getAtlas(), m_adjustedContent.c_str(), getGlobalPosition(), m_scale, m_color);
 }
 
 void UILabel::onSize()

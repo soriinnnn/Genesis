@@ -23,16 +23,14 @@
     {
       "slot": 0,
       "filter": "Anisotropic",
-      "addressU": "Wrap",
-      "addressV": "Wrap",
-      "addressW": "Wrap"
+      "addressUV": "Wrap",
+      "maxAnisotropy": 16
     },
     {
       "slot": 1,
       "filter": "Anisotropic",
-      "addressU": "Wrap",
-      "addressV": "Wrap",
-      "addressW": "Wrap"
+      "addressUV": "Wrap",
+      "maxAnisotropy": 16
     }
   ],
   "properties": {

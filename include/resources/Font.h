@@ -15,10 +15,10 @@ namespace genesis
 		explicit Font(const FontDesc& desc);
 		~Font() override;
 
-		const FontAtlas& getFontAtlas() const;
+		FontAtlas& getAtlas();
 
 	private:
-		SharedPtr<FontAtlas> m_font;
+		SharedPtr<FontAtlas> m_atlas;
 	};
 }
 

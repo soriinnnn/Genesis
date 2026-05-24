@@ -6,12 +6,12 @@ using namespace std;
 
 Font::Font(const FontDesc& desc): Resource(desc.resource)
 {
-	m_font = desc.resource.graphicsContext.graphicsDevice.createFontAtlas({desc.resource.path});
+	m_atlas = desc.resource.graphicsContext.graphicsDevice.createFontAtlas({desc.resource.path});
 }
 
 Font::~Font() {}
 
-const FontAtlas& Font::getFontAtlas() const
+FontAtlas& Font::getAtlas()
 {
-	return *m_font;
+	return *m_atlas;
 }

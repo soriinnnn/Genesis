@@ -21,7 +21,6 @@ Shader::Shader(const ShaderDesc& desc): Resource(desc.resource), m_type{desc.typ
 		desc.entry,
 		desc.type
 	});
-	
 	m_signature = graphicsContext.graphicsDevice.reflectShader({*m_binary});
 }
 

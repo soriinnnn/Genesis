@@ -10,25 +10,25 @@ FontAtlas::FontAtlas(const FontAtlasDesc& fdesc, const GraphicsResourceDesc& gde
 {
 	try {
 		WString path{fdesc.path, fdesc.path + strlen(fdesc.path)};
-		m_font = make_unique<SpriteFont>(&m_device, path.c_str());
+		m_spriteFont = make_unique<SpriteFont>(&m_device, path.c_str());
 	}
 	catch (const std::exception&) {
 		GENESIS_LOG_THROW_ERROR("FontAtlas creation failed for \"{}\". Check font path or the font itself.", fdesc.path);
 	}
-	m_font->SetDefaultCharacter(L'?');
-	m_font->SetPixelAlignment(true);
+	m_spriteFont->SetDefaultCharacter(L'?');
+	m_spriteFont->SetPixelAlignment(true);
 }
 
 FontAtlas::~FontAtlas() {}
 
 bool FontAtlas::contains(wchar_t character) const
 {
-	return m_font->ContainsCharacter(character);
+	return m_spriteFont->ContainsCharacter(character);
 }
 
 Rect FontAtlas::getSize(const wchar_t* text) const
 {
-	RECT bounds = m_font->MeasureDrawBounds(text, DirectX::XMFLOAT2(0.0f, 0.0f));
+	RECT bounds = m_spriteFont->MeasureDrawBounds(text, DirectX::XMFLOAT2(0.0f, 0.0f));
 	return Rect{
 		bounds.left + bounds.right,
 		bounds.top + bounds.bottom
@@ -37,7 +37,7 @@ Rect FontAtlas::getSize(const wchar_t* text) const
 
 FontAtlas::Glyph FontAtlas::getGlyph(wchar_t character) const
 {
-	const SpriteFont::Glyph* dxGlyph = m_font->FindGlyph(character);
+	const SpriteFont::Glyph* dxGlyph = m_spriteFont->FindGlyph(character);
 
 	Glyph glyph{};
 	glyph.character = dxGlyph->Character;
@@ -51,25 +51,25 @@ FontAtlas::Glyph FontAtlas::getGlyph(wchar_t character) const
 
 float FontAtlas::getLineSpacing() const
 {
-	return m_font->GetLineSpacing();
+	return m_spriteFont->GetLineSpacing();
 }
 
 wchar_t FontAtlas::getDefaultCharacter() const
 {
-	return m_font->GetDefaultCharacter();
+	return m_spriteFont->GetDefaultCharacter();
 }
 
 void FontAtlas::setPixelAlignment(bool enable)
 {
-	m_font->SetPixelAlignment(enable);
+	m_spriteFont->SetPixelAlignment(enable);
 }
 
 void FontAtlas::setLineSpacing(float spacing)
 {
-	m_font->SetLineSpacing(spacing);
+	m_spriteFont->SetLineSpacing(spacing);
 }
 
 void FontAtlas::setDefaultCharacter(wchar_t character)
 {
-	m_font->SetDefaultCharacter(character);
+	m_spriteFont->SetDefaultCharacter(character);
 }

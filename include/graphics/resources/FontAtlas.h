@@ -40,7 +40,7 @@ namespace genesis
 		void setDefaultCharacter(wchar_t character);
 
 	private:
-		UniquePtr<DirectX::DX11::SpriteFont> m_font;
+		UniquePtr<DirectX::DX11::SpriteFont> m_spriteFont;
 
 		friend class SpriteBatch;
 	};

@@ -17,8 +17,8 @@ namespace genesis
 		explicit PostProcess(const PostProcessDesc& desc);
 		~PostProcess() override;
 
-		bool hasProperties() const noexcept;
 		bool isDirty() const noexcept;
+		bool hasProperties() const noexcept;
 		const GraphicsPipelineState& getGraphicsPipelineState() const noexcept;
 		const ConstantBuffer& getProperties() const;
 		BinaryData getData() const noexcept;

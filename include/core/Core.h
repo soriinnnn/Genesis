@@ -100,6 +100,7 @@ namespace genesis
     template<typename T> using Vector = std::vector<T>;
     template<typename K, typename T> using HashMap = std::unordered_map<K, T>;
     template<typename K, typename T> using Map = std::map<K, T>;
+    template<typename T1, typename T2> using Pair = std::pair<T1, T2>;
 
     using String = std::string;
     using WString = std::wstring;
