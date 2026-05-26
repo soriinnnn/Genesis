@@ -1,5 +1,6 @@
 #ifndef GENESIS_CORE_H
 #define GENESIS_CORE_H
+#include <core/utils/Macros.h>
 #include <queue>
 #include <chrono>
 #include <format>
@@ -12,101 +13,102 @@
 #include <unordered_map>
 #include <map>
 
-namespace genesis 
-{
-    class Base;
-    class Logger;
-    class Game;
+GENESIS_NAMESPACE_START
 
-    class Display;
-    class Window;
+class Base;
+class Logger;
+class Game;
 
-    class InputManager;
-    class InputListener;
+class Display;
+class Window;
 
-    class ResourceManager;
-    class Resource;
-    class Mesh;
-    class Shader;
-    class Texture;
-    class Material;
-    class PostProcess;
-    class Font;
+class InputManager;
+class InputListener;
 
-    class EntityManager;
-    class Entity;
-    class Component;
-    class TransformComponent;
-    class MeshRendererComponent;
-    class LightComponent;
-    class RigidBodyComponent;
-    class CameraComponent;
+class ResourceManager;
+class Resource;
+class Mesh;
+class Shader;
+class Texture;
+class Material;
+class PostProcess;
+class Font;
 
-    class UIManager;
-    class UIElement;
-    class UILabel;
-    class UIImage;
-    class UIPanel;
-    class UIButton;
+class EntityManager;
+class Entity;
+class Component;
+class TransformComponent;
+class MeshRendererComponent;
+class LightComponent;
+class RigidBodyComponent;
+class CameraComponent;
 
-    class PhysicsEngine;
-    class RigidBody;
+class UIManager;
+class UIElement;
+class UILabel;
+class UIImage;
+class UIPanel;
+class UIButton;
 
-    class GraphicsEngine;
-    class GraphicsDevice;
-    class FrameBuffer;
-    class EngineShaders;
-    class EngineStates;
+class PhysicsEngine;
+class RigidBody;
 
-    class GraphicsCache;
-    class PipelineStateCache;
-    class SamplerStateCache;
+class GraphicsEngine;
+class GraphicsDevice;
+class FrameBuffer;
+class EngineShaders;
+class EngineStates;
 
-    class GraphicsResource;
-    class DeviceContext;
-    class SwapChain;
-    class ShaderBinary;
-    class ShaderSignature;
-    class VertexBuffer;
-    class IndexBuffer;
-    class ConstantBuffer;
-    class RasterizerState;
-    class DepthStencilState;
-    class GraphicsPipelineState;
-    class SamplerState;
-    class ImageTexture;
-    class RenderTargetTexture;
-    class DepthStencilTexture;
-    class StructuredBuffer;
-    class SpriteBatch;
-    class FontAtlas;
+class GraphicsCache;
+class PipelineStateCache;
+class SamplerStateCache;
 
-    using ResourceId = size_t;
-    using EntityId = size_t;
-    using TypeId = size_t;
+class GraphicsResource;
+class DeviceContext;
+class SwapChain;
+class ShaderBinary;
+class ShaderSignature;
+class VertexBuffer;
+class IndexBuffer;
+class ConstantBuffer;
+class RasterizerState;
+class DepthStencilState;
+class GraphicsPipelineState;
+class SamplerState;
+class ImageTexture;
+class RenderTargetTexture;
+class DepthStencilTexture;
+class StructuredBuffer;
+class SpriteBatch;
+class FontAtlas;
 
-    typedef int8_t  int8;
-    typedef int16_t int16;
-    typedef int32_t int32;
-    typedef int64_t int64;
+using ResourceId = size_t;
+using EntityId = size_t;
+using TypeId = size_t;
 
-    typedef uint8_t  uint8;
-    typedef uint16_t uint16;
-    typedef uint32_t uint32;
-    typedef uint64_t uint64;
+typedef int8_t  int8;
+typedef int16_t int16;
+typedef int32_t int32;
+typedef int64_t int64;
 
-    template<typename T> using SharedPtr = std::shared_ptr<T>;
-    template<typename T> using UniquePtr = std::unique_ptr<T>;
-    template<typename T> using WeakPtr = std::weak_ptr<T>;
+typedef uint8_t  uint8;
+typedef uint16_t uint16;
+typedef uint32_t uint32;
+typedef uint64_t uint64;
 
-    template<typename T> using Vector = std::vector<T>;
-    template<typename K, typename T> using HashMap = std::unordered_map<K, T>;
-    template<typename K, typename T> using Map = std::map<K, T>;
-    template<typename T1, typename T2> using Pair = std::pair<T1, T2>;
+template<typename T> using SharedPtr = std::shared_ptr<T>;
+template<typename T> using UniquePtr = std::unique_ptr<T>;
+template<typename T> using WeakPtr = std::weak_ptr<T>;
 
-    using String = std::string;
-    using WString = std::wstring;
-    using TimePoint = std::chrono::steady_clock::time_point;
-}
+template<typename T> using Vector = std::vector<T>;
+template<typename K, typename T> using HashMap = std::unordered_map<K, T>;
+template<typename K, typename T> using Map = std::map<K, T>;
+template<typename T1, typename T2> using Pair = std::pair<T1, T2>;
+
+using String = std::string;
+using WString = std::wstring;
+using TimePoint = std::chrono::steady_clock::time_point;
+
+GENESIS_NAMESPACE_END
 
 #endif

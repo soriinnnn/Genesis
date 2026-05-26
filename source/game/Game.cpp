@@ -102,6 +102,11 @@ AntiAliasing Game::getAntiAliasing() const noexcept
     return m_graphicsEngine->getAntiAliasing();
 }
 
+TextureFiltering Game::getTextureFiltering() const noexcept
+{
+    return m_graphicsEngine->getTextureFiltering();
+}
+
 void Game::setMainCamera(Entity* camera)
 {
     if (!camera) {
@@ -127,6 +132,11 @@ void Game::setRenderResolution(const Rect& resolution)
 void Game::setAntiAliasing(AntiAliasing antiAliasing)
 {
     m_graphicsEngine->setAntiAliasing(antiAliasing);
+}
+
+void Game::setTextureFiltering(TextureFiltering filter)
+{
+    m_graphicsEngine->setTextureFiltering(filter);
 }
 
 void Game::addEffect(SharedPtr<PostProcess> effect)

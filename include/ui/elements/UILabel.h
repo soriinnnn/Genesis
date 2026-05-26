@@ -3,28 +3,29 @@
 #include <ui/elements/UIElement.h>
 #include <math/Vec4.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+class UILabel final: public UIElement
 {
-	class UILabel final: public UIElement
-	{
-	public:
-		explicit UILabel(const UIElementDesc& desc);
-		~UILabel() override;
+public:
+	explicit UILabel(const UIElementDesc& desc);
+	~UILabel() override;
 
-		void setContent(const char* content);
-		void setFont(const SharedPtr<Font>& font);
+	void setContent(const char* content);
+	void setFont(const SharedPtr<Font>& font);
 
-	private:
-		void adjustContent(const Rect& size);
+private:
+	void adjustContent(const Rect& size);
 
-		void onRender(SpriteBatch& batch) override;
-		void onSize() override;
+	void onRender(SpriteBatch& batch) override;
+	void onSize() override;
 
-	private:
-		WString m_content;
-		WString m_adjustedContent;
-		SharedPtr<Font> m_font;
-	};
-}
+private:
+	WString m_content;
+	WString m_adjustedContent;
+	SharedPtr<Font> m_font;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

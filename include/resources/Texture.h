@@ -2,24 +2,25 @@
 #define GENESIS_TEXTURE_H
 #include <resources/Resource.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+struct TextureDesc
 {
-	struct TextureDesc
-	{
-		ResourceDesc resource;
-	};
+	ResourceDesc resource;
+};
 
-	class Texture final: public Resource
-	{
-	public:
-		explicit Texture(const TextureDesc& desc);
-		~Texture() override;
+class Texture final: public Resource
+{
+public:
+	explicit Texture(const TextureDesc& desc);
+	~Texture() override;
 
-		const ImageTexture& getImageTexture() const noexcept;
+	const ImageTexture& getImageTexture() const noexcept;
 
-	private:
-		SharedPtr<ImageTexture> m_texture;
-	};
-}
+private:
+	SharedPtr<ImageTexture> m_texture;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

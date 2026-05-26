@@ -4,27 +4,28 @@
 #include <core/Core.h>
 #include <graphics/GraphicsDevice.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+struct GraphicsCacheDesc
 {
-	struct GraphicsCacheDesc
-	{
-		BaseDesc base;
-		GraphicsDevice& graphicsDevice;
-	};
+	BaseDesc base;
+	GraphicsDevice& graphicsDevice;
+};
 
-	class GraphicsCache: public Base
-	{
-	public:
-		virtual ~GraphicsCache() override;
-		virtual void clear() = 0;
+class GraphicsCache: public Base
+{
+public:
+	virtual ~GraphicsCache() override;
+	virtual void clear() = 0;
 
-	protected:
-		explicit GraphicsCache(const GraphicsCacheDesc& desc);
-		GraphicsResourceDesc getGraphicsResourceDesc();
+protected:
+	explicit GraphicsCache(const GraphicsCacheDesc& desc);
+	GraphicsResourceDesc getGraphicsResourceDesc();
 
-	private:
-		GraphicsDevice& m_graphicsDevice;
-	};
-}
+private:
+	GraphicsDevice& m_graphicsDevice;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

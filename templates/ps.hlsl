@@ -28,7 +28,8 @@ struct LightData
     int type;
 };
 
-StructuredBuffer<LightData> lights: register(t10);
+StructuredBuffer<LightData> lights: register(t0);
+SamplerState defaultSampler: register(s0);
 
 struct InputPS
 {

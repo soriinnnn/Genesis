@@ -5,45 +5,46 @@
 #include <math/Point.h>
 #include <SpriteFont.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+struct FontAtlasDesc
 {
-	struct FontAtlasDesc
+	const char* path;
+};
+
+class FontAtlas final: GraphicsResource
+{
+public:
+	struct Glyph
 	{
-		const char* path;
+		uint32 character;
+		Rect subRect;
+		float xOffset;
+		float yOffset;
+		float xAdvance;
 	};
 
-	class FontAtlas final: GraphicsResource
-	{
-	public:
-		struct Glyph
-		{
-			uint32 character;
-			Rect subRect;
-			float xOffset;
-			float yOffset;
-			float xAdvance;
-		};
+public:
+	FontAtlas(const FontAtlasDesc& fdesc, const GraphicsResourceDesc& gdesc);
+	~FontAtlas() override;
 
-	public:
-		FontAtlas(const FontAtlasDesc& fdesc, const GraphicsResourceDesc& gdesc);
-		~FontAtlas() override;
+	bool contains(wchar_t character) const;
 
-		bool contains(wchar_t character) const;
+	Rect getSize(const wchar_t* text) const;
+	Glyph getGlyph(wchar_t character) const;
+	float getLineSpacing() const;
+	wchar_t getDefaultCharacter() const;
 
-		Rect getSize(const wchar_t* text) const;
-		Glyph getGlyph(wchar_t character) const;
-		float getLineSpacing() const;
-		wchar_t getDefaultCharacter() const;
+	void setPixelAlignment(bool enable);
+	void setLineSpacing(float spacing);
+	void setDefaultCharacter(wchar_t character);
 
-		void setPixelAlignment(bool enable);
-		void setLineSpacing(float spacing);
-		void setDefaultCharacter(wchar_t character);
+private:
+	UniquePtr<DirectX::DX11::SpriteFont> m_spriteFont;
 
-	private:
-		UniquePtr<DirectX::DX11::SpriteFont> m_spriteFont;
+	friend class SpriteBatch;
+};
 
-		friend class SpriteBatch;
-	};
-}
+GENESIS_NAMESPACE_END
 
 #endif

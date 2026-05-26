@@ -1,52 +1,53 @@
 #include <ui/UIManager.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+template<typename T>
+inline T* UIManager::createElement(const char* name)
 {
-	template<typename T>
-	inline T* UIManager::createElement(const char* name)
-	{
-		GENESIS_ASSERT((std::is_base_of<UIElement, T>::value), "T must derive from UIElement.");
+	GENESIS_ASSERT((std::is_base_of<UIElement, T>::value), "T must derive from UIElement.");
 
-		T* result = getElement<T>(name);
-		if (!result) {
-			UniquePtr<T> element = std::make_unique<T>(UIElementDesc{m_logger, m_canvas.get()});
-			result = element.get();
-			auto [it, inserted] = m_elements.emplace(name, RootElement{std::move(element)});
-			m_zOrdered.push_back(&it->second);
-			m_isZDirty = true;
-		}
-		else {
-			GENESIS_LOG_WARNING("User interface element with name \"{}\" already exists. Returning existing element.", name);
-		}
-
-		return result;
+	T* result = getElement<T>(name);
+	if (!result) {
+		UniquePtr<T> element = std::make_unique<T>(UIElementDesc{m_logger, m_canvas.get()});
+		result = element.get();
+		auto [it, inserted] = m_elements.emplace(name, RootElement{std::move(element)});
+		m_zOrdered.push_back(&it->second);
+		m_isZDirty = true;
+	}
+	else {
+		GENESIS_LOG_WARNING("User interface element with name \"{}\" already exists. Returning existing element.", name);
 	}
 
-	template<typename T>
-	inline T* UIManager::getElement(const char* name)
-	{
-		auto it = m_elements.find(name);
-		if (it == m_elements.end()) {
-			return nullptr;
-		}
+	return result;
+}
 
-		auto& root = it->second;
-		return dynamic_cast<T*>(root.element.get());
+template<typename T>
+inline T* UIManager::getElement(const char* name)
+{
+	auto it = m_elements.find(name);
+	if (it == m_elements.end()) {
+		return nullptr;
 	}
 
-	template<typename F>
-	inline void UIManager::forEach(F&& callback) const
-	{
-		for (const auto& [id, root] : m_elements) {
-			callback(*root.element);
-		}
-	}
+	auto& root = it->second;
+	return dynamic_cast<T*>(root.element.get());
+}
 
-	template<typename F>
-	inline void UIManager::forEach(F&& callback)
-	{
-		for (auto& [id, root] : m_elements) {
-			callback(*root.element);
-		}
+template<typename F>
+inline void UIManager::forEach(F&& callback) const
+{
+	for (const auto& [id, root] : m_elements) {
+		callback(*root.element);
 	}
 }
+
+template<typename F>
+inline void UIManager::forEach(F&& callback)
+{
+	for (auto& [id, root] : m_elements) {
+		callback(*root.element);
+	}
+}
+
+GENESIS_NAMESPACE_END

@@ -5,29 +5,30 @@
 #include <d3d11.h>
 #include <wrl.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+struct GraphicsResourceDesc
 {
-	struct GraphicsResourceDesc
-	{
-		BaseDesc base;
-		SharedPtr<GraphicsDevice> graphicsDevice;
-		ID3D11Device& device;
-		IDXGIFactory& factory;
-	};
+	BaseDesc base;
+	SharedPtr<GraphicsDevice> graphicsDevice;
+	ID3D11Device& device;
+	IDXGIFactory& factory;
+};
 
-	class GraphicsResource: public Base
-	{
-	public:
-		virtual ~GraphicsResource() override;
+class GraphicsResource: public Base
+{
+public:
+	virtual ~GraphicsResource() override;
 
-	protected:
-		explicit GraphicsResource(const GraphicsResourceDesc& desc);
+protected:
+	explicit GraphicsResource(const GraphicsResourceDesc& desc);
 
-	protected:
-		SharedPtr<GraphicsDevice> m_graphicsDevice;
-		ID3D11Device& m_device;
-		IDXGIFactory& m_factory;
-	};
-}
+protected:
+	SharedPtr<GraphicsDevice> m_graphicsDevice;
+	ID3D11Device& m_device;
+	IDXGIFactory& m_factory;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

@@ -3,14 +3,13 @@
 
 using namespace genesis;
 using namespace std;
-using namespace chrono;
 
 void Game::run() 
 {
     MSG msg = {};
 
     onCreate();
-    m_previousTime = steady_clock::now();
+    m_previousTime = chrono::steady_clock::now();
     m_isRunning = true;
 
     if (!m_mainCamera) {

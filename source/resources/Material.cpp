@@ -13,11 +13,11 @@ using namespace std;
 using Json = nlohmann::json;
 using LogLevel = Logger::LogLevel;
 
-#define POST_EFFECT_ERROR_PREFIX "Failed to read material file \"{}\".\nDetails:\n"
+#define MATERIAL_ERROR_PREFIX "Failed to read material file \"{}\".\nDetails:\n"
 #define REQUIRE_KEY(json, key, logger, path)\
 {\
 	if (!json.contains(key)) {\
-		GENESIS_LOG_THROW(logger, std::runtime_error, Logger::LogLevel::Error, POST_EFFECT_ERROR_PREFIX "Missing \"{}\" field.", path, key);\
+		GENESIS_LOG_THROW(logger, std::runtime_error, Logger::LogLevel::Error, MATERIAL_ERROR_PREFIX "Missing \"{}\" field.", path, key);\
 	}\
 }
 
@@ -40,8 +40,8 @@ using LogLevel = Logger::LogLevel;
 
 #define DEFAULT_RESOURCE_SLOT 0
 #define DEFAULT_SHADER_ENTRY "main"
-#define DEFAULT_SAMPLER_FILTER TextureFilter::Anisotropic
-#define DEFAULT_SAMPLER_ADDRESS_MODE TextureAddressMode::Wrap
+#define DEFAULT_SAMPLER_FILTER SamplerFilter::Anisotropic
+#define DEFAULT_SAMPLER_ADDRESS_MODE SamplerAddressMode::Wrap
 #define DEFAULT_SAMPLER_MAX_ANISOTROPY 16
 
 static SharedPtr<Shader> getShaderFromJSON(const Json& data, ShaderType type, ResourceManager& resourceManager, const Logger& logger, const char* materialPath);
@@ -51,10 +51,10 @@ static SharedPtr<SamplerState> getSamplerStateFromJSON(const Json& data, Graphic
 static SharedPtr<ConstantBuffer> getConstantBufferFromJSON(const Json& data, const SharedPtr<Shader>& vs, const SharedPtr<Shader>& ps, GraphicsDevice& graphicsDevice, const Logger& logger, const char* materialPath);
 static Vector<uint8> getPropertiesFromJSON(const Json& data, const ShaderReflectionConstantBuffer& reflection, const Logger& logger, const char* materialPath);
 
-static TextureFilter stringToTextureFilter(const String& filter, const Logger& logger, const char* materialPath);
-static TextureAddressMode stringToTextureAddressMode(const String& mode, const Logger& logger, const char* materialPath);
-static const char* textureFilterToString(TextureFilter filter);
-static const char* textureAddressModeToString(TextureAddressMode mode);
+static SamplerFilter stringToTextureFilter(const String& filter, const Logger& logger, const char* materialPath);
+static SamplerAddressMode stringToTextureAddressMode(const String& mode, const Logger& logger, const char* materialPath);
+static const char* textureFilterToString(SamplerFilter filter);
+static const char* textureAddressModeToString(SamplerAddressMode mode);
 
 Material::Material(const MaterialDesc& desc): Resource(desc.resource)
 {
@@ -170,6 +170,9 @@ Vector<Material::TextureBinding> getTexturesFromJSON(const Json& data, ResourceM
 
 		String path = texture[KEY_RESOURCE_PATH];
 		uint32 slot = texture[KEY_RESOURCE_SLOT];
+		if (slot == LIGHT_DATA_TEXTURE_SLOT) {
+			GENESIS_LOG_THROW(logger, std::runtime_error, LogLevel::Error, MATERIAL_ERROR_PREFIX "Texture slot conflicts with the reserved light data texture slot ({}).", materialPath, LIGHT_DATA_TEXTURE_SLOT);
+		}
 		
 		textures.push_back({resourceManager.getTexture(path.c_str()), slot});
 	}
@@ -178,7 +181,7 @@ Vector<Material::TextureBinding> getTexturesFromJSON(const Json& data, ResourceM
 	for (int i = 0; i < size; i++) {
 		for (int j = i + 1; j < size; j++) {
 			if (textures[i].slot == textures[j].slot) {
-				GENESIS_LOG_THROW(logger, std::runtime_error, LogLevel::Error, POST_EFFECT_ERROR_PREFIX "Duplicate texture slot.", materialPath);
+				GENESIS_LOG_THROW(logger, std::runtime_error, LogLevel::Error, MATERIAL_ERROR_PREFIX "Duplicate texture slot.", materialPath);
 			}
 		}
 	}
@@ -189,14 +192,19 @@ Vector<Material::TextureBinding> getTexturesFromJSON(const Json& data, ResourceM
 Vector<Material::SamplerBinding> getSamplersFromJSON(const Json& data, GraphicsDevice& graphicsDevice, const Logger& logger, const char* materialPath)
 {
 	if (!data.contains(KEY_MATERIAL_SAMPLERS)) {
-		return {{graphicsDevice.createSamplerState({}), DEFAULT_RESOURCE_SLOT}};
+		return {};
 	}
 
 	Vector<Material::SamplerBinding> samplers;
 
 	for (const Json& sampler : data[KEY_MATERIAL_SAMPLERS]) {
 		REQUIRE_KEY(sampler, KEY_RESOURCE_SLOT, logger, materialPath);
+
 		uint32 slot = sampler[KEY_RESOURCE_SLOT];
+		if (slot == DEFAULT_SAMPLER_STATE_SLOT) {
+			GENESIS_LOG_THROW(logger, std::runtime_error, LogLevel::Error, MATERIAL_ERROR_PREFIX "Sampler slot cannot be the default slot ({}).", materialPath, DEFAULT_SAMPLER_STATE_SLOT);
+		}
+
 		samplers.push_back({getSamplerStateFromJSON(sampler, graphicsDevice, logger, materialPath), slot});
 	}
 
@@ -204,7 +212,7 @@ Vector<Material::SamplerBinding> getSamplersFromJSON(const Json& data, GraphicsD
 	for (int i = 0; i < size; i++) {
 		for (int j = i + 1; j < size; j++) {
 			if (samplers[i].slot == samplers[j].slot) {
-				GENESIS_LOG_THROW(logger, std::runtime_error, LogLevel::Error, POST_EFFECT_ERROR_PREFIX "Duplicate sampler slot.", materialPath);
+				GENESIS_LOG_THROW(logger, std::runtime_error, LogLevel::Error, MATERIAL_ERROR_PREFIX "Duplicate sampler slot.", materialPath);
 			}
 		}
 	}
@@ -252,7 +260,7 @@ SharedPtr<SamplerState> getSamplerStateFromJSON(const Json& data, GraphicsDevice
 		desc.maxAnisotropy = maxAnisotropy;
 	}
 	else {
-		if (desc.filter == TextureFilter::Anisotropic) {
+		if (desc.filter == SamplerFilter::Anisotropic) {
 			GENESIS_LOG(logger, LogLevel::Warning, "Missing sampler max anisotropy in material \"{}\". Using default \"{}\".", materialPath, DEFAULT_SAMPLER_MAX_ANISOTROPY);
 			desc.maxAnisotropy = DEFAULT_SAMPLER_MAX_ANISOTROPY;
 		}
@@ -284,7 +292,7 @@ SharedPtr<ConstantBuffer> getConstantBufferFromJSON(const Json& data, const Shar
 	}
 
 	if (reflection->slot != MATERIAL_CONSTANT_BUFFER_SLOT) {
-		GENESIS_LOG_THROW(logger, std::runtime_error, LogLevel::Error, POST_EFFECT_ERROR_PREFIX "Constant buffer \"{}\" is assigned to slot {} but expected slot {}.", materialPath, MATERIAL_CONSTANT_BUFFER_NAME, reflection->slot, MATERIAL_CONSTANT_BUFFER_SLOT);
+		GENESIS_LOG_THROW(logger, std::runtime_error, LogLevel::Error, MATERIAL_ERROR_PREFIX "Constant buffer \"{}\" is assigned to slot {} but expected slot {}.", materialPath, MATERIAL_CONSTANT_BUFFER_NAME, reflection->slot, MATERIAL_CONSTANT_BUFFER_SLOT);
 	}
 
 	Vector<uint8> buffer = getPropertiesFromJSON(data, *reflection, logger, materialPath);
@@ -332,61 +340,61 @@ Vector<uint8> getPropertiesFromJSON(const Json& data, const ShaderReflectionCons
 	return values;
 }
 
-TextureFilter stringToTextureFilter(const String& filter, const Logger& logger, const char* materialPath)
+SamplerFilter stringToTextureFilter(const String& filter, const Logger& logger, const char* materialPath)
 {
 	if (filter == "point") {
-		return TextureFilter::Point;
+		return SamplerFilter::Point;
 	}
 	if (filter == "bilinear") {
-		return TextureFilter::Bilinear;
+		return SamplerFilter::Bilinear;
 	}
 	if (filter == "trilinear") {
-		return TextureFilter::Trilinear;
+		return SamplerFilter::Trilinear;
 	}
 	if (filter == "anisotropic") {
-		return TextureFilter::Anisotropic;
+		return SamplerFilter::Anisotropic;
 	}
-	GENESIS_LOG_THROW(logger, std::runtime_error, LogLevel::Error, POST_EFFECT_ERROR_PREFIX "Unknown texture filter \"{}\".", materialPath, filter.c_str());
+	GENESIS_LOG_THROW(logger, std::runtime_error, LogLevel::Error, MATERIAL_ERROR_PREFIX "Unknown texture filter \"{}\".", materialPath, filter.c_str());
 }
 
-TextureAddressMode stringToTextureAddressMode(const String& mode, const Logger& logger, const char* materialPath)
+SamplerAddressMode stringToTextureAddressMode(const String& mode, const Logger& logger, const char* materialPath)
 {
 	if (mode == "wrap") {
-		return TextureAddressMode::Wrap;
+		return SamplerAddressMode::Wrap;
 	}
 	if (mode == "clamp") {
-		return TextureAddressMode::Clamp;
+		return SamplerAddressMode::Clamp;
 	}
 	if (mode == "mirror") {
-		return TextureAddressMode::Mirror;
+		return SamplerAddressMode::Mirror;
 	}
-	GENESIS_LOG_THROW(logger, std::runtime_error, LogLevel::Error, POST_EFFECT_ERROR_PREFIX "Unknown texture address mode \"{}\".", materialPath, mode.c_str());
+	GENESIS_LOG_THROW(logger, std::runtime_error, LogLevel::Error, MATERIAL_ERROR_PREFIX "Unknown texture address mode \"{}\".", materialPath, mode.c_str());
 }
 
-const char* textureFilterToString(TextureFilter filter)
+const char* textureFilterToString(SamplerFilter filter)
 {
 	switch (filter) {
-	case TextureFilter::Point:
+	case SamplerFilter::Point:
 		return "point";
-	case TextureFilter::Bilinear:
+	case SamplerFilter::Bilinear:
 		return "bilinear";
-	case TextureFilter::Trilinear:
+	case SamplerFilter::Trilinear:
 		return "trilinear";
-	case TextureFilter::Anisotropic:
+	case SamplerFilter::Anisotropic:
 		return "anisotropic";
 	default:
 		return "unknown";
 	}
 }
 
-const char* textureAddressModeToString(TextureAddressMode mode)
+const char* textureAddressModeToString(SamplerAddressMode mode)
 {
 	switch (mode) {
-	case TextureAddressMode::Wrap:
+	case SamplerAddressMode::Wrap:
 		return "wrap";
-	case TextureAddressMode::Clamp:
+	case SamplerAddressMode::Clamp:
 		return "clamp";
-	case TextureAddressMode::Mirror:
+	case SamplerAddressMode::Mirror:
 		return "mirror";
 	default:
 		return "unknown";

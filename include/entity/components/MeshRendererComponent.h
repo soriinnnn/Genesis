@@ -2,24 +2,25 @@
 #define GENESIS_MESH_RENDERER_COMPONENT_H
 #include <entity/components/Component.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+class MeshRendererComponent final: public Component
 {
-	class MeshRendererComponent final: public Component
-	{
-	public:
-		explicit MeshRendererComponent(const ComponentDesc& desc);
-		~MeshRendererComponent() override;
+public:
+	explicit MeshRendererComponent(const ComponentDesc& desc);
+	~MeshRendererComponent() override;
 
-		const Mesh* getMesh() const;
-		const Material* getMaterial() const;
+	const Mesh* getMesh() const;
+	const Material* getMaterial() const;
 
-		void setMesh(const SharedPtr<Mesh>& mesh);
-		void setMaterial(const SharedPtr<Material>& material);
+	void setMesh(const SharedPtr<Mesh>& mesh);
+	void setMaterial(const SharedPtr<Material>& material);
 
-	private:
-		SharedPtr<Mesh> m_mesh;
-		SharedPtr<Material> m_material;
-	};
-}
+private:
+	SharedPtr<Mesh> m_mesh;
+	SharedPtr<Material> m_material;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

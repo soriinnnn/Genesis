@@ -3,35 +3,36 @@
 #include <core/Core.h>
 #include <core/utils/Macros.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+class Logger final
 {
-	class Logger final
+GENESIS_DISABLE_COPY_AND_MOVE(Logger)
+public:
+	enum class LogLevel
 	{
-	GENESIS_DISABLE_COPY_AND_MOVE(Logger)
-	public:
-		enum class LogLevel
-		{
-			Error,
-			Warning,
-			Info
-		};
-
-		explicit Logger(LogLevel level = LogLevel::Error);
-		~Logger();
-
-		template<typename... Args>
-		void log(LogLevel level, std::format_string<Args...> format, Args&&... args) const
-		{
-			std::string msg = std::format(format, std::forward<Args>(args)...);
-			internalLog(level, msg.c_str());
-		}
-
-	private:
-		void internalLog(LogLevel level, const char* msg) const;
-
-	private:
-		LogLevel m_level;
+		Error,
+		Warning,
+		Info
 	};
-}
+
+	explicit Logger(LogLevel level = LogLevel::Error);
+	~Logger();
+
+	template<typename... Args>
+	void log(LogLevel level, std::format_string<Args...> format, Args&&... args) const
+	{
+		std::string msg = std::format(format, std::forward<Args>(args)...);
+		internalLog(level, msg.c_str());
+	}
+
+private:
+	void internalLog(LogLevel level, const char* msg) const;
+
+private:
+	LogLevel m_level;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

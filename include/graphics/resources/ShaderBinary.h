@@ -4,35 +4,36 @@
 #include <graphics/utils/GraphicsTypes.h>
 #include <core/utils/Types.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+struct ShaderBinaryDesc
 {
-	struct ShaderBinaryDesc
-	{
-		const void* binaryCode{};
-		size_t binaryCodeSize{};
-	};
+	const void* binaryCode{};
+	size_t binaryCodeSize{};
+};
 
-	struct ShaderCompileDesc
-	{
-		const char* name{};
-		const void* code{};
-		size_t codeSize{};
-		const char* entryPoint{};
-		ShaderType type{};
-	};
+struct ShaderCompileDesc
+{
+	const char* name{};
+	const void* code{};
+	size_t codeSize{};
+	const char* entryPoint{};
+	ShaderType type{};
+};
 
-	class ShaderBinary final: public GraphicsResource
-	{
-	public:
-		ShaderBinary(const ShaderBinaryDesc& sdesc, const GraphicsResourceDesc& gdesc);
-		ShaderBinary(const ShaderCompileDesc& sdesc, const GraphicsResourceDesc& gdesc);
-		~ShaderBinary() override;
+class ShaderBinary final: public GraphicsResource
+{
+public:
+	ShaderBinary(const ShaderBinaryDesc& sdesc, const GraphicsResourceDesc& gdesc);
+	ShaderBinary(const ShaderCompileDesc& sdesc, const GraphicsResourceDesc& gdesc);
+	~ShaderBinary() override;
 
-		BinaryData getData() const noexcept;
+	BinaryData getData() const noexcept;
 
-	private:
-		Microsoft::WRL::ComPtr<ID3DBlob> m_binary;
-	};
-}
+private:
+	Microsoft::WRL::ComPtr<ID3DBlob> m_binary;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

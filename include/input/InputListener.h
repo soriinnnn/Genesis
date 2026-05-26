@@ -4,19 +4,20 @@
 #include <input/InputCodes.h>
 #include <math/Point.h>
 
-namespace genesis
-{
-	class InputListener
-	{
-	public:
-		virtual ~InputListener() = default;
+GENESIS_NAMESPACE_START
 
-		virtual void onKeyDown(Key key) = 0;
-		virtual void onKeyUp(Key key) = 0;
-		virtual void onMouseDown(MouseButton button, Point pos) = 0;
-		virtual void onMouseUp(MouseButton button, Point pos) = 0;
-		virtual void onMouseMove(Point delta, Point pos) = 0;
-	};
-}
+class InputListener
+{
+public:
+	virtual ~InputListener() = default;
+
+	virtual void onKeyDown(Key key) = 0;
+	virtual void onKeyUp(Key key) = 0;
+	virtual void onMouseDown(MouseButton button, Point pos) = 0;
+	virtual void onMouseUp(MouseButton button, Point pos) = 0;
+	virtual void onMouseMove(Point delta, Point pos) = 0;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

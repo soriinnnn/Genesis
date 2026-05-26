@@ -4,36 +4,37 @@
 #include <math/Rect.h>
 #include <math/Vec4.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+struct ImageTextureFileDesc
 {
-	struct ImageTextureFileDesc
-	{
-		const char* path{};
-		bool generateMipMaps{true};
-	};
+	const char* path{};
+	bool generateMipMaps{true};
+};
 
-	struct ImageTextureSolidDesc
-	{
-		Vec4 color = {1.0f, 1.0f, 1.0f, 1.0f};
-		Rect size = {1, 1};
-	};
+struct ImageTextureSolidDesc
+{
+	Vec4 color = {1.0f, 1.0f, 1.0f, 1.0f};
+	Rect size = {1, 1};
+};
 
-	class ImageTexture final: public GraphicsResource
-	{
-	public:
-		ImageTexture(const ImageTextureFileDesc& tdesc, const GraphicsResourceDesc& gdesc);
-		ImageTexture(const ImageTextureSolidDesc& tdesc, const GraphicsResourceDesc& gdesc);
-		~ImageTexture() override;
+class ImageTexture final: public GraphicsResource
+{
+public:
+	ImageTexture(const ImageTextureFileDesc& tdesc, const GraphicsResourceDesc& gdesc);
+	ImageTexture(const ImageTextureSolidDesc& tdesc, const GraphicsResourceDesc& gdesc);
+	~ImageTexture() override;
 
-		Rect getSize() const noexcept;
+	Rect getSize() const noexcept;
 
-	private:
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_resourceView;
-		Rect m_size;
+private:
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_resourceView;
+	Rect m_size;
 
-		friend class DeviceContext;
-		friend class SpriteBatch;
-	};
-}
+	friend class DeviceContext;
+	friend class SpriteBatch;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

@@ -12,20 +12,14 @@
   "textures": [
     {
       "path": "demo/assets/textures/brick_color.jpg",
-      "slot": 0
+      "slot": 1
     },
     {
       "path": "demo/assets/textures/brick_normal.jpg",
-      "slot": 1
+      "slot": 2
     }
   ],
   "samplers": [
-    {
-      "slot": 0,
-      "filter": "Anisotropic",
-      "addressUV": "Wrap",
-      "maxAnisotropy": 16
-    },
     {
       "slot": 1,
       "filter": "Anisotropic",

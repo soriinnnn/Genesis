@@ -3,29 +3,29 @@
 #include <core/Base.h>
 #include <core/Core.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+struct ComponentDesc
 {
-	struct ComponentDesc
-	{
-		BaseDesc base;
-		Entity& entity;
-	};
+	BaseDesc base;
+	Entity& entity;
+};
 
-	class Component: public Base
-	{
-	public:
-		virtual ~Component();
-	
-		virtual void update(float deltaTime);
-		Entity& getEntity();
+class Component: public Base
+{
+public:
+	virtual ~Component();
 
-	protected:
-		explicit Component(const ComponentDesc& desc);
+	virtual void update(float deltaTime);
+	Entity& getEntity();
 
-	protected:
-		Entity& m_entity;
-	};
-}
+protected:
+	explicit Component(const ComponentDesc& desc);
 
+protected:
+	Entity& m_entity;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

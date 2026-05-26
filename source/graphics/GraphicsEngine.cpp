@@ -40,8 +40,10 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
     m_objectBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(ObjectData)});
     m_lightsBuffer = m_graphicsDevice->createStructuredBuffer({nullptr, sizeof(LightData), DEFAULT_MAX_LIGHTS});
     m_sceneRasterizer = &m_states->rasterizerSolid();
+    m_sceneSampler = &m_states->trilinearWrap();
     m_sceneTarget = m_primaryBuffer.get();
-    m_aaMode = AntiAliasing::None;
+    m_antiAliasing = AntiAliasing::None;
+    m_textureFiltering = TextureFiltering::Trilinear;
 }
 
 GraphicsEngine::~GraphicsEngine() {}
@@ -58,7 +60,12 @@ Rect GraphicsEngine::getRenderResolution() const noexcept
 
 AntiAliasing GraphicsEngine::getAntiAliasing() const noexcept
 {
-    return m_aaMode;
+    return m_antiAliasing;
+}
+
+TextureFiltering GraphicsEngine::getTextureFiltering() const noexcept
+{
+    return m_textureFiltering;
 }
 
 void GraphicsEngine::setRenderResolution(const Rect& resolution)
@@ -70,7 +77,7 @@ void GraphicsEngine::setRenderResolution(const Rect& resolution)
 
 void GraphicsEngine::setAntiAliasing(AntiAliasing mode)
 {
-    if (m_aaMode == mode) {
+    if (m_antiAliasing == mode) {
         return;
     }
     if (isHardwareMSAA(mode)) {
@@ -82,7 +89,37 @@ void GraphicsEngine::setAntiAliasing(AntiAliasing mode)
         m_sceneTarget = m_primaryBuffer.get();
     }
     m_msaaBuffer->setSampleCount(getMSAASampleCount(mode));
-    m_aaMode = mode;
+    m_antiAliasing = mode;
+}
+
+void GraphicsEngine::setTextureFiltering(TextureFiltering filter)
+{
+    if (m_textureFiltering == filter) {
+        return;
+    }
+    switch (filter) {
+        case TextureFiltering::Bilinear: {
+            m_sceneSampler = &m_states->bilinearWrap();
+            break;
+        }
+        case TextureFiltering::Trilinear: {
+            m_sceneSampler = &m_states->trilinearWrap();
+            break;
+        }
+        case TextureFiltering::Anisotropic_4X: {
+            m_sceneSampler = &m_states->anisotropicWrap(getMaxAnisotropy(filter));
+            break;
+        }
+        case TextureFiltering::Anisotropic_8X: {
+            m_sceneSampler = &m_states->anisotropicWrap(getMaxAnisotropy(filter));
+            break;
+        }
+        case TextureFiltering::Anisotropic_16X: {
+            m_sceneSampler = &m_states->anisotropicWrap(getMaxAnisotropy(filter));
+            break;
+        }
+    }
+    m_textureFiltering = filter;
 }
 
 void GraphicsEngine::clear(const Vec4& color)
@@ -119,9 +156,10 @@ void GraphicsEngine::render(EntityManager& entities, Entity& camera, float delta
 
     m_deviceContext->setRasterizerState(*m_sceneRasterizer);
     m_deviceContext->setDepthStencilState(m_states->depthDefault());
+    m_deviceContext->setSamplerState(*m_sceneSampler, DEFAULT_SAMPLER_STATE_SLOT);
 
     renderEntities(entities);
-    if (isHardwareMSAA(m_aaMode)) {
+    if (isHardwareMSAA(m_antiAliasing)) {
         m_deviceContext->resolveTexture(m_msaaBuffer->getRenderTarget(), m_primaryBuffer->getRenderTarget());
     }
 }
@@ -146,9 +184,10 @@ void GraphicsEngine::render(DebugRenderer& debug, Entity& camera)
 
     m_deviceContext->setRasterizerState(*m_sceneRasterizer);
     m_deviceContext->setDepthStencilState(m_states->depthDefault());
+    m_deviceContext->setSamplerState(*m_sceneSampler, DEFAULT_SAMPLER_STATE_SLOT);
 
     debug.render(*m_deviceContext);
-    if (isHardwareMSAA(m_aaMode)) {
+    if (isHardwareMSAA(m_antiAliasing)) {
         m_deviceContext->resolveTexture(m_msaaBuffer->getRenderTarget(), m_primaryBuffer->getRenderTarget());
     }
 }
@@ -185,7 +224,7 @@ void GraphicsEngine::present(Display& display)
 
     m_deviceContext->setRasterizerState(m_states->rasterizerSolid());
     m_deviceContext->setDepthStencilState(m_states->depthDefault());
-    m_deviceContext->setSamplerState(m_states->pointWrap());
+    m_deviceContext->setSamplerState(m_states->pointClamp(), DEFAULT_SAMPLER_STATE_SLOT);
     m_deviceContext->setGraphicsPipelineState(m_states->frameBufferPipeline());
 
     m_deviceContext->setTexture(m_primaryBuffer->getRenderTarget());
@@ -270,7 +309,7 @@ void GraphicsEngine::applyPostProcess(PostProcess& effect, FrameBuffer& input, F
 
     m_deviceContext->setRasterizerState(m_states->rasterizerSolid());
     m_deviceContext->setDepthStencilState(m_states->depthDisabled());
-    m_deviceContext->setSamplerState(m_states->pointWrap());
+    m_deviceContext->setSamplerState(m_states->pointClamp(), DEFAULT_SAMPLER_STATE_SLOT);
     m_deviceContext->setGraphicsPipelineState(effect.getGraphicsPipelineState());
 
     m_deviceContext->setTexture(input.getRenderTarget());

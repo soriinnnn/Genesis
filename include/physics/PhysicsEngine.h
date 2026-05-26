@@ -13,46 +13,47 @@
 #include <physics/ContactListener.h>
 #include <physics/DebugRenderer.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+struct PhysicsEngineDesc
 {
-	struct PhysicsEngineDesc
+	BaseDesc base;
+	GraphicsContext graphicsContext;
+};
+
+class PhysicsEngine final: public Base
+{
+public:
+	enum class MotionType
 	{
-		BaseDesc base;
-		GraphicsContext graphicsContext;
+		Static,
+		Kinematic,
+		Dynamic
 	};
 
-	class PhysicsEngine final: public Base
-	{
-	public:
-		enum class MotionType
-		{
-			Static,
-			Kinematic,
-			Dynamic
-		};
+public:
+	explicit PhysicsEngine(const PhysicsEngineDesc& desc);
+	~PhysicsEngine() override;
 
-	public:
-		explicit PhysicsEngine(const PhysicsEngineDesc& desc);
-		~PhysicsEngine() override;
+	void update(EntityManager& entities, float deltaTime);
 
-		void update(EntityManager& entities, float deltaTime);
+	DebugRenderer& getDebugRenderer();
+	SharedPtr<RigidBody> createBox(Vec3 position, Vec3 size, MotionType motionType);
+	SharedPtr<RigidBody> createCapsule(Vec3 position, float height, float radius, MotionType motionType);
 
-		DebugRenderer& getDebugRenderer();
-		SharedPtr<RigidBody> createBox(Vec3 position, Vec3 size, MotionType motionType);
-		SharedPtr<RigidBody> createCapsule(Vec3 position, float height, float radius, MotionType motionType);
+private:
+	UniquePtr<JPH::TempAllocatorImpl> m_tempAllocator;
+	UniquePtr<JPH::JobSystemThreadPool> m_jobSystem;
+	UniquePtr<JPH::PhysicsSystem> m_physicsSystem;
+	UniquePtr<OBPMapping> m_obpMapping;
+	UniquePtr<OBPCollisionFilter> m_obpCollisionFilter;
+	UniquePtr<OOCollisionFilter> m_ooCollisionFilter;
+	UniquePtr<ContactListener> m_contactListener;
+	UniquePtr<DebugRenderer> m_debugRenderer;
+	JPH::BodyManager::DrawSettings m_drawSettings;
+	float m_accumulator;
+};
 
-	private:
-		UniquePtr<JPH::TempAllocatorImpl> m_tempAllocator;
-		UniquePtr<JPH::JobSystemThreadPool> m_jobSystem;
-		UniquePtr<JPH::PhysicsSystem> m_physicsSystem;
-		UniquePtr<OBPMapping> m_obpMapping;
-		UniquePtr<OBPCollisionFilter> m_obpCollisionFilter;
-		UniquePtr<OOCollisionFilter> m_ooCollisionFilter;
-		UniquePtr<ContactListener> m_contactListener;
-		UniquePtr<DebugRenderer> m_debugRenderer;
-		JPH::BodyManager::DrawSettings m_drawSettings;
-		float m_accumulator;
-	};
-}
+GENESIS_NAMESPACE_END
 
 #endif

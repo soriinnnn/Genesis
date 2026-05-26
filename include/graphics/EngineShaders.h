@@ -3,36 +3,37 @@
 #include <core/Base.h>
 #include <core/Core.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+struct EngineShadersDesc
 {
-	struct EngineShadersDesc
+	BaseDesc base;
+	GraphicsDevice& graphicsDevice;
+};
+
+class EngineShaders final: public Base
+{
+public:
+	struct EngineShader
 	{
-		BaseDesc base;
-		GraphicsDevice& graphicsDevice;
+		SharedPtr<ShaderBinary> vsBinary;
+		SharedPtr<ShaderBinary> psBinary;
+		SharedPtr<ShaderSignature> vsSignature;
+		SharedPtr<ShaderSignature> psSignature;
 	};
 
-	class EngineShaders final: public Base
-	{
-	public:
-		struct EngineShader
-		{
-			SharedPtr<ShaderBinary> vsBinary;
-			SharedPtr<ShaderBinary> psBinary;
-			SharedPtr<ShaderSignature> vsSignature;
-			SharedPtr<ShaderSignature> psSignature;
-		};
+public:
+	explicit EngineShaders(const EngineShadersDesc& desc);
+	~EngineShaders() override;
 
-	public:
-		explicit EngineShaders(const EngineShadersDesc& desc);
-		~EngineShaders() override;
+	const EngineShader& fullscreenTriangle() const;
+	const EngineShader& debugLine() const;
 
-		const EngineShader& fullscreenTriangle() const;
-		const EngineShader& debugLine() const;
+private:
+	EngineShader m_fullscreenTriangle;
+	EngineShader m_debugLine;
+};
 
-	private:
-		EngineShader m_fullscreenTriangle;
-		EngineShader m_debugLine;
-	};
-}
+GENESIS_NAMESPACE_END
 
 #endif

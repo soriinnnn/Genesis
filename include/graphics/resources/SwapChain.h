@@ -4,38 +4,39 @@
 #include <core/Core.h>
 #include <math/Rect.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+struct SwapChainDesc
 {
-	struct SwapChainDesc
-	{
-		void* wndHandle{};
-		Rect size{};
-	};
+	void* wndHandle{};
+	Rect size{};
+};
 
-	class SwapChain final: public GraphicsResource
-	{
-	public:
-		SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gdesc);
-		~SwapChain() override;
+class SwapChain final: public GraphicsResource
+{
+public:
+	SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gdesc);
+	~SwapChain() override;
 
-		bool isFullscreen() const;
-		Rect getSize() const noexcept;
+	bool isFullscreen() const;
+	Rect getSize() const noexcept;
 
-		bool setFullscreen(bool enable);
-		void setSize(const Rect& size);
-		void present(bool vsync = false);
+	bool setFullscreen(bool enable);
+	void setSize(const Rect& size);
+	void present(bool vsync = false);
 
-	private:
-		void updateBuffers();
+private:
+	void updateBuffers();
 
-	private:
-		Microsoft::WRL::ComPtr<IDXGISwapChain> m_swapChain;
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_targetView;
-		SharedPtr<DepthStencilTexture> m_depthStencil;
-		Rect m_size;
+private:
+	Microsoft::WRL::ComPtr<IDXGISwapChain> m_swapChain;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_targetView;
+	SharedPtr<DepthStencilTexture> m_depthStencil;
+	Rect m_size;
 
-		friend class DeviceContext;
-	};
-}
+	friend class DeviceContext;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

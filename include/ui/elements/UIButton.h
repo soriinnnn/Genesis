@@ -2,23 +2,24 @@
 #define GENESIS_UI_BUTTON_H
 #include <ui/elements/UIElement.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+class UIButton: public UIElement
 {
-	class UIButton: public UIElement
-	{
-	public:
-		explicit UIButton(const UIElementDesc& desc);
-		~UIButton() override;
-		
-		UILabel* getLabel() noexcept;
+public:
+	explicit UIButton(const UIElementDesc& desc);
+	~UIButton() override;
 
-	private:
-		void onRender(SpriteBatch& batch) override;
-		void onPosition() override;
+	UILabel* getLabel() noexcept;
 
-	private:
-		UniquePtr<UILabel> m_label;
-	};
-}
+private:
+	void onRender(SpriteBatch& batch) override;
+	void onPosition() override;
+
+private:
+	UniquePtr<UILabel> m_label;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

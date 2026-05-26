@@ -2,25 +2,25 @@
 #define GENESIS_FONT_H
 #include <resources/Resource.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+struct FontDesc
 {
-	struct FontDesc 
-	{
-		ResourceDesc& resource;
-	};
+	ResourceDesc& resource;
+};
 
-	class Font final: public Resource
-	{
-	public:
-		explicit Font(const FontDesc& desc);
-		~Font() override;
+class Font final: public Resource
+{
+public:
+	explicit Font(const FontDesc& desc);
+	~Font() override;
 
-		FontAtlas& getAtlas();
+	FontAtlas& getAtlas();
 
-	private:
-		SharedPtr<FontAtlas> m_atlas;
-	};
-}
+private:
+	SharedPtr<FontAtlas> m_atlas;
+};
 
+GENESIS_NAMESPACE_END
 
 #endif

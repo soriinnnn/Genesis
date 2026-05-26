@@ -3,27 +3,28 @@
 #include <resources/Resource.h>
 #include <graphics/utils/GraphicsTypes.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+struct MeshDesc
 {
-	struct MeshDesc
-	{
-		ResourceDesc resource;
-		uint32 components = GENESIS_VERTEX_PRESET_DEFAULT;
-	};
+	ResourceDesc resource;
+	uint32 components = GENESIS_VERTEX_PRESET_DEFAULT;
+};
 
-	class Mesh final: public Resource
-	{
-	public:
-		explicit Mesh(const MeshDesc& desc);
-		~Mesh() override;
+class Mesh final: public Resource
+{
+public:
+	explicit Mesh(const MeshDesc& desc);
+	~Mesh() override;
 
-		const VertexBuffer& getVertexBuffer() const noexcept;
-		const IndexBuffer& getIndexBuffer() const noexcept;
+	const VertexBuffer& getVertexBuffer() const noexcept;
+	const IndexBuffer& getIndexBuffer() const noexcept;
 
-	private:
-		SharedPtr<VertexBuffer> m_vertexBuffer;
-		SharedPtr<IndexBuffer> m_indexBuffer;
-	};
-}
+private:
+	SharedPtr<VertexBuffer> m_vertexBuffer;
+	SharedPtr<IndexBuffer> m_indexBuffer;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

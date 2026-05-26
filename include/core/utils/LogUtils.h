@@ -28,21 +28,23 @@ GENESIS_LOG_THROW(getLogger(), std::runtime_error, Logger::LogLevel::Error,\
 GENESIS_LOG_THROW(getLogger(), std::invalid_argument, Logger::LogLevel::Error,\
 "\b[{}:{}] " msg, genesis::logUtils::getFilename(__FILE__), __LINE__ __VA_OPT__(,) __VA_ARGS__)
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+namespace logUtils 
 {
-	namespace logUtils {
-		constexpr const char* getFilename(const char* path)
-		{
-			const char* file = path;
-			while (*path) {
-				if (*path == '/' || *path == '\\') {
-					file = path + 1;
-				}
-				path++;
+	constexpr const char* getFilename(const char* path)
+	{
+		const char* file = path;
+		while (*path) {
+			if (*path == '/' || *path == '\\') {
+				file = path + 1;
 			}
-			return file;
+			path++;
 		}
+		return file;
 	}
 }
+
+GENESIS_NAMESPACE_END
 
 #endif

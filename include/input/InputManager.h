@@ -5,47 +5,48 @@
 #include <display/Window.h>
 #include <input/InputListener.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+struct InputManagerDesc
 {
-	struct InputManagerDesc
-	{
-		BaseDesc base;
-		Window& window;
-	};
+	BaseDesc base;
+	Window& window;
+};
 
-	class InputManager: public Base
-	{
-	public:
-		virtual ~InputManager() override;
+class InputManager: public Base
+{
+public:
+	virtual ~InputManager() override;
 
-		virtual void update() = 0;
-		void addListener(InputListener* listener);
-		void removeListener(InputListener* listener);
+	virtual void update() = 0;
+	void addListener(InputListener* listener);
+	void removeListener(InputListener* listener);
 
-		virtual bool isKeyDown(Key key) const = 0;
-		virtual bool isKeyUp(Key key) const = 0;
-		virtual bool isMouseDown(MouseButton button) const = 0;
-		virtual bool isMouseUp(MouseButton button) const = 0;
-		virtual Point getMousePosition() const = 0;
-		virtual Point getMouseDelta() const = 0;
-		bool isMouseVisible() const noexcept;
-		bool isMouseLocked() const noexcept;
+	virtual bool isKeyDown(Key key) const = 0;
+	virtual bool isKeyUp(Key key) const = 0;
+	virtual bool isMouseDown(MouseButton button) const = 0;
+	virtual bool isMouseUp(MouseButton button) const = 0;
+	virtual Point getMousePosition() const = 0;
+	virtual Point getMouseDelta() const = 0;
+	bool isMouseVisible() const noexcept;
+	bool isMouseLocked() const noexcept;
 
-		virtual void setMousePosition(Point pos) = 0;
-		virtual void setMouseVisibility(bool enable) = 0;
-		virtual void setMouseLock(bool enable) = 0;
+	virtual void setMousePosition(Point pos) = 0;
+	virtual void setMouseVisibility(bool enable) = 0;
+	virtual void setMouseLock(bool enable) = 0;
 
-		static UniquePtr<InputManager> create(const InputManagerDesc& desc);
+	static UniquePtr<InputManager> create(const InputManagerDesc& desc);
 
-	protected:
-		explicit InputManager(const InputManagerDesc& desc);
+protected:
+	explicit InputManager(const InputManagerDesc& desc);
 
-	protected:
-		Window& m_window;
-		Vector<InputListener*> m_listeners;
-		bool m_mouseVisible;
-		bool m_mouseLocked;
-	};
-}
+protected:
+	Window& m_window;
+	Vector<InputListener*> m_listeners;
+	bool m_mouseVisible;
+	bool m_mouseLocked;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

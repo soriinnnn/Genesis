@@ -29,13 +29,12 @@ struct LightData
     int type;
 };
 
-StructuredBuffer<LightData> lights: register(t10);
+StructuredBuffer<LightData> lights: register(t0);
 
-Texture2D colorTexture: register(t0);
-SamplerState colorSampler: register(s0);
+Texture2D colorTexture: register(t1);
+Texture2D normalTexture: register(t2);
 
-Texture2D normalTexture: register(t1);
-SamplerState normalSampler: register(s1);
+SamplerState defaultSampler: register(s0);
 
 struct InputPS
 {
@@ -78,7 +77,7 @@ float3 getLightColor(uint lightIndex, float3 baseColor, float3 surfaceNormal, fl
 
 float4 getTextureNormal(InputPS input)
 {
-    float4 normal = normalTexture.Sample(normalSampler, input.uv);
+    float4 normal = normalTexture.Sample(defaultSampler, input.uv);
     normal.xyz = normal.xyz * 2.0f - 1.0f;
     normal.xyz = normalize(mul(normal.xyz, input.tbn));
     return normal;
@@ -86,7 +85,7 @@ float4 getTextureNormal(InputPS input)
 
 float4 main(InputPS input): SV_Target0
 {
-    float4 textureColor = colorTexture.Sample(colorSampler, input.uv);
+    float4 textureColor = colorTexture.Sample(defaultSampler, input.uv);
     float4 textureNormal = getTextureNormal(input);
     float4 viewDirection = normalize(cameraPosition - input.worldPosition);
     

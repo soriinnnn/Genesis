@@ -13,63 +13,66 @@
 #include <ui/UIManager.h>
 #include <math/Rect.h>
 
-namespace genesis 
+GENESIS_NAMESPACE_START
+
+struct GameDesc
 {
-    struct GameDesc
-    {
-        const char* windowTitle;
-        Rect windowSize{1280, 720};
-        Logger::LogLevel logLevel = Logger::LogLevel::Error;
-    };
+    const char* windowTitle;
+    Rect windowSize{1280, 720};
+    Logger::LogLevel logLevel = Logger::LogLevel::Error;
+};
 
-    class Game
-    {
-    GENESIS_DISABLE_COPY_AND_MOVE(Game)
-    public:
-        explicit Game(const GameDesc& desc);
-        virtual ~Game();
+class Game
+{
+GENESIS_DISABLE_COPY_AND_MOVE(Game)
+public:
+    explicit Game(const GameDesc& desc);
+    virtual ~Game();
 
-        Logger& getLogger() noexcept;
-        GameContext getContext() noexcept;
-        void run();
+    Logger& getLogger() noexcept;
+    GameContext getContext() noexcept;
+    void run();
 
-    protected:
-        virtual void onCreate();
-        virtual void onUpdate(float deltaTime);
+protected:
+    virtual void onCreate();
+    virtual void onUpdate(float deltaTime);
 
-        Entity* getMainCamera() const noexcept;
-        Rect getRenderResolution() const noexcept;
-        AntiAliasing getAntiAliasing() const noexcept;
+    Entity* getMainCamera() const noexcept;
+    Rect getRenderResolution() const noexcept;
+    AntiAliasing getAntiAliasing() const noexcept;
+    TextureFiltering getTextureFiltering() const noexcept;
 
-        void setMainCamera(Entity* camera);
-        void setRenderResolution(const Rect& resolution);
-        void setAntiAliasing(AntiAliasing antiAliasing);
-        void addEffect(SharedPtr<PostProcess> effect);
-        void clearEffects();
+    void setMainCamera(Entity* camera);
+    void setRenderResolution(const Rect& resolution);
+    void setAntiAliasing(AntiAliasing antiAliasing);
+    void setTextureFiltering(TextureFiltering filter);
+    void addEffect(SharedPtr<PostProcess> effect);
+    void clearEffects();
 
-    private:
-        void onInternalUpdate();
-        float getDeltaTime();
+private:
+    void onInternalUpdate();
+    float getDeltaTime();
 
-    protected:
-        UniquePtr<Display> m_display;
-        UniquePtr<PhysicsEngine> m_physicsEngine;
-        UniquePtr<InputManager> m_inputManager;
-        UniquePtr<ResourceManager> m_resourceManager;
-        UniquePtr<EntityManager> m_entityManager;
-        UniquePtr<UIManager> m_uiManager;
+protected:
+    UniquePtr<Display> m_display;
+    UniquePtr<PhysicsEngine> m_physicsEngine;
+    UniquePtr<InputManager> m_inputManager;
+    UniquePtr<ResourceManager> m_resourceManager;
+    UniquePtr<EntityManager> m_entityManager;
+    UniquePtr<UIManager> m_uiManager;
 
-    private:
-        UniquePtr<Logger> m_logger;
-        UniquePtr<GraphicsEngine> m_graphicsEngine;
-        UniquePtr<Window> m_window;
-        
-    private:
-        Vector<SharedPtr<PostProcess>> m_effects;
-        TimePoint m_previousTime;
-        Entity* m_mainCamera;
-        bool m_isRunning;
-    };
-}
+private:
+    UniquePtr<Logger> m_logger;
+    UniquePtr<GraphicsEngine> m_graphicsEngine;
+    UniquePtr<Window> m_window;
+
+private:
+    Vector<SharedPtr<PostProcess>> m_effects;
+    TimePoint m_previousTime;
+    Entity* m_mainCamera;
+    bool m_isRunning;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

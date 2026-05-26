@@ -17,29 +17,30 @@
 	genesis::graphicsLogUtils::checkShaderCompile(getLogger(), result, error);\
 }
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+namespace graphicsLogUtils
 {
-	namespace graphicsLogUtils
+	inline void checkShaderCompile(Logger& logger, HRESULT res, ID3DBlob* error)
 	{
-		inline void checkShaderCompile(Logger& logger, HRESULT res, ID3DBlob* error)
-		{
-			const char* errorMsg = error ? static_cast<const char*>(error->GetBufferPointer()) : nullptr;
+		const char* errorMsg = error ? static_cast<const char*>(error->GetBufferPointer()) : nullptr;
 
-			if (FAILED(res)) {
-				GENESIS_LOG_THROW(
-					logger, 
-					std::runtime_error, 
-					Logger::LogLevel::Error, 
-					"Shader compilation failed.\nDetails:\n{}",
-					errorMsg
-				);
-			}
+		if (FAILED(res)) {
+			GENESIS_LOG_THROW(
+				logger,
+				std::runtime_error,
+				Logger::LogLevel::Error,
+				"Shader compilation failed.\nDetails:\n{}",
+				errorMsg
+			);
+		}
 
-			if (errorMsg) {
-				GENESIS_LOG(logger, Logger::LogLevel::Warning, "Shader compiled with warnings.\nDetails:\n{}", errorMsg);
-			}
+		if (errorMsg) {
+			GENESIS_LOG(logger, Logger::LogLevel::Warning, "Shader compiled with warnings.\nDetails:\n{}", errorMsg);
 		}
 	}
 }
+
+GENESIS_NAMESPACE_END
 
 #endif

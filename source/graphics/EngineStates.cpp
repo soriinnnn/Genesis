@@ -8,12 +8,12 @@ EngineStates::EngineStates(const EngineStatesDesc& desc): Base(desc.base), m_gra
 {
     auto& fullscreenShader = desc.engineShaders.fullscreenTriangle();
     m_frameBufferPipeline = m_graphicsDevice.createGraphicsPipelineState({fullscreenShader.vsBinary.get(), fullscreenShader.vsSignature.get(), fullscreenShader.psBinary.get(), fullscreenShader.psSignature.get()});
-    m_pointWrap = m_graphicsDevice.createSamplerState({TextureFilter::Point, TextureAddressMode::Wrap, TextureAddressMode::Wrap, TextureAddressMode::Wrap});
-    m_pointClamp = m_graphicsDevice.createSamplerState({TextureFilter::Point, TextureAddressMode::Clamp, TextureAddressMode::Clamp, TextureAddressMode::Clamp});
-    m_bilinearWrap = m_graphicsDevice.createSamplerState({TextureFilter::Bilinear, TextureAddressMode::Wrap, TextureAddressMode::Wrap, TextureAddressMode::Wrap});
-    m_bilinearClamp = m_graphicsDevice.createSamplerState({TextureFilter::Bilinear, TextureAddressMode::Clamp, TextureAddressMode::Clamp, TextureAddressMode::Clamp});
-    m_trilinearWrap = m_graphicsDevice.createSamplerState({TextureFilter::Trilinear, TextureAddressMode::Wrap, TextureAddressMode::Wrap, TextureAddressMode::Wrap});
-    m_trilinearClamp = m_graphicsDevice.createSamplerState({TextureFilter::Trilinear, TextureAddressMode::Clamp, TextureAddressMode::Clamp, TextureAddressMode::Clamp});
+    m_pointWrap = m_graphicsDevice.createSamplerState({SamplerFilter::Point, SamplerAddressMode::Wrap, SamplerAddressMode::Wrap, SamplerAddressMode::Wrap});
+    m_pointClamp = m_graphicsDevice.createSamplerState({SamplerFilter::Point, SamplerAddressMode::Clamp, SamplerAddressMode::Clamp, SamplerAddressMode::Clamp});
+    m_bilinearWrap = m_graphicsDevice.createSamplerState({SamplerFilter::Bilinear, SamplerAddressMode::Wrap, SamplerAddressMode::Wrap, SamplerAddressMode::Wrap});
+    m_bilinearClamp = m_graphicsDevice.createSamplerState({SamplerFilter::Bilinear, SamplerAddressMode::Clamp, SamplerAddressMode::Clamp, SamplerAddressMode::Clamp});
+    m_trilinearWrap = m_graphicsDevice.createSamplerState({SamplerFilter::Trilinear, SamplerAddressMode::Wrap, SamplerAddressMode::Wrap, SamplerAddressMode::Wrap});
+    m_trilinearClamp = m_graphicsDevice.createSamplerState({SamplerFilter::Trilinear, SamplerAddressMode::Clamp, SamplerAddressMode::Clamp, SamplerAddressMode::Clamp});
     m_depthDefault = m_graphicsDevice.createDepthStencilState({});
     m_depthDefault = m_graphicsDevice.createDepthStencilState({false});
     m_rasterizerSolid = m_graphicsDevice.createRasterizerState({});
@@ -60,10 +60,10 @@ const SamplerState& EngineStates::trilinearClamp() const
 const SamplerState& EngineStates::anisotropicWrap(uint32 maxAnisotropy) const
 {
     SamplerStateDesc desc{};
-    desc.filter = TextureFilter::Anisotropic;
-    desc.addressU = TextureAddressMode::Wrap;
-    desc.addressV = TextureAddressMode::Wrap;
-    desc.addressW = TextureAddressMode::Wrap;
+    desc.filter = SamplerFilter::Anisotropic;
+    desc.addressU = SamplerAddressMode::Wrap;
+    desc.addressV = SamplerAddressMode::Wrap;
+    desc.addressW = SamplerAddressMode::Wrap;
     desc.maxAnisotropy = maxAnisotropy;
     return *m_graphicsDevice.createSamplerState(desc);
 }
@@ -71,10 +71,10 @@ const SamplerState& EngineStates::anisotropicWrap(uint32 maxAnisotropy) const
 const SamplerState& EngineStates::anisotropicClamp(uint32 maxAnisotropy) const
 {
     SamplerStateDesc desc{};
-    desc.filter = TextureFilter::Anisotropic;
-    desc.addressU = TextureAddressMode::Clamp;
-    desc.addressV = TextureAddressMode::Clamp;
-    desc.addressW = TextureAddressMode::Clamp;
+    desc.filter = SamplerFilter::Anisotropic;
+    desc.addressU = SamplerAddressMode::Clamp;
+    desc.addressV = SamplerAddressMode::Clamp;
+    desc.addressW = SamplerAddressMode::Clamp;
     desc.maxAnisotropy = maxAnisotropy;
     return *m_graphicsDevice.createSamplerState(desc);
 }

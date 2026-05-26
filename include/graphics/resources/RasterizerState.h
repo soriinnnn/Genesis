@@ -2,24 +2,25 @@
 #define GENESIS_RASTERIZER_STATE_H
 #include <graphics/resources/GraphicsResource.h>
 
-namespace genesis
+GENESIS_NAMESPACE_START
+
+struct RasterizerStateDesc
 {
-	struct RasterizerStateDesc
-	{
-		bool multiSampling = false;
-	};
+	bool multiSampling = false;
+};
 
-	class RasterizerState final: public GraphicsResource
-	{
-	public:
-		RasterizerState(const RasterizerStateDesc& rdesc, const GraphicsResourceDesc& gdesc);
-		~RasterizerState() override;
+class RasterizerState final: public GraphicsResource
+{
+public:
+	RasterizerState(const RasterizerStateDesc& rdesc, const GraphicsResourceDesc& gdesc);
+	~RasterizerState() override;
 
-	private:
-		Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;
+private:
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;
 
-		friend class DeviceContext;
-	};
-}
+	friend class DeviceContext;
+};
+
+GENESIS_NAMESPACE_END
 
 #endif

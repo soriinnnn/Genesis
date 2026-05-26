@@ -4,7 +4,7 @@
 
 using namespace genesis;
 
-static D3D11_SAMPLER_DESC getD3D11SamplerDesc(TextureFilter filter, TextureAddressMode addressU, TextureAddressMode addressV, TextureAddressMode addressW, ComparisonFunction comparison, uint32 maxAnisotropy, float minLOD, float maxLOD);
+static D3D11_SAMPLER_DESC getD3D11SamplerDesc(SamplerFilter filter, SamplerAddressMode addressU, SamplerAddressMode addressV, SamplerAddressMode addressW, ComparisonFunction comparison, uint32 maxAnisotropy, float minLOD, float maxLOD);
 
 SamplerState::SamplerState(const SamplerStateDesc& sdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
@@ -36,7 +36,7 @@ SamplerState::~SamplerState() {}
 
 /* STATIC FUNCTION DEFINITIONS */
 
-D3D11_SAMPLER_DESC getD3D11SamplerDesc(TextureFilter filter, TextureAddressMode addressU, TextureAddressMode addressV, TextureAddressMode addressW, ComparisonFunction comparison, uint32 maxAnisotropy, float minLOD, float maxLOD)
+D3D11_SAMPLER_DESC getD3D11SamplerDesc(SamplerFilter filter, SamplerAddressMode addressU, SamplerAddressMode addressV, SamplerAddressMode addressW, ComparisonFunction comparison, uint32 maxAnisotropy, float minLOD, float maxLOD)
 {
 	D3D11_SAMPLER_DESC desc{};
 
