@@ -231,6 +231,12 @@
     <ClCompile Include="source\ui\elements\UICanvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\graphics\resources\RasterizerState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\graphics\resources\DepthStencilState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\core\Base.h">
@@ -477,6 +483,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\ui\elements\UICanvas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphics\resources\RasterizerState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\graphics\resources\DepthStencilState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

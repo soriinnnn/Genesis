@@ -88,7 +88,9 @@ namespace genesis
 			switch (filter) {
 			case TextureFilter::Point:
 				return D3D11_FILTER_MIN_MAG_MIP_POINT;
-			case TextureFilter::Linear:
+			case TextureFilter::Bilinear:
+				return D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
+			case TextureFilter::Trilinear:
 				return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 			case TextureFilter::Anisotropic:
 				return D3D11_FILTER_ANISOTROPIC;
@@ -156,6 +158,28 @@ namespace genesis
 				return sizeof(uint32);
 			default:
 				return 0;
+			}
+		}
+
+		inline bool isHardwareMSAA(AntiAliasing antiAliasing) 
+		{
+			return 
+				antiAliasing == AntiAliasing::MSAA_2X || 
+				antiAliasing == AntiAliasing::MSAA_4X || 
+				antiAliasing == AntiAliasing::MSAA_8X;
+		}
+
+		inline uint32 getMSAASampleCount(AntiAliasing antiAliasing)
+		{
+			switch (antiAliasing) {
+			case AntiAliasing::MSAA_2X:
+				return 2;
+			case AntiAliasing::MSAA_4X:
+				return 4;
+			case AntiAliasing::MSAA_8X:
+				return 8;
+			default:
+				return 1;
 			}
 		}
 	}

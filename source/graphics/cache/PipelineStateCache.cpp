@@ -19,8 +19,6 @@ struct hash<GraphicsPipelineStateDesc>
         XXH64_update(&state, &desc.vsSignature, sizeof(desc.vsSignature));
         XXH64_update(&state, &desc.psSignature, sizeof(desc.psSignature));
         XXH64_update(&state, &desc.primitive, sizeof(desc.primitive));
-        XXH64_update(&state, &desc.depthEnable, sizeof(desc.depthEnable));
-        XXH64_update(&state, &desc.depthComparison, sizeof(desc.depthComparison));
         return static_cast<size_t>(XXH64_digest(&state));
     }
 };

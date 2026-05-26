@@ -26,8 +26,8 @@ namespace genesis
 		explicit EngineShaders(const EngineShadersDesc& desc);
 		~EngineShaders() override;
 
-		const EngineShader& getFullscreenTriangle() const;
-		const EngineShader& getDebugLine() const;
+		const EngineShader& fullscreenTriangle() const;
+		const EngineShader& debugLine() const;
 
 	private:
 		EngineShader m_fullscreenTriangle;

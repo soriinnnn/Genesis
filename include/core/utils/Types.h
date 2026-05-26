@@ -1,6 +1,7 @@
 #ifndef GENESIS_TYPES_H
 #define GENESIS_TYPES_H
 #include <core/Core.h>
+#include <graphics/utils/GraphicsTypes.h>
 
 namespace genesis 
 {
@@ -19,6 +20,13 @@ namespace genesis
         PhysicsEngine& physics;
         Display& display;
     };
+
+	struct GraphicsContext
+	{
+		GraphicsDevice& graphicsDevice;
+		EngineShaders& engineShaders;
+		EngineStates& engineStates;
+	};
 }
 
 #endif

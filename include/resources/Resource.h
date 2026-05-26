@@ -2,7 +2,7 @@
 #define GENESIS_RESOURCE_H
 #include <core/Base.h>
 #include <core/Core.h>
-#include <graphics/utils/GraphicsTypes.h>
+#include <core/utils/Types.h>
 
 namespace genesis 
 {

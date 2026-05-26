@@ -33,7 +33,7 @@ using LogLevel = Logger::LogLevel;
 #define DEFAULT_SHADER_ENTRY "main"
 
 static SharedPtr<Shader> getShaderFromJSON(const Json& data, ShaderType type, ResourceManager& resourceManager, const Logger& logger, const char* effectPath);
-static SharedPtr<ConstantBuffer> getConstantBufferFromJSON(const Json& data, const SharedPtr<Shader>& ps, GraphicsDevice& graphicsDevice, Vector<uint8>& buffer, HashMap<String, ShaderReflectionVariable>& variables, const Logger& logger, const char* effectPath);
+static SharedPtr<ConstantBuffer> getConstantBufferFromJSON(const Json& data, const SharedPtr<Shader>& ps, GraphicsDevice& graphicsDevice, Vector<uint8>& properties, HashMap<String, ShaderReflectionVariable>& variables, const Logger& logger, const char* effectPath);
 static Vector<uint8> getPropertiesFromJSON(const Json& data, const ShaderReflectionConstantBuffer& reflection, const Logger& logger, const char* effectPath);
 
 PostProcess::PostProcess(const PostProcessDesc& desc): Resource(desc.resource), m_isDirty{false}
@@ -44,13 +44,13 @@ PostProcess::PostProcess(const PostProcessDesc& desc): Resource(desc.resource), 
 		Json data = Json::parse(resourcesUtils::readFile(getPath()));
 
 		SharedPtr<Shader> ps = getShaderFromJSON(data, ShaderType::PixelShader, desc.resource.resourceManager, getLogger(), getPath());
-		m_pipeline = context.graphicsDevice.createGraphicsPipelineState({
-			*context.engineShaders.getFullscreenTriangle().vsBinary, ps->getBinary(),
-			*context.engineShaders.getFullscreenTriangle().vsSignature, ps->getSignature(),
-			PrimitiveTopology::Triangles,
-			false
-		});
-		
+		GraphicsPipelineStateDesc pipelineDesc{};
+		pipelineDesc.vsBinary = context.engineShaders.fullscreenTriangle().vsBinary.get();
+		pipelineDesc.vsSignature = context.engineShaders.fullscreenTriangle().vsSignature.get();
+		pipelineDesc.psBinary = &ps->getBinary();
+		pipelineDesc.psSignature = &ps->getSignature();
+
+		m_pipeline = context.graphicsDevice.createGraphicsPipelineState(pipelineDesc);
 		m_properties = getConstantBufferFromJSON(data, ps, context.graphicsDevice, m_data, m_variables, getLogger(), getPath());
 	}
 	catch (const Json::parse_error& error) {
@@ -146,7 +146,7 @@ SharedPtr<Shader> getShaderFromJSON(const Json& data, ShaderType type, ResourceM
 	return resourceManager.getShader(shaderPath.c_str(), shaderEntry.c_str(), type);
 }
 
-SharedPtr<ConstantBuffer> getConstantBufferFromJSON(const Json& data, const SharedPtr<Shader>& ps, GraphicsDevice& graphicsDevice, Vector<uint8>& buffer, HashMap<String, ShaderReflectionVariable>& variables, const Logger& logger, const char* effectPath)
+SharedPtr<ConstantBuffer> getConstantBufferFromJSON(const Json& data, const SharedPtr<Shader>& ps, GraphicsDevice& graphicsDevice, Vector<uint8>& properties, HashMap<String, ShaderReflectionVariable>& variables, const Logger& logger, const char* effectPath)
 {
 	if (!data.contains(KEY_POST_EFFECT_PROPERTIES)) {
 		GENESIS_LOG(logger, LogLevel::Warning, "No properties defined in post processing effect \"{}\".", effectPath);
@@ -169,12 +169,12 @@ SharedPtr<ConstantBuffer> getConstantBufferFromJSON(const Json& data, const Shar
 	}
 
 	variables = reflection->variables;
-	buffer = getPropertiesFromJSON(data, *reflection, logger, effectPath);
-	if (buffer.empty()) {
+	properties = getPropertiesFromJSON(data, *reflection, logger, effectPath);
+	if (properties.empty()) {
 		return nullptr;
 	}
 
-	return graphicsDevice.createConstantBuffer({buffer.data(), static_cast<uint32>(buffer.size())});
+	return graphicsDevice.createConstantBuffer({properties.data(), static_cast<uint32>(properties.size())});
 }
 
 Vector<uint8> getPropertiesFromJSON(const Json& data, const ShaderReflectionConstantBuffer& reflection, const Logger& logger, const char* effectPath)
@@ -188,7 +188,7 @@ Vector<uint8> getPropertiesFromJSON(const Json& data, const ShaderReflectionCons
 	for (auto& [name, value] : data[KEY_POST_EFFECT_PROPERTIES].items()) {
 		auto it = reflection.variables.find(name);
 		if (it == reflection.variables.end()) {
-			GENESIS_LOG(logger, LogLevel::Warning, "Missing property \"{}\" in post processing file \"{}\". Skipping.", name, effectPath);
+			GENESIS_LOG(logger, LogLevel::Warning, "Missing property \"{}\" in post processing effect \"{}\". Skipping.", name, effectPath);
 			continue;
 		}
 
@@ -206,12 +206,12 @@ Vector<uint8> getPropertiesFromJSON(const Json& data, const ShaderReflectionCons
 			Vector<float> array = value.get<Vector<float>>();
 			size_t size = array.size() * sizeof(float);
 			if (size > variable.size) {
-				GENESIS_LOG(logger, Logger::LogLevel::Warning, "Property \"{}\" array is larger than expected in post processing file \"{}\". Truncating.", name, effectPath);
+				GENESIS_LOG(logger, Logger::LogLevel::Warning, "Property \"{}\" array is larger than expected in post processing effect \"{}\". Truncating.", name, effectPath);
 			}
 			memcpy(values.data() + variable.offset, array.data(), min<size_t>(variable.size, size));
 		}
 		else {
-			GENESIS_LOG(logger, Logger::LogLevel::Warning, "Property \"{}\" has unsupported type in post processing file \"{}\". Skipping.", name, effectPath);
+			GENESIS_LOG(logger, Logger::LogLevel::Warning, "Property \"{}\" has unsupported type in post processing effect \"{}\". Skipping.", name, effectPath);
 		}
 	}
 

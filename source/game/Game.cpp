@@ -97,6 +97,11 @@ Rect Game::getRenderResolution() const noexcept
     return m_graphicsEngine->getRenderResolution();
 }
 
+AntiAliasing Game::getAntiAliasing() const noexcept
+{
+    return m_graphicsEngine->getAntiAliasing();
+}
+
 void Game::setMainCamera(Entity* camera)
 {
     if (!camera) {
@@ -117,6 +122,11 @@ void Game::setMainCamera(Entity* camera)
 void Game::setRenderResolution(const Rect& resolution)
 {
     m_graphicsEngine->setRenderResolution(resolution);
+}
+
+void Game::setAntiAliasing(AntiAliasing antiAliasing)
+{
+    m_graphicsEngine->setAntiAliasing(antiAliasing);
 }
 
 void Game::addEffect(SharedPtr<PostProcess> effect)

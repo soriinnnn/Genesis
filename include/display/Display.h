@@ -1,7 +1,7 @@
 #ifndef GENESIS_DISPLAY_H
 #define GENESIS_DISPLAY_H
 #include <display/Window.h>
-#include <graphics/utils/GraphicsTypes.h>
+#include <core/utils/Types.h>
 
 namespace genesis 
 {
@@ -45,6 +45,7 @@ namespace genesis
 		Window& m_window;
 		SharedPtr<SwapChain> m_swapChain;
 		DisplayMode m_mode;
+		bool m_isTransitioning;
 		Rect m_screenSize;
 		Rect m_windowedSize;
 		bool m_vsync;

@@ -1,7 +1,7 @@
 #ifndef GENESIS_DEBUG_RENDERER_H
 #define GENESIS_DEBUG_RENDERER_H
 #include <core/Core.h>
-#include <graphics/utils/GraphicsTypes.h>
+#include <core/utils/Types.h>
 #include <math/Vec3.h>
 #include <math/Vec4.h>
 #include <jolt/Jolt.h>

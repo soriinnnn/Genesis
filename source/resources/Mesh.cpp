@@ -1,6 +1,6 @@
 #include <resources/Mesh.h>
 #include <graphics/GraphicsDevice.h>
-#include <graphics/utils/GraphicsTypes.h>
+#include <core/utils/Macros.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>

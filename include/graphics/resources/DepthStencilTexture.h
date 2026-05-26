@@ -8,6 +8,7 @@ namespace genesis
 	struct DepthStencilTextureDesc
 	{
 		Rect size;
+		uint32 sampleCount = 1;
 	};
 
 	class DepthStencilTexture final: public GraphicsResource
@@ -21,6 +22,7 @@ namespace genesis
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_depthStencilView;
+		DXGI_FORMAT m_format;
 		Rect m_size;
 
 		friend class DeviceContext;

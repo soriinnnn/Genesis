@@ -3,7 +3,7 @@
 
 using namespace genesis;
 
-FrameBuffer::FrameBuffer(const FrameBufferDesc& desc): Base(desc.base), m_graphicsDevice{desc.graphicsDevice}, m_size{desc.size}
+FrameBuffer::FrameBuffer(const FrameBufferDesc& desc): Base(desc.base), m_graphicsDevice{desc.graphicsDevice}, m_size{desc.size}, m_sampleCount{1}
 {
 	if (m_size.width() <= 0 || m_size.height() <= 0) {
 		GENESIS_LOG_THROW_ERROR("Invalid size: {}x{}.", m_size.width(), m_size.height());
@@ -16,6 +16,11 @@ FrameBuffer::~FrameBuffer() {}
 Rect FrameBuffer::getSize() const noexcept
 {
 	return m_size;
+}
+
+uint32 FrameBuffer::getSampleCount() const noexcept
+{
+	return m_sampleCount;
 }
 
 const RenderTargetTexture& FrameBuffer::getRenderTarget() const noexcept
@@ -40,8 +45,17 @@ void FrameBuffer::setSize(const Rect& size)
 	updateTextures();
 }
 
+void FrameBuffer::setSampleCount(uint32 sampleCount)
+{
+	if (m_sampleCount == sampleCount) {
+		return;
+	}
+	m_sampleCount = sampleCount;
+	updateTextures();
+}
+
 void FrameBuffer::updateTextures()
 {
-	m_renderTarget = m_graphicsDevice.createRenderTargetTexture({m_size});
-	m_depthStencil = m_graphicsDevice.createDepthStencilTexture({m_size});
+	m_renderTarget = m_graphicsDevice.createRenderTargetTexture({m_size, m_sampleCount});
+	m_depthStencil = m_graphicsDevice.createDepthStencilTexture({m_size, m_sampleCount});
 }

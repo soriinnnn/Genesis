@@ -22,7 +22,9 @@ namespace genesis
 		void updateStructuredBuffer(const StructuredBuffer& buffer, const void* data, uint32 size);
 
 		void setRenderTarget(const RenderTargetTexture& renderTarget, const DepthStencilTexture& depthStencil);
-		void setGraphicsPipelineState(const GraphicsPipelineState& graphicsPipeline);
+		void setRasterizerState(const RasterizerState& rasterizer);
+		void setDepthStencilState(const DepthStencilState& depthStencil);
+		void setGraphicsPipelineState(const GraphicsPipelineState& pipeline);
 		void setViewport(const Rect& size);
 		void setVertexBuffer(const VertexBuffer& buffer);
 		void setIndexBuffer(const IndexBuffer& buffer);
@@ -34,6 +36,8 @@ namespace genesis
 
 		void draw(uint32 vertexCount, uint32 startVertexLocation = 0);
 		void drawIndexed(uint32 indexCount, uint32 startIndexLocation = 0, int32 baseVertexLocation = 0);
+
+		void resolveTexture(const RenderTargetTexture& src, const RenderTargetTexture& dst);
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_context;

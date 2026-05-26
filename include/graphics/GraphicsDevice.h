@@ -11,6 +11,8 @@
 #include <graphics/resources/IndexBuffer.h>
 #include <graphics/resources/ConstantBuffer.h>
 #include <graphics/resources/StructuredBuffer.h>
+#include <graphics/resources/RasterizerState.h>
+#include <graphics/resources/DepthStencilState.h>
 #include <graphics/resources/GraphicsPipelineState.h>
 #include <graphics/resources/SamplerState.h>
 #include <graphics/resources/ImageTexture.h>
@@ -46,6 +48,8 @@ namespace genesis
         SharedPtr<ConstantBuffer> createConstantBuffer(const ConstantBufferDesc& desc);
         SharedPtr<StructuredBuffer> createStructuredBuffer(const StructuredBufferDesc& desc);
         
+        SharedPtr<RasterizerState> createRasterizerState(const RasterizerStateDesc& desc);
+        SharedPtr<DepthStencilState> createDepthStencilState(const DepthStencilStateDesc& desc);
         SharedPtr<GraphicsPipelineState> createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc);
         SharedPtr<SamplerState> createSamplerState(const SamplerStateDesc& desc);
         

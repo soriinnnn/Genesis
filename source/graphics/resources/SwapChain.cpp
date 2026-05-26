@@ -98,7 +98,7 @@ void SwapChain::setSize(const Rect& size)
 void SwapChain::present(bool vsync)
 {
 	uint32 flags = 0;
-	if (!vsync) {
+	if (!vsync && !isFullscreen()) {
 		flags = DXGI_PRESENT_ALLOW_TEARING;
 	}
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(

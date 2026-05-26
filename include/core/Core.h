@@ -70,6 +70,8 @@ namespace genesis
     class VertexBuffer;
     class IndexBuffer;
     class ConstantBuffer;
+    class RasterizerState;
+    class DepthStencilState;
     class GraphicsPipelineState;
     class SamplerState;
     class ImageTexture;

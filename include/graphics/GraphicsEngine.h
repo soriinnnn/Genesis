@@ -2,12 +2,12 @@
 #define GENESIS_GRAPHICS_ENGINE_H
 #include <core/Base.h>
 #include <core/Core.h>
+#include <core/utils/Types.h>
 #include <math/Rect.h>
 #include <math/Vec2.h>
 #include <math/Vec3.h>
 #include <math/Vec4.h>
 #include <math/Mat4.h>
-#include <graphics/utils/GraphicsTypes.h>
 #include <physics/DebugRenderer.h>
 
 namespace genesis
@@ -27,7 +27,10 @@ namespace genesis
         GraphicsContext getGraphicsContext() noexcept;
 
         Rect getRenderResolution() const noexcept;
+        AntiAliasing getAntiAliasing() const noexcept;
+
         void setRenderResolution(const Rect& resolution);
+        void setAntiAliasing(AntiAliasing mode);
 
         void clear(const Vec4& color = {1.0f, 1.0f, 1.0f, 1.0f});
         void render(EntityManager& entities, Entity& camera, float deltaTime);
@@ -74,6 +77,7 @@ namespace genesis
         SharedPtr<GraphicsDevice> m_graphicsDevice;
         UniquePtr<FrameBuffer> m_primaryBuffer;
         UniquePtr<FrameBuffer> m_secondaryBuffer;
+        UniquePtr<FrameBuffer> m_msaaBuffer;
         UniquePtr<EngineShaders> m_shaders;
         UniquePtr<EngineStates> m_states;
 
@@ -84,7 +88,11 @@ namespace genesis
         SharedPtr<ConstantBuffer> m_cameraBuffer;
         SharedPtr<ConstantBuffer> m_objectBuffer;
         SharedPtr<StructuredBuffer> m_lightsBuffer;
-        SharedPtr<GraphicsPipelineState> m_frameBufferPipeline;
+
+    private:
+        const RasterizerState* m_sceneRasterizer;
+        FrameBuffer* m_sceneTarget;
+        AntiAliasing m_aaMode;
     };
 }
 

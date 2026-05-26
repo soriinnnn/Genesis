@@ -1,5 +1,7 @@
 #include <graphics/resources/DeviceContext.h>
 #include <graphics/resources/SwapChain.h>
+#include <graphics/resources/RasterizerState.h>
+#include <graphics/resources/DepthStencilState.h>
 #include <graphics/resources/GraphicsPipelineState.h>
 #include <graphics/resources/VertexBuffer.h>
 #include <graphics/resources/IndexBuffer.h>
@@ -140,13 +142,22 @@ void DeviceContext::setRenderTarget(const RenderTargetTexture& renderTarget, con
 	m_context->OMSetRenderTargets(1, &renderView, depthView);
 }
 
-void DeviceContext::setGraphicsPipelineState(const GraphicsPipelineState& graphicsPipeline)
+void DeviceContext::setRasterizerState(const RasterizerState& rasterizer)
 {
-	m_context->IASetInputLayout(graphicsPipeline.m_inputLayout.Get());
-	m_context->IASetPrimitiveTopology(graphicsPipeline.m_primitive);
-	m_context->VSSetShader(graphicsPipeline.m_vertexShader.Get(), nullptr, 0);
-	m_context->PSSetShader(graphicsPipeline.m_pixelShader.Get(), nullptr, 0);
-	m_context->OMSetDepthStencilState(graphicsPipeline.m_depthStencilState.Get(), 0);
+	m_context->RSSetState(rasterizer.m_rasterizerState.Get());
+}
+
+void DeviceContext::setDepthStencilState(const DepthStencilState& depthStencil)
+{
+	m_context->OMSetDepthStencilState(depthStencil.m_depthStencilState.Get(), 0);
+}
+
+void DeviceContext::setGraphicsPipelineState(const GraphicsPipelineState& pipeline)
+{
+	m_context->IASetInputLayout(pipeline.m_inputLayout.Get());
+	m_context->IASetPrimitiveTopology(pipeline.m_primitive);
+	m_context->VSSetShader(pipeline.m_vertexShader.Get(), nullptr, 0);
+	m_context->PSSetShader(pipeline.m_pixelShader.Get(), nullptr, 0);
 }
 
 void DeviceContext::setViewport(const Rect& size)
@@ -216,4 +227,17 @@ void DeviceContext::draw(uint32 vertexCount, uint32 startVertexLocation)
 void DeviceContext::drawIndexed(uint32 indexCount, uint32 startIndexLocation, int32 baseVertexLocation)
 {
 	m_context->DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
+}
+
+void DeviceContext::resolveTexture(const RenderTargetTexture& src, const RenderTargetTexture& dst)
+{
+	if (dst.m_sampleCount > 1) {
+		GENESIS_LOG_THROW_ERROR("Cannot resolve texture: destination is multisampled.");
+	}
+	if (src.m_format != dst.m_format) {
+		GENESIS_LOG_THROW_ERROR("Cannot resolve texture: source and destination formats do not match.");
+	}
+	ID3D11Resource* pSrc = src.m_texture.Get();
+	ID3D11Resource* pDst = dst.m_texture.Get();
+	m_context->ResolveSubresource(pDst, 0, pSrc, 0, src.m_format);
 }

@@ -97,6 +97,16 @@ SharedPtr<StructuredBuffer> GraphicsDevice::createStructuredBuffer(const Structu
     return make_shared<StructuredBuffer>(desc, getGraphicsResourceDesc());
 }
 
+SharedPtr<RasterizerState> GraphicsDevice::createRasterizerState(const RasterizerStateDesc& desc)
+{
+    return make_shared<RasterizerState>(desc, getGraphicsResourceDesc());
+}
+
+SharedPtr<DepthStencilState> GraphicsDevice::createDepthStencilState(const DepthStencilStateDesc& desc)
+{
+    return make_shared<DepthStencilState>(desc, getGraphicsResourceDesc());
+}
+
 SharedPtr<GraphicsPipelineState> GraphicsDevice::createGraphicsPipelineState(const GraphicsPipelineStateDesc& desc)
 {
     return m_pipelineCache->get(desc);

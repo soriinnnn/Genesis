@@ -5,6 +5,7 @@
 #include <graphics/FrameBuffer.h>
 #include <graphics/resources/DeviceContext.h>
 #include <graphics/utils/GraphicsMacros.h>
+#include <graphics/utils/GraphicsUtils.h>
 #include <resources/Mesh.h>
 #include <resources/Texture.h>
 #include <resources/Material.h>
@@ -22,28 +23,25 @@
 
 using namespace genesis;
 using namespace std;
+using namespace graphicsUtils;
 
 GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
 {
     m_graphicsDevice = make_shared<GraphicsDevice>(GraphicsDeviceDesc{m_logger});
     m_shaders = make_unique<EngineShaders>(EngineShadersDesc{m_logger, *m_graphicsDevice});
-    m_states = make_unique<EngineStates>(EngineStatesDesc{m_logger, *m_graphicsDevice});
+    m_states = make_unique<EngineStates>(EngineStatesDesc{m_logger, *m_graphicsDevice, *m_shaders});
     m_primaryBuffer = make_unique<FrameBuffer>(FrameBufferDesc{m_logger, desc.buffersSize, *m_graphicsDevice});
     m_secondaryBuffer = make_unique<FrameBuffer>(FrameBufferDesc{m_logger, desc.buffersSize, *m_graphicsDevice});
+    m_msaaBuffer = make_unique<FrameBuffer>(FrameBufferDesc{m_logger, desc.buffersSize, *m_graphicsDevice});
     m_deviceContext = m_graphicsDevice->createDeviceContext();
     m_spriteBatch = m_graphicsDevice->createSpriteBatch({*m_deviceContext});
     m_sceneBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(SceneData)});
     m_cameraBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(CameraData)});
     m_objectBuffer = m_graphicsDevice->createConstantBuffer({nullptr, sizeof(ObjectData)});
     m_lightsBuffer = m_graphicsDevice->createStructuredBuffer({nullptr, sizeof(LightData), DEFAULT_MAX_LIGHTS});
-
-    auto& m_fullscreenShader = m_shaders->getFullscreenTriangle();
-    m_frameBufferPipeline = m_graphicsDevice->createGraphicsPipelineState({
-        *m_fullscreenShader.vsBinary,
-        *m_fullscreenShader.psBinary,
-        *m_fullscreenShader.vsSignature,
-        *m_fullscreenShader.psSignature
-    });
+    m_sceneRasterizer = &m_states->rasterizerSolid();
+    m_sceneTarget = m_primaryBuffer.get();
+    m_aaMode = AntiAliasing::None;
 }
 
 GraphicsEngine::~GraphicsEngine() {}
@@ -58,16 +56,39 @@ Rect GraphicsEngine::getRenderResolution() const noexcept
     return m_primaryBuffer->getSize();
 }
 
+AntiAliasing GraphicsEngine::getAntiAliasing() const noexcept
+{
+    return m_aaMode;
+}
+
 void GraphicsEngine::setRenderResolution(const Rect& resolution)
 {
     m_primaryBuffer->setSize(resolution);
     m_secondaryBuffer->setSize(resolution);
+    m_msaaBuffer->setSize(resolution);
+}
+
+void GraphicsEngine::setAntiAliasing(AntiAliasing mode)
+{
+    if (m_aaMode == mode) {
+        return;
+    }
+    if (isHardwareMSAA(mode)) {
+        m_sceneRasterizer = &m_states->rasterizerSolidMSAA();
+        m_sceneTarget = m_msaaBuffer.get();
+    }
+    else {
+        m_sceneRasterizer = &m_states->rasterizerSolid();
+        m_sceneTarget = m_primaryBuffer.get();
+    }
+    m_msaaBuffer->setSampleCount(getMSAASampleCount(mode));
+    m_aaMode = mode;
 }
 
 void GraphicsEngine::clear(const Vec4& color)
 {
-    m_deviceContext->clearRenderTarget(m_primaryBuffer->getRenderTarget(), color);
-    m_deviceContext->clearDepthStencil(m_primaryBuffer->getDepthStencil());
+    m_deviceContext->clearRenderTarget(m_sceneTarget->getRenderTarget(), color);
+    m_deviceContext->clearDepthStencil(m_sceneTarget->getDepthStencil());
 }
 
 void GraphicsEngine::render(EntityManager& entities, Entity& camera, float deltaTime)
@@ -77,9 +98,9 @@ void GraphicsEngine::render(EntityManager& entities, Entity& camera, float delta
         return;
     }
 
-    m_deviceContext->setRenderTarget(m_primaryBuffer->getRenderTarget(), m_primaryBuffer->getDepthStencil());
-    m_deviceContext->setViewport(m_primaryBuffer->getSize());
-
+    m_deviceContext->setRenderTarget(m_sceneTarget->getRenderTarget(), m_sceneTarget->getDepthStencil());
+    m_deviceContext->setViewport(m_sceneTarget->getSize());
+    
     CameraData cameraData = {
         cameraComponent->getViewMatrix(),
         cameraComponent->getProjectionMatrix(),
@@ -96,8 +117,13 @@ void GraphicsEngine::render(EntityManager& entities, Entity& camera, float delta
     m_deviceContext->updateConstantBuffer(*m_sceneBuffer, &sceneData, sizeof(SceneData));
     m_deviceContext->setConstantBuffer(*m_sceneBuffer, SCENE_CONSTANT_BUFFER_SLOT);
 
+    m_deviceContext->setRasterizerState(*m_sceneRasterizer);
+    m_deviceContext->setDepthStencilState(m_states->depthDefault());
+
     renderEntities(entities);
-    m_graphicsDevice->executeCommandList(*m_deviceContext);
+    if (isHardwareMSAA(m_aaMode)) {
+        m_deviceContext->resolveTexture(m_msaaBuffer->getRenderTarget(), m_primaryBuffer->getRenderTarget());
+    }
 }
 
 void GraphicsEngine::render(DebugRenderer& debug, Entity& camera)
@@ -107,8 +133,8 @@ void GraphicsEngine::render(DebugRenderer& debug, Entity& camera)
         return;
     }
 
-    m_deviceContext->setRenderTarget(m_primaryBuffer->getRenderTarget(), m_primaryBuffer->getDepthStencil());
-    m_deviceContext->setViewport(m_primaryBuffer->getSize());
+    m_deviceContext->setRenderTarget(m_sceneTarget->getRenderTarget(), m_sceneTarget->getDepthStencil());
+    m_deviceContext->setViewport(m_sceneTarget->getSize());
 
     CameraData cameraData = {
         cameraComponent->getViewMatrix(),
@@ -118,8 +144,13 @@ void GraphicsEngine::render(DebugRenderer& debug, Entity& camera)
     m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData, sizeof(CameraData));
     m_deviceContext->setConstantBuffer(*m_cameraBuffer, CAMERA_CONSTANT_BUFFER_SLOT);
 
+    m_deviceContext->setRasterizerState(*m_sceneRasterizer);
+    m_deviceContext->setDepthStencilState(m_states->depthDefault());
+
     debug.render(*m_deviceContext);
-    m_graphicsDevice->executeCommandList(*m_deviceContext);
+    if (isHardwareMSAA(m_aaMode)) {
+        m_deviceContext->resolveTexture(m_msaaBuffer->getRenderTarget(), m_primaryBuffer->getRenderTarget());
+    }
 }
 
 void GraphicsEngine::render(UIManager& ui)
@@ -148,13 +179,20 @@ void GraphicsEngine::postProcess(PostProcess& effect)
 void GraphicsEngine::present(Display& display)
 {
     const SwapChain& swapChain = display.getSwapChain();
+
     m_deviceContext->clearAndSetBackBuffer(swapChain, Vec4{1.0f, 1.0f, 1.0f, 1.0f});
     m_deviceContext->setViewport(swapChain.getSize());
-    m_deviceContext->setGraphicsPipelineState(*m_frameBufferPipeline);
+
+    m_deviceContext->setRasterizerState(m_states->rasterizerSolid());
+    m_deviceContext->setDepthStencilState(m_states->depthDefault());
+    m_deviceContext->setSamplerState(m_states->pointWrap());
+    m_deviceContext->setGraphicsPipelineState(m_states->frameBufferPipeline());
+
     m_deviceContext->setTexture(m_primaryBuffer->getRenderTarget());
-    m_deviceContext->setSamplerState(m_states->getPointClamp());
+    
     m_deviceContext->draw(FULLSCREEN_TRIANGLE_VERTEX_COUNT);
     m_graphicsDevice->executeCommandList(*m_deviceContext);
+
     display.present();
 }
 
@@ -229,9 +267,13 @@ void GraphicsEngine::applyPostProcess(PostProcess& effect, FrameBuffer& input, F
 {
     m_deviceContext->setRenderTarget(output.getRenderTarget(), output.getDepthStencil());
     m_deviceContext->setViewport(output.getSize());
+
+    m_deviceContext->setRasterizerState(m_states->rasterizerSolid());
+    m_deviceContext->setDepthStencilState(m_states->depthDisabled());
+    m_deviceContext->setSamplerState(m_states->pointWrap());
     m_deviceContext->setGraphicsPipelineState(effect.getGraphicsPipelineState());
+
     m_deviceContext->setTexture(input.getRenderTarget());
-    m_deviceContext->setSamplerState(m_states->getPointClamp());
     if (effect.hasProperties()) {
         if (effect.isDirty()) {
             BinaryData data = effect.getData();
@@ -240,6 +282,6 @@ void GraphicsEngine::applyPostProcess(PostProcess& effect, FrameBuffer& input, F
         }
         m_deviceContext->setConstantBuffer(effect.getProperties(), POST_PROCESSING_EFFECT_CONSTANT_BUFFER_SLOT);
     }
+
     m_deviceContext->draw(FULLSCREEN_TRIANGLE_VERTEX_COUNT);
-    m_graphicsDevice->executeCommandList(*m_deviceContext);
 }

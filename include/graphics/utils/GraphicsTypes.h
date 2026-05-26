@@ -4,39 +4,20 @@
 #include <math/Vec3.h>
 #include <math/Vec2.h>
 
-#define GENESIS_VERTEX_COMPONENT_NONE		(0)
-#define GENESIS_VERTEX_COMPONENT_POSITION	(1 << 0)
-#define GENESIS_VERTEX_COMPONENT_NORMAL		(1 << 1)
-#define GENESIS_VERTEX_COMPONENT_TANGENT	(1 << 2)
-#define GENESIS_VERTEX_COMPONENT_BITANGENT	(1 << 3)
-#define GENESIS_VERTEX_COMPONENT_TEXCOORD	(1 << 4)
-#define GENESIS_VERTEX_COMPONENT_COLOR		(1 << 5)
-
-#define GENESIS_VERTEX_COMPONENT_POSITION_SIZE	sizeof(Vec3)
-#define GENESIS_VERTEX_COMPONENT_NORMAL_SIZE	sizeof(Vec3)
-#define GENESIS_VERTEX_COMPONENT_TANGENT_SIZE	sizeof(Vec3)
-#define GENESIS_VERTEX_COMPONENT_BITANGENT_SIZE	sizeof(Vec3)
-#define GENESIS_VERTEX_COMPONENT_TEXCOORD_SIZE	sizeof(Vec2)
-#define GENESIS_VERTEX_COMPONENT_COLOR_SIZE		sizeof(Vec4)
-
-#define GENESIS_VERTEX_PRESET_DEFAULT (GENESIS_VERTEX_COMPONENT_POSITION | GENESIS_VERTEX_COMPONENT_NORMAL | GENESIS_VERTEX_COMPONENT_TEXCOORD)
-#define GENESIS_VERTEX_PRESET_NORMAL_MAPPED	(GENESIS_VERTEX_PRESET_DEFAULT | GENESIS_VERTEX_COMPONENT_TANGENT | GENESIS_VERTEX_COMPONENT_BITANGENT)
-
 namespace genesis
 {
-	struct GraphicsContext
-	{
-		GraphicsDevice& graphicsDevice;
-		EngineShaders& engineShaders;
-		EngineStates& engineStates;
-	};
-
 	enum class ResourceUsage
 	{
 		Default,
 		Immutable,
 		Dynamic,
 		Staging
+	};
+
+	enum class ShaderType
+	{
+		VertexShader,
+		PixelShader
 	};
 
 	enum class IndexFormat
@@ -69,21 +50,24 @@ namespace genesis
 	enum class TextureFilter
 	{
 		Point,
-		Linear,
+		Bilinear,
+		Trilinear,
 		Anisotropic
 	};
 
 	enum class TextureAddressMode
 	{
 		Wrap,
-		Mirror,
-		Clamp
+		Clamp,
+		Mirror
 	};
 
-	enum class ShaderType
+	enum class AntiAliasing
 	{
-		VertexShader,
-		PixelShader
+		None,
+		MSAA_2X,
+		MSAA_4X,
+		MSAA_8X
 	};
 
 	struct ShaderReflectionVariable

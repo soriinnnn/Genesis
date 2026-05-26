@@ -151,6 +151,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\graphics\resources\DepthStencilState.cpp" />
+    <ClCompile Include="source\graphics\resources\RasterizerState.cpp" />
     <ClCompile Include="source\physics\ContactListener.cpp" />
     <ClCompile Include="source\physics\DebugRenderer.cpp" />
     <ClCompile Include="demo\src\components\PlayerControllerComponent.cpp" />
@@ -227,6 +229,8 @@
     <ClCompile Include="source\ui\elements\UICanvas.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\graphics\resources\DepthStencilState.h" />
+    <ClInclude Include="include\graphics\resources\RasterizerState.h" />
     <ClInclude Include="source\physics\ContactListener.h" />
     <ClInclude Include="source\physics\DebugRenderer.h" />
     <ClInclude Include="include\entity\components\RigidBodyComponent.h" />

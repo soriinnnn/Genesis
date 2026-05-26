@@ -65,13 +65,13 @@ Material::Material(const MaterialDesc& desc): Resource(desc.resource)
 
 		SharedPtr<Shader> vs = getShaderFromJSON(data, ShaderType::VertexShader, desc.resource.resourceManager, getLogger(), getPath());
 		SharedPtr<Shader> ps = getShaderFromJSON(data, ShaderType::PixelShader, desc.resource.resourceManager, getLogger(), getPath());
-		m_pipeline = context.graphicsDevice.createGraphicsPipelineState({
-			vs->getBinary(), 
-			ps->getBinary(), 
-			vs->getSignature(), 
-			ps->getSignature()
-		});
+		GraphicsPipelineStateDesc pipelineDesc{};
+		pipelineDesc.vsBinary = &vs->getBinary();
+		pipelineDesc.vsSignature = &vs->getSignature();
+		pipelineDesc.psBinary = &ps->getBinary();
+		pipelineDesc.psSignature = &ps->getSignature();
 
+		m_pipeline = context.graphicsDevice.createGraphicsPipelineState(pipelineDesc);
 		m_textures = getTexturesFromJSON(data, desc.resource.resourceManager, getLogger(), getPath());
 		m_samplers = getSamplersFromJSON(data, context.graphicsDevice, getLogger(), getPath());
 		m_properties = getConstantBufferFromJSON(data, vs, ps, context.graphicsDevice, getLogger(), getPath());
@@ -337,8 +337,11 @@ TextureFilter stringToTextureFilter(const String& filter, const Logger& logger, 
 	if (filter == "point") {
 		return TextureFilter::Point;
 	}
-	if (filter == "linear") {
-		return TextureFilter::Linear;
+	if (filter == "bilinear") {
+		return TextureFilter::Bilinear;
+	}
+	if (filter == "trilinear") {
+		return TextureFilter::Trilinear;
 	}
 	if (filter == "anisotropic") {
 		return TextureFilter::Anisotropic;
@@ -365,8 +368,10 @@ const char* textureFilterToString(TextureFilter filter)
 	switch (filter) {
 	case TextureFilter::Point:
 		return "point";
-	case TextureFilter::Linear:
-		return "linear";
+	case TextureFilter::Bilinear:
+		return "bilinear";
+	case TextureFilter::Trilinear:
+		return "trilinear";
 	case TextureFilter::Anisotropic:
 		return "anisotropic";
 	default:

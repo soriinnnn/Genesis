@@ -39,9 +39,11 @@ namespace genesis
 
         Entity* getMainCamera() const noexcept;
         Rect getRenderResolution() const noexcept;
+        AntiAliasing getAntiAliasing() const noexcept;
 
         void setMainCamera(Entity* camera);
         void setRenderResolution(const Rect& resolution);
+        void setAntiAliasing(AntiAliasing antiAliasing);
         void addEffect(SharedPtr<PostProcess> effect);
         void clearEffects();
 

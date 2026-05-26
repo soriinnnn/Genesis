@@ -9,17 +9,20 @@ Display::Display(const DisplayDesc& desc): Base(desc.base), m_window{desc.window
 {
 	m_swapChain = desc.graphicsContext.graphicsDevice.createSwapChain({m_window.getHandle(), m_window.getSize()});
 	m_mode = DisplayMode::Windowed;
+	m_isTransitioning = false;
 	m_screenSize = m_window.getScreenSize();
 	m_windowedSize = m_window.getSize();
 	m_vsync = true;
 	m_syncResolution = true;
 	m_onResize = nullptr;
 	m_window.onResize([this](Rect size) {
-		if (m_mode == DisplayMode::Windowed) {
-			m_windowedSize = size;
-		}
-		else if (m_mode == DisplayMode::Fullscreen && size != m_screenSize) {
-			setMode(DisplayMode::Windowed);
+		if (!m_isTransitioning) {
+			if (m_mode == DisplayMode::Windowed) {
+				m_windowedSize = size;
+			}
+			else if (m_mode == DisplayMode::Fullscreen && m_screenSize != size) {
+				setMode(DisplayMode::Windowed);
+			}
 		}
 		if (m_syncResolution) {
 			m_swapChain->setSize(size);
@@ -79,8 +82,11 @@ void Display::setMode(DisplayMode mode)
 	if (m_mode == mode) {
 		return;
 	}
+
+	m_isTransitioning = true;
 	if (m_mode == DisplayMode::Fullscreen) {
 		if (!m_swapChain->setFullscreen(false)) {
+			m_isTransitioning = false;
 			return;
 		}
 	}
@@ -90,27 +96,26 @@ void Display::setMode(DisplayMode mode)
 			m_window.setStyle(WindowStyle::Windowed);
 			m_window.setSize(m_windowedSize);
 			m_window.center();
-			m_mode = mode;
 			break;
 		}
 		case DisplayMode::Borderless: {
-			m_mode = mode;
 			m_window.setStyle(WindowStyle::Borderless);
 			m_window.setSize(m_screenSize);
 			m_window.setPosition({0, 0});
 			break;
 		}
 		case DisplayMode::Fullscreen: {
-			DisplayMode lastMode = m_mode;
-			m_mode = mode;
 			if (!m_swapChain->setFullscreen(true)) {
-				m_mode = lastMode;
+				m_isTransitioning = false;
+				return;
 			};
 			break;
 		}
 		default:
 			GENESIS_LOG_THROW_INVALID_ARG("Invalid display mode.");
 	}
+	m_mode = mode;
+	m_isTransitioning = false;
 }
 
 void Display::setVSync(bool enable)

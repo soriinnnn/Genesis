@@ -9,15 +9,16 @@ using namespace genesis;
 
 DebugRenderer::DebugRenderer(const DebugRendererDesc& desc): m_graphicsDevice{desc.graphicsContext.graphicsDevice}
 {
-	auto& debugShader = desc.graphicsContext.engineShaders.getDebugLine();
-	m_pipeline = m_graphicsDevice.createGraphicsPipelineState({
-		*debugShader.vsBinary,
-		*debugShader.psBinary,
-		*debugShader.vsSignature,
-		*debugShader.psSignature,
-		PrimitiveTopology::Lines,
-		false
-	});
+	auto& debugShader = desc.graphicsContext.engineShaders.debugLine();
+
+	GraphicsPipelineStateDesc pipelineDesc{};
+	pipelineDesc.vsBinary = debugShader.vsBinary.get();
+	pipelineDesc.vsSignature = debugShader.vsSignature.get();
+	pipelineDesc.psBinary = debugShader.psBinary.get();
+	pipelineDesc.psSignature = debugShader.psSignature.get();
+	pipelineDesc.primitive = PrimitiveTopology::Lines;
+
+	m_pipeline = m_graphicsDevice.createGraphicsPipelineState(pipelineDesc);
 	m_buffer = m_graphicsDevice.createVertexBuffer({nullptr, INITIAL_VERTEX_BUFFER_SIZE, sizeof(Vertex), ResourceUsage::Dynamic});
 	m_vertices.reserve(INITIAL_VERTEX_BUFFER_SIZE);
 	Initialize();

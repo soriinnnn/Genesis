@@ -9,6 +9,7 @@ namespace genesis
 	{
 		BaseDesc base;
 		GraphicsDevice& graphicsDevice;
+		EngineShaders& engineShaders;
 	};
 
 	class EngineStates final: public Base
@@ -17,16 +18,36 @@ namespace genesis
 		explicit EngineStates(const EngineStatesDesc& desc);
 		~EngineStates() override;
 
-		const SamplerState& getPointClamp() const;
-		const SamplerState& getPointWrap() const;
-		const SamplerState& getLinearClamp() const;
-		const SamplerState& getLinearWrap() const;
+		const GraphicsPipelineState& frameBufferPipeline() const;
+
+		const SamplerState& pointWrap() const;
+		const SamplerState& pointClamp() const;
+		const SamplerState& bilinearWrap() const;
+		const SamplerState& bilinearClamp() const;
+		const SamplerState& trilinearWrap() const;
+		const SamplerState& trilinearClamp() const;
+		const SamplerState& anisotropicWrap(uint32 maxAnisotropy) const;
+		const SamplerState& anisotropicClamp(uint32 maxAnisotropy) const;
+
+		const DepthStencilState& depthDefault() const;
+		const DepthStencilState& depthDisabled() const;
+
+		const RasterizerState& rasterizerSolid() const;
+		const RasterizerState& rasterizerSolidMSAA() const;
 
 	private:
-		SharedPtr<SamplerState> m_pointClamp;
+		GraphicsDevice& m_graphicsDevice;
+		SharedPtr<GraphicsPipelineState> m_frameBufferPipeline;
 		SharedPtr<SamplerState> m_pointWrap;
-		SharedPtr<SamplerState> m_linearClamp;
-		SharedPtr<SamplerState> m_linearWrap;
+		SharedPtr<SamplerState> m_pointClamp;
+		SharedPtr<SamplerState> m_bilinearWrap;
+		SharedPtr<SamplerState> m_bilinearClamp;
+		SharedPtr<SamplerState> m_trilinearWrap;
+		SharedPtr<SamplerState> m_trilinearClamp;
+		SharedPtr<DepthStencilState> m_depthDefault;
+		SharedPtr<DepthStencilState> m_depthDisabled;
+		SharedPtr<RasterizerState> m_rasterizerSolid;
+		SharedPtr<RasterizerState> m_rasterizerSolidMSAA;
 	};
 }
 

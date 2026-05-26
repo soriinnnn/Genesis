@@ -20,19 +20,22 @@ namespace genesis
 		~FrameBuffer() override;
 
 		Rect getSize() const noexcept;
+		uint32 getSampleCount() const noexcept;
 		const RenderTargetTexture& getRenderTarget() const noexcept;
 		const DepthStencilTexture& getDepthStencil() const noexcept;
 
 		void setSize(const Rect& size);
+		void setSampleCount(uint32 sampleCount);
 
 	private:
 		void updateTextures();
 
 	private:
+		GraphicsDevice& m_graphicsDevice;
 		SharedPtr<RenderTargetTexture> m_renderTarget;
 		SharedPtr<DepthStencilTexture> m_depthStencil;
 		Rect m_size;
-		GraphicsDevice& m_graphicsDevice;
+		uint32 m_sampleCount;
 	};
 }
 

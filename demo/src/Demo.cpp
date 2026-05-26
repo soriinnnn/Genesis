@@ -46,6 +46,7 @@ void Demo::onCreate()
 {
     m_display->setVSync(true);
     setMainCamera(m_entityManager->getEntityByName("camera"));
+    setAntiAliasing(AntiAliasing::MSAA_8X);
     m_inputManager->addListener(this);
 
     m_display->onResize([this](Rect size) {

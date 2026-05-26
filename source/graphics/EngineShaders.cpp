@@ -17,12 +17,12 @@ EngineShaders::EngineShaders(const EngineShadersDesc& desc): Base(desc.base)
 
 EngineShaders::~EngineShaders() {}
 
-const EngineShaders::EngineShader& EngineShaders::getFullscreenTriangle() const
+const EngineShaders::EngineShader& EngineShaders::fullscreenTriangle() const
 {
 	return m_fullscreenTriangle;
 }
 
-const EngineShaders::EngineShader& EngineShaders::getDebugLine() const
+const EngineShaders::EngineShader& EngineShaders::debugLine() const
 {
 	return m_debugLine;
 }
