@@ -28,7 +28,7 @@ GENESIS_LOG_THROW(getLogger(), std::runtime_error, Logger::LogLevel::Error,\
 GENESIS_LOG_THROW(getLogger(), std::invalid_argument, Logger::LogLevel::Error,\
 "\b[{}:{}] " msg, genesis::logUtils::getFilename(__FILE__), __LINE__ __VA_OPT__(,) __VA_ARGS__)
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 namespace logUtils 
 {

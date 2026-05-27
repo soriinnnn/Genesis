@@ -5,7 +5,7 @@
 #include <physics/RigidBody.h>
 #include <mutex>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct ContactListenerDesc
 {

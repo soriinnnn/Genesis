@@ -2,7 +2,7 @@
 #define GENESIS_OO_COLLISION_FILTER_H
 #include <physics/Layers.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class OOCollisionFilter: public JPH::ObjectLayerPairFilter
 {

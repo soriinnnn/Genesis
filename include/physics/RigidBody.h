@@ -7,7 +7,7 @@
 #include <jolt/Physics/Body/Body.h>
 #include <jolt/Physics/Body/BodyInterface.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct RigidBodyDesc
 {

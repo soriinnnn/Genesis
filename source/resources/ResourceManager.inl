@@ -1,6 +1,6 @@
 #include <resources/ResourceManager.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 template<typename T>
 inline SharedPtr<T> ResourceManager::getResource(ResourceId id)

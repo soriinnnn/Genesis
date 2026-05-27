@@ -1,6 +1,6 @@
 #include <resources/PostProcess.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 template<typename T>
 inline void PostProcess::setPropertyT(const char* name, const T& value)

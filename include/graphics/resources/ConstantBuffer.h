@@ -2,7 +2,7 @@
 #define GENESIS_CONSTANT_BUFFER_H
 #include <graphics/resources/GraphicsResource.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct ConstantBufferDesc
 {

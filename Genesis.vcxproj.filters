@@ -219,9 +219,6 @@
     <ClCompile Include="source\physics\RigidBody.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="demo\src\components\PlayerControllerComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\physics\DebugRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -235,6 +232,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\graphics\resources\DepthStencilState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\script\ScriptManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\script\Script.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entity\components\ScriptComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="demo\src\scripts\PlayerMovement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -473,9 +482,6 @@
     <ClInclude Include="include\physics\RigidBody.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="demo\src\components\PlayerControllerComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\physics\DebugRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -489,6 +495,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\graphics\resources\DepthStencilState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\script\ScriptManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\script\Script.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entity\components\ScriptComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="demo\src\scripts\PlayerMovement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -507,6 +525,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="source\resources\PostProcess.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="source\script\ScriptManager.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

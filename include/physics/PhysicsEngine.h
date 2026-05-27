@@ -13,7 +13,7 @@
 #include <physics/ContactListener.h>
 #include <physics/DebugRenderer.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct PhysicsEngineDesc
 {

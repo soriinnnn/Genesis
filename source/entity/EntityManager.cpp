@@ -29,10 +29,6 @@ void EntityManager::update(float deltaTime)
 	}
 	m_events.clear();
 	m_pendingEntities.clear();
-
-	for (auto& [key, entity] : m_entities) {
-		entity->update(deltaTime);
-	}
 }
 
 bool EntityManager::hasEntity(EntityId id) const

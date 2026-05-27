@@ -2,7 +2,7 @@
 #define GENESIS_TEXTURE_H
 #include <resources/Resource.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct TextureDesc
 {

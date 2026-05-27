@@ -1,11 +1,12 @@
 #include "src/Demo.h"
-#include "src/components/PlayerControllerComponent.h"
+#include "src/scripts/PlayerMovement.h"
 
 #include <entity/components/TransformComponent.h>
 #include <entity/components/MeshRendererComponent.h>
 #include <entity/components/CameraComponent.h>	
 #include <entity/components/LightComponent.h>
 #include <entity/components/RigidBodyComponent.h>
+#include <entity/components/ScriptComponent.h>
 #include <ui/elements/UILabel.h>
 #include <ui/elements/UIPanel.h>
 #include <ui/elements/UIButton.h>
@@ -96,7 +97,7 @@ void createCamera(GameContext context)
 {
 	Entity* camera = context.entities.createEntity("camera");
 	camera->createComponent<CameraComponent>();
-	camera->createComponent<PlayerControllerComponent>()->setInputManager(context.input);
+	camera->createComponent<ScriptComponent>()->addScript(context.scripts.createScript<PlayerMovement>());
 }
 
 void setupScene(Game& game) 

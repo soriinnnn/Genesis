@@ -2,7 +2,7 @@
 #define GENESIS_RECT_H
 #include <core/Core.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class Rect
 {

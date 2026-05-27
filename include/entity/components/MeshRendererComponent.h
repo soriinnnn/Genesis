@@ -2,7 +2,7 @@
 #define GENESIS_MESH_RENDERER_COMPONENT_H
 #include <entity/components/Component.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class MeshRendererComponent final: public Component
 {

@@ -8,7 +8,7 @@
 #include <SpriteBatch.h>
 #include <CommonStates.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct SpriteBatchDesc
 {

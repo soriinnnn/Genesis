@@ -3,7 +3,7 @@
 #include <display/Window.h>
 #include <Windows.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class Win32Window final: public Window
 {

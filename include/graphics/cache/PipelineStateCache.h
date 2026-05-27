@@ -2,7 +2,7 @@
 #define GENESIS_PIPELINE_STATE_CACHE_H
 #include <graphics/cache/GraphicsCache.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class PipelineStateCache final: public GraphicsCache
 {

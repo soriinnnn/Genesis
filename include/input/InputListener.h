@@ -4,7 +4,7 @@
 #include <input/InputCodes.h>
 #include <math/Point.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class InputListener
 {

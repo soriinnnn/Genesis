@@ -3,7 +3,7 @@
 #include <resources/Resource.h>
 #include <graphics/utils/GraphicsTypes.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct ShaderDesc
 {

@@ -5,7 +5,7 @@
 #include <math/Rect.h>
 #include <math/Point.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 enum class WindowStyle
 {

@@ -3,7 +3,7 @@
 #include <core/Base.h>
 #include <core/Core.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct EntityDesc
 {
@@ -18,8 +18,6 @@ class Entity final: public Base
 public:
 	explicit Entity(const EntityDesc& desc);
 	~Entity() override;
-
-	void update(float deltaTime);
 
 	EntityId getId() const noexcept;
 	const char* getName() const noexcept;

@@ -5,7 +5,7 @@
 #include <d3d11.h>
 #include <bit>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 namespace graphicsUtils
 {

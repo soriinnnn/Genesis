@@ -4,7 +4,7 @@
 #include <core/utils/LogUtils.h>
 #include <core/utils/Macros.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct BaseDesc
 {

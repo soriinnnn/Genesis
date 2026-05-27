@@ -4,7 +4,7 @@
 #include <math/Rect.h>
 #include <math/Vec4.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct ImageTextureFileDesc
 {

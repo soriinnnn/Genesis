@@ -3,7 +3,7 @@
 #include <graphics/resources/GraphicsResource.h>
 #include <math/Rect.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct DepthStencilTextureDesc
 {

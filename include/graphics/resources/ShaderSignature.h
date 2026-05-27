@@ -5,7 +5,7 @@
 #include <core/utils/Types.h>
 #include <d3dcompiler.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct ShaderSignatureDesc
 {

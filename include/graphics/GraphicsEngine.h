@@ -10,7 +10,7 @@
 #include <math/Mat4.h>
 #include <physics/DebugRenderer.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct GraphicsEngineDesc
 {

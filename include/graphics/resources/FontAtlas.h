@@ -5,7 +5,7 @@
 #include <math/Point.h>
 #include <SpriteFont.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct FontAtlasDesc
 {

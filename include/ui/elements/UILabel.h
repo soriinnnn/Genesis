@@ -3,7 +3,7 @@
 #include <ui/elements/UIElement.h>
 #include <math/Vec4.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class UILabel final: public UIElement
 {

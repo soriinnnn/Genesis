@@ -3,7 +3,7 @@
 #include <entity/components/Component.h>
 #include <math/Vec3.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class LightComponent final: public Component
 {

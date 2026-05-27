@@ -2,7 +2,7 @@
 #define GENESIS_RIGID_BODY_COMPONENT_H
 #include <entity/components/Component.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class RigidBodyComponent final: public Component
 {

@@ -2,7 +2,7 @@
 #define GENESIS_OBP_MAPPING_H
 #include <physics/Layers.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class OBPMapping final: public JPH::BroadPhaseLayerInterface
 {

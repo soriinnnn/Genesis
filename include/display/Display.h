@@ -3,7 +3,7 @@
 #include <display/Window.h>
 #include <graphics/utils/GraphicsTypes.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 enum class DisplayMode
 {

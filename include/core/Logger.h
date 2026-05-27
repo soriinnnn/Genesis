@@ -3,7 +3,7 @@
 #include <core/Core.h>
 #include <core/utils/Macros.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class Logger final
 {

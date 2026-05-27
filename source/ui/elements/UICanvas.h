@@ -2,7 +2,7 @@
 #define GENESIS_UI_WINDOW_H
 #include <ui/elements/UIElement.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class UICanvas final: public UIElement
 {

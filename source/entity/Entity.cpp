@@ -15,13 +15,6 @@ Entity::~Entity()
 	}
 }
 
-void Entity::update(float deltaTime)
-{
-	for (auto& [id, component] : m_components) {
-		component->update(deltaTime);
-	}
-}
-
 EntityId Entity::getId() const noexcept
 {
 	return m_id;

@@ -4,7 +4,7 @@
 #include <jolt/Jolt.h>
 #include <jolt/Physics/Collision/BroadPhase/BroadPhaseLayer.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 namespace ObjectLayers
 {

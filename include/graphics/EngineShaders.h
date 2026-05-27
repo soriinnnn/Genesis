@@ -3,7 +3,7 @@
 #include <core/Base.h>
 #include <core/Core.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct EngineShadersDesc
 {

@@ -7,7 +7,7 @@
 #include <math/Vec4.h>
 #include <math/Vec2.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 enum class Anchor {
 	Absolute,

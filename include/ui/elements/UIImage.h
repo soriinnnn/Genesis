@@ -3,7 +3,7 @@
 #include <ui/elements/UIElement.h>
 #include <math/Vec2.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class UIImage final: public UIElement
 {

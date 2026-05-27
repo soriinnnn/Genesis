@@ -3,7 +3,7 @@
 #include <core/Core.h>
 #include <fstream>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 namespace resourcesUtils
 {

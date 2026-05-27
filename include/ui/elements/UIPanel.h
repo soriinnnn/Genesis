@@ -2,7 +2,7 @@
 #define GENESIS_UI_PANEL_H
 #include <ui/elements/UIElement.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class UIPanel final: public UIElement
 {

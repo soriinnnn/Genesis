@@ -4,7 +4,7 @@
 #include <core/Core.h>
 #include <math/Rect.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct FrameBufferDesc
 {

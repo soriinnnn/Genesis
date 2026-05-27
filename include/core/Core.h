@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <map>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class Base;
 class Logger;
@@ -40,8 +40,12 @@ class Component;
 class TransformComponent;
 class MeshRendererComponent;
 class LightComponent;
-class RigidBodyComponent;
 class CameraComponent;
+class RigidBodyComponent;
+class ScriptComponent;
+
+class ScriptManager;
+class Script;
 
 class UIManager;
 class UIElement;

@@ -98,6 +98,10 @@ void GraphicsEngine::setTextureFiltering(TextureFiltering filter)
         return;
     }
     switch (filter) {
+        case TextureFiltering::Point: {
+            m_sceneSampler = &m_states->pointWrap();
+            break;
+        }
         case TextureFiltering::Bilinear: {
             m_sceneSampler = &m_states->bilinearWrap();
             break;

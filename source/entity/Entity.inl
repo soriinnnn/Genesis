@@ -2,7 +2,7 @@
 #include <entity/EntityManager.h>
 #include <entity/components/Component.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 template<typename T>
 inline bool Entity::hasComponent() const

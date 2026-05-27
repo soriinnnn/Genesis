@@ -20,6 +20,7 @@ Game::Game(const GameDesc& desc)
     m_uiManager = make_unique<UIManager>(UIManagerDesc{getLogger(), m_display->getSize()});
     m_inputManager = InputManager::create({getLogger(), *m_window});
     m_entityManager = make_unique<EntityManager>(EntityManagerDesc{getLogger()});
+    m_scriptManager = make_unique<ScriptManager>(ScriptManagerDesc{getLogger(), ScriptContext{*m_inputManager, *m_entityManager, *m_resourceManager, *m_uiManager, *m_physicsEngine}});
     m_isRunning = false;
     m_mainCamera = nullptr;
 
@@ -31,6 +32,7 @@ Game::~Game()
 {
     GENESIS_LOG_INFO("Game is shutting down...");
     m_display.reset();
+    m_scriptManager.reset();
     m_uiManager.reset();
     m_entityManager.reset();
     m_inputManager.reset();
@@ -48,7 +50,7 @@ Logger& Game::getLogger() noexcept
 
 GameContext Game::getContext() noexcept
 {
-    return {*m_entityManager, *m_inputManager, *m_resourceManager, *m_uiManager, *m_physicsEngine, *m_display};
+    return {*m_entityManager, *m_inputManager, *m_resourceManager, *m_uiManager, *m_scriptManager, *m_physicsEngine, *m_display};
 }
 
 void Game::onInternalUpdate()
@@ -56,10 +58,11 @@ void Game::onInternalUpdate()
     float deltaTime = getDeltaTime();
 
     m_inputManager->update();
+    m_entityManager->update(deltaTime);
+    m_scriptManager->update(deltaTime);
+    m_physicsEngine->update(*m_entityManager, deltaTime);
     m_uiManager->update(deltaTime);
     onUpdate(deltaTime);
-    m_entityManager->update(deltaTime);
-    m_physicsEngine->update(*m_entityManager, deltaTime);
 
     m_graphicsEngine->clear();
     if (m_mainCamera) {

@@ -14,6 +14,6 @@ assert(condition && msg)
 
 #endif
 
-#define GENESIS_NAMESPACE_START namespace genesis {
+#define GENESIS_NAMESPACE_BEGIN namespace genesis {
 
 #define GENESIS_NAMESPACE_END }

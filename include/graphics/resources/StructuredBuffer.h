@@ -2,7 +2,7 @@
 #define GENESIS_STRUCTURED_BUFFER_H
 #include <graphics/resources/GraphicsResource.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct StructuredBufferDesc
 {

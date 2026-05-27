@@ -2,7 +2,7 @@
 #define GENESIS_MATERIAL_H
 #include <resources/Resource.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct MaterialDesc
 {

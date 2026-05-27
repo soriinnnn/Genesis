@@ -4,7 +4,7 @@
 #include <core/Core.h>
 #include <graphics/GraphicsDevice.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct GraphicsCacheDesc
 {

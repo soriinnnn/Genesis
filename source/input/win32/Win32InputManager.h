@@ -4,7 +4,7 @@
 
 #define KEY_STATE_SIZE 256
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class Win32InputManager final: public InputManager
 {

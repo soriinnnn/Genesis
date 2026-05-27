@@ -5,7 +5,7 @@
 #include <display/Window.h>
 #include <input/InputListener.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct InputManagerDesc
 {

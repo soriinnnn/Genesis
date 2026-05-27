@@ -4,7 +4,7 @@
 #include <graphics/utils/GraphicsTypes.h>
 #include <core/utils/Types.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct PostProcessDesc
 {

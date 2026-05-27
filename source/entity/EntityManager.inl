@@ -1,6 +1,6 @@
 #include <entity/EntityManager.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 template<typename F>
 inline void EntityManager::forEach(F&& callback) const

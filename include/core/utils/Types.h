@@ -2,7 +2,7 @@
 #define GENESIS_TYPES_H
 #include <core/Core.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct GameContext
 {
@@ -10,8 +10,18 @@ struct GameContext
 	InputManager& input;
 	ResourceManager& resources;
 	UIManager& ui;
+	ScriptManager& scripts;
 	PhysicsEngine& physics;
 	Display& display;
+};
+
+struct ScriptContext
+{
+	InputManager& input;
+	EntityManager& entities;
+	ResourceManager& resources;
+	UIManager& ui;
+	PhysicsEngine& physics;
 };
 
 enum class AntiAliasing
@@ -24,6 +34,7 @@ enum class AntiAliasing
 
 enum class TextureFiltering
 {
+	Point,
 	Bilinear,
 	Trilinear,
 	Anisotropic_4X,

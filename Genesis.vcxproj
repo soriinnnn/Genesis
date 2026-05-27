@@ -151,11 +151,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="demo\src\scripts\PlayerMovement.cpp" />
+    <ClCompile Include="source\entity\components\ScriptComponent.cpp" />
+    <ClCompile Include="source\script\Script.cpp" />
+    <ClCompile Include="source\script\ScriptManager.cpp" />
     <ClCompile Include="source\graphics\resources\DepthStencilState.cpp" />
     <ClCompile Include="source\graphics\resources\RasterizerState.cpp" />
     <ClCompile Include="source\physics\ContactListener.cpp" />
     <ClCompile Include="source\physics\DebugRenderer.cpp" />
-    <ClCompile Include="demo\src\components\PlayerControllerComponent.cpp" />
     <ClCompile Include="source\physics\RigidBody.cpp" />
     <ClCompile Include="source\entity\components\RigidBodyComponent.cpp" />
     <ClCompile Include="source\physics\OOCollisionFilter.cpp" />
@@ -231,11 +234,14 @@
   <ItemGroup>
     <ClInclude Include="include\graphics\resources\DepthStencilState.h" />
     <ClInclude Include="include\graphics\resources\RasterizerState.h" />
+    <ClInclude Include="include\script\ScriptManager.h" />
+    <ClInclude Include="include\script\Script.h" />
+    <ClInclude Include="include\entity\components\ScriptComponent.h" />
+    <ClInclude Include="demo\src\scripts\PlayerMovement.h" />
     <ClInclude Include="source\physics\ContactListener.h" />
     <ClInclude Include="source\physics\DebugRenderer.h" />
     <ClInclude Include="include\entity\components\RigidBodyComponent.h" />
     <ClInclude Include="include\physics\RigidBody.h" />
-    <ClInclude Include="demo\src\components\PlayerControllerComponent.h" />
     <ClInclude Include="source\physics\OOCollisionFilter.h" />
     <ClInclude Include="source\physics\OBPCollisionFilter.h" />
     <ClInclude Include="source\physics\Layers.h" />
@@ -320,6 +326,7 @@
     <None Include="source\entity\EntityManager.inl" />
     <None Include="source\resources\PostProcess.inl" />
     <None Include="source\resources\ResourceManager.inl" />
+    <None Include="source\script\ScriptManager.inl" />
     <None Include="source\ui\UIManager.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

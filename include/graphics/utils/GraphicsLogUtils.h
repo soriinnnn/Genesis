@@ -17,7 +17,7 @@
 	genesis::graphicsLogUtils::checkShaderCompile(getLogger(), result, error);\
 }
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 namespace graphicsLogUtils
 {

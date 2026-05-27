@@ -8,12 +8,13 @@
 #include <physics/PhysicsEngine.h>
 #include <input/InputManager.h>
 #include <resources/ResourceManager.h>
+#include <script/ScriptManager.h>
 #include <entity/EntityManager.h>
 #include <entity/Entity.h>
 #include <ui/UIManager.h>
 #include <math/Rect.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct GameDesc
 {
@@ -60,6 +61,7 @@ protected:
     UniquePtr<ResourceManager> m_resourceManager;
     UniquePtr<EntityManager> m_entityManager;
     UniquePtr<UIManager> m_uiManager;
+    UniquePtr<ScriptManager> m_scriptManager;
 
 private:
     UniquePtr<Logger> m_logger;

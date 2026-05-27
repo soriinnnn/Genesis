@@ -7,7 +7,7 @@
 #include <jolt/Jolt.h>
 #include <jolt/Renderer/DebugRendererSimple.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 struct DebugRendererDesc
 {

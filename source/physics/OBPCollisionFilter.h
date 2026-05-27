@@ -2,7 +2,7 @@
 #define GENESIS_OBP_COLLISION_FILTER_H
 #include <physics/Layers.h>
 
-GENESIS_NAMESPACE_START
+GENESIS_NAMESPACE_BEGIN
 
 class OBPCollisionFilter final: public JPH::ObjectVsBroadPhaseLayerFilter
 {
