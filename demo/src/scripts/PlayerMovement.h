@@ -14,6 +14,7 @@ protected:
 	void onAwake() override;
 	void onStart() override;
 	void onUpdate(float deltaTime) override;
+	void onFixedUpdate(float deltaTime) override;
 
 private:
 	static const float MAX_PITCH;

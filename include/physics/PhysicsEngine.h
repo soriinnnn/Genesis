@@ -12,6 +12,7 @@
 #include <physics/OOCollisionFilter.h>
 #include <physics/ContactListener.h>
 #include <physics/DebugRenderer.h>
+#include <physics/utils/PhysicsTypes.h>
 
 GENESIS_NAMESPACE_BEGIN
 
@@ -24,18 +25,11 @@ struct PhysicsEngineDesc
 class PhysicsEngine final: public Base
 {
 public:
-	enum class MotionType
-	{
-		Static,
-		Kinematic,
-		Dynamic
-	};
-
-public:
 	explicit PhysicsEngine(const PhysicsEngineDesc& desc);
 	~PhysicsEngine() override;
 
 	void update(EntityManager& entities, float deltaTime);
+	void drawDebug();
 
 	DebugRenderer& getDebugRenderer();
 	SharedPtr<RigidBody> createBox(Vec3 position, Vec3 size, MotionType motionType);
@@ -51,7 +45,6 @@ private:
 	UniquePtr<ContactListener> m_contactListener;
 	UniquePtr<DebugRenderer> m_debugRenderer;
 	JPH::BodyManager::DrawSettings m_drawSettings;
-	float m_accumulator;
 };
 
 GENESIS_NAMESPACE_END

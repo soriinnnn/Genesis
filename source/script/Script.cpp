@@ -33,6 +33,11 @@ void Script::update(float deltaTime)
 	onUpdate(deltaTime);
 }
 
+void Script::fixedUpdate(float deltaTime)
+{
+	onFixedUpdate(deltaTime);
+}
+
 bool Script::hasStarted() const noexcept
 {
 	return m_started;
@@ -46,6 +51,8 @@ Entity* Script::getEntity() noexcept
 void Script::onAwake() {}
 
 void Script::onStart() {}
+
+void Script::onFixedUpdate(float deltaTime) {}
 
 void Script::assignEntity(Entity& entity)
 {

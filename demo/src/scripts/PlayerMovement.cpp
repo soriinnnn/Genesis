@@ -60,3 +60,5 @@ void PlayerMovement::onUpdate(float deltaTime)
 	m_transform->setPosition(position);
 	m_transform->setRotation(rotation);
 }
+
+void PlayerMovement::onFixedUpdate(float deltaTime) {}

@@ -57,7 +57,7 @@ void createWorld(GameContext context)
 	floorMeshRenderer->setMaterial(brickMaterial);
 
 	auto* floorRigidBody = floor->createComponent<RigidBodyComponent>();
-	floorRigidBody->setBody(context.physics.createBox(floorTransform->getPosition(), {50.0f, 0.0f, 50.0f}, PhysicsEngine::MotionType::Static));
+	floorRigidBody->setBody(context.physics.createBox(floorTransform->getPosition(), {50.0f, 0.0f, 50.0f}, MotionType::Static));
 
 	Entity* cube = context.entities.createEntity("cube");
 
@@ -70,7 +70,7 @@ void createWorld(GameContext context)
 	cubeMeshRenderer->setMaterial(brickMaterial);
 
 	auto* cubeRigidBody = cube->createComponent<RigidBodyComponent>();
-	cubeRigidBody->setBody(context.physics.createBox({0.0f, 100.0f, 0.0f}, {0.8f, 0.8f, 0.8f}, PhysicsEngine::MotionType::Dynamic));
+	cubeRigidBody->setBody(context.physics.createBox({0.0f, 100.0f, 0.0f}, {0.8f, 0.8f, 0.8f}, MotionType::Dynamic));
 	cubeRigidBody->getBody()->addForce({0.0f, -2.0f, 0.0f});
 
 	auto* body = cubeRigidBody->getBody();

@@ -72,6 +72,7 @@ private:
     Vector<SharedPtr<PostProcess>> m_effects;
     TimePoint m_previousTime;
     Entity* m_mainCamera;
+    float m_accumulator;
     bool m_isRunning;
 };
 

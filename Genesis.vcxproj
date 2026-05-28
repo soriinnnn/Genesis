@@ -234,6 +234,8 @@
   <ItemGroup>
     <ClInclude Include="include\graphics\resources\DepthStencilState.h" />
     <ClInclude Include="include\graphics\resources\RasterizerState.h" />
+    <ClInclude Include="include\physics\utils\PhysicsTypes.h" />
+    <ClInclude Include="include\physics\utils\PhysicsUtils.h" />
     <ClInclude Include="include\script\ScriptManager.h" />
     <ClInclude Include="include\script\Script.h" />
     <ClInclude Include="include\entity\components\ScriptComponent.h" />

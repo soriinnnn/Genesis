@@ -1,5 +1,5 @@
-#ifndef GENESIS_CAMERA_H
-#define GENESIS_CAMERA_H
+#ifndef GENESIS_CAMERA_COMPONENT_H
+#define GENESIS_CAMERA_COMPONENT_H
 #include <entity/components/Component.h>
 #include <math/Mat4.h>
 

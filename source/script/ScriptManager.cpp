@@ -1,10 +1,14 @@
 #include <script/ScriptManager.h>
+#include <physics/utils/PhysicsUtils.h>
 #include <algorithm>
 
 using namespace genesis;
 using namespace std;
 
-ScriptManager::ScriptManager(const ScriptManagerDesc& desc): Base(desc.base), m_context{desc.context} {}
+ScriptManager::ScriptManager(const ScriptManagerDesc& desc): Base(desc.base), m_context{desc.context} 
+{
+	m_accumulator = 0.0f;
+}
 
 ScriptManager::~ScriptManager() {}
 
@@ -14,6 +18,13 @@ void ScriptManager::update(float deltaTime)
 	deleteInactive();
 	for (auto& instance : m_activeScripts) {
 		instance.script->update(deltaTime);
+	}
+}
+
+void ScriptManager::fixedUpdate(float deltaTime)
+{
+	for (auto& instance : m_activeScripts) {
+		instance.script->fixedUpdate(deltaTime);
 	}
 }
 
@@ -67,8 +78,8 @@ void ScriptManager::onSetActive(ScriptEvent event)
 
 	auto it = find_if(m_inactiveScripts.begin(), m_inactiveScripts.end(),
 		[script](const ScriptInstance& instance) {
-		return instance.script.get() == script;
-	}
+			return instance.script.get() == script;
+		}
 	);
 	if (it == m_inactiveScripts.end()) {
 		return; // already active.
@@ -87,11 +98,11 @@ void ScriptManager::onSetInactive(ScriptEvent event)
 
 	auto it = find_if(m_activeScripts.begin(), m_activeScripts.end(),
 		[script](const ScriptInstance& instance) {
-		return instance.script.get() == script;
-	}
+			return instance.script.get() == script;
+		}
 	);
 	if (it == m_activeScripts.end()) {
-		return; // already inactive.
+		return; // already inactive
 	}
 
 	m_inactiveScripts.push_back(move(*it));

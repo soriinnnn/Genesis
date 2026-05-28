@@ -20,6 +20,7 @@ public:
 	~ScriptManager() override;
 
 	void update(float deltaTime);
+	void fixedUpdate(float deltaTime);
 
 	template<typename T>
 	T* createScript(uint32 priority = 0);
@@ -58,6 +59,7 @@ private:
 	Vector<ScriptInstance> m_inactiveScripts;
 	Vector<ScriptEvent> m_events;
 	ScriptContext m_context;
+	float m_accumulator;
 
 	friend class Script;
 };

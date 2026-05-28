@@ -21,6 +21,7 @@ public:
 
 	void start();
 	void update(float deltaTime);
+	void fixedUpdate(float deltaTime);
 
 	bool hasStarted() const noexcept;
 	Entity* getEntity() noexcept;
@@ -31,6 +32,7 @@ protected:
 	virtual void onAwake();
 	virtual void onStart();
 	virtual void onUpdate(float deltaTime) = 0;
+	virtual void onFixedUpdate(float deltaTime);
 
 protected:
 	ScriptContext m_context;

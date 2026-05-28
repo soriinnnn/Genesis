@@ -6,6 +6,7 @@
 #include <jolt/Jolt.h>
 #include <jolt/Physics/Body/Body.h>
 #include <jolt/Physics/Body/BodyInterface.h>
+#include <physics/utils/PhysicsTypes.h>
 
 GENESIS_NAMESPACE_BEGIN
 
@@ -14,6 +15,7 @@ struct RigidBodyDesc
 	BaseDesc base;
 	JPH::BodyID body;
 	JPH::BodyInterface& bodyInterface;
+	MotionType motionType;
 };
 
 class RigidBody final: public Base
@@ -47,6 +49,9 @@ public:
 	Vec3 getLinearVelocity() const;
 	Vec3 getAngularVelocity() const;
 	bool isActive() const;
+	bool isStatic() const;
+	bool isKinematic() const;
+	bool isDynamic() const;
 
 	void setPosition(const Vec3& position);
 	void setRotation(const Vec3& rotation);
@@ -71,6 +76,7 @@ private:
 	Entity* m_entity;
 	JPH::BodyID m_body;
 	JPH::BodyInterface& m_bodyInterface;
+	MotionType m_motionType;
 
 private:
 	std::function<void(ContactAddedData&)> m_onContactAdded;

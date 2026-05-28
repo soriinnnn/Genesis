@@ -17,18 +17,15 @@
 #define NUM_BODY_MUTEXES 0
 #define MAX_BODY_PAIRS 1024
 #define MAX_CONTACT_CONSTRAINTS 1024
-#define MAX_COLLISION_STEPS 5
-
-constexpr float UPDATE_RATE = 1.0f / 60.0f;
 
 using namespace genesis;
 using namespace std;
 
-static JPH::EMotionType mapMotionTypeToJolt(PhysicsEngine::MotionType motionType);
+static JPH::EMotionType mapMotionTypeToJolt(MotionType motionType);
 static JPH::ObjectLayer getObjectLayer(JPH::EMotionType motionType);
 static void trace(const char* inFMT, ...);
 
-PhysicsEngine::PhysicsEngine(const PhysicsEngineDesc& desc): Base(desc.base), m_accumulator{0.0f}
+PhysicsEngine::PhysicsEngine(const PhysicsEngineDesc& desc): Base(desc.base)
 {
 	JPH::RegisterDefaultAllocator();
 	JPH::Trace = trace;
@@ -74,43 +71,36 @@ PhysicsEngine::~PhysicsEngine()
 
 void PhysicsEngine::update(EntityManager& entities, float deltaTime)
 {
-	entities.forEachComponent<RigidBodyComponent>([](RigidBodyComponent& rigidBody) {
+	entities.forEachComponent<RigidBodyComponent>([deltaTime](RigidBodyComponent& rigidBody) {
+		auto* body = rigidBody.getBody();
+		if (!body->isKinematic()) {
+			return;
+		}
+
 		Entity& entity = rigidBody.getEntity();
 		auto* transform = entity.getComponent<TransformComponent>();
-
-		auto* body = rigidBody.getBody();
-		body->setPosition(transform->getPosition());
-		body->setRotation(transform->getRotation());
+		body->moveKinematic(transform->getPosition(), transform->getRotation(), deltaTime);
 	});
 
-	m_accumulator += deltaTime;
+	m_physicsSystem->Update(deltaTime, 1, m_tempAllocator.get(), m_jobSystem.get());
+	m_contactListener->dispatchEvents();
 
-	int steps = 0;
-	while (m_accumulator >= UPDATE_RATE && steps < MAX_COLLISION_STEPS) {
-		steps += 1;
-		m_accumulator -= UPDATE_RATE;
-	}
-	if (steps == MAX_COLLISION_STEPS) {
-		m_accumulator = 0.0f;
-	}
+	entities.forEachComponent<RigidBodyComponent>([](RigidBodyComponent& rigidBody) {
+		auto* body = rigidBody.getBody();
+		if (!body->isDynamic()) {
+			return;
+		}
 
-	if (steps > 0) {
-		m_physicsSystem->Update(UPDATE_RATE * steps, steps, m_tempAllocator.get(), m_jobSystem.get());
-		m_contactListener->dispatchEvents();
+		Entity& entity = rigidBody.getEntity();
+		auto* transform = entity.getComponent<TransformComponent>();
+		transform->setPosition(body->getPosition());
+		transform->setRotation(body->getRotation());
+	});
+}
 
-		entities.forEachComponent<RigidBodyComponent>([](RigidBodyComponent& rigidBody) {
-			Entity& entity = rigidBody.getEntity();
-			auto* transform = entity.getComponent<TransformComponent>();
-
-			auto* body = rigidBody.getBody();
-			transform->setPosition(body->getPosition());
-			transform->setRotation(body->getRotation());
-		});
-	}
-
-#ifdef _DEBUG
+void PhysicsEngine::drawDebug()
+{
 	m_physicsSystem->DrawBodies(m_drawSettings, m_debugRenderer.get());
-#endif
 }
 
 DebugRenderer& PhysicsEngine::getDebugRenderer()
@@ -141,7 +131,7 @@ SharedPtr<RigidBody> PhysicsEngine::createBox(Vec3 position, Vec3 size, MotionTy
 	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
 	JPH::BodyID body = bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);
 	
-	return make_shared<RigidBody>(RigidBodyDesc{m_logger, body, bodyInterface});
+	return make_shared<RigidBody>(RigidBodyDesc{m_logger, body, bodyInterface, motionType});
 }
 
 SharedPtr<RigidBody> PhysicsEngine::createCapsule(Vec3 position, float height, float radius, MotionType motionType)
@@ -168,19 +158,19 @@ SharedPtr<RigidBody> PhysicsEngine::createCapsule(Vec3 position, float height, f
 	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
 	JPH::BodyID body = bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);
 
-	return make_shared<RigidBody>(RigidBodyDesc{m_logger, body, bodyInterface});
+	return make_shared<RigidBody>(RigidBodyDesc{m_logger, body, bodyInterface, motionType});
 }
 
 /* STATIC FUNCTIONS DEFINITIONS */
 
-JPH::EMotionType mapMotionTypeToJolt(PhysicsEngine::MotionType motionType)
+JPH::EMotionType mapMotionTypeToJolt(MotionType motionType)
 {
 	switch (motionType) {
-	case PhysicsEngine::MotionType::Static:
+	case MotionType::Static:
 		return JPH::EMotionType::Static;
-	case PhysicsEngine::MotionType::Kinematic:
+	case MotionType::Kinematic:
 		return JPH::EMotionType::Kinematic;
-	case PhysicsEngine::MotionType::Dynamic:
+	case MotionType::Dynamic:
 		return JPH::EMotionType::Dynamic;
 	default:
 		return JPH::EMotionType::Static;

@@ -4,10 +4,12 @@
 #include <entity/EntityManager.h>
 #include <entity/Entity.h>
 #include <entity/components/CameraComponent.h>
+#include <physics/utils/PhysicsUtils.h>
 
 using namespace genesis;
 using namespace std;
 using namespace chrono;
+using namespace physicsUtils;
 
 Game::Game(const GameDesc& desc)
 {
@@ -21,6 +23,7 @@ Game::Game(const GameDesc& desc)
     m_inputManager = InputManager::create({getLogger(), *m_window});
     m_entityManager = make_unique<EntityManager>(EntityManagerDesc{getLogger()});
     m_scriptManager = make_unique<ScriptManager>(ScriptManagerDesc{getLogger(), ScriptContext{*m_inputManager, *m_entityManager, *m_resourceManager, *m_uiManager, *m_physicsEngine}});
+    m_accumulator = 0.0f;
     m_isRunning = false;
     m_mainCamera = nullptr;
 
@@ -56,11 +59,18 @@ GameContext Game::getContext() noexcept
 void Game::onInternalUpdate()
 {
     float deltaTime = getDeltaTime();
+    m_accumulator += deltaTime;
 
     m_inputManager->update();
     m_entityManager->update(deltaTime);
     m_scriptManager->update(deltaTime);
-    m_physicsEngine->update(*m_entityManager, deltaTime);
+
+    int steps = getUpdateSteps(m_accumulator);
+    for (int i = 0; i < steps; i++) {
+        m_scriptManager->fixedUpdate(FIXED_UPDATE_DT);
+        m_physicsEngine->update(*m_entityManager, FIXED_UPDATE_DT);
+    }
+
     m_uiManager->update(deltaTime);
     onUpdate(deltaTime);
 
@@ -68,6 +78,7 @@ void Game::onInternalUpdate()
     if (m_mainCamera) {
         m_graphicsEngine->render(*m_entityManager, *m_mainCamera, deltaTime);
 #ifdef _DEBUG
+        m_physicsEngine->drawDebug();
         m_graphicsEngine->render(m_physicsEngine->getDebugRenderer(), *m_mainCamera);
 #endif
         for (auto& effect : m_effects) {
