@@ -30,6 +30,69 @@ namespace resourcesUtils
 			GENESIS_LOG_THROW(logger, std::runtime_error, Logger::LogLevel::Error, "Failed to generate font '{}' at size {}.", font, size);
 		}
 	}
+
+	inline const char* textureFilterToString(SamplerFilter filter)
+	{
+		switch (filter) {
+		case SamplerFilter::Point:
+			return "point";
+		case SamplerFilter::Bilinear:
+			return "bilinear";
+		case SamplerFilter::Trilinear:
+			return "trilinear";
+		case SamplerFilter::Anisotropic:
+			return "anisotropic";
+		default:
+			return "unknown";
+		}
+	}
+
+	inline const char* textureAddressModeToString(SamplerAddressMode mode)
+	{
+		switch (mode) {
+		case SamplerAddressMode::Wrap:
+			return "wrap";
+		case SamplerAddressMode::Clamp:
+			return "clamp";
+		case SamplerAddressMode::Mirror:
+			return "mirror";
+		default:
+			return "unknown";
+		}
+	}
+
+	inline SamplerFilter stringToTextureFilter(const String& filter, const Logger& logger, const char* errorPrefix)
+	{
+		if (filter == "point") {
+			return SamplerFilter::Point;
+		}
+		if (filter == "bilinear") {
+			return SamplerFilter::Bilinear;
+		}
+		if (filter == "trilinear") {
+			return SamplerFilter::Trilinear;
+		}
+		if (filter == "anisotropic") {
+			return SamplerFilter::Anisotropic;
+		}
+		GENESIS_LOG(logger, Logger::LogLevel::Warning, "{} Unknown sampler filter: \"{}\". Using default \"{}\".", errorPrefix, filter.c_str(), textureFilterToString(SamplerFilter::Trilinear));
+		return SamplerFilter::Trilinear;
+	}
+
+	inline SamplerAddressMode stringToTextureAddressMode(const String& mode, const Logger& logger, const char* errorPrefix)
+	{
+		if (mode == "wrap") {
+			return SamplerAddressMode::Wrap;
+		}
+		if (mode == "clamp") {
+			return SamplerAddressMode::Clamp;
+		}
+		if (mode == "mirror") {
+			return SamplerAddressMode::Mirror;
+		}
+		GENESIS_LOG(logger, Logger::LogLevel::Warning, "{} Unknown texture address mode \"{}\". Using default \"{}\".", errorPrefix, mode.c_str(), textureAddressModeToString(SamplerAddressMode::Wrap));
+		return SamplerAddressMode::Wrap;
+	}
 }
 
 GENESIS_NAMESPACE_END

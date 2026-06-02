@@ -1,5 +1,5 @@
-#ifndef PLAYER_MOVEMENT_H
-#define PLAYER_MOVEMENT_H
+#ifndef PLAYER_MOVEMENT_SCRIPT_H
+#define PLAYER_MOVEMENT_SCRIPT_H
 #include <script/Script.h>
 
 using namespace genesis;

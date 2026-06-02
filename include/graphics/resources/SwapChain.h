@@ -23,6 +23,7 @@ public:
 
 	bool setFullscreen(bool enable);
 	void setSize(const Rect& size);
+	void updateState();
 	void present(bool vsync = false);
 
 private:

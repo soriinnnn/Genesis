@@ -16,12 +16,15 @@ public:
 
 private:
 	void applyAutoSize();
+	void updateSize();
 
 	void onRender(SpriteBatch& batch) override;
 	void onSize() override;
+	void onScale() override;
 
 private:
 	SharedPtr<Texture> m_texture;
+	Rect m_sourceTexture;
 	bool m_autoSize;
 };
 

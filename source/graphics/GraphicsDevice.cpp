@@ -127,6 +127,11 @@ SharedPtr<ImageTexture> GraphicsDevice::createImageTexture(const ImageTextureSol
     return make_shared<ImageTexture>(desc, getGraphicsResourceDesc());
 }
 
+SharedPtr<CubeTexture> GraphicsDevice::createCubeTexture(const CubeTextureDesc& desc)
+{
+    return make_shared<CubeTexture>(desc, getGraphicsResourceDesc());
+}
+
 SharedPtr<DepthStencilTexture> GraphicsDevice::createDepthStencilTexture(const DepthStencilTextureDesc& desc)
 {
     return make_shared<DepthStencilTexture>(desc, getGraphicsResourceDesc());

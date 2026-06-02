@@ -12,6 +12,8 @@ public:
 
 private:
 	void onRender(SpriteBatch& batch) override;
+	void onSize() override;
+	void onScale() override;
 };
 
 GENESIS_NAMESPACE_END

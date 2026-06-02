@@ -1,4 +1,8 @@
 #include "src/Demo.h"
+#include "src/utils/Macros.h"
+#include "src/utils/Constants.h"
+#include "src/utils/Utils.h"
+
 #include "src/scripts/PlayerMovement.h"
 
 #include <entity/components/TransformComponent.h>
@@ -17,28 +21,47 @@
 #include <resources/Font.h>
 
 using namespace genesis;
+using namespace utils;
+using namespace constants;
 
-void createMenu(GameContext context)
+void createMainMenu(GameContext context)
 {
-	Rect windowSize = context.display.getSize();
-	SharedPtr<Font> font = context.resources.getFont("demo/assets/fonts/arial_16.spritefont");
+	Rect ref = {TARGET_RESOLUTION_WIDTH, TARGET_RESOLUTION_HEIGHT};
+	/*
+	UIPanel* background = context.ui.createElement<UIPanel>(MAIN_MENU_BACKGROUND);
+	background->setSize(context.display.getSize());
+	background->setPosition({0, 0});
+	background->setColor({0.0f, 0.0f, 0.0f, 1.0f});	
 
-	UIPanel* menuPanel1 = context.ui.createElement<UIPanel>("menuPanel1");
-	menuPanel1->setSize(windowSize);
-	menuPanel1->setPosition({0, 0});
-	menuPanel1->setColor({1.0f, 1.0f, 1.0f, 1.0f});
+	UIImage* earth = context.ui.createElement<UIImage>(MAIN_MENU_EARTH);
+	earth->setTexture(context.resources.getTexture(TEXTURE_PATH_EARTH));
+	earth->setAnchor(Anchor::Center);
+	earth->setMargin(applyMarginScale(earthMargin, getSizeScaleRatio(context.display.getSize(), referenceSize)));
+	earth->setScale(getSizeScaleRatio(context.display.getSize(), referenceSize));
 
-	UIPanel* menuPanel2 = context.ui.createElement<UIPanel>("menuPanel2");
-	menuPanel2->setSize({500, 600});
-	menuPanel2->setAnchor(Anchor::Center);
-	menuPanel2->setColor({0.3f, 0.3f, 0.3f, 0.5f});
+	UIImage* moon = context.ui.createElement<UIImage>(MAIN_MENU_MOON);
+	*/
+	SharedPtr<Font> font = context.resources.getFont(ASSETS_FONT);
+
+	UIImage* menuPanel = context.ui.createElement<UIImage>("menuPanel");
+	menuPanel->setTexture(context.resources.getTexture("demo/assets/textures/ui/menu.png"));
+	menuPanel->setAnchor(Anchor::Center);
+	menuPanel->setColor({1.0f, 1.0f, 1.0f, 0.5f});
 
 	UILabel* title = context.ui.createElement<UILabel>("menuTitle");
 	title->setContent("Malo");
 	title->setFont(font);
 	title->setAnchor(Anchor::Center);
-	title->setColor({0.0f, 0.0f, 0.0f, 1.0f});
+	title->setColor({1.0f, 1.0f, 1.0f, 1.0f});
 	title->setSize({60, 100});
+
+	/*
+		m_uiManager->getElement<UIPanel>(MAIN_MENU_BACKGROUND)->setSize(size);
+
+		UIImage* menuEarth = m_uiManager->getElement<UIImage>(MAIN_MENU_EARTH);
+		menuEarth->setMargin(applyMarginScale(earthMargin, getSizeScaleRatio(size, referenceSize)));
+		menuEarth->setScale(getSizeScaleRatio(size, referenceSize));
+		*/
 }
 
 void createWorld(GameContext context)
@@ -79,41 +102,39 @@ void createWorld(GameContext context)
 	});
 }
 
-void createLights(GameContext context)
+static void createLights(GameContext context)
 {
-	Entity* sun = context.entities.createEntity("sun");
+	Entity* sun = context.entities.createEntity(ENTITIES_SUN);
 
-	auto* light = sun->createComponent<LightComponent>();
+	LightComponent* light = sun->createComponent<LightComponent>();
 	light->setType(LightComponent::LightType::Directional);
 	light->setColor(Vec3{1.0f, 0.95f, 0.85f});
 	light->setIntensity(1.0f);
 
-	auto* transform = sun->getComponent<TransformComponent>();
+	TransformComponent* transform = sun->getComponent<TransformComponent>();
 	transform->setPosition(Vec3{0.0f, 100.0f, 0.0f});
 	transform->setRotation(Vec3{-0.785f, 0.523f, 0.0f});
 }
 
-void createCamera(GameContext context)
+static void createCamera(GameContext context)
 {
-	Entity* camera = context.entities.createEntity("camera");
+	Entity* camera = context.entities.createEntity(ENTITIES_MAIN_CAMERA);
 	camera->createComponent<CameraComponent>();
-	camera->createComponent<ScriptComponent>()->addScript(context.scripts.createScript<PlayerMovement>());
 }
 
 void setupScene(Game& game) 
 {
 	GameContext context = game.getContext();
-
-	createCamera(context);
-	//createMenu(context);
+	//createCamera(context);
+	createMainMenu(context);
 	createLights(context);
-	createWorld(context);
+	//createWorld(context);
 }
 
 int main()
 {
 	try {
-		Demo game({.windowTitle = "Demo", .logLevel = Logger::LogLevel::Info});
+		Demo game({.windowTitle = "Demo", .windowIcon = "C:/Users/Sorin/Downloads/draven_bof.ico", .logLevel = Logger::LogLevel::Info});
 		setupScene(game);
 		game.run();
 	}

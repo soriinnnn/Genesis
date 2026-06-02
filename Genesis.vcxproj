@@ -151,7 +151,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\graphics\resources\CubeTexture.cpp" />
     <ClCompile Include="demo\src\scripts\PlayerMovement.cpp" />
+    <ClCompile Include="demo\src\scripts\MainMenu.cpp" />
+    <ClCompile Include="source\graphics\EngineMeshes.cpp" />
+    <ClCompile Include="source\resources\SkyBox.cpp" />
     <ClCompile Include="source\entity\components\ScriptComponent.cpp" />
     <ClCompile Include="source\script\Script.cpp" />
     <ClCompile Include="source\script\ScriptManager.cpp" />
@@ -232,14 +236,22 @@
     <ClCompile Include="source\ui\elements\UICanvas.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\graphics\resources\CubeTexture.h" />
+    <ClInclude Include="demo\src\utils\Constants.h" />
+    <ClInclude Include="demo\src\utils\Macros.h" />
+    <ClInclude Include="demo\src\utils\Utils.h" />
+    <ClInclude Include="include\graphics\EngineMeshes.h" />
     <ClInclude Include="include\graphics\resources\DepthStencilState.h" />
     <ClInclude Include="include\graphics\resources\RasterizerState.h" />
+    <ClInclude Include="include\graphics\utils\MeshPrimitives.h" />
     <ClInclude Include="include\physics\utils\PhysicsTypes.h" />
     <ClInclude Include="include\physics\utils\PhysicsUtils.h" />
     <ClInclude Include="include\script\ScriptManager.h" />
     <ClInclude Include="include\script\Script.h" />
     <ClInclude Include="include\entity\components\ScriptComponent.h" />
     <ClInclude Include="demo\src\scripts\PlayerMovement.h" />
+    <ClInclude Include="demo\src\scripts\MainMenu.h" />
+    <ClInclude Include="include\resources\SkyBox.h" />
     <ClInclude Include="source\physics\ContactListener.h" />
     <ClInclude Include="source\physics\DebugRenderer.h" />
     <ClInclude Include="include\entity\components\RigidBodyComponent.h" />

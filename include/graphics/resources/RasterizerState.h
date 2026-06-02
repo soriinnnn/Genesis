@@ -1,12 +1,14 @@
 #ifndef GENESIS_RASTERIZER_STATE_H
 #define GENESIS_RASTERIZER_STATE_H
 #include <graphics/resources/GraphicsResource.h>
+#include <graphics/utils/GraphicsUtils.h>
 
 GENESIS_NAMESPACE_BEGIN
 
 struct RasterizerStateDesc
 {
 	bool multiSampling = false;
+	CullMode cullMode = CullMode::Back;
 };
 
 class RasterizerState final: public GraphicsResource

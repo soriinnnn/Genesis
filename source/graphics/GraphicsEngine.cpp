@@ -2,6 +2,7 @@
 #include <graphics/GraphicsDevice.h>
 #include <graphics/EngineShaders.h>
 #include <graphics/EngineStates.h>
+#include <graphics/EngineMeshes.h>
 #include <graphics/FrameBuffer.h>
 #include <graphics/resources/DeviceContext.h>
 #include <graphics/utils/GraphicsMacros.h>
@@ -10,6 +11,7 @@
 #include <resources/Texture.h>
 #include <resources/Material.h>
 #include <resources/PostProcess.h>
+#include <resources/SkyBox.h>
 #include <entity/Entity.h>
 #include <entity/EntityManager.h>
 #include <entity/components/LightComponent.h>
@@ -30,6 +32,7 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
     m_graphicsDevice = make_shared<GraphicsDevice>(GraphicsDeviceDesc{m_logger});
     m_shaders = make_unique<EngineShaders>(EngineShadersDesc{m_logger, *m_graphicsDevice});
     m_states = make_unique<EngineStates>(EngineStatesDesc{m_logger, *m_graphicsDevice, *m_shaders});
+    m_meshes = make_unique<EngineMeshes>(EngineMeshesDesc{m_logger, *m_graphicsDevice});
     m_primaryBuffer = make_unique<FrameBuffer>(FrameBufferDesc{m_logger, desc.buffersSize, *m_graphicsDevice});
     m_secondaryBuffer = make_unique<FrameBuffer>(FrameBufferDesc{m_logger, desc.buffersSize, *m_graphicsDevice});
     m_msaaBuffer = make_unique<FrameBuffer>(FrameBufferDesc{m_logger, desc.buffersSize, *m_graphicsDevice});
@@ -44,6 +47,7 @@ GraphicsEngine::GraphicsEngine(const GraphicsEngineDesc& desc): Base(desc.base)
     m_sceneTarget = m_primaryBuffer.get();
     m_antiAliasing = AntiAliasing::None;
     m_textureFiltering = TextureFiltering::Trilinear;
+    m_msaaDirty = false;
 }
 
 GraphicsEngine::~GraphicsEngine() {}
@@ -128,8 +132,12 @@ void GraphicsEngine::setTextureFiltering(TextureFiltering filter)
 
 void GraphicsEngine::clear(const Vec4& color)
 {
-    m_deviceContext->clearRenderTarget(m_sceneTarget->getRenderTarget(), color);
-    m_deviceContext->clearDepthStencil(m_sceneTarget->getDepthStencil());
+    m_deviceContext->clearRenderTarget(m_primaryBuffer->getRenderTarget(), color);
+    m_deviceContext->clearDepthStencil(m_primaryBuffer->getDepthStencil());
+    if (isHardwareMSAA(m_antiAliasing)) {
+        m_deviceContext->clearRenderTarget(m_msaaBuffer->getRenderTarget(), color);
+        m_deviceContext->clearDepthStencil(m_msaaBuffer->getDepthStencil());
+    }
 }
 
 void GraphicsEngine::render(EntityManager& entities, Entity& camera, float deltaTime)
@@ -141,6 +149,9 @@ void GraphicsEngine::render(EntityManager& entities, Entity& camera, float delta
 
     m_deviceContext->setRenderTarget(m_sceneTarget->getRenderTarget(), m_sceneTarget->getDepthStencil());
     m_deviceContext->setViewport(m_sceneTarget->getSize());
+    if (isHardwareMSAA(m_antiAliasing)) {
+        m_msaaDirty = true;
+    }
     
     CameraData cameraData = {
         cameraComponent->getViewMatrix(),
@@ -163,9 +174,6 @@ void GraphicsEngine::render(EntityManager& entities, Entity& camera, float delta
     m_deviceContext->setSamplerState(*m_sceneSampler, DEFAULT_SAMPLER_STATE_SLOT);
 
     renderEntities(entities);
-    if (isHardwareMSAA(m_antiAliasing)) {
-        m_deviceContext->resolveTexture(m_msaaBuffer->getRenderTarget(), m_primaryBuffer->getRenderTarget());
-    }
 }
 
 void GraphicsEngine::render(DebugRenderer& debug, Entity& camera)
@@ -177,6 +185,9 @@ void GraphicsEngine::render(DebugRenderer& debug, Entity& camera)
 
     m_deviceContext->setRenderTarget(m_sceneTarget->getRenderTarget(), m_sceneTarget->getDepthStencil());
     m_deviceContext->setViewport(m_sceneTarget->getSize());
+    if (isHardwareMSAA(m_antiAliasing)) {
+        m_msaaDirty = true;
+    }
 
     CameraData cameraData = {
         cameraComponent->getViewMatrix(),
@@ -191,15 +202,49 @@ void GraphicsEngine::render(DebugRenderer& debug, Entity& camera)
     m_deviceContext->setSamplerState(*m_sceneSampler, DEFAULT_SAMPLER_STATE_SLOT);
 
     debug.render(*m_deviceContext);
-    if (isHardwareMSAA(m_antiAliasing)) {
-        m_deviceContext->resolveTexture(m_msaaBuffer->getRenderTarget(), m_primaryBuffer->getRenderTarget());
+}
+
+void GraphicsEngine::render(SkyBox& skybox, Entity& camera)
+{
+    CameraComponent* cameraComponent = camera.getComponent<CameraComponent>();
+    if (!cameraComponent) {
+        return;
     }
+
+    m_deviceContext->setRenderTarget(m_sceneTarget->getRenderTarget(), m_sceneTarget->getDepthStencil());
+    m_deviceContext->setViewport(m_sceneTarget->getSize());
+    if (isHardwareMSAA(m_antiAliasing)) {
+        m_msaaDirty = true;
+    }
+
+    CameraData cameraData = {
+        cameraComponent->getViewMatrix(),
+        cameraComponent->getProjectionMatrix(),
+        Vec4{camera.getComponent<TransformComponent>()->getPosition()}
+    };
+    m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData, sizeof(CameraData));
+    m_deviceContext->setConstantBuffer(*m_cameraBuffer, CAMERA_CONSTANT_BUFFER_SLOT);
+
+    m_deviceContext->setRasterizerState(m_states->rasterizerSkybox());
+    m_deviceContext->setDepthStencilState(m_states->depthSkybox());
+    m_deviceContext->setSamplerState(skybox.getSamplerState(), DEFAULT_SAMPLER_STATE_SLOT);
+    m_deviceContext->setGraphicsPipelineState(m_states->cubeSkyboxPipeline());
+    m_deviceContext->setTexture(skybox.getCubeTexture(), DEFAULT_TEXTURE_SLOT);
+
+    auto& skyboxMesh = m_meshes->skyboxCube();
+    m_deviceContext->setVertexBuffer(*skyboxMesh.vertices);
+    m_deviceContext->setIndexBuffer(*skyboxMesh.indices);
+
+    m_deviceContext->drawIndexed(skyboxMesh.indices->getIndexCount());
 }
 
 void GraphicsEngine::render(UIManager& ui)
 {
-    m_deviceContext->setRenderTarget(m_primaryBuffer->getRenderTarget(), m_primaryBuffer->getDepthStencil());
-    m_deviceContext->setViewport(m_primaryBuffer->getSize());
+    m_deviceContext->setRenderTarget(m_sceneTarget->getRenderTarget(), m_sceneTarget->getDepthStencil());
+    m_deviceContext->setViewport(m_sceneTarget->getSize());
+    if (isHardwareMSAA(m_antiAliasing)) {
+        m_msaaDirty = true;
+    }
 
     try {
         m_spriteBatch->begin();
@@ -215,14 +260,23 @@ void GraphicsEngine::render(UIManager& ui)
 
 void GraphicsEngine::postProcess(PostProcess& effect)
 {
+    if (m_msaaDirty) {
+        m_deviceContext->resolveTexture(m_msaaBuffer->getRenderTarget(), m_primaryBuffer->getRenderTarget());
+        m_msaaDirty = false;
+    }
+
     applyPostProcess(effect, *m_primaryBuffer, *m_secondaryBuffer);
     std::swap(m_primaryBuffer, m_secondaryBuffer);
 }
 
 void GraphicsEngine::present(Display& display)
 {
-    const SwapChain& swapChain = display.getSwapChain();
+    if (m_msaaDirty) {
+        m_deviceContext->resolveTexture(m_msaaBuffer->getRenderTarget(), m_primaryBuffer->getRenderTarget());
+        m_msaaDirty = false;
+    }
 
+    const SwapChain& swapChain = display.getSwapChain();
     m_deviceContext->clearAndSetBackBuffer(swapChain, Vec4{1.0f, 1.0f, 1.0f, 1.0f});
     m_deviceContext->setViewport(swapChain.getSize());
 
@@ -230,7 +284,6 @@ void GraphicsEngine::present(Display& display)
     m_deviceContext->setDepthStencilState(m_states->depthDefault());
     m_deviceContext->setSamplerState(m_states->pointClamp(), DEFAULT_SAMPLER_STATE_SLOT);
     m_deviceContext->setGraphicsPipelineState(m_states->frameBufferPipeline());
-
     m_deviceContext->setTexture(m_primaryBuffer->getRenderTarget());
     
     m_deviceContext->draw(FULLSCREEN_TRIANGLE_VERTEX_COUNT);

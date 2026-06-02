@@ -37,16 +37,16 @@ inline T* UIManager::getElement(const char* name)
 template<typename F>
 inline void UIManager::forEach(F&& callback) const
 {
-	for (const auto& [id, root] : m_elements) {
-		callback(*root.element);
+	for (const auto* root : m_zOrdered) {
+		callback(*root->element);
 	}
 }
 
 template<typename F>
 inline void UIManager::forEach(F&& callback)
 {
-	for (auto& [id, root] : m_elements) {
-		callback(*root.element);
+	for (auto* root : m_zOrdered) {
+		callback(*root->element);
 	}
 }
 

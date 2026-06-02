@@ -5,6 +5,7 @@
 #include <resources/Material.h>
 #include <resources/PostProcess.h>
 #include <resources/Font.h>
+#include <resources/SkyBox.h>
 #include <core/utils/Macros.h>
 #include <filesystem>
 
@@ -96,6 +97,20 @@ SharedPtr<Font> ResourceManager::getFont(const char* path)
 	if (!result) {
 		ResourceDesc desc = getResourceDesc(id, absolutePath.c_str());
 		result = createResource<Font, FontDesc>(id, {desc});
+	}
+
+	return result;
+}
+
+SharedPtr<SkyBox> ResourceManager::getSkybox(const char* path)
+{
+	String absolutePath = getAbsolutePath(path);
+	ResourceId id = getResourceId(absolutePath.c_str());
+
+	SharedPtr<SkyBox> result = getResource<SkyBox>(id);
+	if (!result) {
+		ResourceDesc desc = getResourceDesc(id, absolutePath.c_str());
+		result = createResource<SkyBox, SkyBoxDesc>(id, {desc});
 	}
 
 	return result;

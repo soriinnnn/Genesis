@@ -1,6 +1,8 @@
 #include <display/win32/Win32Window.h>
+#include <filesystem>
 
 #define WINDOW_CLASS_NAME L"GENESIS_WINDOW_CLASS"
+#define ICON_EXTENSION ".ico"
 #define CHECK_INVALID_WINDOW_POINTER(wnd, hwnd, msg, wparam, lparam) \
 if (!(wnd)) {\
     return DefWindowProc((hwnd), (msg), (wparam), (lparam));\
@@ -9,11 +11,13 @@ if (!(wnd)) {\
 using namespace genesis;
 using namespace std;
 
+static String getPathExtension(const char* path);
+static WString getAbsolutePath(const char* path);
 static WNDCLASSEX getWindowClass(HINSTANCE instance, LPCTSTR className, WNDPROC windowProc);
 static RECT createWindowRect(UINT width, UINT height, DWORD style);
 static DWORD getWindowStyle(WindowStyle style);
 
-Win32Window::Win32Window(const WindowDesc& desc): Window(desc), m_instance{GetModuleHandle(nullptr)}, m_cursor{LoadCursor(nullptr, IDC_ARROW)}
+Win32Window::Win32Window(const WindowDesc& desc): Window(desc), m_instance{GetModuleHandle(nullptr)}, m_cursor{LoadCursor(nullptr, IDC_ARROW)}, m_icon{nullptr}
 {
     WNDCLASSEX wndClass;
     if (!GetClassInfoEx(m_instance, WINDOW_CLASS_NAME, &wndClass)) {
@@ -23,6 +27,7 @@ Win32Window::Win32Window(const WindowDesc& desc): Window(desc), m_instance{GetMo
         }
     }
     open();
+    setIcon(desc.icon);
 }
 
 Win32Window::~Win32Window()
@@ -105,6 +110,42 @@ void Win32Window::setTitle(const char* title)
     m_title = String{title};
 }
 
+void Win32Window::setIcon(const char* path)
+{
+    if (!path) {
+        return;
+    }
+
+    String extension = getPathExtension(path);
+    if (extension != ICON_EXTENSION) {
+        GENESIS_LOG_ERROR("Invalid icon format: \"{}\". Only \"{}\" files are supported.", extension, ICON_EXTENSION);
+        return;
+    }
+
+    HICON icon = static_cast<HICON>(LoadImage(
+        nullptr,
+        getAbsolutePath(path).c_str(),
+        IMAGE_ICON,
+        0,
+        0,
+        LR_DEFAULTSIZE | LR_LOADFROMFILE
+    ));
+
+    if (!icon) {
+        GENESIS_LOG_ERROR("LoadIcon failed. Error: 0x{:08X}", GetLastError());
+        return;
+    }
+
+    HWND hwnd = static_cast<HWND>(m_handle);
+    SendMessage(hwnd, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(icon));
+    SendMessage(hwnd, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(icon));
+
+    if (m_icon) {
+        DestroyIcon(m_icon);
+    }
+    m_icon = icon;
+}
+
 void Win32Window::show()
 {
     if (isVisible()) {
@@ -159,6 +200,9 @@ void Win32Window::close()
 {
     if (!m_handle) {
         return;
+    }
+    if (m_icon) {
+        DestroyIcon(m_icon);
     }
     if (!DestroyWindow(static_cast<HWND>(m_handle))) {
         GENESIS_LOG_THROW_ERROR("DestroyWindow failed.\nError code: 0x{:08X}", GetLastError());
@@ -321,6 +365,18 @@ LRESULT Win32Window::onSetCursor(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 }
 
 /* STATIC FUNCTION DEFINITIONS */
+
+String getPathExtension(const char* path)
+{
+    GENESIS_ASSERT(path, "Path is null.");
+    return std::filesystem::path(path).extension().generic_string();
+}
+
+WString getAbsolutePath(const char* path)
+{
+    GENESIS_ASSERT(path, "Path is null.");
+    return std::filesystem::absolute(path).generic_wstring();
+}
 
 WNDCLASSEX getWindowClass(HINSTANCE instance, LPCTSTR className, WNDPROC windowProc)
 {

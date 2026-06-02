@@ -138,6 +138,44 @@ namespace graphicsUtils
 		}
 	}
 
+	inline D3D11_STENCIL_OP getD3D11StencilOP(StencilOperation operation)
+	{
+		switch (operation) {
+		case StencilOperation::Keep:
+			return D3D11_STENCIL_OP_KEEP;
+		case StencilOperation::Zero:
+			return D3D11_STENCIL_OP_ZERO;
+		case StencilOperation::Replace:
+			return D3D11_STENCIL_OP_REPLACE;
+		case StencilOperation::IncrementAndClamp:
+			return D3D11_STENCIL_OP_INCR_SAT;
+		case StencilOperation::DecrementAndClamp:
+			return D3D11_STENCIL_OP_DECR_SAT;
+		case StencilOperation::Invert:
+			return D3D11_STENCIL_OP_INVERT;
+		case StencilOperation::IncrementAndWrap:
+			return D3D11_STENCIL_OP_INCR;
+		case StencilOperation::DecrementAndWrap:
+			return D3D11_STENCIL_OP_DECR;
+		default:
+			return D3D11_STENCIL_OP_KEEP;
+		}
+	}
+
+	inline D3D11_CULL_MODE getD3D11CullMode(CullMode mode)
+	{
+		switch (mode) {
+		case CullMode::None:
+			return D3D11_CULL_NONE;
+		case CullMode::Back:
+			return D3D11_CULL_BACK;
+		case CullMode::Front:
+			return D3D11_CULL_FRONT;
+		default:
+			return D3D11_CULL_NONE;
+		}
+	}
+
 	inline DXGI_FORMAT getDXGIIndexFormat(IndexFormat format)
 	{
 		switch (format) {

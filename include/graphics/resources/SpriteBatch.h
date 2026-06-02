@@ -21,7 +21,7 @@ public:
 	SpriteBatch(const SpriteBatchDesc& sdesc, const GraphicsResourceDesc& gdesc);
 	~SpriteBatch() override;
 
-	void begin(const SamplerState* samplerState = nullptr);
+	void begin();
 	void drawText(const FontAtlas& font, const wchar_t* text, const Point& pos, const Vec2& scale, const Vec4& color);
 	void drawImage(const ImageTexture& image, const Rect& sourceRect, const Point& pos, const Vec2& scale, const Vec4& color);
 	void drawSolid(const Rect& size, const Point& pos, const Vec2& scale, const Vec4& color);

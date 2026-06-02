@@ -22,14 +22,12 @@ SpriteBatch::SpriteBatch(const SpriteBatchDesc& sdesc, const GraphicsResourceDes
 
 SpriteBatch::~SpriteBatch() {}
 
-void SpriteBatch::begin(const SamplerState* samplerState)
+void SpriteBatch::begin()
 {
-	ID3D11SamplerState* dxSamplerState = samplerState ? samplerState->m_samplerState.Get() : nullptr;
-
 	m_batch->Begin(
 		DirectX::DX11::SpriteSortMode_Deferred,
-		nullptr,
-		dxSamplerState,
+		m_states->NonPremultiplied(),
+		m_states->LinearClamp(),
 		nullptr,
 		nullptr,
 		nullptr,
@@ -63,7 +61,7 @@ void SpriteBatch::drawImage(const ImageTexture& image, const Rect& sourceRect, c
 	DirectX::XMFLOAT2 dxPosition = DirectX::XMFLOAT2(static_cast<float>(pos.x), static_cast<float>(pos.y));
 	DirectX::XMFLOAT2 dxScale = DirectX::XMFLOAT2(scale.toArray());
 	DirectX::XMFLOAT4 dxColor = DirectX::XMFLOAT4(color.toArray());
-
+		
 	m_batch->Draw(
 		resourceView,
 		dxPosition,

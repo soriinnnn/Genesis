@@ -17,12 +17,11 @@ void EntityManager::update(float deltaTime)
 	for (auto& event : m_events) {
 		switch (event.type) {
 			case EventType::Create: {
-				m_entities.emplace(event.id, std::move(m_pendingEntities[event.id]));
+				onCreate(event);
 				break;
 			}
 			case EventType::Destroy: {
-				m_entities.erase(event.id);
-				m_idPool.push_back(event.id);
+				onDestroy(event);
 				break;
 			}	
 		}
@@ -66,7 +65,6 @@ void EntityManager::destroyEntity(EntityId id)
 		return;
 	}
 	m_events.push_back({EventType::Destroy, id});
-	m_nameToId.erase(it->second->getName());
 }
 
 Entity* EntityManager::getEntity(EntityId id)
@@ -104,7 +102,6 @@ void EntityManager::destroyEntityByName(const char* name)
 		return;
 	}
 	m_events.push_back({EventType::Destroy, it->second});
-	m_nameToId.erase(it);
 }
 
 Entity* EntityManager::getEntityByName(const char* name)
@@ -169,4 +166,21 @@ void EntityManager::unregisterComponent(TypeId id, Component* component)
 		components[i] = components.back();
 		components.pop_back();
 	}
+}
+
+void EntityManager::onCreate(EntityEvent event)
+{
+	m_entities.emplace(event.id, move(m_pendingEntities[event.id]));
+	m_pendingEntities.erase(event.id);
+}
+
+void EntityManager::onDestroy(EntityEvent event)
+{
+	auto it = m_entities.find(event.id);
+	if (it != m_entities.end()) {
+		m_nameToId.erase(it->second->getName());
+	}
+
+	m_entities.erase(event.id);
+	m_idPool.push_back(event.id);
 }

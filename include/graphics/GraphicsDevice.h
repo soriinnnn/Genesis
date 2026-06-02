@@ -16,6 +16,7 @@
 #include <graphics/resources/GraphicsPipelineState.h>
 #include <graphics/resources/SamplerState.h>
 #include <graphics/resources/ImageTexture.h>
+#include <graphics/resources/CubeTexture.h>
 #include <graphics/resources/DepthStencilTexture.h>
 #include <graphics/resources/RenderTargetTexture.h>
 #include <graphics/resources/SpriteBatch.h>
@@ -55,6 +56,7 @@ public:
 
     SharedPtr<ImageTexture> createImageTexture(const ImageTextureFileDesc& desc);
     SharedPtr<ImageTexture> createImageTexture(const ImageTextureSolidDesc& desc);
+    SharedPtr<CubeTexture> createCubeTexture(const CubeTextureDesc& desc);
     SharedPtr<DepthStencilTexture> createDepthStencilTexture(const DepthStencilTextureDesc& desc);
     SharedPtr<RenderTargetTexture> createRenderTargetTexture(const RenderTargetTextureDesc& desc);
 

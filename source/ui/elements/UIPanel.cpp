@@ -14,3 +14,20 @@ void UIPanel::onRender(SpriteBatch& batch)
 {
 	batch.drawSolid(m_size, getGlobalPosition(), m_scale, m_color);
 }
+
+void UIPanel::onSize()
+{
+	m_size = Rect{
+		static_cast<int32>(round(m_size.width() * m_scale.x)),
+		static_cast<int32>(round(m_size.height() * m_scale.y))
+	};
+}
+
+void UIPanel::onScale()
+{
+	m_size = Rect{
+		static_cast<int32>(round(m_size.width() * m_scale.x)),
+		static_cast<int32>(round(m_size.height() * m_scale.y))
+	};
+	updateRelativeLayout();
+}

@@ -25,6 +25,7 @@ public:
 	SharedPtr<Shader> getShader(const char* path, const char* entry, ShaderType type);
 	SharedPtr<PostProcess> getPostProcess(const char* path);
 	SharedPtr<Font> getFont(const char* path);
+	SharedPtr<SkyBox> getSkybox(const char* path);
 
 	void unloadResource(ResourceId id);
 	void unloadUnused();

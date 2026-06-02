@@ -1,0 +1,10 @@
+{
+  "textures": {
+    "right": "demo/assets/skybox/starfield/right.png",
+    "left": "demo/assets/skybox/starfield/left.png",
+    "top": "demo/assets/skybox/starfield/top.png",
+    "bottom": "demo/assets/skybox/starfield/bottom.png",
+    "front": "demo/assets/skybox/starfield/front.png",
+    "back": "demo/assets/skybox/starfield/back.png"
+  }
+}

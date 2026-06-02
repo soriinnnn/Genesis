@@ -18,6 +18,7 @@ struct WindowDesc
     BaseDesc base;
     Rect size{};
     const char* title{};
+    const char* icon{};
     WindowStyle style = WindowStyle::Windowed;
 };
 
@@ -39,6 +40,7 @@ public:
     virtual void setSize(const Rect& size) = 0;
     virtual void setStyle(WindowStyle style) = 0;
     virtual void setTitle(const char* title) = 0;
+    virtual void setIcon(const char* path) = 0;
 
     bool isVisible() const noexcept;
     bool hasFocus() const noexcept;

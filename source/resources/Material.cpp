@@ -10,6 +10,7 @@
 
 using namespace genesis;
 using namespace std;
+using namespace resourcesUtils;
 using Json = nlohmann::json;
 using LogLevel = Logger::LogLevel;
 
@@ -40,7 +41,7 @@ using LogLevel = Logger::LogLevel;
 
 #define DEFAULT_RESOURCE_SLOT 0
 #define DEFAULT_SHADER_ENTRY "main"
-#define DEFAULT_SAMPLER_FILTER SamplerFilter::Anisotropic
+#define DEFAULT_SAMPLER_FILTER SamplerFilter::Trilinear
 #define DEFAULT_SAMPLER_ADDRESS_MODE SamplerAddressMode::Wrap
 #define DEFAULT_SAMPLER_MAX_ANISOTROPY 16
 
@@ -51,17 +52,12 @@ static SharedPtr<SamplerState> getSamplerStateFromJSON(const Json& data, Graphic
 static SharedPtr<ConstantBuffer> getConstantBufferFromJSON(const Json& data, const SharedPtr<Shader>& vs, const SharedPtr<Shader>& ps, GraphicsDevice& graphicsDevice, const Logger& logger, const char* materialPath);
 static Vector<uint8> getPropertiesFromJSON(const Json& data, const ShaderReflectionConstantBuffer& reflection, const Logger& logger, const char* materialPath);
 
-static SamplerFilter stringToTextureFilter(const String& filter, const Logger& logger, const char* materialPath);
-static SamplerAddressMode stringToTextureAddressMode(const String& mode, const Logger& logger, const char* materialPath);
-static const char* textureFilterToString(SamplerFilter filter);
-static const char* textureAddressModeToString(SamplerAddressMode mode);
-
 Material::Material(const MaterialDesc& desc): Resource(desc.resource)
 {
 	auto& context = desc.resource.graphicsContext;
 
 	try {
-		Json data = Json::parse(resourcesUtils::readFile(getPath()));
+		Json data = Json::parse(readFile(getPath()));
 
 		SharedPtr<Shader> vs = getShaderFromJSON(data, ShaderType::VertexShader, desc.resource.resourceManager, getLogger(), getPath());
 		SharedPtr<Shader> ps = getShaderFromJSON(data, ShaderType::PixelShader, desc.resource.resourceManager, getLogger(), getPath());
@@ -77,13 +73,13 @@ Material::Material(const MaterialDesc& desc): Resource(desc.resource)
 		m_properties = getConstantBufferFromJSON(data, vs, ps, context.graphicsDevice, getLogger(), getPath());
 	}
 	catch (const Json::parse_error& error) {
-		GENESIS_LOG_THROW_ERROR("Failed to parse material file \"{}\".\nDetails:\n{}", getPath(), error.what());
+		GENESIS_LOG_THROW_ERROR(MATERIAL_ERROR_PREFIX "{}", getPath(), error.what());
 	}
 	catch (const Json::out_of_range& error) {
-		GENESIS_LOG_THROW_ERROR("Failed to read material file \"{}\".\nDetails:\n{}", getPath(), error.what());
+		GENESIS_LOG_THROW_ERROR(MATERIAL_ERROR_PREFIX "{}", getPath(), error.what());
 	}
 	catch (const Json::type_error& error) {
-		GENESIS_LOG_THROW_ERROR("Failed to read material file \"{}\".\nDetails:\n{}", getPath(), error.what());
+		GENESIS_LOG_THROW_ERROR(MATERIAL_ERROR_PREFIX "{}", getPath(), error.what());
 	}
 }
 
@@ -227,7 +223,7 @@ SharedPtr<SamplerState> getSamplerStateFromJSON(const Json& data, GraphicsDevice
 	if (data.contains(KEY_SAMPLER_FILTER)) {
 		String filter = data[KEY_SAMPLER_FILTER];
 		std::transform(filter.begin(), filter.end(), filter.begin(), ::tolower);
-		desc.filter = stringToTextureFilter(filter, logger, materialPath);
+		desc.filter = stringToTextureFilter(filter, logger, format(MATERIAL_ERROR_PREFIX, materialPath).c_str());
 	}
 	else {
 		GENESIS_LOG(logger, LogLevel::Warning, "Missing sampler texture filter in material \"{}\". Using default \"{}\".", materialPath, textureFilterToString(DEFAULT_SAMPLER_FILTER));
@@ -237,7 +233,7 @@ SharedPtr<SamplerState> getSamplerStateFromJSON(const Json& data, GraphicsDevice
 	if (data.contains(KEY_SAMPLER_ADDRESS_UV)) {
 		String mode = data[KEY_SAMPLER_ADDRESS_UV];
 		std::transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
-		desc.addressU = stringToTextureAddressMode(mode, logger, materialPath);
+		desc.addressU = stringToTextureAddressMode(mode, logger, format(MATERIAL_ERROR_PREFIX, materialPath).c_str());
 		desc.addressV = desc.addressU;
 	}
 	else {
@@ -249,7 +245,7 @@ SharedPtr<SamplerState> getSamplerStateFromJSON(const Json& data, GraphicsDevice
 	if (data.contains(KEY_SAMPLER_ADDRESS_W)) {
 		String mode = data[KEY_SAMPLER_ADDRESS_W];
 		std::transform(mode.begin(), mode.end(), mode.begin(), ::tolower);
-		desc.addressW = stringToTextureAddressMode(mode, logger, materialPath);
+		desc.addressW = stringToTextureAddressMode(mode, logger, format(MATERIAL_ERROR_PREFIX, materialPath).c_str());
 	}
 	else {
 		desc.addressW = DEFAULT_SAMPLER_ADDRESS_MODE;
@@ -338,65 +334,4 @@ Vector<uint8> getPropertiesFromJSON(const Json& data, const ShaderReflectionCons
 	}
 
 	return values;
-}
-
-SamplerFilter stringToTextureFilter(const String& filter, const Logger& logger, const char* materialPath)
-{
-	if (filter == "point") {
-		return SamplerFilter::Point;
-	}
-	if (filter == "bilinear") {
-		return SamplerFilter::Bilinear;
-	}
-	if (filter == "trilinear") {
-		return SamplerFilter::Trilinear;
-	}
-	if (filter == "anisotropic") {
-		return SamplerFilter::Anisotropic;
-	}
-	GENESIS_LOG_THROW(logger, std::runtime_error, LogLevel::Error, MATERIAL_ERROR_PREFIX "Unknown texture filter \"{}\".", materialPath, filter.c_str());
-}
-
-SamplerAddressMode stringToTextureAddressMode(const String& mode, const Logger& logger, const char* materialPath)
-{
-	if (mode == "wrap") {
-		return SamplerAddressMode::Wrap;
-	}
-	if (mode == "clamp") {
-		return SamplerAddressMode::Clamp;
-	}
-	if (mode == "mirror") {
-		return SamplerAddressMode::Mirror;
-	}
-	GENESIS_LOG_THROW(logger, std::runtime_error, LogLevel::Error, MATERIAL_ERROR_PREFIX "Unknown texture address mode \"{}\".", materialPath, mode.c_str());
-}
-
-const char* textureFilterToString(SamplerFilter filter)
-{
-	switch (filter) {
-	case SamplerFilter::Point:
-		return "point";
-	case SamplerFilter::Bilinear:
-		return "bilinear";
-	case SamplerFilter::Trilinear:
-		return "trilinear";
-	case SamplerFilter::Anisotropic:
-		return "anisotropic";
-	default:
-		return "unknown";
-	}
-}
-
-const char* textureAddressModeToString(SamplerAddressMode mode)
-{
-	switch (mode) {
-	case SamplerAddressMode::Wrap:
-		return "wrap";
-	case SamplerAddressMode::Clamp:
-		return "clamp";
-	case SamplerAddressMode::Mirror:
-		return "mirror";
-	default:
-		return "unknown";
-	}
 }

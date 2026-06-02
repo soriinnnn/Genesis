@@ -31,6 +31,7 @@ public:
 	void setConstantBuffer(const ConstantBuffer& buffer, uint32 slot = 0);
 	void setStructuredBuffer(const StructuredBuffer& buffer, uint32 slot = 0);
 	void setTexture(const ImageTexture& texture, uint32 slot = 0);
+	void setTexture(const CubeTexture& texture, uint32 slot = 0);
 	void setTexture(const RenderTargetTexture& texture, uint32 slot = 0);
 	void setSamplerState(const SamplerState& sampler, uint32 slot = 0);
 

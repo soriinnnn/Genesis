@@ -17,6 +17,7 @@ public:
 	void setSize(const Rect& size) override;
 	void setStyle(WindowStyle style) override;
 	void setTitle(const char* title) override;
+	void setIcon(const char* path) override;
 
 	void show() override;
 	void hide() override;
@@ -41,6 +42,7 @@ private:
 private:
 	HINSTANCE m_instance;
 	HCURSOR m_cursor;
+	HICON m_icon;
 };
 
 GENESIS_NAMESPACE_END

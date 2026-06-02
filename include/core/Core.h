@@ -33,6 +33,7 @@ class Texture;
 class Material;
 class PostProcess;
 class Font;
+class SkyBox;
 
 class EntityManager;
 class Entity;
@@ -62,6 +63,7 @@ class GraphicsDevice;
 class FrameBuffer;
 class EngineShaders;
 class EngineStates;
+class EngineMeshes;
 
 class GraphicsCache;
 class PipelineStateCache;
@@ -80,6 +82,7 @@ class DepthStencilState;
 class GraphicsPipelineState;
 class SamplerState;
 class ImageTexture;
+class CubeTexture;
 class RenderTargetTexture;
 class DepthStencilTexture;
 class StructuredBuffer;

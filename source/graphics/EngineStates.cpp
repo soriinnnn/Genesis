@@ -8,16 +8,24 @@ EngineStates::EngineStates(const EngineStatesDesc& desc): Base(desc.base), m_gra
 {
     auto& fullscreenShader = desc.engineShaders.fullscreenTriangle();
     m_frameBufferPipeline = m_graphicsDevice.createGraphicsPipelineState({fullscreenShader.vsBinary.get(), fullscreenShader.vsSignature.get(), fullscreenShader.psBinary.get(), fullscreenShader.psSignature.get()});
+
+    auto& cubeSkyboxShader = desc.engineShaders.cubeSkybox();
+    m_cubeSkyboxPipeline = m_graphicsDevice.createGraphicsPipelineState({cubeSkyboxShader.vsBinary.get(), cubeSkyboxShader.vsSignature.get(), cubeSkyboxShader.psBinary.get(), cubeSkyboxShader.psSignature.get()});
+
     m_pointWrap = m_graphicsDevice.createSamplerState({SamplerFilter::Point, SamplerAddressMode::Wrap, SamplerAddressMode::Wrap, SamplerAddressMode::Wrap});
     m_pointClamp = m_graphicsDevice.createSamplerState({SamplerFilter::Point, SamplerAddressMode::Clamp, SamplerAddressMode::Clamp, SamplerAddressMode::Clamp});
     m_bilinearWrap = m_graphicsDevice.createSamplerState({SamplerFilter::Bilinear, SamplerAddressMode::Wrap, SamplerAddressMode::Wrap, SamplerAddressMode::Wrap});
     m_bilinearClamp = m_graphicsDevice.createSamplerState({SamplerFilter::Bilinear, SamplerAddressMode::Clamp, SamplerAddressMode::Clamp, SamplerAddressMode::Clamp});
     m_trilinearWrap = m_graphicsDevice.createSamplerState({SamplerFilter::Trilinear, SamplerAddressMode::Wrap, SamplerAddressMode::Wrap, SamplerAddressMode::Wrap});
     m_trilinearClamp = m_graphicsDevice.createSamplerState({SamplerFilter::Trilinear, SamplerAddressMode::Clamp, SamplerAddressMode::Clamp, SamplerAddressMode::Clamp});
+
     m_depthDefault = m_graphicsDevice.createDepthStencilState({});
     m_depthDefault = m_graphicsDevice.createDepthStencilState({false});
+    m_depthSkybox = m_graphicsDevice.createDepthStencilState({true, false, ComparisonFunction::LessEqual});
+
     m_rasterizerSolid = m_graphicsDevice.createRasterizerState({});
     m_rasterizerSolidMSAA = m_graphicsDevice.createRasterizerState({true});
+    m_rasterizerSkybox = m_graphicsDevice.createRasterizerState({false, CullMode::None});
 }
 
 EngineStates::~EngineStates() {}
@@ -25,6 +33,11 @@ EngineStates::~EngineStates() {}
 const GraphicsPipelineState& EngineStates::frameBufferPipeline() const
 {
     return *m_frameBufferPipeline;
+}
+
+const GraphicsPipelineState& EngineStates::cubeSkyboxPipeline() const
+{
+    return *m_cubeSkyboxPipeline;
 }
 
 const SamplerState& EngineStates::pointWrap() const
@@ -89,6 +102,11 @@ const DepthStencilState& EngineStates::depthDisabled() const
     return *m_depthDisabled;
 }
 
+const DepthStencilState& EngineStates::depthSkybox() const
+{
+    return *m_depthSkybox;
+}
+
 const RasterizerState& EngineStates::rasterizerSolid() const
 {
     return *m_rasterizerSolid;
@@ -97,4 +115,9 @@ const RasterizerState& EngineStates::rasterizerSolid() const
 const RasterizerState& EngineStates::rasterizerSolidMSAA() const
 {
     return *m_rasterizerSolidMSAA;
+}
+
+const RasterizerState& EngineStates::rasterizerSkybox() const
+{
+    return *m_rasterizerSkybox;
 }

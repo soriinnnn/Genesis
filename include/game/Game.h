@@ -19,6 +19,7 @@ GENESIS_NAMESPACE_BEGIN
 struct GameDesc
 {
     const char* windowTitle;
+    const char* windowIcon{};
     Rect windowSize{1280, 720};
     Logger::LogLevel logLevel = Logger::LogLevel::Error;
 };
@@ -47,6 +48,7 @@ protected:
     void setRenderResolution(const Rect& resolution);
     void setAntiAliasing(AntiAliasing antiAliasing);
     void setTextureFiltering(TextureFiltering filter);
+    void setSkybox(SharedPtr<SkyBox> skybox);
     void addEffect(SharedPtr<PostProcess> effect);
     void clearEffects();
 
@@ -70,6 +72,7 @@ private:
 
 private:
     Vector<SharedPtr<PostProcess>> m_effects;
+    SharedPtr<SkyBox> m_skybox;
     TimePoint m_previousTime;
     Entity* m_mainCamera;
     float m_accumulator;

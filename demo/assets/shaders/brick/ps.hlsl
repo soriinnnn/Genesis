@@ -30,11 +30,10 @@ struct LightData
 };
 
 StructuredBuffer<LightData> lights: register(t0);
+SamplerState defaultSampler: register(s0);
 
 Texture2D colorTexture: register(t1);
 Texture2D normalTexture: register(t2);
-
-SamplerState defaultSampler: register(s0);
 
 struct InputPS
 {

@@ -77,7 +77,6 @@ void UILabel::onRender(SpriteBatch& batch)
 	if (!m_font) {
 		return;
 	}
-	batch.drawSolid(m_size, m_position, m_scale, {1.0f, 0.0f, 0.0f, 1.0f});
 	batch.drawText(m_font->getAtlas(), m_adjustedContent.c_str(), getGlobalPosition(), m_scale, m_color);
 }
 

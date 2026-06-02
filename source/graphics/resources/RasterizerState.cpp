@@ -3,11 +3,11 @@
 
 using namespace genesis;
 
-static D3D11_RASTERIZER_DESC getD3D11RasterizerDesc(bool multiSampling);
+static D3D11_RASTERIZER_DESC getD3D11RasterizerDesc(bool multiSampling, CullMode cullMode);
 
 RasterizerState::RasterizerState(const RasterizerStateDesc& rdesc, const GraphicsResourceDesc& gdesc): GraphicsResource(gdesc)
 {
-	D3D11_RASTERIZER_DESC rasterizerDesc = getD3D11RasterizerDesc(rdesc.multiSampling);
+	D3D11_RASTERIZER_DESC rasterizerDesc = getD3D11RasterizerDesc(rdesc.multiSampling, rdesc.cullMode);
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_device.CreateRasterizerState(
 			&rasterizerDesc,
@@ -21,12 +21,12 @@ RasterizerState::~RasterizerState() {}
 
 /* STATIC FUNCTION DEFINITIONS */
 
-D3D11_RASTERIZER_DESC getD3D11RasterizerDesc(bool multiSampling)
+D3D11_RASTERIZER_DESC getD3D11RasterizerDesc(bool multiSampling, CullMode cullMode)
 {
 	D3D11_RASTERIZER_DESC desc{};
 
 	desc.FillMode = D3D11_FILL_SOLID;
-	desc.CullMode = D3D11_CULL_BACK;
+	desc.CullMode = graphicsUtils::getD3D11CullMode(cullMode);
 	desc.FrontCounterClockwise = false;
 	desc.DepthBias = 0;
 	desc.DepthBiasClamp = 0.0f;

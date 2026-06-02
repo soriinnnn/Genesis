@@ -28,10 +28,14 @@ public:
 
 	const EngineShader& fullscreenTriangle() const;
 	const EngineShader& debugLine() const;
+	const EngineShader& sphereSkybox() const;
+	const EngineShader& cubeSkybox() const;
 
 private:
 	EngineShader m_fullscreenTriangle;
 	EngineShader m_debugLine;
+	EngineShader m_sphereSkybox;
+	EngineShader m_cubeSkybox;
 };
 
 GENESIS_NAMESPACE_END

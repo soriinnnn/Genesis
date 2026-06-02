@@ -8,7 +8,11 @@ GENESIS_NAMESPACE_BEGIN
 struct DepthStencilStateDesc
 {
 	bool depthEnable = true;
+	bool depthWrite = true;
 	ComparisonFunction depthComparison = ComparisonFunction::Less;
+	bool stencilEnable = false;
+	StencilFaceBehaviour frontFace;
+	StencilFaceBehaviour backFace;
 };
 
 class DepthStencilState final: public GraphicsResource

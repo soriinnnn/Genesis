@@ -37,6 +37,7 @@ public:
     void clear(const Vec4& color = {1.0f, 1.0f, 1.0f, 1.0f});
     void render(EntityManager& entities, Entity& camera, float deltaTime);
     void render(DebugRenderer& debug, Entity& camera);
+    void render(SkyBox& skybox, Entity& camera);
     void render(UIManager& ui);
     void postProcess(PostProcess& effect);
     void present(Display& display);
@@ -82,6 +83,7 @@ private:
     UniquePtr<FrameBuffer> m_msaaBuffer;
     UniquePtr<EngineShaders> m_shaders;
     UniquePtr<EngineStates> m_states;
+    UniquePtr<EngineMeshes> m_meshes;
 
 private:
     SharedPtr<DeviceContext> m_deviceContext;
@@ -97,6 +99,7 @@ private:
     FrameBuffer* m_sceneTarget;
     AntiAliasing m_antiAliasing;
     TextureFiltering m_textureFiltering;
+    bool m_msaaDirty;
 };
 
 GENESIS_NAMESPACE_END

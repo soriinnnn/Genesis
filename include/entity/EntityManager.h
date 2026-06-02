@@ -57,6 +57,9 @@ private:
 	void registerComponent(TypeId id, Component* component);
 	void unregisterComponent(TypeId id, Component* component);
 
+	void onCreate(EntityEvent event);
+	void onDestroy(EntityEvent event);
+
 private:
 	EntityId m_nextId;
 	Vector<EntityId> m_idPool;

@@ -35,6 +35,7 @@ protected:
 	virtual void onFixedUpdate(float deltaTime);
 
 protected:
+	ScriptManager& m_manager;
 	ScriptContext m_context;
 
 private:
@@ -42,7 +43,6 @@ private:
 	void unassignEntity();
 
 private:
-	ScriptManager& m_manager;
 	Entity* m_entity;
 	bool m_started;
 

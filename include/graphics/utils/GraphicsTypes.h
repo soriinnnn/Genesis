@@ -79,6 +79,33 @@ enum class ComparisonFunction
 	Always
 };
 
+enum class StencilOperation
+{
+	Keep,
+	Zero,
+	Replace,
+	IncrementAndClamp,
+	DecrementAndClamp,
+	Invert,
+	IncrementAndWrap,	
+	DecrementAndWrap
+};
+
+struct StencilFaceBehaviour
+{
+	StencilOperation stencilFail = StencilOperation::Keep;
+	StencilOperation stencilDepthFail = StencilOperation::Keep;
+	StencilOperation stencilPass = StencilOperation::Keep;
+	ComparisonFunction stencilComparison = ComparisonFunction::Always;
+};
+
+enum class CullMode
+{
+	None,
+	Front,
+	Back
+};
+
 enum class SamplerFilter
 {
 	Point,

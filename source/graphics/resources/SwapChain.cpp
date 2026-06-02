@@ -21,7 +21,7 @@ SwapChain::SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gde
 		"CreateSwapChain failed."
 	);
 	updateBuffers();
-
+	
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_factory.MakeWindowAssociation(
 			static_cast<HWND>(sdesc.wndHandle), 
@@ -57,8 +57,10 @@ bool SwapChain::setFullscreen(bool enable)
 {
 	HRESULT result = m_swapChain->SetFullscreenState(static_cast<BOOL>(enable), nullptr);
 	switch (result) {
-		case S_OK:
+		case S_OK: {
+			updateState();
 			return true;
+		}
 		case DXGI_ERROR_NOT_CURRENTLY_AVAILABLE:
 			GENESIS_LOG_WARNING("Cannot change fullscreen state. The operation is not currently available.");
 			return false;
@@ -88,6 +90,22 @@ void SwapChain::setSize(const Rect& size)
 			static_cast<uint32>(size.width()),
 			static_cast<uint32>(size.height()),
 			DXGI_FORMAT_UNKNOWN, 
+			DEFAULT_FLAGS
+		),
+		"ResizeBuffers failed."
+	);
+	updateBuffers();
+}
+
+void SwapChain::updateState()
+{
+	m_targetView.Reset();
+	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
+		m_swapChain->ResizeBuffers(
+			0,
+			static_cast<uint32>(m_size.width()),
+			static_cast<uint32>(m_size.height()),
+			DXGI_FORMAT_UNKNOWN,
 			DEFAULT_FLAGS
 		),
 		"ResizeBuffers failed."

@@ -30,8 +30,8 @@ ImageTexture::ImageTexture(const ImageTextureFileDesc& tdesc, const GraphicsReso
 		DirectX::LoadFromWICFile(path.c_str(), DirectX::WIC_FLAGS_NONE, nullptr, image),
 		"LoadFromWICFile failed."
 	);
+	THROW_ON_INVALID_TEXTURE_SIZE(image.GetMetadata().width, image.GetMetadata().height);
 	m_size = Rect{static_cast<int32>(image.GetMetadata().width), static_cast<int32>(image.GetMetadata().height)};
-	THROW_ON_INVALID_TEXTURE_SIZE(m_size.width(), m_size.height());
 
 	Microsoft::WRL::ComPtr<ID3D11Resource> texture;
 	DirectX::ScratchImage* targetImage = &image;

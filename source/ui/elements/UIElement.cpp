@@ -52,7 +52,7 @@ Point UIElement::getGlobalPosition() const noexcept
 {
 	if (m_parent) {
 		Point parentPos = m_parent->getGlobalPosition();
-		return Point{parentPos.x + m_position.x, parentPos.y + m_position.y};
+		return Point{parentPos.x + m_position.x + m_margin.x, parentPos.y + m_position.y + m_margin.y};
 	}
 	return m_position;
 }
@@ -88,8 +88,8 @@ Rect UIElement::getBounds() const noexcept
 	return Rect{
 		globalPos.x,
 		globalPos.y,
-		globalPos.x + static_cast<int32>(m_size.width() * m_scale.x),
-		globalPos.y + static_cast<int32>(m_size.height() * m_scale.y)
+		globalPos.x + m_size.width(),
+		globalPos.y + m_size.height()
 	};
 }
 
@@ -230,7 +230,7 @@ void UIElement::updateRelativeLayout()
 		}
 		case Anchor::TopRight: {
 			m_position = Point{
-				parentSize.width() - m_size.width() - m_margin.x,
+				parentSize.width() - m_size.width() + m_margin.x,
 				m_margin.y
 			};
 			break;
@@ -254,7 +254,7 @@ void UIElement::updateRelativeLayout()
 		case Anchor::CenterRight: {
 			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
 			m_position = Point{
-				parentSize.width() - m_size.width() - m_margin.x,
+				parentSize.width() - m_size.width() + m_margin.x,
 				relativeCenter.y + m_margin.y
 			};
 			break;
@@ -262,7 +262,7 @@ void UIElement::updateRelativeLayout()
 		case Anchor::BottomLeft: {
 			m_position = Point{
 				m_margin.x,
-				parentSize.height() - m_size.height() - m_margin.y
+				parentSize.height() - m_size.height() + m_margin.y
 			};
 			break;
 		}
@@ -270,14 +270,14 @@ void UIElement::updateRelativeLayout()
 			Point relativeCenter = calculateRelativeCenter(m_size, parentSize);
 			m_position = Point{
 				relativeCenter.x + m_margin.x,
-				parentSize.height() - m_size.height() - m_margin.y
+				parentSize.height() - m_size.height() + m_margin.y
 			};
 			break;
 		}
 		case Anchor::BottomRight: {
 			m_position = Point{
-				parentSize.width() - m_size.width() - m_margin.x,
-				parentSize.height() - m_size.height() - m_margin.y
+				parentSize.width() - m_size.width() + m_margin.x,
+				parentSize.height() - m_size.height() + m_margin.y
 			};
 			break;
 		}

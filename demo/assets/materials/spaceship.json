@@ -1,0 +1,24 @@
+{
+  "shaders": {
+    "vertex": {
+      "path": "demo/assets/shaders/default/vs.hlsl",
+      "entry": "main"
+    },
+    "pixel": {
+      "path": "demo/assets/shaders/default/ps.hlsl",
+      "entry": "main"
+    }
+  },
+  "textures": [
+    {
+      "path": "demo/assets/textures/spaceship.jpg",
+      "slot": 1
+    }
+  ],
+  "properties": {
+    "ka": 0.3,
+    "kd": 0.8,
+    "ks": 0.5,
+    "shininess": 5.0
+  }
+}

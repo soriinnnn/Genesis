@@ -19,6 +19,7 @@ public:
 	~EngineStates() override;
 
 	const GraphicsPipelineState& frameBufferPipeline() const;
+	const GraphicsPipelineState& cubeSkyboxPipeline() const;
 
 	const SamplerState& pointWrap() const;
 	const SamplerState& pointClamp() const;
@@ -31,13 +32,16 @@ public:
 
 	const DepthStencilState& depthDefault() const;
 	const DepthStencilState& depthDisabled() const;
+	const DepthStencilState& depthSkybox() const;
 
 	const RasterizerState& rasterizerSolid() const;
 	const RasterizerState& rasterizerSolidMSAA() const;
+	const RasterizerState& rasterizerSkybox() const;
 
 private:
 	GraphicsDevice& m_graphicsDevice;
 	SharedPtr<GraphicsPipelineState> m_frameBufferPipeline;
+	SharedPtr<GraphicsPipelineState> m_cubeSkyboxPipeline;
 	SharedPtr<SamplerState> m_pointWrap;
 	SharedPtr<SamplerState> m_pointClamp;
 	SharedPtr<SamplerState> m_bilinearWrap;
@@ -46,8 +50,10 @@ private:
 	SharedPtr<SamplerState> m_trilinearClamp;
 	SharedPtr<DepthStencilState> m_depthDefault;
 	SharedPtr<DepthStencilState> m_depthDisabled;
+	SharedPtr<DepthStencilState> m_depthSkybox;
 	SharedPtr<RasterizerState> m_rasterizerSolid;
 	SharedPtr<RasterizerState> m_rasterizerSolidMSAA;
+	SharedPtr<RasterizerState> m_rasterizerSkybox;
 };
 
 GENESIS_NAMESPACE_END

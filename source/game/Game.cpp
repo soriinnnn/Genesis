@@ -14,7 +14,7 @@ using namespace physicsUtils;
 Game::Game(const GameDesc& desc)
 {
     m_logger = make_unique<Logger>(desc.logLevel);
-    m_window = Window::create({getLogger(), desc.windowSize, desc.windowTitle});
+    m_window = Window::create({getLogger(), desc.windowSize, desc.windowTitle, desc.windowIcon});
     m_graphicsEngine = make_unique<GraphicsEngine>(GraphicsEngineDesc{getLogger(), desc.windowSize});
     m_physicsEngine = make_unique<PhysicsEngine>(PhysicsEngineDesc{getLogger(), m_graphicsEngine->getGraphicsContext()});
     m_resourceManager = make_unique<ResourceManager>(ResourceManagerDesc{getLogger(), m_graphicsEngine->getGraphicsContext()});
@@ -76,7 +76,10 @@ void Game::onInternalUpdate()
 
     m_graphicsEngine->clear();
     if (m_mainCamera) {
-        m_graphicsEngine->render(*m_entityManager, *m_mainCamera, deltaTime);
+        if (m_skybox) {
+            m_graphicsEngine->render(*m_skybox, *m_mainCamera);
+        }
+        m_graphicsEngine->render(*m_entityManager, *m_mainCamera, deltaTime); 
 #ifdef _DEBUG
         m_physicsEngine->drawDebug();
         m_graphicsEngine->render(m_physicsEngine->getDebugRenderer(), *m_mainCamera);
@@ -151,6 +154,11 @@ void Game::setAntiAliasing(AntiAliasing antiAliasing)
 void Game::setTextureFiltering(TextureFiltering filter)
 {
     m_graphicsEngine->setTextureFiltering(filter);
+}
+
+void Game::setSkybox(SharedPtr<SkyBox> skybox)
+{
+    m_skybox = std::move(skybox);
 }
 
 void Game::addEffect(SharedPtr<PostProcess> effect)

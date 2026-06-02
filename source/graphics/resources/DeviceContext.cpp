@@ -9,6 +9,7 @@
 #include <graphics/resources/StructuredBuffer.h>
 #include <graphics/resources/SamplerState.h>
 #include <graphics/resources/ImageTexture.h>
+#include <graphics/resources/CubeTexture.h>
 #include <graphics/resources/DepthStencilTexture.h>
 #include <graphics/resources/RenderTargetTexture.h>
 #include <graphics/utils/GraphicsLogUtils.h>
@@ -199,6 +200,13 @@ void DeviceContext::setStructuredBuffer(const StructuredBuffer& buffer, uint32 s
 }
 
 void DeviceContext::setTexture(const ImageTexture& texture, uint32 slot)
+{
+	ID3D11ShaderResourceView* resourceView = texture.m_resourceView.Get();
+	m_context->VSSetShaderResources(slot, 1, &resourceView);
+	m_context->PSSetShaderResources(slot, 1, &resourceView);
+}
+
+void DeviceContext::setTexture(const CubeTexture& texture, uint32 slot)
 {
 	ID3D11ShaderResourceView* resourceView = texture.m_resourceView.Get();
 	m_context->VSSetShaderResources(slot, 1, &resourceView);
