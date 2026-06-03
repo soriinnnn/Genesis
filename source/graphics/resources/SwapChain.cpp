@@ -21,7 +21,7 @@ SwapChain::SwapChain(const SwapChainDesc& sdesc, const GraphicsResourceDesc& gde
 		"CreateSwapChain failed."
 	);
 	updateBuffers();
-	
+
 	GENESIS_GRAPHICS_LOG_THROW_ON_FAIL(
 		m_factory.MakeWindowAssociation(
 			static_cast<HWND>(sdesc.wndHandle), 

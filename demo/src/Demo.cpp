@@ -4,6 +4,9 @@
 #include <entity/components/CameraComponent.h>
 #include <entity/components/ScriptComponent.h>
 
+#include <entity/components/TransformComponent.h>
+#include "../src/scripts/PlayerMovement.h"
+
 Demo::Demo(const GameDesc& desc): Game(desc) {}
 
 Demo::~Demo() {}
@@ -53,6 +56,7 @@ void Demo::onCreate()
 
     Entity* camera = m_entityManager->createEntity(ENTITIES_MAIN_CAMERA);
     camera->createComponent<CameraComponent>();
+    //camera->createComponent<ScriptComponent>()->addScript(m_scriptManager->createScript<PlayerMovement>());
 
     setMainCamera(m_entityManager->getEntityByName(ENTITIES_MAIN_CAMERA));
     setSkybox(m_resourceManager->getSkybox(ASSETS_SKYBOX));
@@ -62,6 +66,17 @@ void Demo::onCreate()
     Entity* scripts = m_entityManager->createEntity(ENTITIES_GLOBAL_SCRIPTS);
     ScriptComponent* scriptComponent = scripts->createComponent<ScriptComponent>();
     scriptComponent->addScript(m_scriptManager->createScript<MainMenu>());
+
 }
 
-void Demo::onUpdate(float deltaTime) {}
+void Demo::onUpdate(float deltaTime) 
+{
+    /*
+    Entity* camera = m_entityManager->getEntityByName(ENTITIES_MAIN_CAMERA);
+
+    Vec3 rotation = camera->getComponent<TransformComponent>()->getRotation();
+    Vec3 forward = camera->getComponent<TransformComponent>()->getForwardVector();
+
+    GENESIS_LOG_INFO("Camera rot: x={}, y={}, z={}", rotation.x, rotation.y, rotation.z);
+    GENESIS_LOG_INFO("Camera forward: x={}, y={}, z={}", forward.x, forward.y, forward.z);*/
+}

@@ -20,7 +20,7 @@ EngineStates::EngineStates(const EngineStatesDesc& desc): Base(desc.base), m_gra
     m_trilinearClamp = m_graphicsDevice.createSamplerState({SamplerFilter::Trilinear, SamplerAddressMode::Clamp, SamplerAddressMode::Clamp, SamplerAddressMode::Clamp});
 
     m_depthDefault = m_graphicsDevice.createDepthStencilState({});
-    m_depthDefault = m_graphicsDevice.createDepthStencilState({false});
+    m_depthDisabled = m_graphicsDevice.createDepthStencilState({false});
     m_depthSkybox = m_graphicsDevice.createDepthStencilState({true, false, ComparisonFunction::LessEqual});
 
     m_rasterizerSolid = m_graphicsDevice.createRasterizerState({});

@@ -108,34 +108,24 @@ static void createLights(GameContext context)
 
 	LightComponent* light = sun->createComponent<LightComponent>();
 	light->setType(LightComponent::LightType::Directional);
-	light->setColor(Vec3{1.0f, 0.95f, 0.85f});
-	light->setIntensity(1.0f);
+	light->setColor(SUN_COLOR);
 
 	TransformComponent* transform = sun->getComponent<TransformComponent>();
-	transform->setPosition(Vec3{0.0f, 100.0f, 0.0f});
-	transform->setRotation(Vec3{-0.785f, 0.523f, 0.0f});
+	transform->setRotation(SUN_DIRECTION);
 }
 
-static void createCamera(GameContext context)
-{
-	Entity* camera = context.entities.createEntity(ENTITIES_MAIN_CAMERA);
-	camera->createComponent<CameraComponent>();
-}
-
-void setupScene(Game& game) 
+void setupGame(Game& game) 
 {
 	GameContext context = game.getContext();
-	//createCamera(context);
-	createMainMenu(context);
+	//createMainMenu(context);
 	createLights(context);
-	//createWorld(context);
 }
 
 int main()
 {
 	try {
 		Demo game({.windowTitle = "Demo", .windowIcon = "C:/Users/Sorin/Downloads/draven_bof.ico", .logLevel = Logger::LogLevel::Info});
-		setupScene(game);
+		setupGame(game);
 		game.run();
 	}
 	catch (const std::runtime_error&) {

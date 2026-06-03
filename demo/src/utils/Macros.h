@@ -1,9 +1,12 @@
 #ifndef MACROS_H
 #define MACROS_H
-#include <math/Rect.h>
+#include <math/Vec3.h>
 
 #define TARGET_RESOLUTION_WIDTH 1920
 #define TARGET_RESOLUTION_HEIGHT 1080
+
+#define SUN_COLOR Vec3{1.0f, 0.95f, 0.85f}
+#define SUN_DIRECTION Vec3{0.065f, 3.07f, 0.0f}
 
 #define ASSETS_FONT "demo/assets/fonts/arial_16.spritefont"
 #define ASSETS_SKYBOX "demo/assets/skybox/starfield.json"

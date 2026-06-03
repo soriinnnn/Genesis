@@ -11,7 +11,7 @@
   },
   "textures": [
     {
-      "path": "demo/assets/textures/spaceship.jpg",
+      "path": "demo/assets/textures/spaceship_color.jpg",
       "slot": 1
     }
   ],
