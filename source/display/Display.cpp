@@ -20,7 +20,7 @@ Display::Display(const DisplayDesc& desc): Base(desc.base), m_window{desc.window
 			if (m_mode == DisplayMode::Windowed) {
 				m_windowedSize = size;
 			}
-			else if (m_mode == DisplayMode::Fullscreen && m_screenSize != size) {
+			else if (m_mode == DisplayMode::Fullscreen) {
 				setMode(DisplayMode::Windowed);
 			}
 		}

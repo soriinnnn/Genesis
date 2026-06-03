@@ -25,7 +25,7 @@ const EngineMeshes::EngineMesh& EngineMeshes::skyboxCube() const
 	return m_skyboxCube;
 }
 
-/* STATIC FUNCTIONS DEFINITIONS */
+/* STATIC FUNCTION DEFINITIONS */
 
 EngineMeshes::EngineMesh createMesh(const MeshPrimitive& primitive, uint32 vertexSize, GraphicsDevice& graphicsDevice)
 {

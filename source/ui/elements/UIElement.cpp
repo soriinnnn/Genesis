@@ -52,7 +52,7 @@ Point UIElement::getGlobalPosition() const noexcept
 {
 	if (m_parent) {
 		Point parentPos = m_parent->getGlobalPosition();
-		return Point{parentPos.x + m_position.x + m_margin.x, parentPos.y + m_position.y + m_margin.y};
+		return Point{parentPos.x + m_position.x, parentPos.y + m_position.y};
 	}
 	return m_position;
 }

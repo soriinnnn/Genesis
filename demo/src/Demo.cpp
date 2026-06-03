@@ -27,14 +27,16 @@ void Demo::onKeyUp(Key key)
             break;
         }
         case Key::F11: {
-            DisplayMode mode = (m_display->getMode() != DisplayMode::Fullscreen) ? DisplayMode::Fullscreen : DisplayMode::Windowed;
+            DisplayMode mode = (m_display->getMode() != DisplayMode::Borderless) ? DisplayMode::Borderless : DisplayMode::Windowed;
             m_display->setMode(mode);
             break;
         }
         case Key::F12: {
-            DisplayMode mode = (m_display->getMode() != DisplayMode::Borderless) ? DisplayMode::Borderless : DisplayMode::Windowed;
+            /*
+            DisplayMode mode = (m_display->getMode() != DisplayMode::Fullscreen) ? DisplayMode::Fullscreen : DisplayMode::Windowed;
             m_display->setMode(mode);
             break;
+            */
         }
     }
 }

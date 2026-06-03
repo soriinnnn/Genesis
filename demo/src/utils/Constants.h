@@ -9,8 +9,13 @@ namespace constants
 
 	// USER INTERFACE
 
-	const Rect referenceSize = Rect{TARGET_RESOLUTION_WIDTH, TARGET_RESOLUTION_HEIGHT};
-	const Point earthMargin = Point{200, -100};
+	const Rect refCanvasSize = Rect{TARGET_RESOLUTION_WIDTH, TARGET_RESOLUTION_HEIGHT};
+
+	const Vec4 fontColor = Vec4{1.0f, 1.0f, 1.0f, 1.0f};
+
+	const Rect buttonSize = Rect{140, 50};
+	const Vec4 buttonIdleColor = Vec4{0.1f, 0.1f, 0.1f, 1.0f};
+	const Vec4 buttonHoverColor = Vec4{0.3f, 0.3f, 0.3f, 1.0f};
 
 }
 

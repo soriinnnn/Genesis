@@ -34,6 +34,7 @@ public:
     Logger& getLogger() noexcept;
     GameContext getContext() noexcept;
     void run();
+    void quit();
 
 protected:
     virtual void onCreate();

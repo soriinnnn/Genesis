@@ -56,6 +56,15 @@ GameContext Game::getContext() noexcept
     return {*m_entityManager, *m_inputManager, *m_resourceManager, *m_uiManager, *m_scriptManager, *m_physicsEngine, *m_display};
 }
 
+void Game::quit()
+{
+    if (!m_isRunning) {
+        GENESIS_LOG_WARNING("Game is not running.");
+        return;
+    }
+    m_isRunning = false;
+}
+
 void Game::onInternalUpdate()
 {
     float deltaTime = getDeltaTime();

@@ -18,6 +18,7 @@ protected:
 
 private:
 	void setupScene();
+	void setupMenu();
 
 private:
 	Entity* m_camera;
