@@ -110,17 +110,22 @@ Entity* EntityManager::getEntityByName(const char* name)
 		return nullptr;
 	}
 
-	auto id = m_nameToId.find(name);
-	if (id == m_nameToId.end()) {
+	auto it1 = m_nameToId.find(name);
+	if (it1 == m_nameToId.end()) {
 		return nullptr;
 	}
 
-	auto entity = m_entities.find(id->second);
-	if (entity != m_entities.end()) {
-		return entity->second.get();
+	auto it2 = m_entities.find(it1->second);
+	if (it2 != m_entities.end()) {
+		return it2->second.get();
 	}
 
-	return m_pendingEntities[id->second].get();
+	it2 = m_pendingEntities.find(it1->second);
+	if (it2 != m_pendingEntities.end()) {
+		return it2->second.get();
+	}
+
+	return nullptr;
 }
 
 EntityId EntityManager::getAvailableEntityId()

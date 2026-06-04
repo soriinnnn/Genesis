@@ -17,6 +17,7 @@
 #define NUM_BODY_MUTEXES 0
 #define MAX_BODY_PAIRS 1024
 #define MAX_CONTACT_CONSTRAINTS 1024
+#define TEMP_ALLOCATOR_SIZE (10 * 1024 * 1024)
 
 using namespace genesis;
 using namespace std;
@@ -31,14 +32,16 @@ PhysicsEngine::PhysicsEngine(const PhysicsEngineDesc& desc): Base(desc.base)
 	JPH::Trace = trace;
 	JPH::Factory::sInstance = new JPH::Factory();
 	JPH::RegisterTypes();
-	
-	m_tempAllocator = make_unique<JPH::TempAllocatorImpl>(10 * 1024 * 1024);
+
+	uint32 hardwareThreads = thread::hardware_concurrency();
+	uint32 workerThreads = (hardwareThreads > 0) ? hardwareThreads - 1 : 1;
 	m_jobSystem = make_unique<JPH::JobSystemThreadPool>(
 		JPH::cMaxPhysicsJobs,
 		JPH::cMaxPhysicsBarriers,
-		thread::hardware_concurrency() - 1
+		workerThreads
 	);
 
+	m_tempAllocator = make_unique<JPH::TempAllocatorImpl>(TEMP_ALLOCATOR_SIZE);
 	m_obpMapping = make_unique<OBPMapping>();
 	m_obpCollisionFilter = make_unique<OBPCollisionFilter>();
 	m_ooCollisionFilter = make_unique<OOCollisionFilter>();
@@ -73,12 +76,15 @@ void PhysicsEngine::update(EntityManager& entities, float deltaTime)
 {
 	entities.forEachComponent<RigidBodyComponent>([deltaTime](RigidBodyComponent& rigidBody) {
 		auto* body = rigidBody.getBody();
-		if (!body->isKinematic()) {
+		if (!body || !body->isKinematic()) {
 			return;
 		}
 
 		Entity& entity = rigidBody.getEntity();
 		auto* transform = entity.getComponent<TransformComponent>();
+		if (!transform) {
+			return;
+		}
 		body->moveKinematic(transform->getPosition(), transform->getRotation(), deltaTime);
 	});
 
@@ -87,12 +93,15 @@ void PhysicsEngine::update(EntityManager& entities, float deltaTime)
 
 	entities.forEachComponent<RigidBodyComponent>([](RigidBodyComponent& rigidBody) {
 		auto* body = rigidBody.getBody();
-		if (!body->isDynamic()) {
+		if (!body || !body->isDynamic()) {
 			return;
 		}
 
 		Entity& entity = rigidBody.getEntity();
 		auto* transform = entity.getComponent<TransformComponent>();
+		if (!transform) {
+			return;
+		}
 		transform->setPosition(body->getPosition());
 		transform->setRotation(body->getRotation());
 	});

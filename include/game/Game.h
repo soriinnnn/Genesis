@@ -33,6 +33,12 @@ public:
 
     Logger& getLogger() noexcept;
     GameContext getContext() noexcept;
+    AntiAliasing getAntiAliasing() const noexcept;
+    TextureFiltering getTextureFiltering() const noexcept;
+
+    void setAntiAliasing(AntiAliasing antiAliasing);
+    void setTextureFiltering(TextureFiltering filter);
+
     void run();
     void quit();
 
@@ -42,13 +48,9 @@ protected:
 
     Entity* getMainCamera() const noexcept;
     Rect getRenderResolution() const noexcept;
-    AntiAliasing getAntiAliasing() const noexcept;
-    TextureFiltering getTextureFiltering() const noexcept;
 
     void setMainCamera(Entity* camera);
     void setRenderResolution(const Rect& resolution);
-    void setAntiAliasing(AntiAliasing antiAliasing);
-    void setTextureFiltering(TextureFiltering filter);
     void setSkybox(SharedPtr<SkyBox> skybox);
     void addEffect(SharedPtr<PostProcess> effect);
     void clearEffects();
@@ -75,8 +77,9 @@ private:
     Vector<SharedPtr<PostProcess>> m_effects;
     SharedPtr<SkyBox> m_skybox;
     TimePoint m_previousTime;
-    Entity* m_mainCamera;
+    EntityId m_mainCameraId;
     float m_accumulator;
+    bool m_hasMainCamera;
     bool m_isRunning;
 };
 

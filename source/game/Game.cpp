@@ -25,7 +25,8 @@ Game::Game(const GameDesc& desc)
     m_scriptManager = make_unique<ScriptManager>(ScriptManagerDesc{getLogger(), ScriptContext{*m_inputManager, *m_entityManager, *m_resourceManager, *m_uiManager, *m_physicsEngine}});
     m_accumulator = 0.0f;
     m_isRunning = false;
-    m_mainCamera = nullptr;
+    m_mainCameraId = 0;
+    m_hasMainCamera = false;
 
     m_inputManager->addListener(m_uiManager.get());
     GENESIS_LOG_INFO("Game initialized.");
@@ -84,19 +85,22 @@ void Game::onInternalUpdate()
     onUpdate(deltaTime);
 
     m_graphicsEngine->clear();
-    if (m_mainCamera) {
+
+    Entity* mainCamera = getMainCamera();
+    if (mainCamera) {
         if (m_skybox) {
-            m_graphicsEngine->render(*m_skybox, *m_mainCamera);
+            m_graphicsEngine->render(*m_skybox, *mainCamera);
         }
-        m_graphicsEngine->render(*m_entityManager, *m_mainCamera, deltaTime); 
+        m_graphicsEngine->render(*m_entityManager, *mainCamera, deltaTime); 
 #ifdef _DEBUG
         m_physicsEngine->drawDebug();
-        m_graphicsEngine->render(m_physicsEngine->getDebugRenderer(), *m_mainCamera);
+        m_graphicsEngine->render(m_physicsEngine->getDebugRenderer(), *mainCamera);
 #endif
         for (auto& effect : m_effects) {
             m_graphicsEngine->postProcess(*effect);
         }
     }
+
     m_graphicsEngine->render(*m_uiManager);
     m_graphicsEngine->present(*m_display);
 }
@@ -115,7 +119,10 @@ void Game::onUpdate(float deltaTime) {}
 
 Entity* Game::getMainCamera() const noexcept
 {
-    return m_mainCamera;
+    if (!m_hasMainCamera) {
+        return nullptr;
+    }
+    return m_entityManager->getEntity(m_mainCameraId);
 }
 
 Rect Game::getRenderResolution() const noexcept
@@ -147,7 +154,8 @@ void Game::setMainCamera(Entity* camera)
         GENESIS_LOG_WARNING("Failed to set main camera: Entity is missing a CameraComponent.");
         return;
     }
-    m_mainCamera = camera;
+    m_mainCameraId = camera->getId();
+    m_hasMainCamera = true;
 }
 
 void Game::setRenderResolution(const Rect& resolution)

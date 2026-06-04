@@ -1,5 +1,6 @@
 #include "MainMenu.h"
 #include "../utils/Macros.h"
+#include "../utils/Constants.h"
 #include <entity/components/TransformComponent.h>
 #include <entity/components/MeshRendererComponent.h>
 #include <resources/ResourceManager.h>
@@ -13,13 +14,27 @@
 #define MAIN_MENU_SPACESHIP_POSITION Vec3{-20.0f, -3.0f, 15.0f}
 #define MAIN_MENU_SPACESHIP_ROTATION Vec3{0.0f, 0.0f, -0.27f}
 
+using namespace constants;
+
 MainMenu::MainMenu(const ScriptDesc& desc): Script(desc) 
 {
 	m_camera = nullptr;
 	m_spaceship = nullptr;
 }
 
-MainMenu::~MainMenu() {}
+MainMenu::~MainMenu() 
+{
+	m_context.entities.destroyEntity(m_spaceship->getId());
+
+	for (const String& element : mainMenuElements) {
+		UIElement* elem = m_context.ui.getElement<UIElement>(element.c_str());
+		elem->setVisible(false);
+	}
+	for (const String& hint : mainMenuHints) {
+		UIElement* elem = m_context.ui.getElement<UIElement>(hint.c_str());
+		elem->setVisible(false);
+	}
+}
 
 void MainMenu::onAwake() {}
 
@@ -57,33 +72,12 @@ void MainMenu::setupScene()
 
 void MainMenu::setupMenu()
 {
-	UIImage* menuPanel = m_context.ui.getElement<UIImage>(UI_MAIN_MENU_PANEL);
-	if (!menuPanel) {
-		GENESIS_LOG_THROW_ERROR("Failed to find UI element: {}", UI_MAIN_MENU_PANEL);
+	for (const String& element : mainMenuElements) {
+		UIElement* elem = m_context.ui.getElement<UIElement>(element.c_str());
+		elem->setVisible(true);
 	}
-	menuPanel->setVisible(true);
-	
-	UILabel* menuTitle = m_context.ui.getElement<UILabel>(UI_MAIN_MENU_TITLE);
-	if (!menuTitle) {
-		GENESIS_LOG_THROW_ERROR("Failed to find UI element: {}", UI_MAIN_MENU_TITLE);
+	for (const String& hint : mainMenuHints) {
+		UIElement* elem = m_context.ui.getElement<UIElement>(hint.c_str());
+		elem->setVisible(true);
 	}
-	menuTitle->setVisible(true);
-
-	UIButton* menuStart = m_context.ui.getElement<UIButton>(UI_MAIN_MENU_START_BUTTON);
-	if (!menuStart) {
-		GENESIS_LOG_THROW_ERROR("Failed to find UI element: {}", UI_MAIN_MENU_START_BUTTON);
-	}
-	menuStart->setVisible(true);
-
-	UIButton* menuSettings = m_context.ui.getElement<UIButton>(UI_MAIN_MENU_SETTINGS_BUTTON);
-	if (!menuSettings) {
-		GENESIS_LOG_THROW_ERROR("Failed to find UI element: {}", UI_MAIN_MENU_SETTINGS_BUTTON);
-	}
-	menuSettings->setVisible(true);
-
-	UIButton* menuQuit = m_context.ui.getElement<UIButton>(UI_MAIN_MENU_QUIT_BUTTON);
-	if (!menuQuit) {
-		GENESIS_LOG_THROW_ERROR("Failed to find UI element: {}", UI_MAIN_MENU_QUIT_BUTTON);
-	}
-	menuQuit->setVisible(true);
 }

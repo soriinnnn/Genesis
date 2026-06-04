@@ -23,14 +23,6 @@ UIElement::UIElement(const UIElementDesc& desc): Base(desc.base), m_parent{desc.
 
 UIElement::~UIElement() {}
 
-void UIElement::update(float deltaTime) 
-{
-	if (!isEnabled()) {
-		return;
-	}
-	onUpdate(deltaTime);
-}
-
 void UIElement::render(SpriteBatch& batch)
 {
 	if (!isVisible()) {
@@ -333,7 +325,7 @@ void UIElement::onMouseEnter()
 
 void UIElement::onMouseOut()
 {
-	if (!isEnabled() || !isVisible()) {
+	if (!isEnabled()) {
 		return;
 	}
 	m_hovered = false;

@@ -39,7 +39,7 @@ inline void UIManager::forEach(F&& callback) const
 {
 	for (const auto* root : m_zOrdered) {
 		callback(*root->element);
-	}
+	}	
 }
 
 template<typename F>

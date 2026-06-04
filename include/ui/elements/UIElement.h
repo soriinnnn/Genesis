@@ -33,9 +33,7 @@ class UIElement: public Base
 public:
 	virtual ~UIElement() override;
 
-	void update(float deltaTime);
 	void render(SpriteBatch& batch);
-
 	bool contains(const Point& position) const noexcept;
 
 	Point getGlobalPosition() const noexcept;

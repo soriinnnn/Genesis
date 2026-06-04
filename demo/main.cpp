@@ -1,8 +1,10 @@
 #include "src/Demo.h"
-#include "src/utils/Macros.h"
 #include "src/utils/Constants.h"
+#include "src/utils/Macros.h"
+#include "src/utils/Types.h"
 #include "src/utils/Utils.h"
 
+#include "src/scripts/MainMenu.h"
 #include "src/scripts/PlayerMovement.h"
 
 #include <entity/components/TransformComponent.h>
@@ -21,8 +23,9 @@
 #include <resources/Font.h>
 
 using namespace genesis;
-using namespace utils;
 using namespace constants;
+using namespace types;
+using namespace utils;
 
 void createWorld(GameContext context)
 {
@@ -62,116 +65,95 @@ void createWorld(GameContext context)
 	});
 }
 
-
-	/*
-	Rect ref = {TARGET_RESOLUTION_WIDTH, TARGET_RESOLUTION_HEIGHT};
-
-	UIPanel* background = context.ui.createElement<UIPanel>(MAIN_MENU_BACKGROUND);
-	background->setSize(context.display.getSize());
-	background->setPosition({0, 0});
-	background->setColor({0.0f, 0.0f, 0.0f, 1.0f});
-
-	UIImage* earth = context.ui.createElement<UIImage>(MAIN_MENU_EARTH);
-	earth->setTexture(context.resources.getTexture(TEXTURE_PATH_EARTH));
-	earth->setAnchor(Anchor::Center);
-	earth->setMargin(applyMarginScale(earthMargin, getSizeScaleRatio(context.display.getSize(), referenceSize)));
-	earth->setScale(getSizeScaleRatio(context.display.getSize(), referenceSize));
-
-	UIImage* moon = context.ui.createElement<UIImage>(MAIN_MENU_MOON);
-	*/
-
 static void createMainMenu(Game& game)
 {
 	GameContext context = game.getContext();
 
-	UIImage* menuPanel = context.ui.createElement<UIImage>(UI_MAIN_MENU_PANEL);
-	menuPanel->setTexture(context.resources.getTexture(ASSETS_MAIN_MENU_PANEL));
-	menuPanel->setColor({1.0f, 1.0f, 1.0f, 0.5f});
-	menuPanel->setAnchor(Anchor::Center);
-	menuPanel->setVisible(false);
+	UIImageCreateInfo menuPanelInfo = {
+		UI_MAIN_MENU_PANEL,
+		ASSETS_MAIN_MENU_PANEL,
+		{1.0f, 1.0f, 1.0f, 0.5f},
+		Anchor::Center,
+		{0, 0}
+	};
+	createUIImage(game, menuPanelInfo);
 
-	UILabel* menuTitle = context.ui.createElement<UILabel>(UI_MAIN_MENU_TITLE);
-	menuTitle->setFont(context.resources.getFont(ASSETS_FONT_PRIMARY_24_PX));
-	menuTitle->setContent("STARFIELD");
-	menuTitle->setColor(fontColor);
-	menuTitle->setSize({180, 30});
-	menuTitle->setAnchor(Anchor::Center);
-	menuTitle->setMargin({0, -150});
-	menuTitle->setVisible(false);
+	UILabelCreateInfo menuTitleInfo = {
+		UI_MAIN_MENU_TITLE,
+		ASSETS_FONT_PRIMARY_24_PX,
+		"STARFIELD",
+		{180, 30},
+		Anchor::Center,
+		{0, -150}
+	};
+	createUILabel(game, menuTitleInfo);
 
 	/* START BUTTON */
 
-	UIButton* menuStart = context.ui.createElement<UIButton>(UI_MAIN_MENU_START_BUTTON);
-	menuStart->setColor(buttonIdleColor);
-	menuStart->setSize(buttonSize);
-	menuStart->setAnchor(Anchor::Center);
-	menuStart->setMargin({0, -38});
-	menuStart->setVisible(false);
+	UIButtonCreateInfo menuStartInfo = {
+		UI_MAIN_MENU_START_BUTTON,
+		Anchor::Center,
+		{0, -38},
+		ASSETS_FONT_PRIMARY_16_PX,
+		"START",
+		{72, 22}
+	};
+	UIButton* menuStart = createUIButton(game, menuStartInfo);
 
 	menuStart->setOnMouseEnterCallback([context]() {
-		context.ui.getElement<UIButton>(UI_MAIN_MENU_START_BUTTON)->setColor(buttonHoverColor);
+		context.ui.getElement<UIElement>(UI_MAIN_MENU_START_BUTTON)->setColor(buttonHoverColor);
 	});
 	menuStart->setOnMouseOutCallback([context]() {
-		context.ui.getElement<UIButton>(UI_MAIN_MENU_START_BUTTON)->setColor(buttonIdleColor);
+		context.ui.getElement<UIElement>(UI_MAIN_MENU_START_BUTTON)->setColor(buttonIdleColor);
 	});
-
-	UILabel* menuStartLabel = menuStart->getLabel();
-	menuStartLabel->setFont(context.resources.getFont(ASSETS_FONT_PRIMARY_16_PX));
-	menuStartLabel->setContent("START");
-	menuStartLabel->setColor(fontColor);
-	menuStartLabel->setSize({72, 22});
-	menuStartLabel->setAnchor(Anchor::Center);
 
 	/* SETTINGS BUTTON */
 
-	UIButton* menuSettings = context.ui.createElement<UIButton>(UI_MAIN_MENU_SETTINGS_BUTTON);
-	menuSettings->setColor(buttonIdleColor);
-	menuSettings->setSize(buttonSize);
-	menuSettings->setAnchor(Anchor::Center);
-	menuSettings->setMargin({0, 50});
-	menuSettings->setVisible(false);
+	UIButtonCreateInfo menuSettingsInfo = {
+		UI_MAIN_MENU_SETTINGS_BUTTON,
+		Anchor::Center,
+		{0, 50},
+		ASSETS_FONT_PRIMARY_16_PX,
+		"SETTINGS",
+		{110, 22}
+	};
+	UIButton* menuSettings = createUIButton(game, menuSettingsInfo);
 
 	menuSettings->setOnMouseEnterCallback([context]() {
-		context.ui.getElement<UIButton>(UI_MAIN_MENU_SETTINGS_BUTTON)->setColor(buttonHoverColor);
+		context.ui.getElement<UIElement>(UI_MAIN_MENU_SETTINGS_BUTTON)->setColor(buttonHoverColor);
 	});
 	menuSettings->setOnMouseOutCallback([context]() {
-		context.ui.getElement<UIButton>(UI_MAIN_MENU_SETTINGS_BUTTON)->setColor(buttonIdleColor);
+		context.ui.getElement<UIElement>(UI_MAIN_MENU_SETTINGS_BUTTON)->setColor(buttonIdleColor);
 	});
 	menuSettings->setOnMouseDownCallback([context](MouseButton button) {
 		if (button != MouseButton::Left) {
 			return;
 		}
-		context.ui.getElement<UIImage>(UI_MAIN_MENU_PANEL)->setVisible(false);
-		context.ui.getElement<UILabel>(UI_MAIN_MENU_TITLE)->setVisible(false);
-		context.ui.getElement<UIButton>(UI_MAIN_MENU_START_BUTTON)->setVisible(false);
-		context.ui.getElement<UIButton>(UI_MAIN_MENU_SETTINGS_BUTTON)->setVisible(false);
-		context.ui.getElement<UIButton>(UI_MAIN_MENU_QUIT_BUTTON)->setVisible(false);
-		context.ui.getElement<UIImage>(UI_SETTINGS_MENU_PANEL)->setVisible(true);
-		context.ui.getElement<UILabel>(UI_SETTINGS_MENU_TITLE)->setVisible(true);
-		context.ui.getElement<UIButton>(UI_SETTINGS_MENU_BACK_BUTTON)->setVisible(true);
+		for (const String& element : mainMenuElements) {
+			context.ui.getElement<UIElement>(element.c_str())->setVisible(false);
+		}
+		for (const String& element : settingsMenuElements) {
+			context.ui.getElement<UIElement>(element.c_str())->setVisible(true);
+		}
 	});
-
-	UILabel* menuSettingsLabel = menuSettings->getLabel();
-	menuSettingsLabel->setFont(context.resources.getFont(ASSETS_FONT_PRIMARY_16_PX));
-	menuSettingsLabel->setContent("SETTINGS");
-	menuSettingsLabel->setColor(fontColor);
-	menuSettingsLabel->setSize({110, 22});
-	menuSettingsLabel->setAnchor(Anchor::Center);
 
 	/* QUIT BUTTON */
 
-	UIButton* menuQuit = context.ui.createElement<UIButton>(UI_MAIN_MENU_QUIT_BUTTON);
-	menuQuit->setColor(buttonIdleColor);
-	menuQuit->setSize(buttonSize);
-	menuQuit->setAnchor(Anchor::Center);
-	menuQuit->setMargin({0, 137});
-	menuQuit->setVisible(false);
+	UIButtonCreateInfo menuQuitInfo = {
+		UI_MAIN_MENU_QUIT_BUTTON,
+		Anchor::Center,
+		{0, 137},
+		ASSETS_FONT_PRIMARY_16_PX,
+		"QUIT",
+		{54, 22}
+	};
+	UIButton* menuQuit = createUIButton(game, menuQuitInfo);
 
 	menuQuit->setOnMouseEnterCallback([context]() {
-		context.ui.getElement<UIButton>(UI_MAIN_MENU_QUIT_BUTTON)->setColor(buttonHoverColor);
+		context.ui.getElement<UIElement>(UI_MAIN_MENU_QUIT_BUTTON)->setColor(buttonHoverColor);
 	});
 	menuQuit->setOnMouseOutCallback([context]() {
-		context.ui.getElement<UIButton>(UI_MAIN_MENU_QUIT_BUTTON)->setColor(buttonIdleColor);
+		context.ui.getElement<UIElement>(UI_MAIN_MENU_QUIT_BUTTON)->setColor(buttonIdleColor);
 	});
 	menuQuit->setOnMouseDownCallback([&](MouseButton button) {
 		if (button != MouseButton::Left) {
@@ -179,73 +161,274 @@ static void createMainMenu(Game& game)
 		}
 		game.quit();
 	});
+}
 
-	UILabel* menuQuitLabel = menuQuit->getLabel();
-	menuQuitLabel->setFont(context.resources.getFont(ASSETS_FONT_PRIMARY_16_PX));
-	menuQuitLabel->setContent("QUIT");
-	menuQuitLabel->setColor(fontColor);
-	menuQuitLabel->setSize({54, 22});
-	menuQuitLabel->setAnchor(Anchor::Center);
+static void updateTextureFilteringOptions(Game& game)
+{
+	GameContext context = game.getContext();
+	TextureFiltering currentFilter = game.getTextureFiltering();
+
+	for (const auto& option : textureFilterOptions) {
+		UIElement* element = context.ui.getElement<UIElement>(option.id);
+
+		bool isSelected = (currentFilter == option.filter);
+		bool isHovered = element->isHovered();
+
+		if (isSelected) {
+			element->setColor(isHovered ? buttonSelectedHoverColor : buttonSelectedIdleColor);
+		}
+		else {
+			element->setColor(isHovered ? buttonHoverColor : buttonIdleColor);
+		}
+	}
+}
+
+static void createSettingsTextureFilteringOptions(Game& game)
+{
+	GameContext context = game.getContext();
+
+	UILabelCreateInfo labelInfo = {
+		UI_SETTINGS_MENU_TEX_FILTERING_LABEL,
+		ASSETS_FONT_PRIMARY_16_PX,
+		"Texture filtering:",
+		{154, 22},
+		Anchor::Center,
+		{-186, -152}
+	};
+	createUILabel(game, labelInfo);
+
+	for (const auto& option : textureFilterOptions) {
+		UIButtonCreateInfo buttonInfo = {
+			option.id,
+			Anchor::Center,
+			option.margin,
+			ASSETS_FONT_PRIMARY_16_PX,
+			option.labelContent,
+			option.labelSize
+		};
+		UIButton* button = createUIButton(game, buttonInfo);
+
+		button->setOnMouseEnterCallback([&]() {
+			GameContext context = game.getContext();
+			if (game.getTextureFiltering() != option.filter) {
+				context.ui.getElement<UIElement>(option.id)->setColor(buttonHoverColor);
+				return;
+			}
+			context.ui.getElement<UIElement>(option.id)->setColor(buttonSelectedHoverColor);
+		});
+		button->setOnMouseOutCallback([&]() {
+			GameContext context = game.getContext();
+			if (game.getTextureFiltering() != option.filter) {
+				context.ui.getElement<UIElement>(option.id)->setColor(buttonIdleColor);
+				return;
+			}
+			context.ui.getElement<UIElement>(option.id)->setColor(buttonSelectedIdleColor);
+		});
+		button->setOnMouseDownCallback([&](MouseButton mouseButton) {
+			if (mouseButton != MouseButton::Left) {
+				return;
+			}
+			game.setTextureFiltering(option.filter);
+			updateTextureFilteringOptions(game);
+		});
+	}
+
+	updateTextureFilteringOptions(game);
+}
+
+static void updateAntiAliasingOptions(Game& game)
+{
+	GameContext context = game.getContext();
+	AntiAliasing currentAntialiasing = game.getAntiAliasing();
+
+	for (const auto& option : antiAliasingOptions) {
+		UIElement* element = context.ui.getElement<UIElement>(option.id);
+
+		bool isSelected = (currentAntialiasing == option.antialiasing);
+		bool isHovered = element->isHovered();
+
+		if (isSelected) {
+			element->setColor(isHovered ? buttonSelectedHoverColor : buttonSelectedIdleColor);
+		}
+		else {
+			element->setColor(isHovered ? buttonHoverColor : buttonIdleColor);
+		}
+	}
+}
+
+static void createSettingsAntiAliasingOptions(Game& game)
+{
+	GameContext context = game.getContext();
+
+	UILabelCreateInfo labelInfo = {
+		UI_SETTINGS_MENU_ANTIALIASING_LABEL,
+		ASSETS_FONT_PRIMARY_16_PX,
+		"Anti-aliasing:",
+		{124, 22},
+		Anchor::Center,
+		{-201, 50}
+	};
+	createUILabel(game, labelInfo);
+
+	for (const auto& option : antiAliasingOptions) {
+		UIButtonCreateInfo buttonInfo = {
+			option.id,
+			Anchor::Center,
+			option.margin,
+			ASSETS_FONT_PRIMARY_16_PX,
+			option.labelContent,
+			option.labelSize
+		};
+		UIButton* button = createUIButton(game, buttonInfo);
+
+		button->setOnMouseEnterCallback([&]() {
+			GameContext context = game.getContext();
+			if (game.getAntiAliasing() != option.antialiasing) {
+				context.ui.getElement<UIElement>(option.id)->setColor(buttonHoverColor);
+				return;
+			}
+			context.ui.getElement<UIElement>(option.id)->setColor(buttonSelectedHoverColor);
+		});
+		button->setOnMouseOutCallback([&]() {
+			GameContext context = game.getContext();
+			if (game.getAntiAliasing() != option.antialiasing) {
+				context.ui.getElement<UIElement>(option.id)->setColor(buttonIdleColor);
+				return;
+			}
+			context.ui.getElement<UIElement>(option.id)->setColor(buttonSelectedIdleColor);
+		});
+		button->setOnMouseDownCallback([&](MouseButton mouseButton) {
+			if (mouseButton != MouseButton::Left) {
+				return;
+			}
+			game.setAntiAliasing(option.antialiasing);
+			updateAntiAliasingOptions(game);
+		});
+	}
+
+	updateAntiAliasingOptions(game);
 }
 
 static void createSettingsMenu(Game& game)
 {
 	GameContext context = game.getContext();
 
-	UIImage* menuPanel = context.ui.createElement<UIImage>(UI_SETTINGS_MENU_PANEL);
-	menuPanel->setTexture(context.resources.getTexture(ASSETS_SETTINGS_MENU_PANEL));
-	menuPanel->setColor({1.0f, 1.0f, 1.0f, 0.5f});
-	menuPanel->setAnchor(Anchor::Center);
-	menuPanel->setVisible(false);
+	UIImageCreateInfo menuPanelInfo = {
+		UI_SETTINGS_MENU_PANEL,
+		ASSETS_SETTINGS_MENU_PANEL,
+		{1.0f, 1.0f, 1.0f, 0.5f},
+		Anchor::Center,
+		{0, 0}
+	};
+	createUIImage(game, menuPanelInfo);
 
-	UILabel* menuTitle = context.ui.createElement<UILabel>(UI_SETTINGS_MENU_TITLE);
-	menuTitle->setFont(context.resources.getFont(ASSETS_FONT_PRIMARY_24_PX));
-	menuTitle->setContent("SETTINGS");
-	menuTitle->setColor(fontColor);
-	menuTitle->setSize({164, 30});
-	menuTitle->setAnchor(Anchor::Center);
-	menuTitle->setMargin({0, -250});
-	menuTitle->setVisible(false);
+	UILabelCreateInfo menuTitleInfo = {
+		UI_SETTINGS_MENU_TITLE,
+		ASSETS_FONT_PRIMARY_24_PX,
+		"SETTINGS",
+		{164, 30},
+		Anchor::Center,
+		{0, -250}
+	};
+	createUILabel(game, menuTitleInfo);
 
-	/* BACK BUTTON */
+	UIButtonCreateInfo menuQuitBack = {
+		UI_SETTINGS_MENU_BACK_BUTTON,
+		Anchor::Center,
+		{188, 238},
+		ASSETS_FONT_PRIMARY_16_PX,
+		"BACK",
+		{60, 22}
+	};
+	UIButton* menuBack = createUIButton(game, menuQuitBack);
 
-	UIButton* menuBack = context.ui.createElement<UIButton>(UI_SETTINGS_MENU_BACK_BUTTON);
-	menuBack->setColor(buttonIdleColor);
-	menuBack->setSize(buttonSize);
-	menuBack->setAnchor(Anchor::Center);
-	menuBack->setMargin({0, 0});
-	menuBack->setVisible(false);
-
+	menuBack->setOnMouseEnterCallback([context]() {
+		context.ui.getElement<UIElement>(UI_SETTINGS_MENU_BACK_BUTTON)->setColor(buttonHoverColor);
+	});
+	menuBack->setOnMouseOutCallback([context]() {
+		context.ui.getElement<UIElement>(UI_SETTINGS_MENU_BACK_BUTTON)->setColor(buttonIdleColor);
+	});
 	menuBack->setOnMouseDownCallback([context](MouseButton button) {
 		if (button != MouseButton::Left) {
 			return;
 		}
-		context.ui.getElement<UIImage>(UI_MAIN_MENU_PANEL)->setVisible(true);
-		context.ui.getElement<UILabel>(UI_MAIN_MENU_TITLE)->setVisible(true);
-		context.ui.getElement<UIButton>(UI_MAIN_MENU_START_BUTTON)->setVisible(true);
-		context.ui.getElement<UIButton>(UI_MAIN_MENU_SETTINGS_BUTTON)->setVisible(true);
-		context.ui.getElement<UIButton>(UI_MAIN_MENU_QUIT_BUTTON)->setVisible(true);
-		context.ui.getElement<UIImage>(UI_SETTINGS_MENU_PANEL)->setVisible(false);
-		context.ui.getElement<UILabel>(UI_SETTINGS_MENU_TITLE)->setVisible(false);
-		context.ui.getElement<UIButton>(UI_SETTINGS_MENU_BACK_BUTTON)->setVisible(false);
-	});
-	menuBack->setOnMouseEnterCallback([context]() {
-		context.ui.getElement<UIButton>(UI_SETTINGS_MENU_BACK_BUTTON)->setColor(buttonHoverColor);
-	});
-	menuBack->setOnMouseOutCallback([context]() {
-		context.ui.getElement<UIButton>(UI_SETTINGS_MENU_BACK_BUTTON)->setColor(buttonIdleColor);
+		for (const String& element : mainMenuElements) {
+			context.ui.getElement<UIElement>(element.c_str())->setVisible(true);
+		}
+		for (const String& element : settingsMenuElements) {
+			context.ui.getElement<UIElement>(element.c_str())->setVisible(false);
+		}
 	});
 
-	UILabel* menuBackLabel = menuBack->getLabel();
-	menuBackLabel->setFont(context.resources.getFont(ASSETS_FONT_PRIMARY_16_PX));
-	menuBackLabel->setContent("BACK");
-	menuBackLabel->setColor(fontColor);
-	menuBackLabel->setSize({60, 22});
-	menuBackLabel->setAnchor(Anchor::Center);
+	createSettingsTextureFilteringOptions(game);
+	createSettingsAntiAliasingOptions(game);
+	for (const String& element : settingsMenuElements) {
+		context.ui.setZOrder(element.c_str(), 1);
+	}
+}
 
-	context.ui.setZOrder(UI_SETTINGS_MENU_PANEL, 1);
-	context.ui.setZOrder(UI_SETTINGS_MENU_TITLE, 1);
-	context.ui.setZOrder(UI_SETTINGS_MENU_BACK_BUTTON, 1);
+static void createGameInfo(Game& game)
+{
+	GameContext context = game.getContext();
+
+	UILabelCreateInfo fpsInfo = {
+		UI_INFO_FPS,
+		ASSETS_FONT_PRIMARY_16_PX,
+		"FPS: ",
+		{200, 22},
+		Anchor::TopLeft,
+		{0, 0}
+	};
+	createUILabel(game, fpsInfo);
+}
+
+static void createHints(Game& game)
+{
+	GameContext context = game.getContext();
+
+	UILabelCreateInfo hint1Info = {
+		UI_HINT1,
+		ASSETS_FONT_PRIMARY_12_PX,
+		"Press F11 to toggle fullscreen",
+		{216, 16},
+		Anchor::BottomLeft,
+		{0, -4}
+	};
+	createUILabel(game, hint1Info);
+
+	UILabelCreateInfo hint2Info = {
+		UI_HINT2,
+		ASSETS_FONT_PRIMARY_12_PX,
+		"Press F2 to toggle vsync",
+		{180, 16},
+		Anchor::BottomLeft,
+		{0, -24}
+	};
+	createUILabel(game, hint2Info);
+
+	UILabelCreateInfo hint3Info = {
+		UI_HINT3,
+		ASSETS_FONT_PRIMARY_12_PX,
+		"Press F1 to show fps",
+		{164, 16},
+		Anchor::BottomLeft,
+		{0, -44}
+	};
+	createUILabel(game, hint3Info);
+
+	UILabelCreateInfo hint4Info = {
+		UI_HINT4,
+		ASSETS_FONT_PRIMARY_12_PX,
+		"Press G to toggle mouse lock",
+		{210, 16},
+		Anchor::BottomLeft,
+		{0, -64}
+	};
+	createUILabel(game, hint4Info);
+
+	for (const String& hint : mainMenuHints) {
+		context.ui.setZOrder(hint.c_str(), 5);
+	}
 }
 
 static void createLights(Game& game)
@@ -262,11 +445,26 @@ static void createLights(Game& game)
 	sunTransform->setRotation(SUN_DIRECTION);
 }
 
-void setupGame(Game& game) 
+static void createScripts(Game& game)
 {
+	GameContext context = game.getContext();
+
+	Entity* scripts = context.entities.createEntity(ENTITIES_GLOBAL_SCRIPTS);
+
+	ScriptComponent* scriptComponent = scripts->createComponent<ScriptComponent>();
+	scriptComponent->addScript(context.scripts.createScript<MainMenu>());
+}
+
+static void setupGame(Game& game) 
+{
+	game.setTextureFiltering(TextureFiltering::Anisotropic_16X);
+	game.setAntiAliasing(AntiAliasing::MSAA_8X);
 	createMainMenu(game);
 	createSettingsMenu(game);
+	createGameInfo(game);
+	createHints(game);
 	createLights(game);
+	createScripts(game);
 }
 
 int main()

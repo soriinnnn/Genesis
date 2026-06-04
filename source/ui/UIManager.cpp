@@ -25,12 +25,6 @@ void UIManager::update(float deltaTime)
         );
         m_isZDirty = false;
     }
-    for (auto* root : m_zOrdered) {
-        auto* element = root->element.get();
-        if (element->isEnabled()) {
-            element->update(deltaTime);
-        }
-    }
 }
 
 void UIManager::destroyElement(const char* name)
@@ -121,7 +115,7 @@ void UIManager::onMouseUp(MouseButton button, Point pos)
         m_pressedElement->onMouseUp(button);
     }
     else {
-        m_pressedElement->m_pressed = false;;
+        m_pressedElement->m_pressed = false;
     }
     m_pressedElement = nullptr;
 }

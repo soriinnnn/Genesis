@@ -1,11 +1,9 @@
 #include "Demo.h"
 #include "utils/Macros.h"
-#include "scripts/MainMenu.h"
+#include "utils/Utils.h"
 #include <entity/components/CameraComponent.h>
-#include <entity/components/ScriptComponent.h>
 
-#include <entity/components/TransformComponent.h>
-#include "../src/scripts/PlayerMovement.h"
+using namespace utils;
 
 Demo::Demo(const GameDesc& desc): Game(desc) {}
 
@@ -22,7 +20,12 @@ void Demo::onKeyUp(Key key)
             m_inputManager->setMouseVisibility(mouseLock);
             break;
         }
-        case Key::F9: {
+        case Key::F1: {
+            UIElement* fps = m_uiManager->getElement<UIElement>(UI_INFO_FPS);
+            fps->setVisible(!fps->isVisible());
+            break;
+        }
+        case Key::F2: {
             m_display->setVSync(!m_display->getVSync());
             break;
         }
@@ -30,13 +33,6 @@ void Demo::onKeyUp(Key key)
             DisplayMode mode = (m_display->getMode() != DisplayMode::Borderless) ? DisplayMode::Borderless : DisplayMode::Windowed;
             m_display->setMode(mode);
             break;
-        }
-        case Key::F12: {
-            /*
-            DisplayMode mode = (m_display->getMode() != DisplayMode::Fullscreen) ? DisplayMode::Fullscreen : DisplayMode::Windowed;
-            m_display->setMode(mode);
-            break;
-            */
         }
     }
 }
@@ -62,17 +58,12 @@ void Demo::onCreate()
 
     setMainCamera(m_entityManager->getEntityByName(ENTITIES_MAIN_CAMERA));
     setSkybox(m_resourceManager->getSkybox(ASSETS_SKYBOX));
-    setTextureFiltering(TextureFiltering::Anisotropic_16X);
-    setAntiAliasing(AntiAliasing::MSAA_8X);
-
-    Entity* scripts = m_entityManager->createEntity(ENTITIES_GLOBAL_SCRIPTS);
-    ScriptComponent* scriptComponent = scripts->createComponent<ScriptComponent>();
-    scriptComponent->addScript(m_scriptManager->createScript<MainMenu>());
-
 }
 
 void Demo::onUpdate(float deltaTime) 
 {
+    updateFPSLabel(deltaTime, *m_uiManager->getElement<UILabel>(UI_INFO_FPS));
+
     /*
     Entity* camera = m_entityManager->getEntityByName(ENTITIES_MAIN_CAMERA);
 
@@ -80,5 +71,6 @@ void Demo::onUpdate(float deltaTime)
     Vec3 forward = camera->getComponent<TransformComponent>()->getForwardVector();
 
     GENESIS_LOG_INFO("Camera rot: x={}, y={}, z={}", rotation.x, rotation.y, rotation.z);
-    GENESIS_LOG_INFO("Camera forward: x={}, y={}, z={}", forward.x, forward.y, forward.z);*/
+    GENESIS_LOG_INFO("Camera forward: x={}, y={}, z={}", forward.x, forward.y, forward.z);
+    */
 }

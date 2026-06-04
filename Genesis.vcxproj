@@ -236,6 +236,7 @@
     <ClCompile Include="source\ui\elements\UICanvas.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="demo\src\utils\Types.h" />
     <ClInclude Include="include\graphics\resources\CubeTexture.h" />
     <ClInclude Include="demo\src\utils\Constants.h" />
     <ClInclude Include="demo\src\utils\Macros.h" />

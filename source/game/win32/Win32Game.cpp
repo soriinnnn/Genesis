@@ -12,7 +12,7 @@ void Game::run()
     m_previousTime = chrono::steady_clock::now();
     m_isRunning = true;
 
-    if (!m_mainCamera) {
+    if (!m_hasMainCamera) {
         GENESIS_LOG_WARNING("The main camera has not been set.");
     }
 

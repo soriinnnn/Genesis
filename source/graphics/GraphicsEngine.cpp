@@ -301,7 +301,7 @@ uint32 GraphicsEngine::getLights(EntityManager& entities)
         if (!lightComponent.isEnabled()) {
             return;
         }
-        if (lights.size() > DEFAULT_MAX_LIGHTS) {
+        if (lights.size() >= DEFAULT_MAX_LIGHTS) {
             return;
         }
 
@@ -332,15 +332,24 @@ void GraphicsEngine::renderEntities(EntityManager& entities)
 {
     entities.forEachComponent<MeshRendererComponent>([&](MeshRendererComponent& meshComponent) {
         Entity& entity = meshComponent.getEntity();
-        TransformComponent* transformComponent = entity.getComponent<TransformComponent>();
+
+        TransformComponent* transform = entity.getComponent<TransformComponent>();
+        if (!transform) {
+            return;
+        }
+
+        const Material* material = meshComponent.getMaterial();
+        const Mesh* mesh = meshComponent.getMesh();
+        if (!material || !mesh) {
+            return;
+        }
 
         ObjectData objectData{
-           transformComponent->getWorldMatrix()
+           transform->getWorldMatrix()
         };
         m_deviceContext->updateConstantBuffer(*m_objectBuffer, &objectData, sizeof(ObjectData));
         m_deviceContext->setConstantBuffer(*m_objectBuffer, OBJECT_CONSTANT_BUFFER_SLOT);
 
-        const Material* material = meshComponent.getMaterial();
         if (material->hasProperties()) {
             m_deviceContext->setConstantBuffer(material->getProperties(), MATERIAL_CONSTANT_BUFFER_SLOT);
         }
@@ -352,7 +361,6 @@ void GraphicsEngine::renderEntities(EntityManager& entities)
         }
         m_deviceContext->setGraphicsPipelineState(material->getGraphicsPipelineState());
 
-        const Mesh* mesh = meshComponent.getMesh();
         m_deviceContext->setVertexBuffer(mesh->getVertexBuffer());
         m_deviceContext->setIndexBuffer(mesh->getIndexBuffer());
         m_deviceContext->drawIndexed(mesh->getIndexBuffer().getIndexCount());

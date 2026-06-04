@@ -551,6 +551,9 @@
     <ClInclude Include="include\graphics\resources\CubeTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="demo\src\utils\Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
