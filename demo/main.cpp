@@ -169,9 +169,9 @@ static void updateTextureFilteringOptions(Game& game)
 	TextureFiltering currentFilter = game.getTextureFiltering();
 
 	for (const auto& option : textureFilterOptions) {
-		UIElement* element = context.ui.getElement<UIElement>(option.id);
+		UIElement* element = context.ui.getElement<UIElement>(option.buttonInfo.id);
 
-		bool isSelected = (currentFilter == option.filter);
+		bool isSelected = (currentFilter == option.textureFilter);
 		bool isHovered = element->isHovered();
 
 		if (isSelected) {
@@ -198,37 +198,29 @@ static void createSettingsTextureFilteringOptions(Game& game)
 	createUILabel(game, labelInfo);
 
 	for (const auto& option : textureFilterOptions) {
-		UIButtonCreateInfo buttonInfo = {
-			option.id,
-			Anchor::Center,
-			option.margin,
-			ASSETS_FONT_PRIMARY_16_PX,
-			option.labelContent,
-			option.labelSize
-		};
-		UIButton* button = createUIButton(game, buttonInfo);
+		UIButton* button = createUIButton(game, option.buttonInfo);
 
 		button->setOnMouseEnterCallback([&]() {
 			GameContext context = game.getContext();
-			if (game.getTextureFiltering() != option.filter) {
-				context.ui.getElement<UIElement>(option.id)->setColor(buttonHoverColor);
+			if (game.getTextureFiltering() != option.textureFilter) {
+				context.ui.getElement<UIElement>(option.buttonInfo.id)->setColor(buttonHoverColor);
 				return;
 			}
-			context.ui.getElement<UIElement>(option.id)->setColor(buttonSelectedHoverColor);
+			context.ui.getElement<UIElement>(option.buttonInfo.id)->setColor(buttonSelectedHoverColor);
 		});
 		button->setOnMouseOutCallback([&]() {
 			GameContext context = game.getContext();
-			if (game.getTextureFiltering() != option.filter) {
-				context.ui.getElement<UIElement>(option.id)->setColor(buttonIdleColor);
+			if (game.getTextureFiltering() != option.textureFilter) {
+				context.ui.getElement<UIElement>(option.buttonInfo.id)->setColor(buttonIdleColor);
 				return;
 			}
-			context.ui.getElement<UIElement>(option.id)->setColor(buttonSelectedIdleColor);
+			context.ui.getElement<UIElement>(option.buttonInfo.id)->setColor(buttonSelectedIdleColor);
 		});
 		button->setOnMouseDownCallback([&](MouseButton mouseButton) {
 			if (mouseButton != MouseButton::Left) {
 				return;
 			}
-			game.setTextureFiltering(option.filter);
+			game.setTextureFiltering(option.textureFilter);
 			updateTextureFilteringOptions(game);
 		});
 	}
@@ -242,9 +234,9 @@ static void updateAntiAliasingOptions(Game& game)
 	AntiAliasing currentAntialiasing = game.getAntiAliasing();
 
 	for (const auto& option : antiAliasingOptions) {
-		UIElement* element = context.ui.getElement<UIElement>(option.id);
+		UIElement* element = context.ui.getElement<UIElement>(option.buttonInfo.id);
 
-		bool isSelected = (currentAntialiasing == option.antialiasing);
+		bool isSelected = (currentAntialiasing == option.antiAliasing);
 		bool isHovered = element->isHovered();
 
 		if (isSelected) {
@@ -271,37 +263,29 @@ static void createSettingsAntiAliasingOptions(Game& game)
 	createUILabel(game, labelInfo);
 
 	for (const auto& option : antiAliasingOptions) {
-		UIButtonCreateInfo buttonInfo = {
-			option.id,
-			Anchor::Center,
-			option.margin,
-			ASSETS_FONT_PRIMARY_16_PX,
-			option.labelContent,
-			option.labelSize
-		};
-		UIButton* button = createUIButton(game, buttonInfo);
+		UIButton* button = createUIButton(game, option.buttonInfo);
 
 		button->setOnMouseEnterCallback([&]() {
 			GameContext context = game.getContext();
-			if (game.getAntiAliasing() != option.antialiasing) {
-				context.ui.getElement<UIElement>(option.id)->setColor(buttonHoverColor);
+			if (game.getAntiAliasing() != option.antiAliasing) {
+				context.ui.getElement<UIElement>(option.buttonInfo.id)->setColor(buttonHoverColor);
 				return;
 			}
-			context.ui.getElement<UIElement>(option.id)->setColor(buttonSelectedHoverColor);
+			context.ui.getElement<UIElement>(option.buttonInfo.id)->setColor(buttonSelectedHoverColor);
 		});
 		button->setOnMouseOutCallback([&]() {
 			GameContext context = game.getContext();
-			if (game.getAntiAliasing() != option.antialiasing) {
-				context.ui.getElement<UIElement>(option.id)->setColor(buttonIdleColor);
+			if (game.getAntiAliasing() != option.antiAliasing) {
+				context.ui.getElement<UIElement>(option.buttonInfo.id)->setColor(buttonIdleColor);
 				return;
 			}
-			context.ui.getElement<UIElement>(option.id)->setColor(buttonSelectedIdleColor);
+			context.ui.getElement<UIElement>(option.buttonInfo.id)->setColor(buttonSelectedIdleColor);
 		});
 		button->setOnMouseDownCallback([&](MouseButton mouseButton) {
 			if (mouseButton != MouseButton::Left) {
 				return;
 			}
-			game.setAntiAliasing(option.antialiasing);
+			game.setAntiAliasing(option.antiAliasing);
 			updateAntiAliasingOptions(game);
 		});
 	}
@@ -440,6 +424,7 @@ static void createLights(Game& game)
 	LightComponent* sunLight = sun->createComponent<LightComponent>();
 	sunLight->setType(LightComponent::LightType::Directional);
 	sunLight->setColor(SUN_COLOR);
+	sunLight->setIntensity(1.0f);
 
 	TransformComponent* sunTransform = sun->getComponent<TransformComponent>();
 	sunTransform->setRotation(SUN_DIRECTION);

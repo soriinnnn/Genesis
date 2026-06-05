@@ -13,27 +13,32 @@ cbuffer ObjectData: register(b2)
 struct InputVS
 {
     float3 position: POSITION0;
-    float3 normal: COLOR0;
+    float3 normal: NORMAL0;
+    float3 tangent: TANGENT0;
+    float3 bitangent: BINORMAL0;
     float2 uv: TEXCOORD0;
 };
 
 struct OutputPS
 {
     float4 clipPosition: SV_Position;
-    float3 normal: COLOR0;
     float2 uv: TEXCOORD0;
     float4 worldPosition: TEXCOORD1;
+    row_major float3x3 tbn: TEXCOORD2;
 };
 
 OutputPS main(InputVS input)
 {
     OutputPS output;
-    float4 worldPosition = mul(float4(input.position, 1.0f), worldMatrix);    
+    float4 worldPosition = mul(float4(input.position, 1.0f), worldMatrix);
    
     output.clipPosition = mul(mul(worldPosition, viewMatrix), projectionMatrix);
-    output.normal = normalize(mul(float4(input.normal, 0.0f), worldMatrix).xyz);
     output.uv = input.uv;
     output.worldPosition = worldPosition;
+    
+    output.tbn[0] = normalize(mul(input.tangent, (float3x3) worldMatrix));
+    output.tbn[1] = normalize(mul(input.bitangent, (float3x3) worldMatrix));
+    output.tbn[2] = normalize(mul(input.normal, (float3x3) worldMatrix));
     
     return output;
 }

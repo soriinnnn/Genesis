@@ -1,8 +1,10 @@
 #ifndef MAIN_MENU_SCRIPT_H
 #define MAIN_MENU_SCRIPT_H
+#include "../utils/Types.h"
 #include <script/Script.h>
 
 using namespace genesis;
+using namespace types;
 
 class MainMenu: public Script
 {
@@ -21,8 +23,17 @@ private:
 	void setupMenu();
 
 private:
-	Entity* m_camera;
 	Entity* m_spaceship;
+	Entity* m_asteroid1;
+	Entity* m_asteroid2;
+	Entity* m_asteroid3;
+	Animation m_spaceshipPosAnim;
+	Animation m_spaceshipRotAnim;
+	Animation m_asteroid1PosAnim;
+	Animation m_asteroid1RotAnim;
+	Animation m_asteroid2PosAnim;
+	Animation m_asteroid2RotAnim;
+	Animation m_asteroid3RotAnim;
 };
 
 #endif

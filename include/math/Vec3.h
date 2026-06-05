@@ -25,9 +25,10 @@ public:
 	Vec3& operator*=(float scalar) noexcept;
 	Vec3& operator/=(float scalar) noexcept;
 
-	static float dot(const Vec3& v1, const Vec3& v2) noexcept;
-	static Vec3 cross(const Vec3& v1, const Vec3& v2) noexcept;
+	static float dot(const Vec3& a, const Vec3& b) noexcept;
+	static Vec3 cross(const Vec3& a, const Vec3& b) noexcept;
 	static Vec3 normalize(const Vec3& v) noexcept;
+	static Vec3 lerp(const Vec3& a, const Vec3& b, float t) noexcept;
 
 public:
 	float x, y, z;

@@ -40,22 +40,47 @@ namespace types
 		Rect labelSize;
 	};
 
-	struct TextureFilterUIOption
+	struct TextureFilterOption
 	{
-		const char* id;
-		Point margin;
-		TextureFiltering filter;
-		const char* labelContent;
-		Rect labelSize;
+		UIButtonCreateInfo buttonInfo;
+		TextureFiltering textureFilter;
 	};
 
-	struct AntiAliasingUIOption
+	struct AntiAliasingOption
 	{
-		const char* id;
-		Point margin;
-		AntiAliasing antialiasing;
-		const char* labelContent;
-		Rect labelSize;
+		UIButtonCreateInfo buttonInfo;
+		AntiAliasing antiAliasing;
+	};
+	
+	enum class Easing
+	{
+		Linear,
+		EaseInQuad,
+		EaseOutQuad,
+		EaseInOutQuad,
+		EaseInCubic,
+		EaseOutCubic,
+		EaseInOutCubic,
+		EaseInSine,
+		EaseOutSine,
+		EaseInOutSine
+	};
+
+	struct Transition
+	{
+		Vec3 origin;
+		Vec3 target;
+		float duration;
+		Easing easing = Easing::Linear;
+	};
+
+	struct Animation
+	{
+		Vec3 target;
+		Vector<Transition> transitions;
+		uint32 currentTransition = 0;
+		float currentTime = 0.0f;
+		bool loop = true;
 	};
 }
 

@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include "Types.h"
 
+#include <game/Game.h>
 #include <ui/elements/UIImage.h>
 #include <ui/elements/UILabel.h>
 #include <ui/elements/UIButton.h>
@@ -101,6 +102,81 @@ namespace utils
 			timeElapsed = 0.0f;
 			frameCount = 0;
 		}
+	}
+
+	// pre: t >= 0 && t <= 1.0f
+	inline float applyEasing(Easing easing, float t)
+	{
+		switch (easing) {
+		case Easing::Linear:
+			return t;
+		case Easing::EaseInQuad:
+			return t * t;
+		case Easing::EaseOutQuad:
+			return t * (2.0f - t);
+		case Easing::EaseInOutQuad:
+			return (t < 0.5f) ? 2.0f * t * t : -1.0f + t * (4.0f - 2.0f * t);
+		case Easing::EaseInCubic:
+			return t * t * t;
+		case Easing::EaseOutCubic:
+			return t * (3.0f + t * (-3.0f + t));
+		case Easing::EaseInOutCubic:
+			return (t < 0.5f) ? 4.0f * t * t * t : -3.0f + t * (12.0f + t * (-12.0f + 4.0f * t));
+		case Easing::EaseInSine:
+			return 1.0f - std::cos((pi * t) / 2.0f);
+		case Easing::EaseOutSine:
+			return std::sin((pi * t) / 2.0f);
+		case Easing::EaseInOutSine:
+			return -(std::cos(pi * t) - 1.0f) / 2.0f;
+		default:
+			return t;
+		}
+	}
+
+	// pre: t >= 0 && t <= 1.0f
+	inline void updateAnimation(Animation& anim, float deltaTime)
+	{
+		uint32 transitionCount = static_cast<uint32>(anim.transitions.size());
+		if (anim.currentTransition >= transitionCount) {
+			return;
+		}
+
+		const Transition& transition = anim.transitions[anim.currentTransition];
+		anim.currentTime += deltaTime;
+
+		float t = anim.currentTime / transition.duration;
+		if (t < 1.0f) {
+			anim.target = Vec3::lerp(transition.origin, transition.target, applyEasing(transition.easing, t));
+			return;
+		}
+
+		anim.target = transition.target;
+		anim.currentTransition++;
+		anim.currentTime = 0.0f;
+
+		if (anim.loop && anim.currentTransition >= transitionCount) {
+			anim.target = anim.transitions[0].origin;
+			anim.currentTransition = 0;
+		}
+	}
+
+	inline Vector<Transition> offsetTransitions(const Transition* transitions, uint32 count, const Vec3& offset) {
+		Vector<Transition> result(count);
+
+		for (uint32 i = 0; i < count; i++) {
+			result[i].origin = transitions[i].origin + offset;
+			result[i].target = transitions[i].target + offset;
+			result[i].duration = transitions[i].duration;
+		}
+
+		return result;
+	}
+
+	// for arrays
+	template<typename T, size_t N>
+	constexpr uint32 countof(T(&)[N])
+	{
+		return static_cast<uint32>(N);
 	}
 }
 

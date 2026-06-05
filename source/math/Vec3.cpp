@@ -141,17 +141,22 @@ Vec3& Vec3::operator/=(float scalar) noexcept
 	return *this;
 }
 
-float Vec3::dot(const Vec3& v1, const Vec3& v2) noexcept
+float Vec3::dot(const Vec3& a, const Vec3& b) noexcept
 {
-	return v1.dot(v2);
+	return a.dot(b);
 }
 
-Vec3 Vec3::cross(const Vec3& v1, const Vec3& v2) noexcept
+Vec3 Vec3::cross(const Vec3& a, const Vec3& b) noexcept
 {
-	return v1.cross(v2);
+	return a.cross(b);
 }
 
 Vec3 Vec3::normalize(const Vec3& v) noexcept
 {
 	return v.normalize();
+}
+
+Vec3 Vec3::lerp(const Vec3& a, const Vec3& b, float t) noexcept
+{
+	return a + (b - a) * t;
 }

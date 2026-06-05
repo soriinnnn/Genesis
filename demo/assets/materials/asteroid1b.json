@@ -1,0 +1,40 @@
+{
+  "shaders": {
+    "vertex": {
+      "path": "demo/assets/shaders/default/vs.hlsl",
+      "entry": "main"
+    },
+    "pixel": {
+      "path": "demo/assets/shaders/asteroid/ps.hlsl",
+      "entry": "main"
+    }
+  },
+  "textures": [
+    {
+      "path": "demo/assets/textures/asteroid1b/asteroid_color.png",
+      "slot": 1
+    },
+    {
+      "path": "demo/assets/textures/asteroid1b/asteroid_normal.png",
+      "slot": 2
+    },
+    {
+      "path": "demo/assets/textures/asteroid1b/asteroid_ambient_occlusion.png",
+      "slot": 3
+    },
+    {
+      "path": "demo/assets/textures/asteroid1b/asteroid_roughness.png",
+      "slot": 4
+    },
+    {
+      "path": "demo/assets/textures/asteroid1b/asteroid_metallic.png",
+      "slot": 5
+    }
+  ],
+  "properties": {
+    "ka": 1.0,
+    "kd": 0.8,
+    "ks": 0.5,
+    "shininess": 64.0
+  }
+}

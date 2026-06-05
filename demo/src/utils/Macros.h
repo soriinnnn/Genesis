@@ -12,10 +12,23 @@
 #define ASSETS_FONT_PRIMARY_16_PX "demo/assets/fonts/arial_16.spritefont"
 #define ASSETS_FONT_PRIMARY_12_PX "demo/assets/fonts/arial_12.spritefont"
 #define ASSETS_SKYBOX "demo/assets/skybox/starfield.json"
+
+#define ASSETS_MESH_SPACESHIP "demo/assets/meshes/spaceship.obj"
+#define ASSETS_MESH_ASTEROID_1A "demo/assets/meshes/asteroid1a.obj"
+#define ASSETS_MESH_ASTEROID_1B "demo/assets/meshes/asteroid1b.obj"
+#define ASSETS_MESH_ASTEROID_2A "demo/assets/meshes/asteroid2a.obj"
+#define ASSETS_MESH_ASTEROID_2B "demo/assets/meshes/asteroid2b.obj"
+#define ASSETS_MESH_ASTEROID_2C "demo/assets/meshes/asteroid2c.obj"
+
+#define ASSETS_MATERIAL_SPACESHIP "demo/assets/materials/spaceship.json"
+#define ASSETS_MATERIAL_ASTEROID_1A "demo/assets/materials/asteroid1a.json"
+#define ASSETS_MATERIAL_ASTEROID_1B "demo/assets/materials/asteroid1b.json"
+#define ASSETS_MATERIAL_ASTEROID_2A "demo/assets/materials/asteroid2a.json"
+#define ASSETS_MATERIAL_ASTEROID_2B "demo/assets/materials/asteroid2b.json"
+#define ASSETS_MATERIAL_ASTEROID_2C "demo/assets/materials/asteroid2c.json"
+
 #define ASSETS_MAIN_MENU_PANEL "demo/assets/textures/ui/main_menu.png"
 #define ASSETS_SETTINGS_MENU_PANEL "demo/assets/textures/ui/settings_menu.png"
-#define ASSETS_SPACESHIP_MESH "demo/assets/meshes/spaceship.obj"
-#define ASSETS_SPACESHIP_MATERIAL "demo/assets/materials/spaceship.json"
 
 #define ENTITIES_MAIN_CAMERA "main_camera"
 #define ENTITIES_GLOBAL_SCRIPTS "global_scripts"
