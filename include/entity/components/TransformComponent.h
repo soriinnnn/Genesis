@@ -17,6 +17,8 @@ public:
 	Vec3 getScale() const noexcept;
 	const Mat4& getWorldMatrix() noexcept;
 	Vec3 getForwardVector() const noexcept;
+	Vec3 getRightVector() const noexcept;
+	Vec3 getUpVector() const noexcept;
 
 	void setPosition(const Vec3& position) noexcept;
 	void setRotation(const Vec3& rotation) noexcept;

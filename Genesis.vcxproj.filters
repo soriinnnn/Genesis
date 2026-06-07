@@ -243,7 +243,7 @@
     <ClCompile Include="source\entity\components\ScriptComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="demo\src\scripts\PlayerMovement.cpp">
+    <ClCompile Include="demo\src\scripts\SpaceshipController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="demo\src\scripts\MainMenu.cpp">
@@ -256,6 +256,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\graphics\resources\CubeTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="demo\src\scripts\MainGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -518,7 +521,7 @@
     <ClInclude Include="include\entity\components\ScriptComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="demo\src\scripts\PlayerMovement.h">
+    <ClInclude Include="demo\src\scripts\SpaceshipController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\physics\utils\PhysicsUtils.h">
@@ -552,6 +555,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="demo\src\utils\Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="demo\src\scripts\MainGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="demo\src\utils\GameState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

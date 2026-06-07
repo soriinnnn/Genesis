@@ -16,7 +16,7 @@ public:
 	explicit EntityManager(const EntityManagerDesc& desc);
 	~EntityManager() override;
 
-	void update(float deltaTime);
+	void update();
 
 	bool hasEntity(EntityId id) const;
 	Entity* createEntity(const char* name = nullptr);

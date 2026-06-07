@@ -1,11 +1,19 @@
 #include "Demo.h"
+#include "scripts/MainMenu.h"
+#include "utils/GameState.h"
 #include "utils/Macros.h"
 #include "utils/Utils.h"
-#include <entity/components/CameraComponent.h>
+#include <entity/components/ScriptComponent.h>
 
 using namespace utils;
 
-Demo::Demo(const GameDesc& desc): Game(desc) {}
+GameState gameState = GameState::MainMenu;
+
+Demo::Demo(const GameDesc& desc): Game(desc) 
+{
+    setTextureFiltering(TextureFiltering::Anisotropic_16X);
+    setAntiAliasing(AntiAliasing::MSAA_8X);
+}
 
 Demo::~Demo() {}
 
@@ -52,25 +60,15 @@ void Demo::onCreate()
         m_uiManager->setCanvasSize(size);
     });
 
-    Entity* camera = m_entityManager->createEntity(ENTITIES_MAIN_CAMERA);
-    camera->createComponent<CameraComponent>();
-    //camera->createComponent<ScriptComponent>()->addScript(m_scriptManager->createScript<PlayerMovement>());
-
     setMainCamera(m_entityManager->getEntityByName(ENTITIES_MAIN_CAMERA));
     setSkybox(m_resourceManager->getSkybox(ASSETS_SKYBOX));
+
+    Entity* scripts = m_entityManager->createEntity(ENTITIES_GLOBAL_SCRIPTS);
+    ScriptComponent* scriptComponent = scripts->createComponent<ScriptComponent>();
+    scriptComponent->addScript(m_scriptManager->createScript<MainMenu>());
 }
 
 void Demo::onUpdate(float deltaTime) 
 {
     updateFPSLabel(deltaTime, *m_uiManager->getElement<UILabel>(UI_INFO_FPS));
-
-    /*
-    Entity* camera = m_entityManager->getEntityByName(ENTITIES_MAIN_CAMERA);
-
-    Vec3 rotation = camera->getComponent<TransformComponent>()->getRotation();
-    Vec3 forward = camera->getComponent<TransformComponent>()->getForwardVector();
-
-    GENESIS_LOG_INFO("Camera rot: x={}, y={}, z={}", rotation.x, rotation.y, rotation.z);
-    GENESIS_LOG_INFO("Camera forward: x={}, y={}, z={}", forward.x, forward.y, forward.z);
-    */
 }

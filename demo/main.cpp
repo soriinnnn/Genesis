@@ -1,11 +1,10 @@
 #include "src/Demo.h"
+#include "src/scripts/MainMenu.h"
+#include "src/utils/GameState.h"	
 #include "src/utils/Constants.h"
 #include "src/utils/Macros.h"
 #include "src/utils/Types.h"
 #include "src/utils/Utils.h"
-
-#include "src/scripts/MainMenu.h"
-#include "src/scripts/PlayerMovement.h"
 
 #include <entity/components/TransformComponent.h>
 #include <entity/components/MeshRendererComponent.h>
@@ -26,44 +25,6 @@ using namespace genesis;
 using namespace constants;
 using namespace types;
 using namespace utils;
-
-void createWorld(GameContext context)
-{
-	SharedPtr<Material> brickMaterial = context.resources.getMaterial("demo/assets/materials/brick.json");
-	SharedPtr<Mesh> floorMesh = context.resources.getMesh("assets/meshes/terrain.obj", GENESIS_VERTEX_PRESET_NORMAL_MAPPED);
-	SharedPtr<Mesh> cubeMesh = context.resources.getMesh("assets/meshes/box.obj", GENESIS_VERTEX_PRESET_NORMAL_MAPPED);
-
-	Entity* floor = context.entities.createEntity("floor");
-
-	auto* floorTransform = floor->createComponent<TransformComponent>();
-	floorTransform->setScale({0.5f, 0.5f, 0.5f});
-
-	auto* floorMeshRenderer = floor->createComponent<MeshRendererComponent>();
-	floorMeshRenderer->setMesh(floorMesh);
-	floorMeshRenderer->setMaterial(brickMaterial);
-
-	auto* floorRigidBody = floor->createComponent<RigidBodyComponent>();
-	floorRigidBody->setBody(context.physics.createBox(floorTransform->getPosition(), {50.0f, 0.0f, 50.0f}, MotionType::Static));
-
-	Entity* cube = context.entities.createEntity("cube");
-
-	auto* cubeTransform = cube->createComponent<TransformComponent>();
-	cubeTransform->setPosition({0.0f, 2.5f, 0.0f});
-	cubeTransform->setRotation({1.01f, 0.0f, 0.0f});
-
-	auto* cubeMeshRenderer = cube->createComponent<MeshRendererComponent>();
-	cubeMeshRenderer->setMesh(cubeMesh);
-	cubeMeshRenderer->setMaterial(brickMaterial);
-
-	auto* cubeRigidBody = cube->createComponent<RigidBodyComponent>();
-	cubeRigidBody->setBody(context.physics.createBox({0.0f, 100.0f, 0.0f}, {0.8f, 0.8f, 0.8f}, MotionType::Dynamic));
-	cubeRigidBody->getBody()->addForce({0.0f, -2.0f, 0.0f});
-
-	auto* body = cubeRigidBody->getBody();
-	body->setOnContactAddedCallback([body](const RigidBody::ContactAddedData& data) {
-		body->setPosition({0.0f, 10.0f, 0.0f});
-	});
-}
 
 static void createMainMenu(Game& game)
 {
@@ -125,7 +86,7 @@ static void createMainMenu(Game& game)
 	menuSettings->setOnMouseOutCallback([context]() {
 		context.ui.getElement<UIElement>(UI_MAIN_MENU_SETTINGS_BUTTON)->setColor(buttonIdleColor);
 	});
-	menuSettings->setOnMouseDownCallback([context](MouseButton button) {
+	menuSettings->setOnMouseUpCallback([context](MouseButton button) {
 		if (button != MouseButton::Left) {
 			return;
 		}
@@ -155,7 +116,7 @@ static void createMainMenu(Game& game)
 	menuQuit->setOnMouseOutCallback([context]() {
 		context.ui.getElement<UIElement>(UI_MAIN_MENU_QUIT_BUTTON)->setColor(buttonIdleColor);
 	});
-	menuQuit->setOnMouseDownCallback([&](MouseButton button) {
+	menuQuit->setOnMouseUpCallback([&](MouseButton button) {
 		if (button != MouseButton::Left) {
 			return;
 		}
@@ -216,7 +177,7 @@ static void createSettingsTextureFilteringOptions(Game& game)
 			}
 			context.ui.getElement<UIElement>(option.buttonInfo.id)->setColor(buttonSelectedIdleColor);
 		});
-		button->setOnMouseDownCallback([&](MouseButton mouseButton) {
+		button->setOnMouseUpCallback([&](MouseButton mouseButton) {
 			if (mouseButton != MouseButton::Left) {
 				return;
 			}
@@ -281,7 +242,7 @@ static void createSettingsAntiAliasingOptions(Game& game)
 			}
 			context.ui.getElement<UIElement>(option.buttonInfo.id)->setColor(buttonSelectedIdleColor);
 		});
-		button->setOnMouseDownCallback([&](MouseButton mouseButton) {
+		button->setOnMouseUpCallback([&](MouseButton mouseButton) {
 			if (mouseButton != MouseButton::Left) {
 				return;
 			}
@@ -316,7 +277,7 @@ static void createSettingsMenu(Game& game)
 	};
 	createUILabel(game, menuTitleInfo);
 
-	UIButtonCreateInfo menuQuitBack = {
+	UIButtonCreateInfo menuBackInfo = {
 		UI_SETTINGS_MENU_BACK_BUTTON,
 		Anchor::Center,
 		{188, 238},
@@ -324,7 +285,7 @@ static void createSettingsMenu(Game& game)
 		"BACK",
 		{60, 22}
 	};
-	UIButton* menuBack = createUIButton(game, menuQuitBack);
+	UIButton* menuBack = createUIButton(game, menuBackInfo);
 
 	menuBack->setOnMouseEnterCallback([context]() {
 		context.ui.getElement<UIElement>(UI_SETTINGS_MENU_BACK_BUTTON)->setColor(buttonHoverColor);
@@ -332,12 +293,19 @@ static void createSettingsMenu(Game& game)
 	menuBack->setOnMouseOutCallback([context]() {
 		context.ui.getElement<UIElement>(UI_SETTINGS_MENU_BACK_BUTTON)->setColor(buttonIdleColor);
 	});
-	menuBack->setOnMouseDownCallback([context](MouseButton button) {
+	menuBack->setOnMouseUpCallback([context](MouseButton button) {
 		if (button != MouseButton::Left) {
 			return;
 		}
-		for (const String& element : mainMenuElements) {
-			context.ui.getElement<UIElement>(element.c_str())->setVisible(true);
+		if (gameState == GameState::MainMenu) {
+			for (const String& element : mainMenuElements) {
+				context.ui.getElement<UIElement>(element.c_str())->setVisible(true);
+			}
+		}
+		else if (gameState == GameState::Paused) {
+			for (const String& element : gameMenuElements) {
+				context.ui.getElement<UIElement>(element.c_str())->setVisible(true);
+			}
 		}
 		for (const String& element : settingsMenuElements) {
 			context.ui.getElement<UIElement>(element.c_str())->setVisible(false);
@@ -351,6 +319,117 @@ static void createSettingsMenu(Game& game)
 	}
 }
 
+static void createGameMenu(Game& game)
+{
+	GameContext context = game.getContext();
+
+	UIImageCreateInfo menuPanelInfo = {
+		UI_GAME_MENU_PANEL,
+		ASSETS_GAME_MENU_PANEL,
+		{1.0f, 1.0f, 1.0f, 0.5f},
+		Anchor::Center,
+		{0, 0}
+	};
+	createUIImage(game, menuPanelInfo);
+
+	UILabelCreateInfo menuTitleInfo = {
+		UI_GAME_MENU_TITLE,
+		ASSETS_FONT_PRIMARY_24_PX,
+		"PAUSE",
+		{116, 30},
+		Anchor::Center,
+		{0, -150}
+	};
+	createUILabel(game, menuTitleInfo);
+
+	/* RESUME BUTTON */
+
+	UIButtonCreateInfo menuResumeInfo = {
+		UI_GAME_MENU_RESUME_BUTTON,
+		Anchor::Center,
+		{0, -38},
+		ASSETS_FONT_PRIMARY_16_PX,
+		"RESUME",
+		{96, 22}
+	};
+	UIButton* menuResume = createUIButton(game, menuResumeInfo);
+
+	menuResume->setOnMouseEnterCallback([context]() {
+		context.ui.getElement<UIElement>(UI_GAME_MENU_RESUME_BUTTON)->setColor(buttonHoverColor);
+	});
+	menuResume->setOnMouseOutCallback([context]() {
+		context.ui.getElement<UIElement>(UI_GAME_MENU_RESUME_BUTTON)->setColor(buttonIdleColor);
+	});
+	menuResume->setOnMouseUpCallback([context](MouseButton button) {
+		if (button != MouseButton::Left) {
+			return;
+		}
+		if (gameState != GameState::Paused) {
+			return;
+		}
+		gameState = GameState::Playing;
+		for (const String& element : gameMenuElements) {
+			context.ui.getElement<UIElement>(element.c_str())->setVisible(false);
+		}
+		for (const String& element : mainMenuHints) {
+			context.ui.getElement<UIElement>(element.c_str())->setVisible(false);
+		}
+	});
+
+	/* SETTINGS BUTTON */
+
+	UIButtonCreateInfo menuSettingsInfo = {
+		UI_GAME_MENU_SETTINGS_BUTTON,
+		Anchor::Center,
+		{0, 50},
+		ASSETS_FONT_PRIMARY_16_PX,
+		"SETTINGS",
+		{110, 22}
+	};
+	UIButton* menuSettings = createUIButton(game, menuSettingsInfo);
+
+	menuSettings->setOnMouseEnterCallback([context]() {
+		context.ui.getElement<UIElement>(UI_GAME_MENU_SETTINGS_BUTTON)->setColor(buttonHoverColor);
+	});
+	menuSettings->setOnMouseOutCallback([context]() {
+		context.ui.getElement<UIElement>(UI_GAME_MENU_SETTINGS_BUTTON)->setColor(buttonIdleColor);
+	});
+	menuSettings->setOnMouseUpCallback([context](MouseButton button) {
+		if (button != MouseButton::Left) {
+			return;
+		}
+		for (const String& element : gameMenuElements) {
+			context.ui.getElement<UIElement>(element.c_str())->setVisible(false);
+		}
+		for (const String& element : settingsMenuElements) {
+			context.ui.getElement<UIElement>(element.c_str())->setVisible(true);
+		}
+	});
+
+	/* QUIT BUTTON */
+
+	UIButtonCreateInfo menuMainInfo = {
+		UI_GAME_MENU_MAIN_BUTTON,
+		Anchor::Center,
+		{0, 137},
+		ASSETS_FONT_PRIMARY_16_PX,
+		"MAIN MENU",
+		{120, 22}
+	};
+	UIButton* menuMain = createUIButton(game, menuMainInfo);
+
+	menuMain->setOnMouseEnterCallback([context]() {
+		context.ui.getElement<UIElement>(UI_GAME_MENU_MAIN_BUTTON)->setColor(buttonHoverColor);
+	});
+	menuMain->setOnMouseOutCallback([context]() {
+		context.ui.getElement<UIElement>(UI_GAME_MENU_MAIN_BUTTON)->setColor(buttonIdleColor);
+	});
+
+	for (const String& element : gameMenuElements) {
+		context.ui.setZOrder(element.c_str(), 1);
+	}
+}
+
 static void createGameInfo(Game& game)
 {
 	GameContext context = game.getContext();
@@ -358,7 +437,7 @@ static void createGameInfo(Game& game)
 	UILabelCreateInfo fpsInfo = {
 		UI_INFO_FPS,
 		ASSETS_FONT_PRIMARY_16_PX,
-		"FPS: ",
+		"",
 		{200, 22},
 		Anchor::TopLeft,
 		{0, 0}
@@ -424,32 +503,29 @@ static void createLights(Game& game)
 	LightComponent* sunLight = sun->createComponent<LightComponent>();
 	sunLight->setType(LightComponent::LightType::Directional);
 	sunLight->setColor(SUN_COLOR);
-	sunLight->setIntensity(1.0f);
+	sunLight->setIntensity(SUN_INTENSITY);
 
 	TransformComponent* sunTransform = sun->getComponent<TransformComponent>();
 	sunTransform->setRotation(SUN_DIRECTION);
 }
 
-static void createScripts(Game& game)
+static void createCamera(Game& game)
 {
 	GameContext context = game.getContext();
 
-	Entity* scripts = context.entities.createEntity(ENTITIES_GLOBAL_SCRIPTS);
-
-	ScriptComponent* scriptComponent = scripts->createComponent<ScriptComponent>();
-	scriptComponent->addScript(context.scripts.createScript<MainMenu>());
+	Entity* camera = context.entities.createEntity(ENTITIES_MAIN_CAMERA);
+	camera->createComponent<CameraComponent>();
 }
 
 static void setupGame(Game& game) 
 {
-	game.setTextureFiltering(TextureFiltering::Anisotropic_16X);
-	game.setAntiAliasing(AntiAliasing::MSAA_8X);
+	createCamera(game);
+	createLights(game);
 	createMainMenu(game);
 	createSettingsMenu(game);
+	createGameMenu(game);
 	createGameInfo(game);
 	createHints(game);
-	createLights(game);
-	createScripts(game);
 }
 
 int main()

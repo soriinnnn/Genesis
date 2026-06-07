@@ -208,8 +208,8 @@ Mat4 Mat4::fromRotationX(float rotX) noexcept
 
 	res.m_data[0][0] = 1;
 	res.m_data[1][1] = cosX;
-	res.m_data[1][2] = sinX;
-	res.m_data[2][1] = -sinX;
+	res.m_data[1][2] = -sinX;
+	res.m_data[2][1] = sinX;
 	res.m_data[2][2] = cosX;
 	res.m_data[3][3] = 1;
 
@@ -223,9 +223,9 @@ Mat4 Mat4::fromRotationY(float rotY) noexcept
 	float cosY = cos(rotY);
 
 	res.m_data[0][0] = cosY;
-	res.m_data[0][2] = -sinY;
+	res.m_data[0][2] = sinY;
 	res.m_data[1][1] = 1;
-	res.m_data[2][0] = sinY;
+	res.m_data[2][0] = -sinY;
 	res.m_data[2][2] = cosY;
 	res.m_data[3][3] = 1;
 
@@ -239,8 +239,8 @@ Mat4 Mat4::fromRotationZ(float rotZ) noexcept
 	float cosZ = cos(rotZ);
 
 	res.m_data[0][0] = cosZ;
-	res.m_data[0][1] = sinZ;
-	res.m_data[1][0] = -sinZ;
+	res.m_data[0][1] = -sinZ;
+	res.m_data[1][0] = sinZ;
 	res.m_data[1][1] = cosZ;
 	res.m_data[2][2] = 1;
 	res.m_data[3][3] = 1;

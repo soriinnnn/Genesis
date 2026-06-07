@@ -26,6 +26,11 @@ public:
 	static Mat4 identity() noexcept;
 	static Mat4 fromTranslation(const Vec3& translation) noexcept;
 	static Mat4 fromScale(const Vec3& scale) noexcept;
+
+	// clockwise rotation
+	// x+ right
+	// y+ up
+	// z+ forward
 	static Mat4 fromRotation(const Vec3& rotation) noexcept;
 	static Mat4 fromRotationX(float rotX) noexcept;
 	static Mat4 fromRotationY(float rotY) noexcept;

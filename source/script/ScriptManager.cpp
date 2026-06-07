@@ -52,7 +52,9 @@ void ScriptManager::insertActive(ScriptInstance instance)
 
 void ScriptManager::processEvents()
 {
-	for (auto& event : m_events) {
+	for (size_t i = 0; i < m_events.size(); i++) {
+		ScriptEvent event = move(m_events[i]);
+
 		switch (event.type) {
 			case EventType::SetActive: {
 				onSetActive(event);
@@ -82,13 +84,15 @@ void ScriptManager::onSetActive(ScriptEvent event)
 		}
 	);
 	if (it == m_inactiveScripts.end()) {
-		return; // already active.
+		return; // not found
 	}
 
-	insertActive(move(*it));
+	size_t index = distance(m_inactiveScripts.begin(), it);
+
+	insertActive(move(m_inactiveScripts[index]));
 	script->start();
 
-	*it = move(m_inactiveScripts.back());
+	m_inactiveScripts[index] = move(m_inactiveScripts.back());
 	m_inactiveScripts.pop_back();
 }
 

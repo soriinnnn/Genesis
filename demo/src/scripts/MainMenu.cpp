@@ -1,4 +1,6 @@
 #include "MainMenu.h"
+#include "MainGame.h"
+#include "../utils/GameState.h"
 #include "../utils/Constants.h"
 #include "../utils/Utils.h"
 
@@ -9,13 +11,14 @@
 #include <resources/ResourceManager.h>
 #include <entity/components/TransformComponent.h>
 #include <entity/components/MeshRendererComponent.h>
+#include <entity/components/ScriptComponent.h>
 
 using namespace constants;
 using namespace types;
 using namespace utils;
 
 #define INITIAL_SPACESHIP_POSITION Vec3{-20.0f, -3.0f, 15.0f}
-#define INITIAL_SPACESHIP_ROTATION Vec3{0.0f, 0.0f, -0.27f}
+#define INITIAL_SPACESHIP_ROTATION Vec3{0.0f, 0.0f, 0.27f}
 
 #define INITIAL_ASTEROID1_POSITION Vec3{12.0f, 2.0f, 0.0f}
 #define INITIAL_ASTEROID1_ROTATION Vec3{0.0f, 0.0f, 0.0f}
@@ -50,11 +53,15 @@ MainMenu::~MainMenu()
 	}
 	for (const String& element : mainMenuElements) {
 		UIElement* elem = m_context.ui.getElement<UIElement>(element.c_str());
-		elem->setVisible(false);
+		if (elem) {
+			elem->setVisible(false);
+		}
 	}
 	for (const String& hint : mainMenuHints) {
 		UIElement* elem = m_context.ui.getElement<UIElement>(hint.c_str());
-		elem->setVisible(false);
+		if (elem) {
+			elem->setVisible(false);
+		}
 	}
 }
 
@@ -62,9 +69,13 @@ void MainMenu::onAwake() {}
 
 void MainMenu::onStart()
 {
+	if (gameState != GameState::MainMenu) {
+		GENESIS_LOG_THROW_ERROR("Invalid game state.");
+	}
+
 	Entity* camera = m_context.entities.getEntityByName(ENTITIES_MAIN_CAMERA);
 	if (!camera) {
-		GENESIS_LOG_THROW_ERROR("Main camera not found.");
+		GENESIS_LOG_THROW_ERROR("Entity \"{}\" not found.", ENTITIES_MAIN_CAMERA);
 	}
 
 	TransformComponent* transform = camera->getComponent<TransformComponent>();
@@ -203,10 +214,36 @@ void MainMenu::setupMenu()
 {
 	for (const String& element : mainMenuElements) {
 		UIElement* elem = m_context.ui.getElement<UIElement>(element.c_str());
+		if (!elem) {
+			GENESIS_LOG_THROW_ERROR("UI element \"{}\" not found.", element.c_str());
+		}
 		elem->setVisible(true);
 	}
 	for (const String& hint : mainMenuHints) {
 		UIElement* elem = m_context.ui.getElement<UIElement>(hint.c_str());
+		if (!elem) {
+			GENESIS_LOG_THROW_ERROR("UI element \"{}\" not found.", hint.c_str());
+		}
 		elem->setVisible(true);
 	}
+
+	UIElement* menuStart = m_context.ui.getElement<UIElement>(UI_MAIN_MENU_START_BUTTON);
+	menuStart->setOnMouseUpCallback([this, menuStart](MouseButton button) {
+		if (button != MouseButton::Left) {
+			return;
+		}
+
+		Entity* scripts = m_context.entities.getEntityByName(ENTITIES_GLOBAL_SCRIPTS);
+		if (!scripts) {
+			GENESIS_LOG_THROW_ERROR("Entity \"{}\" not found.", ENTITIES_GLOBAL_SCRIPTS);
+		}
+
+		ScriptComponent* scriptComponent = scripts->getComponent<ScriptComponent>();
+		scriptComponent->removeScript(this);
+
+		gameState = GameState::Playing;
+		scriptComponent->addScript(m_manager.createScript<MainGame>());
+
+		menuStart->setOnMouseUpCallback(nullptr);
+	});
 }

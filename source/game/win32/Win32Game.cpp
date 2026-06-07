@@ -6,6 +6,10 @@ using namespace std;
 
 void Game::run() 
 {
+    if (m_isRunning) {
+        return;
+    }
+
     MSG msg = {};
 
     onCreate();

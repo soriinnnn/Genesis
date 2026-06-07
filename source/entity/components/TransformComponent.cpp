@@ -41,9 +41,27 @@ const Mat4& TransformComponent::getWorldMatrix() noexcept
 Vec3 TransformComponent::getForwardVector() const noexcept
 {
 	return Vec3{
-		 cos(m_rotation.x) * sin(m_rotation.y),
-		-sin(m_rotation.x),
+		 -cos(m_rotation.x) * sin(m_rotation.y) * cos(m_rotation.z) + sin(m_rotation.x) * sin(m_rotation.z),
+		 cos(m_rotation.x) * sin(m_rotation.y)* sin(m_rotation.z) + sin(m_rotation.x) * cos(m_rotation.z),
 		 cos(m_rotation.x) * cos(m_rotation.y)
+	};
+}
+
+Vec3 TransformComponent::getRightVector() const noexcept
+{
+	return Vec3{
+		cos(m_rotation.y) * cos(m_rotation.z),
+		-cos(m_rotation.y) * sin(m_rotation.z),
+		sin(m_rotation.y)
+	};
+}
+
+Vec3 TransformComponent::getUpVector() const noexcept
+{
+	return Vec3{
+		 sin(m_rotation.x) * sin(m_rotation.y) * cos(m_rotation.z) + cos(m_rotation.x) * sin(m_rotation.z),
+		 -sin(m_rotation.x)* sin(m_rotation.y)* sin(m_rotation.z) + cos(m_rotation.x) * cos(m_rotation.z),
+		 -sin(m_rotation.x)* cos(m_rotation.y)
 	};
 }
 

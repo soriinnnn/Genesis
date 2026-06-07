@@ -20,7 +20,7 @@ public:
 	explicit UIManager(const UIManagerDesc& desc);
 	~UIManager() override;
 
-	void update(float deltaTime);
+	void update();
 
 	void setCanvasSize(const Rect& size);
 	void setZOrder(const char* name, int zOrder);

@@ -240,11 +240,13 @@ void GraphicsEngine::render(SkyBox& skybox, Entity& camera)
 
 void GraphicsEngine::render(UIManager& ui)
 {
-    m_deviceContext->setRenderTarget(m_sceneTarget->getRenderTarget(), m_sceneTarget->getDepthStencil());
-    m_deviceContext->setViewport(m_sceneTarget->getSize());
-    if (isHardwareMSAA(m_antiAliasing)) {
-        m_msaaDirty = true;
+    if (m_msaaDirty) {
+        m_deviceContext->resolveTexture(m_msaaBuffer->getRenderTarget(), m_primaryBuffer->getRenderTarget());
+        m_msaaDirty = false;
     }
+
+    m_deviceContext->setRenderTarget(m_primaryBuffer->getRenderTarget(), m_primaryBuffer->getDepthStencil());
+    m_deviceContext->setViewport(m_primaryBuffer->getSize());
 
     try {
         m_spriteBatch->begin();

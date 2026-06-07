@@ -18,10 +18,12 @@ public:
 	Vec3 operator-() const noexcept;
 	Vec3 operator+(const Vec3& rhs) const noexcept;
 	Vec3 operator-(const Vec3& rhs) const noexcept;
+	Vec3 operator*(const Vec3& rhs) const noexcept;
 	Vec3 operator*(float scalar) const noexcept;
 	Vec3 operator/(float scalar) const noexcept;
 	Vec3& operator+=(const Vec3& rhs) noexcept;
 	Vec3& operator-=(const Vec3& rhs) noexcept;
+	Vec3& operator*=(const Vec3& rhs) noexcept;
 	Vec3& operator*=(float scalar) noexcept;
 	Vec3& operator/=(float scalar) noexcept;
 

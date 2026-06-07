@@ -12,7 +12,7 @@ EntityManager::EntityManager(const EntityManagerDesc& desc): Base(desc.base)
 
 EntityManager::~EntityManager() {}
 
-void EntityManager::update(float deltaTime)
+void EntityManager::update()
 {
 	for (auto& event : m_events) {
 		switch (event.type) {

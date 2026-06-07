@@ -2,11 +2,13 @@
 #define MACROS_H
 #include <math/Vec3.h>
 
-#define TARGET_RESOLUTION_WIDTH 1920
-#define TARGET_RESOLUTION_HEIGHT 1080
+// MISC
 
 #define SUN_COLOR Vec3{1.0f, 0.95f, 0.85f}
 #define SUN_DIRECTION Vec3{0.065f, 3.07f, 0.0f}
+#define SUN_INTENSITY 1.0f
+
+// ASSETS
 
 #define ASSETS_FONT_PRIMARY_24_PX "demo/assets/fonts/arial_24.spritefont"
 #define ASSETS_FONT_PRIMARY_16_PX "demo/assets/fonts/arial_16.spritefont"
@@ -29,10 +31,15 @@
 
 #define ASSETS_MAIN_MENU_PANEL "demo/assets/textures/ui/main_menu.png"
 #define ASSETS_SETTINGS_MENU_PANEL "demo/assets/textures/ui/settings_menu.png"
+#define ASSETS_GAME_MENU_PANEL "demo/assets/textures/ui/game_menu.png"
+
+// ENTITIES
 
 #define ENTITIES_MAIN_CAMERA "main_camera"
 #define ENTITIES_GLOBAL_SCRIPTS "global_scripts"
 #define ENTITIES_SUN "sun"
+
+// USER INTERFACE
 
 #define UI_HINT1 "hint1"
 #define UI_HINT2 "hint2"
@@ -60,5 +67,11 @@
 #define UI_SETTINGS_MENU_ANTIALIASING_OPTION2 "settings_menu_antialiasing_option2"
 #define UI_SETTINGS_MENU_ANTIALIASING_OPTION3 "settings_menu_antialiasing_option3"
 #define UI_SETTINGS_MENU_ANTIALIASING_OPTION4 "settings_menu_antialiasing_option4"
+
+#define UI_GAME_MENU_PANEL "game_menu_panel_button"
+#define UI_GAME_MENU_TITLE "game_menu_title"
+#define UI_GAME_MENU_RESUME_BUTTON "game_menu_resume_button"
+#define UI_GAME_MENU_SETTINGS_BUTTON "game_menu_settings_button"
+#define UI_GAME_MENU_MAIN_BUTTON "game_menu_main_button"
 
 #endif

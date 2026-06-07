@@ -15,7 +15,7 @@ UIManager::UIManager(const UIManagerDesc& desc): Base(desc.base), m_pressedEleme
 
 UIManager::~UIManager() {}
 
-void UIManager::update(float deltaTime)
+void UIManager::update()
 {
     if (m_isZDirty) {
         std::stable_sort(m_zOrdered.begin(), m_zOrdered.end(), 

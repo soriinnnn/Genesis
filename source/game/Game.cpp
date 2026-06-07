@@ -72,7 +72,7 @@ void Game::onInternalUpdate()
     m_accumulator += deltaTime;
 
     m_inputManager->update();
-    m_entityManager->update(deltaTime);
+    m_entityManager->update();
     m_scriptManager->update(deltaTime);
 
     int steps = getUpdateSteps(m_accumulator);
@@ -81,8 +81,8 @@ void Game::onInternalUpdate()
         m_physicsEngine->update(*m_entityManager, FIXED_UPDATE_DT);
     }
 
-    m_uiManager->update(deltaTime);
     onUpdate(deltaTime);
+    m_uiManager->update();
 
     m_graphicsEngine->clear();
 

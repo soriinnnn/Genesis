@@ -82,6 +82,16 @@ Vec3 Vec3::operator-(const Vec3& rhs) const noexcept
 	};
 }
 
+Vec3 Vec3::operator*(const Vec3& rhs) const noexcept
+{
+	return Vec3
+	{
+		this->x * rhs.x,
+		this->y * rhs.y,
+		this->z * rhs.z
+	};
+}
+
 Vec3 Vec3::operator*(float scalar) const noexcept
 {
 	return Vec3
@@ -117,6 +127,15 @@ Vec3& Vec3::operator-=(const Vec3& rhs) noexcept
 	this->x -= rhs.x;
 	this->y -= rhs.y;
 	this->z -= rhs.z;
+
+	return *this;
+}
+
+Vec3& Vec3::operator*=(const Vec3& rhs) noexcept
+{
+	this->x *= rhs.x;
+	this->y *= rhs.y;
+	this->z *= rhs.z;
 
 	return *this;
 }
