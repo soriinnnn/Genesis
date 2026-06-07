@@ -11,29 +11,33 @@ using namespace constants;
 
 #define MOVE_SPEED 1.0f
 
-#define MAX_PITCH 1.40f
+#define MAX_PITCH 1.4f
 #define MOUSE_SENSITIVITY_X 0.002f
 #define MOUSE_SENSITIVITY_Y 0.002f
-#define BANK_MULTIPLIER 2.0f
-#define MAX_BANK_ANGLE 0.1f
-#define BANK_SMOOTH_SPEED 12.0f
+
+#define MAX_BANK_ANGLE 0.5f
+#define BANK_MULTIPLIER 4.0f
+#define BANK_DECAY 10.0f
 #define LERP_SPEED 6.5f
 
 SpaceshipController::SpaceshipController(const ScriptDesc& desc): Script(desc)
 {
 	m_camera = nullptr;
-	m_playerTransform = nullptr;
+	m_transform = nullptr;
+	m_pitch = 0.0f;
+	m_yaw = 0.0f;
+	m_bank = 0.0f;
 }
 
 SpaceshipController::~SpaceshipController() {}
 
 void SpaceshipController::onAwake()
 {
-	Entity* player = getEntity();
+	Entity* entity = getEntity();
 
-	m_playerTransform = player->getComponent<TransformComponent>();
-	if (!m_playerTransform) {
-		m_playerTransform = player->createComponent<TransformComponent>();
+	m_transform = entity->getComponent<TransformComponent>();
+	if (!m_transform) {
+		m_transform = entity->createComponent<TransformComponent>();
 	}
 }
 
@@ -51,41 +55,46 @@ void SpaceshipController::onUpdate(float deltaTime)
 	if (gameState != GameState::Playing) {
 		return;
 	}
-	if (!m_context.input.isMouseLocked()) {
-		return;
-	}
-	updateRotation(deltaTime);
-	updatePosition(deltaTime);
+	updateSpaceshipRot(deltaTime);
+	updateSpaceshipPos(deltaTime);
 	updateCamera();
 }
 
 void SpaceshipController::onFixedUpdate(float deltaTime) {}
 
-void SpaceshipController::updateRotation(float deltaTime)
+void SpaceshipController::updateSpaceshipRot(float deltaTime)
 {
-	Vec3 currentRotation = m_playerTransform->getRotation();
+	if (!m_context.input.isMouseLocked()) {
+		return;
+	}
+
 	Point delta = m_context.input.getMouseDelta();
 	
-	m_targetRotation.x -= delta.y * MOUSE_SENSITIVITY_X;
-	m_targetRotation.y -= delta.x * MOUSE_SENSITIVITY_Y;
-	if (m_targetRotation.x > MAX_PITCH) m_targetRotation.x = MAX_PITCH;
-	if (m_targetRotation.x < -MAX_PITCH) m_targetRotation.x = -MAX_PITCH;
+	m_pitch += delta.y * MOUSE_SENSITIVITY_X;
+	m_yaw += delta.x * MOUSE_SENSITIVITY_Y;
+	if (m_pitch > MAX_PITCH) m_pitch = MAX_PITCH;
+	if (m_pitch < -MAX_PITCH) m_pitch = -MAX_PITCH;
 
-	float bankAngle = -delta.x * MOUSE_SENSITIVITY_Y * BANK_MULTIPLIER;
-	if (bankAngle > MAX_BANK_ANGLE) bankAngle = MAX_BANK_ANGLE;
-	if (bankAngle < -MAX_BANK_ANGLE) bankAngle = -MAX_BANK_ANGLE;
-	m_targetRotation.z = bankAngle;
+	float targetBank = -delta.x * MOUSE_SENSITIVITY_Y * BANK_MULTIPLIER;
+	if (targetBank > MAX_BANK_ANGLE) targetBank = MAX_BANK_ANGLE;
+	if (targetBank < -MAX_BANK_ANGLE) targetBank = -MAX_BANK_ANGLE;
+	m_bank = std::lerp(m_bank, targetBank, BANK_DECAY * deltaTime);
 
-	Vec3 rotation = Vec3::lerp(currentRotation, m_targetRotation, LERP_SPEED * deltaTime);
-	m_playerTransform->setRotation(rotation);
+	Vec3 currentRotation = m_transform->getRotation();
+	Vec3 targetRotation = {m_pitch, m_yaw, m_bank};
+	m_transform->setRotation(Vec3::lerp(currentRotation, targetRotation, LERP_SPEED * deltaTime));
 }
 
-void SpaceshipController::updatePosition(float deltaTime)
+void SpaceshipController::updateSpaceshipPos(float deltaTime)
 {
+	if (!m_context.input.isMouseLocked()) {
+		return;
+	}
+
 	auto& input = m_context.input;
 
-	Vec3 position = m_playerTransform->getPosition();
-	Vec3 forward = m_playerTransform->getForwardVector();
+	Vec3 position = m_transform->getPosition();
+	Vec3 forward = m_transform->getForwardVector();
 	Vec3 right = Vec3::normalize(Vec3::cross(Vec3{0.0f, 1.0f, 0.0f}, forward));
 
 	if (input.isKeyDown(Key::W)) {
@@ -101,23 +110,25 @@ void SpaceshipController::updatePosition(float deltaTime)
 		position -= right * MOVE_SPEED * deltaTime;
 	}
 
-	m_playerTransform->setPosition(position);
+	GENESIS_LOG_INFO("POS: X={}, Y={}, Z={}", position.x, position.y, position.z);
+
+	m_transform->setPosition(position);
 }
 
 void SpaceshipController::updateCamera()
 {
 	TransformComponent* cameraTransform = m_camera->getComponent<TransformComponent>();
 
-	Vec3 forward = m_playerTransform->getForwardVector();
-	Vec3 right = m_playerTransform->getRightVector();
-	Vec3 up = m_playerTransform->getUpVector();
+	Vec3 forward = m_transform->getForwardVector();
+	Vec3 right = m_transform->getRightVector();
+	Vec3 up = m_transform->getUpVector();
 
-	Vec3 camPosition = m_playerTransform->getPosition() +
+	Vec3 camPosition = m_transform->getPosition() +
 		forward * cameraPlayerOffset.z +
 		right * cameraPlayerOffset.x +
 		up * cameraPlayerOffset.y;
 
-	Vec3 dirToPlayer = Vec3::normalize(m_playerTransform->getPosition() - camPosition);
+	Vec3 dirToPlayer = Vec3::normalize(m_transform->getPosition() - camPosition);
 	
 	float pitch = asin(-dirToPlayer.y);
 	float yaw = atan2(dirToPlayer.x, dirToPlayer.z);

@@ -10,8 +10,10 @@
 #include <input/InputManager.h>
 #include <script/ScriptManager.h>
 #include <resources/ResourceManager.h>
+#include <physics/PhysicsEngine.h>
 #include <entity/components/TransformComponent.h>
 #include <entity/components/MeshRendererComponent.h>
+#include <entity/components/RigidBodyComponent.h>
 #include <entity/components/ScriptComponent.h>
 
 using namespace constants;
@@ -118,6 +120,9 @@ void MainGame::setupScene()
 	MeshRendererComponent* spaceshipMesh = m_spaceship->createComponent<MeshRendererComponent>();
 	spaceshipMesh->setMesh(m_context.resources.getMesh(ASSETS_MESH_SPACESHIP, GENESIS_VERTEX_PRESET_NORMAL_MAPPED));
 	spaceshipMesh->setMaterial(m_context.resources.getMaterial(ASSETS_MATERIAL_SPACESHIP));
+
+	RigidBodyComponent* spaceshipBody = m_spaceship->createComponent<RigidBodyComponent>();
+	spaceshipBody->setBody(m_context.physics.createBox({0.0f, 0.0f, 0.0f}, {20.0f, 8.0f, 20.0f}, MotionType::Kinematic));
 
 	ScriptComponent* spaceshipScripts = m_spaceship->createComponent<ScriptComponent>();
 	spaceshipScripts->addScript(m_manager.createScript<SpaceshipController>());

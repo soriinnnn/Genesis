@@ -18,14 +18,17 @@ protected:
 	void onFixedUpdate(float deltaTime) override;
 
 private:
-	void updateRotation(float deltaTime);
-	void updatePosition(float deltaTime);
+	void updateSpaceshipRot(float deltaTime);
+	void updateSpaceshipPos(float deltaTime);
 	void updateCamera();
 
 private:
 	Entity* m_camera;
-	TransformComponent* m_playerTransform;
+	TransformComponent* m_transform;
 	Vec3 m_targetRotation;
+	float m_pitch;
+	float m_yaw;
+	float m_bank;
 };
 
 #endif

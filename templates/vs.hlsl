@@ -21,6 +21,12 @@ cbuffer ObjectData: register(b2)
 struct InputVS
 {
     // Put the variables you will use in order.
+    // 1. Position
+    // 2. Normal
+    // 3. Tangent
+    // 4. Bitangent
+    // 5. Texcoord
+    // 6. Color
 };
 
 struct OutputPS

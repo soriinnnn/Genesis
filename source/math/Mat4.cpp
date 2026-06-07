@@ -203,13 +203,13 @@ Mat4 Mat4::fromRotation(const Vec3& rotation) noexcept
 Mat4 Mat4::fromRotationX(float rotX) noexcept
 {
 	Mat4 res{};
-	float sinX = sin(rotX);
-	float cosX = cos(rotX);
+	float sinX = sinf(rotX);
+	float cosX = cosf(rotX);
 
 	res.m_data[0][0] = 1;
 	res.m_data[1][1] = cosX;
-	res.m_data[1][2] = -sinX;
-	res.m_data[2][1] = sinX;
+	res.m_data[1][2] = sinX;
+	res.m_data[2][1] = -sinX;
 	res.m_data[2][2] = cosX;
 	res.m_data[3][3] = 1;
 
@@ -219,13 +219,13 @@ Mat4 Mat4::fromRotationX(float rotX) noexcept
 Mat4 Mat4::fromRotationY(float rotY) noexcept
 {
 	Mat4 res{};
-	float sinY = sin(rotY);
-	float cosY = cos(rotY);
+	float sinY = sinf(rotY);
+	float cosY = cosf(rotY);
 
 	res.m_data[0][0] = cosY;
-	res.m_data[0][2] = sinY;
+	res.m_data[0][2] = -sinY;
 	res.m_data[1][1] = 1;
-	res.m_data[2][0] = -sinY;
+	res.m_data[2][0] = sinY;
 	res.m_data[2][2] = cosY;
 	res.m_data[3][3] = 1;
 
@@ -235,12 +235,12 @@ Mat4 Mat4::fromRotationY(float rotY) noexcept
 Mat4 Mat4::fromRotationZ(float rotZ) noexcept
 {
 	Mat4 res{};
-	float sinZ = sin(rotZ);
-	float cosZ = cos(rotZ);
+	float sinZ = sinf(rotZ);
+	float cosZ = cosf(rotZ);
 
 	res.m_data[0][0] = cosZ;
-	res.m_data[0][1] = -sinZ;
-	res.m_data[1][0] = sinZ;
+	res.m_data[0][1] = sinZ;
+	res.m_data[1][0] = -sinZ;
 	res.m_data[1][1] = cosZ;
 	res.m_data[2][2] = 1;
 	res.m_data[3][3] = 1;
@@ -279,7 +279,7 @@ Mat4 Mat4::orthographicOffCenterLH(float left, float right, float bottom, float 
 Mat4 Mat4::perspectiveLH(float fov, float aspect, float znear, float zfar) noexcept
 {
 	Mat4 res{};
-	float yscale = 1.0f / tan(fov / 2.0f);
+	float yscale = 1.0f / tanf(fov / 2.0f);
 	float xscale = yscale / aspect;
 
 	res.m_data[0][0] = xscale;

@@ -40,28 +40,47 @@ const Mat4& TransformComponent::getWorldMatrix() noexcept
 
 Vec3 TransformComponent::getForwardVector() const noexcept
 {
+	float cosX = cosf(m_rotation.x);
+	float cosY = cosf(m_rotation.y);
+	float cosZ = cosf(m_rotation.z);
+	float sinX = sinf(m_rotation.x);
+	float sinY = sinf(m_rotation.y);
+	float sinZ = sinf(m_rotation.z);
+
 	return Vec3{
-		 -cos(m_rotation.x) * sin(m_rotation.y) * cos(m_rotation.z) + sin(m_rotation.x) * sin(m_rotation.z),
-		 cos(m_rotation.x) * sin(m_rotation.y)* sin(m_rotation.z) + sin(m_rotation.x) * cos(m_rotation.z),
-		 cos(m_rotation.x) * cos(m_rotation.y)
+		 cosX * sinY * cosZ + sinX * sinZ,
+		 cosX * sinY * sinZ - sinX * cosZ,
+		 cosX * cosY
 	};
 }
 
 Vec3 TransformComponent::getRightVector() const noexcept
 {
+	float cosY = cosf(m_rotation.y);
+	float cosZ = cosf(m_rotation.z);
+	float sinY = sinf(m_rotation.y);
+	float sinZ = sinf(m_rotation.z);
+
 	return Vec3{
-		cos(m_rotation.y) * cos(m_rotation.z),
-		-cos(m_rotation.y) * sin(m_rotation.z),
-		sin(m_rotation.y)
+		cosY * cosZ,
+		cosY * sinZ,
+		-sinY
 	};
 }
 
 Vec3 TransformComponent::getUpVector() const noexcept
 {
+	float cosX = cosf(m_rotation.x);
+	float cosY = cosf(m_rotation.y);
+	float cosZ = cosf(m_rotation.z);
+	float sinX = sinf(m_rotation.x);
+	float sinY = sinf(m_rotation.y);
+	float sinZ = sinf(m_rotation.z);
+
 	return Vec3{
-		 sin(m_rotation.x) * sin(m_rotation.y) * cos(m_rotation.z) + cos(m_rotation.x) * sin(m_rotation.z),
-		 -sin(m_rotation.x)* sin(m_rotation.y)* sin(m_rotation.z) + cos(m_rotation.x) * cos(m_rotation.z),
-		 -sin(m_rotation.x)* cos(m_rotation.y)
+		 sinX * sinY * cosZ - cosX * sinZ,
+		 sinX * sinY * sinZ + cosX * cosZ,
+		 sinX * cosY
 	};
 }
 

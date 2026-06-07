@@ -38,7 +38,7 @@ Vec3 Vec3::cross(const Vec3& v) const noexcept
 	};
 }
 
-Vec3 Vec3::normalize() const noexcept
+Vec3 Vec3::normalize() const
 {
 	float distSq = x*x + y*y + z*z;
 	
@@ -46,7 +46,7 @@ Vec3 Vec3::normalize() const noexcept
 		return *this;
 	}
 
-	float dist = sqrt(distSq);
+	float dist = sqrtf(distSq);
 	float invDist = 1.0f / dist;
 
 	return Vec3
@@ -170,7 +170,7 @@ Vec3 Vec3::cross(const Vec3& a, const Vec3& b) noexcept
 	return a.cross(b);
 }
 
-Vec3 Vec3::normalize(const Vec3& v) noexcept
+Vec3 Vec3::normalize(const Vec3& v)
 {
 	return v.normalize();
 }

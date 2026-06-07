@@ -13,7 +13,7 @@ public:
 	const float* toArray() const noexcept;
 	float dot(const Vec3& v) const noexcept;
 	Vec3 cross(const Vec3& v) const noexcept;
-	Vec3 normalize() const noexcept;
+	Vec3 normalize() const;
 
 	Vec3 operator-() const noexcept;
 	Vec3 operator+(const Vec3& rhs) const noexcept;
@@ -29,7 +29,7 @@ public:
 
 	static float dot(const Vec3& a, const Vec3& b) noexcept;
 	static Vec3 cross(const Vec3& a, const Vec3& b) noexcept;
-	static Vec3 normalize(const Vec3& v) noexcept;
+	static Vec3 normalize(const Vec3& v);
 	static Vec3 lerp(const Vec3& a, const Vec3& b, float t) noexcept;
 
 public:

@@ -18,7 +18,7 @@ using namespace types;
 using namespace utils;
 
 #define INITIAL_SPACESHIP_POSITION Vec3{-20.0f, -3.0f, 15.0f}
-#define INITIAL_SPACESHIP_ROTATION Vec3{0.0f, 0.0f, 0.27f}
+#define INITIAL_SPACESHIP_ROTATION Vec3{0.0f, 0.0f, -0.27f}
 
 #define INITIAL_ASTEROID1_POSITION Vec3{12.0f, 2.0f, 0.0f}
 #define INITIAL_ASTEROID1_ROTATION Vec3{0.0f, 0.0f, 0.0f}

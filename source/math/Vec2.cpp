@@ -31,7 +31,7 @@ float Vec2::cross(const Vec2& v) const noexcept
 	return this->x * v.y - this->y * v.x;
 }
 
-Vec2 Vec2::normalize() const noexcept
+Vec2 Vec2::normalize() const
 {
 	float distSq = x * x + y * y;
 
@@ -39,7 +39,7 @@ Vec2 Vec2::normalize() const noexcept
 		return *this;
 	}
 
-	float dist = sqrt(distSq);
+	float dist = sqrtf(distSq);
 	float invDist = 1.0f / dist;
 
 	return Vec2
@@ -122,7 +122,8 @@ Vec2& Vec2::operator/=(float scalar) noexcept
 
 bool Vec2::operator==(const Vec2& rhs) const noexcept
 {
-	return this->x == rhs.x && this->y == rhs.y;
+	return (fabsf(this->x - rhs.x) < 0.01f &&
+			fabsf(this->y - rhs.y) < 0.01f);
 }
 
 float Vec2::dot(const Vec2& v1, const Vec2& v2) noexcept
@@ -135,7 +136,7 @@ float Vec2::cross(const Vec2& v1, const Vec2& v2) noexcept
 	return v1.cross(v2);
 }
 
-Vec2 Vec2::normalize(const Vec2& v) noexcept
+Vec2 Vec2::normalize(const Vec2& v)
 {
 	return v.normalize();
 }
