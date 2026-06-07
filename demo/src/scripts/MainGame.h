@@ -29,6 +29,7 @@ private:
 
 private:
 	Entity* m_spaceship;
+	Entity* m_asteroid;
 };
 
 #endif

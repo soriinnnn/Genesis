@@ -21,6 +21,7 @@ using namespace constants;
 MainGame::MainGame(const ScriptDesc& desc): Script(desc) 
 {
 	m_spaceship = nullptr;
+	m_asteroid = nullptr;
 }
 
 MainGame::~MainGame() 
@@ -28,9 +29,11 @@ MainGame::~MainGame()
 	if (m_spaceship) {
 		m_context.entities.destroyEntity(m_spaceship->getId());
 	}
+	if (m_asteroid) {
+		m_context.entities.destroyEntity(m_asteroid->getId());
+	}
 
 	m_context.input.removeListener(this);
-
 	for (const String& element : gameMenuElements) {
 		UIElement* elem = m_context.ui.getElement<UIElement>(element.c_str());
 		if (elem) {
@@ -113,9 +116,9 @@ void MainGame::setupScene()
 {
 	m_spaceship = m_context.entities.createEntity("main_game_spaceship");
 
-	TransformComponent* spaceshipComponent = m_spaceship->createComponent<TransformComponent>();
-	spaceshipComponent->setPosition({0.0f, 0.0f, 0.0f});
-	spaceshipComponent->setRotation({0.0f, 0.0f, 0.0f});
+	TransformComponent* spaceshipTransform = m_spaceship->createComponent<TransformComponent>();
+	spaceshipTransform->setPosition({0.0f, 0.0f, 0.0f});
+	spaceshipTransform->setRotation({0.0f, 0.0f, 0.0f});
 
 	MeshRendererComponent* spaceshipMesh = m_spaceship->createComponent<MeshRendererComponent>();
 	spaceshipMesh->setMesh(m_context.resources.getMesh(ASSETS_MESH_SPACESHIP, GENESIS_VERTEX_PRESET_NORMAL_MAPPED));
@@ -126,6 +129,15 @@ void MainGame::setupScene()
 
 	ScriptComponent* spaceshipScripts = m_spaceship->createComponent<ScriptComponent>();
 	spaceshipScripts->addScript(m_manager.createScript<SpaceshipController>());
+
+	m_asteroid = m_context.entities.createEntity("main_game_asteroid1");
+
+	TransformComponent* asteroidTransform = m_asteroid->createComponent<TransformComponent>();
+	asteroidTransform->setPosition({0.0f, 0.0f, 5.0f});
+
+	MeshRendererComponent* asteroidMesh = m_asteroid->createComponent<MeshRendererComponent>();
+	asteroidMesh->setMesh(m_context.resources.getMesh(ASSETS_MESH_ASTEROID_1A, GENESIS_VERTEX_PRESET_NORMAL_MAPPED));
+	asteroidMesh->setMaterial(m_context.resources.getMaterial(ASSETS_MATERIAL_ASTEROID_1A));
 }
 
 void MainGame::setupMenu()
