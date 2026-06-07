@@ -104,7 +104,7 @@ void MainGame::setupScene()
 	spaceshipMesh->setMaterial(m_context.resources.getMaterial(ASSETS_MATERIAL_SPACESHIP));
 
 	RigidBodyComponent* spaceshipBody = m_spaceship->createComponent<RigidBodyComponent>();
-	spaceshipBody->setBody(m_context.physics.createBox({0.0f, 0.0f, 0.0f}, {20.0f, 8.0f, 20.0f}, MotionType::Kinematic));
+	spaceshipBody->setBody(m_context.physics.createBox({0.0f, 0.0f, 0.0f}, {26.0f, 4.4f, 22.0f}, MotionType::Kinematic));
 
 	ScriptComponent* spaceshipScripts = m_spaceship->createComponent<ScriptComponent>();
 	spaceshipScripts->addScript(m_manager.createScript<SpaceshipController>());
