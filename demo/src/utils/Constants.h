@@ -20,7 +20,7 @@ namespace constants
 	const Vec4 buttonSelectedIdleColor = Vec4{0.1f, 0.15f, 0.3f, 1.0f};
 	const Vec4 buttonSelectedHoverColor = Vec4{0.3f, 0.35f, 0.5f, 1.0f};
 
-	const String mainMenuElements[] = {
+	const Vector<String> mainMenuElements = {
 		UI_MAIN_MENU_PANEL,
 		UI_MAIN_MENU_TITLE,
 		UI_MAIN_MENU_START_BUTTON,
@@ -28,7 +28,7 @@ namespace constants
 		UI_MAIN_MENU_SETTINGS_BUTTON
 	};
 
-	const String settingsMenuElements[] = {
+	const Vector<String> settingsMenuElements = {
 		UI_SETTINGS_MENU_PANEL,
 		UI_SETTINGS_MENU_TITLE,
 		UI_SETTINGS_MENU_BACK_BUTTON,
@@ -44,7 +44,7 @@ namespace constants
 		UI_SETTINGS_MENU_ANTIALIASING_OPTION4
 	};
 
-	const String gameMenuElements[] = {
+	const Vector<String> gameMenuElements = {
 		UI_GAME_MENU_PANEL,
 		UI_GAME_MENU_TITLE,
 		UI_GAME_MENU_RESUME_BUTTON,
@@ -52,7 +52,7 @@ namespace constants
 		UI_GAME_MENU_MAIN_BUTTON
 	};
 
-	const String mainMenuHints[] = {
+	const Vector<String> hints = {
 		UI_HINT1,
 		UI_HINT2,
 		UI_HINT3,

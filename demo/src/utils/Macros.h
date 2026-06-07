@@ -4,6 +4,9 @@
 
 // MISC
 
+#define WINDOW_TITLE "Starfield"
+#define WINDOW_ICON "C:/Users/Sorin/Downloads/draven_bof.ico"
+
 #define SUN_COLOR Vec3{1.0f, 0.95f, 0.85f}
 #define SUN_DIRECTION Vec3{0.065f, 3.07f, 0.0f}
 #define SUN_INTENSITY 1.0f

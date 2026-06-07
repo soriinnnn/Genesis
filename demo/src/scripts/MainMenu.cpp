@@ -51,18 +51,8 @@ MainMenu::~MainMenu()
 	if (m_asteroid3) {
 		m_context.entities.destroyEntity(m_asteroid3->getId());
 	}
-	for (const String& element : mainMenuElements) {
-		UIElement* elem = m_context.ui.getElement<UIElement>(element.c_str());
-		if (elem) {
-			elem->setVisible(false);
-		}
-	}
-	for (const String& hint : mainMenuHints) {
-		UIElement* elem = m_context.ui.getElement<UIElement>(hint.c_str());
-		if (elem) {
-			elem->setVisible(false);
-		}
-	}
+	setUIVisibility(false, mainMenuElements, m_context.ui);
+	setUIVisibility(false, hints, m_context.ui);
 }
 
 void MainMenu::onAwake() {}
@@ -212,20 +202,8 @@ void MainMenu::setupScene()
 
 void MainMenu::setupMenu()
 {
-	for (const String& element : mainMenuElements) {
-		UIElement* elem = m_context.ui.getElement<UIElement>(element.c_str());
-		if (!elem) {
-			GENESIS_LOG_THROW_ERROR("UI element \"{}\" not found.", element.c_str());
-		}
-		elem->setVisible(true);
-	}
-	for (const String& hint : mainMenuHints) {
-		UIElement* elem = m_context.ui.getElement<UIElement>(hint.c_str());
-		if (!elem) {
-			GENESIS_LOG_THROW_ERROR("UI element \"{}\" not found.", hint.c_str());
-		}
-		elem->setVisible(true);
-	}
+	setUIVisibility(true, mainMenuElements, m_context.ui);
+	setUIVisibility(true, hints, m_context.ui);
 
 	UIElement* menuStart = m_context.ui.getElement<UIElement>(UI_MAIN_MENU_START_BUTTON);
 	menuStart->setOnMouseUpCallback([this, menuStart](MouseButton button) {

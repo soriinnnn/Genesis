@@ -23,6 +23,9 @@ void Demo::onKeyUp(Key key)
 {
     switch (key) {
         case Key::G: {
+            if (gameState != GameState::Playing) {
+                return;
+            }
             bool mouseLock = m_inputManager->isMouseLocked();
             m_inputManager->setMouseLock(!mouseLock);
             m_inputManager->setMouseVisibility(mouseLock);

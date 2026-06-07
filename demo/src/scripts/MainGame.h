@@ -30,6 +30,7 @@ private:
 private:
 	Entity* m_spaceship;
 	Entity* m_asteroid;
+	bool m_wasMouseLocked;
 };
 
 #endif

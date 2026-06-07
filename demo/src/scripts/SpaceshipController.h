@@ -1,15 +1,22 @@
 #ifndef SPACESHIP_CONTROLLER_SCRIPT_H
 #define SPACESHIP_CONTROLLER_SCRIPT_H
 #include <script/Script.h>
+#include <input/InputListener.h>
 #include <math/Vec3.h>
 
 using namespace genesis;
 
-class SpaceshipController final: public Script
+class SpaceshipController final: public Script, InputListener
 {
 public:
 	explicit SpaceshipController(const ScriptDesc& desc);
 	~SpaceshipController() override;
+
+	void onKeyDown(Key key);
+	void onKeyUp(Key key);
+	void onMouseMove(Point delta, Point pos);
+	void onMouseDown(MouseButton button, Point pos);
+	void onMouseUp(MouseButton button, Point pos);
 
 protected:
 	void onAwake() override;

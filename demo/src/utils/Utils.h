@@ -85,6 +85,16 @@ namespace utils
 		return button;
 	}
 
+	inline void setUIVisibility(bool visible, const Vector<String>& elements, UIManager& manager)
+	{
+		for (const String& element : elements) {
+			UIElement* elem = manager.getElement<UIElement>(element.c_str());
+			if (elem) {
+				elem->setVisible(visible);
+			}
+		}
+	}
+
 	inline void updateFPSLabel(float deltaTime, UILabel& label)
 	{
 		static float timeElapsed = 0.0f;

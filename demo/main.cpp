@@ -90,12 +90,8 @@ static void createMainMenu(Game& game)
 		if (button != MouseButton::Left) {
 			return;
 		}
-		for (const String& element : mainMenuElements) {
-			context.ui.getElement<UIElement>(element.c_str())->setVisible(false);
-		}
-		for (const String& element : settingsMenuElements) {
-			context.ui.getElement<UIElement>(element.c_str())->setVisible(true);
-		}
+		setUIVisibility(false, mainMenuElements, context.ui);
+		setUIVisibility(true, settingsMenuElements, context.ui);
 	});
 
 	/* QUIT BUTTON */
@@ -298,18 +294,12 @@ static void createSettingsMenu(Game& game)
 			return;
 		}
 		if (gameState == GameState::MainMenu) {
-			for (const String& element : mainMenuElements) {
-				context.ui.getElement<UIElement>(element.c_str())->setVisible(true);
-			}
+			setUIVisibility(true, mainMenuElements, context.ui);
 		}
 		else if (gameState == GameState::Paused) {
-			for (const String& element : gameMenuElements) {
-				context.ui.getElement<UIElement>(element.c_str())->setVisible(true);
-			}
+			setUIVisibility(true, gameMenuElements, context.ui);
 		}
-		for (const String& element : settingsMenuElements) {
-			context.ui.getElement<UIElement>(element.c_str())->setVisible(false);
-		}
+		setUIVisibility(false, settingsMenuElements, context.ui);
 	});
 
 	createSettingsTextureFilteringOptions(game);
@@ -368,12 +358,8 @@ static void createGameMenu(Game& game)
 			return;
 		}
 		gameState = GameState::Playing;
-		for (const String& element : gameMenuElements) {
-			context.ui.getElement<UIElement>(element.c_str())->setVisible(false);
-		}
-		for (const String& element : mainMenuHints) {
-			context.ui.getElement<UIElement>(element.c_str())->setVisible(false);
-		}
+		setUIVisibility(false, gameMenuElements, context.ui);
+		setUIVisibility(false, hints, context.ui);
 	});
 
 	/* SETTINGS BUTTON */
@@ -398,12 +384,8 @@ static void createGameMenu(Game& game)
 		if (button != MouseButton::Left) {
 			return;
 		}
-		for (const String& element : gameMenuElements) {
-			context.ui.getElement<UIElement>(element.c_str())->setVisible(false);
-		}
-		for (const String& element : settingsMenuElements) {
-			context.ui.getElement<UIElement>(element.c_str())->setVisible(true);
-		}
+		setUIVisibility(false, gameMenuElements, context.ui);
+		setUIVisibility(true, settingsMenuElements, context.ui);
 	});
 
 	/* QUIT BUTTON */
@@ -489,7 +471,7 @@ static void createHints(Game& game)
 	};
 	createUILabel(game, hint4Info);
 
-	for (const String& hint : mainMenuHints) {
+	for (const String& hint : hints) {
 		context.ui.setZOrder(hint.c_str(), 5);
 	}
 }
@@ -531,7 +513,7 @@ static void setupGame(Game& game)
 int main()
 {
 	try {
-		Demo game({.windowTitle = "Starfield", .windowIcon = "C:/Users/Sorin/Downloads/draven_bof.ico", .logLevel = Logger::LogLevel::Info});
+		Demo game({.windowTitle = WINDOW_TITLE, .windowIcon = WINDOW_ICON, .logLevel = Logger::LogLevel::Info});
 		setupGame(game);
 		game.run();
 	}

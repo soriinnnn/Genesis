@@ -4,6 +4,7 @@
 #include "../utils/GameState.h"
 #include "../utils/Constants.h"
 #include "../utils/Macros.h"
+#include "../utils/Utils.h"
 
 #include <ui/UIManager.h>
 #include <ui/elements/UIElement.h>
@@ -17,11 +18,13 @@
 #include <entity/components/ScriptComponent.h>
 
 using namespace constants;
+using namespace utils;
 
 MainGame::MainGame(const ScriptDesc& desc): Script(desc) 
 {
 	m_spaceship = nullptr;
 	m_asteroid = nullptr;
+	m_wasMouseLocked = false;
 }
 
 MainGame::~MainGame() 
@@ -32,14 +35,8 @@ MainGame::~MainGame()
 	if (m_asteroid) {
 		m_context.entities.destroyEntity(m_asteroid->getId());
 	}
-
 	m_context.input.removeListener(this);
-	for (const String& element : gameMenuElements) {
-		UIElement* elem = m_context.ui.getElement<UIElement>(element.c_str());
-		if (elem) {
-			elem->setVisible(false);
-		}
-	}
+	setUIVisibility(false, gameMenuElements, m_context.ui);
 }
 
 void MainGame::onAwake() {}
@@ -67,42 +64,24 @@ void MainGame::onKeyUp(Key key)
 		return;
 	}
 
-	m_context.input.setMouseLock(false);
-	m_context.input.setMouseVisibility(true);
-
+	bool mouseLock = false;
 	if (gameState == GameState::Playing) {
 		gameState = GameState::Paused;
+		m_wasMouseLocked = m_context.input.isMouseLocked();
 	}
 	else {
 		gameState = GameState::Playing;
+		mouseLock = m_wasMouseLocked;
 	}
+
+	m_context.input.setMouseLock(mouseLock);
+	m_context.input.setMouseVisibility(!mouseLock);
 
 	bool menuVisible = (gameState == GameState::Paused);
-
-	for (const String& element : gameMenuElements) {
-		UIElement* elem = m_context.ui.getElement<UIElement>(element.c_str());
-		if (!elem) {
-			GENESIS_LOG_THROW_ERROR("UI element \"{}\" not found.", element.c_str());
-		}
-		elem->setVisible(menuVisible);
-	}
-
-	for (const String& element : mainMenuHints) {
-		UIElement* elem = m_context.ui.getElement<UIElement>(element.c_str());
-		if (!elem) {
-			GENESIS_LOG_THROW_ERROR("UI element \"{}\" not found.", element.c_str());
-		}
-		elem->setVisible(menuVisible);
-	}
-
+	setUIVisibility(menuVisible, gameMenuElements, m_context.ui);
+	setUIVisibility(menuVisible, hints, m_context.ui);
 	if (!menuVisible) {
-		for (const String& element : settingsMenuElements) {
-			UIElement* elem = m_context.ui.getElement<UIElement>(element.c_str());
-			if (!elem) {
-				GENESIS_LOG_THROW_ERROR("UI element \"{}\" not found.", element.c_str());
-			}
-			elem->setVisible(false);
-		}
+		setUIVisibility(false, settingsMenuElements, m_context.ui);
 	}
 }
 

@@ -11,7 +11,8 @@
 using namespace constants;
 using namespace utils;
 
-#define NORMAL_MOVEMENT_SPEED 20.0f
+#define NORMAL_MOVEMENT_SPEED 40.0f
+#define SPRINT_MOVEMENT_SPEED 80.0f;
 #define MOUSE_SENSITIVITY_X 0.002f
 #define MOUSE_SENSITIVITY_Y 0.002f
 #define ORBIT_DISTANCE 30.0f
@@ -28,7 +29,32 @@ SpaceshipController::SpaceshipController(const ScriptDesc& desc): Script(desc)
 	m_movementSpeed = NORMAL_MOVEMENT_SPEED;
 }
 
-SpaceshipController::~SpaceshipController() {}
+SpaceshipController::~SpaceshipController() 
+{
+	m_context.input.removeListener(this);
+}
+
+void SpaceshipController::onKeyDown(Key key) 
+{
+	if (key != Key::LeftShift) {
+		return;
+	}
+	m_movementSpeed = SPRINT_MOVEMENT_SPEED;
+}
+
+void SpaceshipController::onKeyUp(Key key) 
+{
+	if (key != Key::LeftShift) {
+		return;
+	}
+	m_movementSpeed = NORMAL_MOVEMENT_SPEED;
+}
+
+void SpaceshipController::onMouseMove(Point delta, Point pos) {}
+
+void SpaceshipController::onMouseDown(MouseButton button, Point pos) {}
+
+void SpaceshipController::onMouseUp(MouseButton button, Point pos) {}
 
 void SpaceshipController::onAwake()
 {
@@ -47,6 +73,7 @@ void SpaceshipController::onStart()
 		GENESIS_LOG_THROW_ERROR("Entity \"{}\" not found.", ENTITIES_MAIN_CAMERA);
 	}
 	updateCamera();
+	m_context.input.addListener(this);
 }
 
 void SpaceshipController::onUpdate(float deltaTime)
