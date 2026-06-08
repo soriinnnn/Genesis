@@ -496,7 +496,7 @@ static void createCamera(Game& game)
 	GameContext context = game.getContext();
 
 	Entity* camera = context.entities.createEntity(ENTITIES_MAIN_CAMERA);
-	camera->createComponent<CameraComponent>();
+	camera->createComponent<CameraComponent>()->setFarPlane(5000.0f);
 }
 
 static void setupGame(Game& game) 

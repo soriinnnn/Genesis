@@ -19,10 +19,12 @@ public:
 
 	const VertexBuffer& getVertexBuffer() const noexcept;
 	const IndexBuffer& getIndexBuffer() const noexcept;
+	Vec3 getSize() const noexcept;
 
 private:
 	SharedPtr<VertexBuffer> m_vertexBuffer;
 	SharedPtr<IndexBuffer> m_indexBuffer;
+	Vec3 m_size;
 };
 
 GENESIS_NAMESPACE_END

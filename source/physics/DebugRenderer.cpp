@@ -1,4 +1,7 @@
 #include <physics/DebugRenderer.h>
+
+#ifdef _DEBUG
+
 #include <graphics/GraphicsDevice.h>
 #include <graphics/FrameBuffer.h>
 #include <graphics/EngineShaders.h>
@@ -78,3 +81,5 @@ void DebugRenderer::render(DeviceContext& context)
 	context.draw(vertexCount);
 	m_vertices.clear();
 }
+
+#endif

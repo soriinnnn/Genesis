@@ -5,6 +5,8 @@
 #include <math/Vec3.h>
 #include <math/Vec4.h>
 #include <jolt/Jolt.h>
+
+#ifdef _DEBUG
 #include <jolt/Renderer/DebugRendererSimple.h>
 
 GENESIS_NAMESPACE_BEGIN
@@ -45,4 +47,5 @@ private:
 
 GENESIS_NAMESPACE_END
 
+#endif
 #endif

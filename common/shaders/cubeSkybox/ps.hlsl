@@ -1,5 +1,5 @@
-TextureCube skyboxTexture: register(t0);
-SamplerState skyboxSampler: register(s0);
+TextureCube colorTexture: register(t0);
+SamplerState textureSampler: register(s0);
 
 struct InputPS
 {
@@ -10,5 +10,5 @@ struct InputPS
 float4 main(InputPS input): SV_Target0
 {
     float3 direction = normalize(input.sampleDirection);
-    return skyboxTexture.Sample(skyboxSampler, direction);
+    return colorTexture.Sample(textureSampler, direction);
 }

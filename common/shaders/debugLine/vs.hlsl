@@ -13,7 +13,7 @@ struct InputVS
 
 struct OutputPS
 {
-    float4 position: SV_Position;
+    float4 clipPosition: SV_Position;
     float4 color: COLOR0;
 };
 
@@ -22,9 +22,7 @@ OutputPS main(InputVS input)
     OutputPS output;
     
     float4 worldPosition = float4(input.position, 1.0f);
-    output.position = mul(worldPosition, viewMatrix);
-    output.position = mul(output.position, projectionMatrix);
-    
+    output.clipPosition = mul(mul(worldPosition, viewMatrix), projectionMatrix);
     output.color = input.color;
     
     return output;

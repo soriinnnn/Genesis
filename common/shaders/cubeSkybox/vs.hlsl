@@ -14,7 +14,7 @@ struct InputVS
 struct OutputPS
 {
     float4 clipPosition: SV_Position;
-    float2 uv: TEXCOORD0;
+    float3 sampleDirection: TEXCOORD0;
 };
 
 OutputPS main(InputVS input)
@@ -25,11 +25,10 @@ OutputPS main(InputVS input)
     viewNoTranslation[3].xyz = float3(0.0f, 0.0f, 0.0f);
     
     float4 worldPosition = float4(input.position, 1.0f);
-    output.clipPosition = mul(worldPosition, viewNoTranslation);
-    output.clipPosition = mul(output.clipPosition, projectionMatrix);
+    output.clipPosition = mul(mul(worldPosition, viewNoTranslation), projectionMatrix);
     output.clipPosition.z = output.clipPosition.w;
     
-    output.uv = input.uv;
+    output.sampleDirection = input.position;
     
     return output;
 }

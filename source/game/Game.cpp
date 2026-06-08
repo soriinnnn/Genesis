@@ -54,7 +54,7 @@ Logger& Game::getLogger() noexcept
 
 GameContext Game::getContext() noexcept
 {
-    return {*m_entityManager, *m_inputManager, *m_resourceManager, *m_uiManager, *m_scriptManager, *m_physicsEngine, *m_display};
+    return {*m_entityManager, *m_inputManager, *m_resourceManager, *m_uiManager, *m_scriptManager, *m_physicsEngine, *m_display, m_effects};
 }
 
 void Game::quit()
@@ -176,14 +176,4 @@ void Game::setTextureFiltering(TextureFiltering filter)
 void Game::setSkybox(SharedPtr<SkyBox> skybox)
 {
     m_skybox = std::move(skybox);
-}
-
-void Game::addEffect(SharedPtr<PostProcess> effect)
-{
-    m_effects.push_back(std::move(effect));
-}
-
-void Game::clearEffects()
-{
-    m_effects.clear();
 }

@@ -57,6 +57,7 @@ public:
 	void setRotation(const Vec3& rotation);
 	void setLinearVelocity(const Vec3& velocity);
 	void setAngularVelocity(const Vec3& velocity);
+	void setGravityFactor(float gravity);
 
 	void addLinearVelocity(const Vec3& velocity);
 	void addForce(const Vec3& force);
@@ -79,7 +80,7 @@ private:
 	MotionType m_motionType;
 
 private:
-	std::function<void(ContactAddedData&)> m_onContactAdded;
+	std::function<void(const ContactAddedData&)> m_onContactAdded;
 	std::function<void(const ContactPersistedData&)> m_onContactPersisted;
 	std::function<void(const ContactRemovedData&)> m_onContactRemoved;
 

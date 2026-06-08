@@ -27,13 +27,15 @@ protected:
 private:
 	void updateRotation(float deltaTime);
 	void updatePosition(float deltaTime);
-	void updateCamera();
+	void updateCamera(float deltaTime);
 
 private:
 	Entity* m_camera;
-	TransformComponent* m_shipTransform;
+	TransformComponent* m_transform;
 	Vec3 m_targetRotation;
 	Vec3 m_orbitRotation;
+	float m_currentOrbitDistance;
+	float m_targetOrbitDistance;
 	float m_movementSpeed;
 };
 

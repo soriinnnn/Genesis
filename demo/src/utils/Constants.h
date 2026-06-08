@@ -73,6 +73,22 @@ namespace constants
 		{{UI_SETTINGS_MENU_ANTIALIASING_OPTION4, Anchor::Center, {-188, 176}, ASSETS_FONT_PRIMARY_16_PX, "MSAA 8x", {92, 22}}, AntiAliasing::MSAA_8X}
 	};
 
+	const Vector<String> asteroidMeshes = {
+		ASSETS_MESH_ASTEROID_1A,
+		ASSETS_MESH_ASTEROID_1B,
+		ASSETS_MESH_ASTEROID_2A,
+		ASSETS_MESH_ASTEROID_2B,
+		ASSETS_MESH_ASTEROID_2C
+	};
+
+	const Vector<String> asteroidMaterials = {
+		ASSETS_MATERIAL_ASTEROID_1A,
+		ASSETS_MATERIAL_ASTEROID_1B,
+		ASSETS_MATERIAL_ASTEROID_2A,
+		ASSETS_MATERIAL_ASTEROID_2B,
+		ASSETS_MATERIAL_ASTEROID_2C
+	};
+
 	// TRANSITIONS
 
 	const float pi = 3.14159265f;
@@ -148,10 +164,6 @@ namespace constants
 		{{3.142f, 6.283f, -3.142f}, {4.712f, 9.425f, -4.712f}, 40.0f, Easing::Linear},
 		{{4.712f, 9.425f, -4.712f}, {6.283f, 12.566f, -6.283f}, 40.0f, Easing::Linear}
 	};
-
-	// MAIN GAME
-
-	const Vec3 cameraPlayerOffset = Vec3{0.0f, 5.0f, -30.0f};
 }
 
 #endif

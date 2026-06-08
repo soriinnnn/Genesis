@@ -5,7 +5,7 @@
 // MISC
 
 #define WINDOW_TITLE "Starfield"
-#define WINDOW_ICON "C:/Users/Sorin/Downloads/draven_bof.ico"
+#define WINDOW_ICON "demo/assets/demo.ico"
 
 #define SUN_COLOR Vec3{1.0f, 0.95f, 0.85f}
 #define SUN_DIRECTION Vec3{0.065f, 3.07f, 0.0f}
@@ -31,6 +31,8 @@
 #define ASSETS_MATERIAL_ASTEROID_2A "demo/assets/materials/asteroid2a.json"
 #define ASSETS_MATERIAL_ASTEROID_2B "demo/assets/materials/asteroid2b.json"
 #define ASSETS_MATERIAL_ASTEROID_2C "demo/assets/materials/asteroid2c.json"
+
+#define ASSETS_POST_EFFECT_SPRINTING "demo/assets/effects/sprinting.json"
 
 #define ASSETS_MAIN_MENU_PANEL "demo/assets/textures/ui/main_menu.png"
 #define ASSETS_SETTINGS_MENU_PANEL "demo/assets/textures/ui/settings_menu.png"

@@ -60,9 +60,11 @@ PhysicsEngine::PhysicsEngine(const PhysicsEngineDesc& desc): Base(desc.base)
 	m_contactListener = make_unique<ContactListener>(ContactListenerDesc{m_physicsSystem->GetBodyInterface()});
 	m_physicsSystem->SetContactListener(m_contactListener.get());
 
+#ifdef _DEBUG
 	m_debugRenderer = make_unique<DebugRenderer>(DebugRendererDesc{desc.graphicsContext});
 	m_drawSettings.mDrawShape = true;
 	m_drawSettings.mDrawBoundingBox = false;
+#endif
 }
 
 PhysicsEngine::~PhysicsEngine() 
@@ -105,16 +107,6 @@ void PhysicsEngine::update(EntityManager& entities, float deltaTime)
 		transform->setPosition(body->getPosition());
 		transform->setRotation(body->getRotation());
 	});
-}
-
-void PhysicsEngine::drawDebug()
-{
-	m_physicsSystem->DrawBodies(m_drawSettings, m_debugRenderer.get());
-}
-
-DebugRenderer& PhysicsEngine::getDebugRenderer()
-{
-	return *m_debugRenderer;
 }
 
 SharedPtr<RigidBody> PhysicsEngine::createBox(Vec3 position, Vec3 size, MotionType motionType)
@@ -169,6 +161,20 @@ SharedPtr<RigidBody> PhysicsEngine::createCapsule(Vec3 position, float height, f
 
 	return make_shared<RigidBody>(RigidBodyDesc{m_logger, body, bodyInterface, motionType});
 }
+
+#ifdef _DEBUG
+
+void PhysicsEngine::drawDebug()
+{
+	m_physicsSystem->DrawBodies(m_drawSettings, m_debugRenderer.get());
+}
+
+DebugRenderer& PhysicsEngine::getDebugRenderer()
+{
+	return *m_debugRenderer;
+}
+
+#endif
 
 /* STATIC FUNCTIONS DEFINITIONS */
 

@@ -176,34 +176,6 @@ void GraphicsEngine::render(EntityManager& entities, Entity& camera, float delta
     renderEntities(entities);
 }
 
-void GraphicsEngine::render(DebugRenderer& debug, Entity& camera)
-{
-    CameraComponent* cameraComponent = camera.getComponent<CameraComponent>();
-    if (!cameraComponent) {
-        return;
-    }
-
-    m_deviceContext->setRenderTarget(m_sceneTarget->getRenderTarget(), m_sceneTarget->getDepthStencil());
-    m_deviceContext->setViewport(m_sceneTarget->getSize());
-    if (isHardwareMSAA(m_antiAliasing)) {
-        m_msaaDirty = true;
-    }
-
-    CameraData cameraData = {
-        cameraComponent->getViewMatrix(),
-        cameraComponent->getProjectionMatrix(),
-        Vec4{camera.getComponent<TransformComponent>()->getPosition()}
-    };
-    m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData, sizeof(CameraData));
-    m_deviceContext->setConstantBuffer(*m_cameraBuffer, CAMERA_CONSTANT_BUFFER_SLOT);
-
-    m_deviceContext->setRasterizerState(*m_sceneRasterizer);
-    m_deviceContext->setDepthStencilState(m_states->depthDefault());
-    m_deviceContext->setSamplerState(*m_sceneSampler, DEFAULT_SAMPLER_STATE_SLOT);
-
-    debug.render(*m_deviceContext);
-}
-
 void GraphicsEngine::render(SkyBox& skybox, Entity& camera)
 {
     CameraComponent* cameraComponent = camera.getComponent<CameraComponent>();
@@ -269,6 +241,9 @@ void GraphicsEngine::postProcess(PostProcess& effect)
 
     applyPostProcess(effect, *m_primaryBuffer, *m_secondaryBuffer);
     std::swap(m_primaryBuffer, m_secondaryBuffer);
+    if (!isHardwareMSAA(m_antiAliasing)) {
+        m_sceneTarget = m_primaryBuffer.get();
+    }
 }
 
 void GraphicsEngine::present(Display& display)
@@ -293,6 +268,36 @@ void GraphicsEngine::present(Display& display)
 
     display.present();
 }
+
+#ifdef _DEBUG
+void GraphicsEngine::render(DebugRenderer& debug, Entity& camera)
+{
+    CameraComponent* cameraComponent = camera.getComponent<CameraComponent>();
+    if (!cameraComponent) {
+        return;
+    }
+
+    m_deviceContext->setRenderTarget(m_sceneTarget->getRenderTarget(), m_sceneTarget->getDepthStencil());
+    m_deviceContext->setViewport(m_sceneTarget->getSize());
+    if (isHardwareMSAA(m_antiAliasing)) {
+        m_msaaDirty = true;
+    }
+
+    CameraData cameraData = {
+        cameraComponent->getViewMatrix(),
+        cameraComponent->getProjectionMatrix(),
+        Vec4{camera.getComponent<TransformComponent>()->getPosition()}
+    };
+    m_deviceContext->updateConstantBuffer(*m_cameraBuffer, &cameraData, sizeof(CameraData));
+    m_deviceContext->setConstantBuffer(*m_cameraBuffer, CAMERA_CONSTANT_BUFFER_SLOT);
+
+    m_deviceContext->setRasterizerState(*m_sceneRasterizer);
+    m_deviceContext->setDepthStencilState(m_states->depthDefault());
+    m_deviceContext->setSamplerState(*m_sceneSampler, DEFAULT_SAMPLER_STATE_SLOT);
+
+    debug.render(*m_deviceContext);
+}
+#endif
 
 uint32 GraphicsEngine::getLights(EntityManager& entities)
 {
@@ -376,7 +381,7 @@ void GraphicsEngine::applyPostProcess(PostProcess& effect, FrameBuffer& input, F
 
     m_deviceContext->setRasterizerState(m_states->rasterizerSolid());
     m_deviceContext->setDepthStencilState(m_states->depthDisabled());
-    m_deviceContext->setSamplerState(m_states->pointClamp(), DEFAULT_SAMPLER_STATE_SLOT);
+    m_deviceContext->setSamplerState(m_states->trilinearClamp(), DEFAULT_SAMPLER_STATE_SLOT);
     m_deviceContext->setGraphicsPipelineState(effect.getGraphicsPipelineState());
 
     m_deviceContext->setTexture(input.getRenderTarget());

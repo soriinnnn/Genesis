@@ -13,6 +13,7 @@ struct GameContext
 	ScriptManager& scripts;
 	PhysicsEngine& physics;
 	Display& display;
+	Vector<SharedPtr<PostProcess>>& effects;
 };
 
 struct ScriptContext

@@ -82,6 +82,11 @@ void RigidBody::setAngularVelocity(const Vec3& velocity)
 	m_bodyInterface.SetAngularVelocity(m_body, JPH::Vec3(velocity.x, velocity.y, velocity.z));
 }
 
+void RigidBody::setGravityFactor(float gravity)
+{
+	m_bodyInterface.SetGravityFactor(m_body, gravity);
+}
+
 void RigidBody::addLinearVelocity(const Vec3& velocity)
 {
 	m_bodyInterface.AddLinearVelocity(m_body, JPH::Vec3(velocity.x, velocity.y, velocity.z));

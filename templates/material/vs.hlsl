@@ -1,4 +1,4 @@
-// Template for vertex shaders.
+// Template for material vertex shaders.
 
 cbuffer SceneData: register(b0)
 {

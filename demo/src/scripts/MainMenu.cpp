@@ -109,7 +109,7 @@ void MainMenu::onFixedUpdate(float deltaTime) {}
 
 void MainMenu::setupScene() 
 {
-	m_spaceship = m_context.entities.createEntity("main_menu_spaceship");
+	m_spaceship = m_context.entities.createEntity();
 
 	TransformComponent* spaceshipTransform = m_spaceship->createComponent<TransformComponent>();
 	spaceshipTransform->setPosition(INITIAL_SPACESHIP_POSITION);
@@ -133,7 +133,7 @@ void MainMenu::setupScene()
 		INITIAL_SPACESHIP_ROTATION
 	);
 
-	m_asteroid1 = m_context.entities.createEntity("main_menu_asteroid1");
+	m_asteroid1 = m_context.entities.createEntity();
 
 	TransformComponent* asteroid1Transform = m_asteroid1->createComponent<TransformComponent>();
 	asteroid1Transform->setPosition(INITIAL_ASTEROID1_POSITION);
@@ -157,7 +157,7 @@ void MainMenu::setupScene()
 		INITIAL_ASTEROID1_ROTATION
 	);
 
-	m_asteroid2 = m_context.entities.createEntity("main_menu_asteroid2");
+	m_asteroid2 = m_context.entities.createEntity();
 
 	TransformComponent* asteroid2Transform = m_asteroid2->createComponent<TransformComponent>();
 	asteroid2Transform->setPosition(INITIAL_ASTEROID2_POSITION);
@@ -181,7 +181,7 @@ void MainMenu::setupScene()
 		INITIAL_ASTEROID2_ROTATION
 	);
 
-	m_asteroid3 = m_context.entities.createEntity("main_menu_asteroid3");
+	m_asteroid3 = m_context.entities.createEntity();
 
 	TransformComponent* asteroid3Transform = m_asteroid3->createComponent<TransformComponent>();
 	asteroid3Transform->setPosition(INITIAL_ASTEROID3_POSITION);

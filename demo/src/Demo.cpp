@@ -69,6 +69,14 @@ void Demo::onCreate()
     Entity* scripts = m_entityManager->createEntity(ENTITIES_GLOBAL_SCRIPTS);
     ScriptComponent* scriptComponent = scripts->createComponent<ScriptComponent>();
     scriptComponent->addScript(m_scriptManager->createScript<MainMenu>());
+
+    // preload resources
+    for (const String& mesh : asteroidMeshes) {
+        m_resourceManager->getMesh(mesh.c_str());
+    }
+    for (const String& material : asteroidMaterials) {
+        m_resourceManager->getMaterial(material.c_str());
+    }
 }
 
 void Demo::onUpdate(float deltaTime) 

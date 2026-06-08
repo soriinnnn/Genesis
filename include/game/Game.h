@@ -52,8 +52,6 @@ protected:
     void setMainCamera(Entity* camera);
     void setRenderResolution(const Rect& resolution);
     void setSkybox(SharedPtr<SkyBox> skybox);
-    void addEffect(SharedPtr<PostProcess> effect);
-    void clearEffects();
 
 private:
     void onInternalUpdate();
@@ -67,6 +65,7 @@ protected:
     UniquePtr<EntityManager> m_entityManager;
     UniquePtr<UIManager> m_uiManager;
     UniquePtr<ScriptManager> m_scriptManager;
+    Vector<SharedPtr<PostProcess>> m_effects;
 
 private:
     UniquePtr<Logger> m_logger;
@@ -74,7 +73,6 @@ private:
     UniquePtr<Window> m_window;
 
 private:
-    Vector<SharedPtr<PostProcess>> m_effects;
     SharedPtr<SkyBox> m_skybox;
     TimePoint m_previousTime;
     EntityId m_mainCameraId;

@@ -25,16 +25,13 @@ using LogLevel = Logger::LogLevel;
 
 #define KEY_RESOURCE_PATH "path"
 #define KEY_RESOURCE_SLOT "slot"
-
 #define KEY_POST_EFFECT_SHADER "shader"
 #define KEY_POST_EFFECT_PROPERTIES "properties"
 #define KEY_SHADER_ENTRY "entry"
-
 #define DEFAULT_SHADER_ENTRY "main"
 
-static SharedPtr<Shader> getShaderFromJSON(const Json& data, ShaderType type, ResourceManager& resourceManager, const Logger& logger, const char* effectPath);
-static SharedPtr<ConstantBuffer> getConstantBufferFromJSON(const Json& data, const SharedPtr<Shader>& ps, GraphicsDevice& graphicsDevice, Vector<uint8>& properties, HashMap<String, ShaderReflectionVariable>& variables, const Logger& logger, const char* effectPath);
-static Vector<uint8> getPropertiesFromJSON(const Json& data, const ShaderReflectionConstantBuffer& reflection, const Logger& logger, const char* effectPath);
+static SharedPtr<Shader> getShaderFromJSON(const Json& data, ShaderType type, ResourceManager& resourceManager, const Logger& logger, const char* path);
+static Vector<uint8> getPropertiesFromJSON(const Json& data, const ShaderReflectionConstantBuffer& reflection, const Logger& logger, const char* path);
 
 PostProcess::PostProcess(const PostProcessDesc& desc): Resource(desc.resource), m_isDirty{false}
 {
@@ -51,7 +48,21 @@ PostProcess::PostProcess(const PostProcessDesc& desc): Resource(desc.resource), 
 		pipelineDesc.psSignature = &ps->getSignature();
 
 		m_pipeline = context.graphicsDevice.createGraphicsPipelineState(pipelineDesc);
-		m_properties = getConstantBufferFromJSON(data, ps, context.graphicsDevice, m_data, m_variables, getLogger(), getPath());
+
+		const ShaderReflectionConstantBuffer* reflection = nullptr;
+		const ShaderSignature& psSignature = ps->getSignature();
+
+		if (psSignature.hasConstantBuffer(POST_PROCESSING_EFFECT_CONSTANT_BUFFER_NAME)) {
+			reflection = psSignature.getConstantBufferReflection(POST_PROCESSING_EFFECT_CONSTANT_BUFFER_NAME);
+
+			if (reflection->slot != POST_PROCESSING_EFFECT_CONSTANT_BUFFER_SLOT) {
+				GENESIS_LOG_THROW_ERROR(POST_EFFECT_ERROR_PREFIX "Constant buffer \"{}\" is assigned to slot {} but expected slot {}.", getPath(), POST_PROCESSING_EFFECT_CONSTANT_BUFFER_NAME, reflection->slot, POST_PROCESSING_EFFECT_CONSTANT_BUFFER_SLOT);
+			}
+
+			m_variables = reflection->variables;
+			m_data = getPropertiesFromJSON(data, *reflection, getLogger(), getPath());
+			m_buffer = context.graphicsDevice.createConstantBuffer({m_data.data(), static_cast<uint32>(m_data.size())});
+		}
 	}
 	catch (const Json::parse_error& error) {
 		GENESIS_LOG_THROW_ERROR("Failed to parse post processing effect file \"{}\".\nDetails:\n{}", getPath(), error.what());
@@ -73,7 +84,7 @@ bool PostProcess::isDirty() const noexcept
 
 bool PostProcess::hasProperties() const noexcept
 {
-	return m_properties != nullptr;
+	return m_buffer != nullptr;
 }
 
 const GraphicsPipelineState& PostProcess::getGraphicsPipelineState() const noexcept
@@ -86,7 +97,7 @@ const ConstantBuffer& PostProcess::getProperties() const
 	if (!hasProperties()) {
 		GENESIS_LOG_THROW_ERROR("Post processing effect \"{}\" has no properties buffer.", getPath());
 	}
-	return *m_properties;
+	return *m_buffer;
 }
 
 BinaryData PostProcess::getData() const noexcept
@@ -126,12 +137,12 @@ void PostProcess::setProperty(const char* name, const Vec4& value)
 
 /* STATIC FUNCTION DEFINITIONS */
 
-SharedPtr<Shader> getShaderFromJSON(const Json& data, ShaderType type, ResourceManager& resourceManager, const Logger& logger, const char* effectPath)
+SharedPtr<Shader> getShaderFromJSON(const Json& data, ShaderType type, ResourceManager& resourceManager, const Logger& logger, const char* path)
 {
-	REQUIRE_KEY(data, KEY_POST_EFFECT_SHADER, logger, effectPath);
+	REQUIRE_KEY(data, KEY_POST_EFFECT_SHADER, logger, path);
 	const Json& shader = data[KEY_POST_EFFECT_SHADER];
 	
-	REQUIRE_KEY(shader, KEY_RESOURCE_PATH, logger, effectPath);
+	REQUIRE_KEY(shader, KEY_RESOURCE_PATH, logger, path);
 	String shaderPath = shader[KEY_RESOURCE_PATH];
 
 	String shaderEntry{};
@@ -139,56 +150,26 @@ SharedPtr<Shader> getShaderFromJSON(const Json& data, ShaderType type, ResourceM
 		shaderEntry = shader[KEY_SHADER_ENTRY];
 	}
 	else {
-		GENESIS_LOG(logger, LogLevel::Warning, "Missing entry point in post processing effect \"{}\" for shader \"{}\". Using default \"{}\".", effectPath, shaderPath, DEFAULT_SHADER_ENTRY);
+		GENESIS_LOG(logger, LogLevel::Warning, "Missing entry point in post processing effect \"{}\" for shader \"{}\". Using default \"{}\".", path, shaderPath, DEFAULT_SHADER_ENTRY);
 		shaderEntry = DEFAULT_SHADER_ENTRY;
 	}
 
 	return resourceManager.getShader(shaderPath.c_str(), shaderEntry.c_str(), type);
 }
 
-SharedPtr<ConstantBuffer> getConstantBufferFromJSON(const Json& data, const SharedPtr<Shader>& ps, GraphicsDevice& graphicsDevice, Vector<uint8>& properties, HashMap<String, ShaderReflectionVariable>& variables, const Logger& logger, const char* effectPath)
+Vector<uint8> getPropertiesFromJSON(const Json& data, const ShaderReflectionConstantBuffer& reflection, const Logger& logger, const char* path)
 {
-	if (!data.contains(KEY_POST_EFFECT_PROPERTIES)) {
-		GENESIS_LOG(logger, LogLevel::Warning, "No properties defined in post processing effect \"{}\".", effectPath);
-		return nullptr;
-	}
-
-	const ShaderReflectionConstantBuffer* reflection = nullptr;
-	const ShaderSignature& psSignature = ps->getSignature();
-
-	if (psSignature.hasConstantBuffer(POST_PROCESSING_EFFECT_CONSTANT_BUFFER_NAME)) {
-		reflection = psSignature.getConstantBufferReflection(POST_PROCESSING_EFFECT_CONSTANT_BUFFER_NAME);
-	}
-	else {
-		GENESIS_LOG(logger, LogLevel::Warning, "Missing constant buffer \"{}\" definition in post processing effect \"{}\". Ignoring properties.", POST_PROCESSING_EFFECT_CONSTANT_BUFFER_NAME, effectPath);
-		return nullptr;
-	}
-
-	if (reflection->slot != POST_PROCESSING_EFFECT_CONSTANT_BUFFER_SLOT) {
-		GENESIS_LOG_THROW(logger, std::runtime_error, LogLevel::Error, POST_EFFECT_ERROR_PREFIX "Constant buffer \"{}\" is assigned to slot {} but expected slot {}.", effectPath, POST_PROCESSING_EFFECT_CONSTANT_BUFFER_NAME, reflection->slot, POST_PROCESSING_EFFECT_CONSTANT_BUFFER_SLOT);
-	}
-
-	variables = reflection->variables;
-	properties = getPropertiesFromJSON(data, *reflection, logger, effectPath);
-	if (properties.empty()) {
-		return nullptr;
-	}
-
-	return graphicsDevice.createConstantBuffer({properties.data(), static_cast<uint32>(properties.size())});
-}
-
-Vector<uint8> getPropertiesFromJSON(const Json& data, const ShaderReflectionConstantBuffer& reflection, const Logger& logger, const char* effectPath)
-{
-	if (!data.contains(KEY_POST_EFFECT_PROPERTIES)) {
-		return {};
-	}
-
 	Vector<uint8> values(reflection.size, 0);
+
+	if (!data.contains(KEY_POST_EFFECT_PROPERTIES)) {
+		GENESIS_LOG(logger, LogLevel::Warning, "No properties defined in post processing effect \"{}\".", path);
+		return values;
+	}
 
 	for (auto& [name, value] : data[KEY_POST_EFFECT_PROPERTIES].items()) {
 		auto it = reflection.variables.find(name);
 		if (it == reflection.variables.end()) {
-			GENESIS_LOG(logger, LogLevel::Warning, "Missing property \"{}\" in post processing effect \"{}\". Skipping.", name, effectPath);
+			GENESIS_LOG(logger, LogLevel::Warning, "Missing property \"{}\" in post processing effect \"{}\". Skipping.", name, path);
 			continue;
 		}
 
@@ -206,12 +187,12 @@ Vector<uint8> getPropertiesFromJSON(const Json& data, const ShaderReflectionCons
 			Vector<float> array = value.get<Vector<float>>();
 			size_t size = array.size() * sizeof(float);
 			if (size > variable.size) {
-				GENESIS_LOG(logger, Logger::LogLevel::Warning, "Property \"{}\" array is larger than expected in post processing effect \"{}\". Truncating.", name, effectPath);
+				GENESIS_LOG(logger, Logger::LogLevel::Warning, "Property \"{}\" array is larger than expected in post processing effect \"{}\". Truncating.", name, path);
 			}
 			memcpy(values.data() + variable.offset, array.data(), min<size_t>(variable.size, size));
 		}
 		else {
-			GENESIS_LOG(logger, Logger::LogLevel::Warning, "Property \"{}\" has unsupported type in post processing effect \"{}\". Skipping.", name, effectPath);
+			GENESIS_LOG(logger, Logger::LogLevel::Warning, "Property \"{}\" has unsupported type in post processing effect \"{}\". Skipping.", name, path);
 		}
 	}
 

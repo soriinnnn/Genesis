@@ -1,4 +1,4 @@
-// Template for pixel shaders.
+// Template for material pixel shaders.
 
 cbuffer SceneData: register(b0)
 {

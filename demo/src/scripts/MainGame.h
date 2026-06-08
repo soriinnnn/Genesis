@@ -2,6 +2,7 @@
 #define MAIN_GAME_SCRIPT_H
 #include <script/Script.h>
 #include <input/InputListener.h>
+#include <math/Vec3.h>
 
 using namespace genesis;
 
@@ -25,11 +26,12 @@ protected:
 
 private:
 	void setupScene();
-	void setupMenu();
+	void setupMenu();	
+	void spawnAsteroid(Vec3 position, float scale, const char* mesh, const char* material);
 
 private:
 	Entity* m_spaceship;
-	Entity* m_asteroid;
+	Vector<Entity*> m_asteroids;
 	bool m_wasMouseLocked;
 };
 

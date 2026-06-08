@@ -8,7 +8,11 @@
 #include <math/Vec3.h>
 #include <math/Vec4.h>
 #include <math/Mat4.h>
+#include <graphics/utils/GraphicsTypes.h>
+
+#ifdef _DEBUG
 #include <physics/DebugRenderer.h>
+#endif
 
 GENESIS_NAMESPACE_BEGIN
 
@@ -36,11 +40,14 @@ public:
 
     void clear(const Vec4& color = {1.0f, 1.0f, 1.0f, 1.0f});
     void render(EntityManager& entities, Entity& camera, float deltaTime);
-    void render(DebugRenderer& debug, Entity& camera);
     void render(SkyBox& skybox, Entity& camera);
     void render(UIManager& ui);
     void postProcess(PostProcess& effect);
     void present(Display& display);
+
+#ifdef _DEBUG
+    void render(DebugRenderer& debug, Entity& camera);
+#endif
 
 private:
     uint32 getLights(EntityManager& entities);

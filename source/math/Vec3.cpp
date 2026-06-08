@@ -57,6 +57,11 @@ Vec3 Vec3::normalize() const
 	};
 }
 
+float Vec3::norm() const
+{
+	return sqrtf(x * x + y * y + z * z);
+}
+
 Vec3 Vec3::operator-() const noexcept
 {
 	return Vec3{-x, -y, -z};
@@ -168,6 +173,11 @@ float Vec3::dot(const Vec3& a, const Vec3& b) noexcept
 Vec3 Vec3::cross(const Vec3& a, const Vec3& b) noexcept
 {
 	return a.cross(b);
+}
+
+float Vec3::norm(const Vec3& v)
+{
+	return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
 Vec3 Vec3::normalize(const Vec3& v)

@@ -36,7 +36,7 @@ private:
 
 private:
 	SharedPtr<GraphicsPipelineState> m_pipeline;
-	SharedPtr<ConstantBuffer> m_properties;
+	SharedPtr<ConstantBuffer> m_buffer;
 	Vector<uint8> m_data;
 	HashMap<String, ShaderReflectionVariable> m_variables;
 	bool m_isDirty;

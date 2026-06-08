@@ -1,17 +1,21 @@
 #include <resources/Mesh.h>
 #include <graphics/GraphicsDevice.h>
 #include <graphics/utils/GraphicsTypes.h>
+
+#undef max
+#undef min
+
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#include <assimp/Scene.h>
+#include <assimp/PostProcess.h>
 
 using namespace genesis;
-using namespace std;
 using namespace Assimp;
 
 static uint32 getVertexStride(uint32 components);
-static vector<uint8> getVertices(const aiMesh& mesh, uint32 components);
-static vector<uint32> getIndices(const aiMesh& mesh);
+static Vector<uint8> getVertices(const aiMesh& mesh, uint32 components);
+static Vector<uint32> getIndices(const aiMesh& mesh);
+static Vec3 getMeshSize(const aiMesh& mesh);
 
 Mesh::Mesh(const MeshDesc& desc): Resource(desc.resource)
 {
@@ -43,10 +47,11 @@ Mesh::Mesh(const MeshDesc& desc): Resource(desc.resource)
         GENESIS_LOG_THROW_ERROR("Failed to create mesh \"{}\": Vertex components mask is empty.", m_path.c_str());
     }
 
-    vector<uint8> vertices = getVertices(*mesh, desc.components);
+    Vector<uint8> vertices = getVertices(*mesh, desc.components);
     m_vertexBuffer = graphicsContext.graphicsDevice.createVertexBuffer({vertices.data(), static_cast<uint32>(vertices.size()) / stride, stride});
+    m_size = getMeshSize(*mesh);
 
-    vector<uint32> indices = getIndices(*mesh);
+    Vector<uint32> indices = getIndices(*mesh);
     m_indexBuffer = graphicsContext.graphicsDevice.createIndexBuffer({indices.data(), static_cast<uint32>(indices.size())});
 }
 
@@ -62,11 +67,16 @@ const IndexBuffer& Mesh::getIndexBuffer() const noexcept
     return *m_indexBuffer;
 }
 
+Vec3 Mesh::getSize() const noexcept
+{
+    return m_size;
+}
+
 /* STATIC FUNCTION DEFINITIONS */
 
-vector<uint8> getVertices(const aiMesh& mesh, uint32 components) 
+Vector<uint8> getVertices(const aiMesh& mesh, uint32 components) 
 {
-    vector<uint8> vertices(mesh.mNumVertices * getVertexStride(components), 0);
+    Vector<uint8> vertices(mesh.mNumVertices * getVertexStride(components), 0);
 
     uint8* data = vertices.data();
     for (uint32 i = 0; i < mesh.mNumVertices; i++) {
@@ -147,9 +157,9 @@ vector<uint8> getVertices(const aiMesh& mesh, uint32 components)
     return vertices;
 }
 
-vector<uint32> getIndices(const aiMesh& mesh)
+Vector<uint32> getIndices(const aiMesh& mesh)
 {
-    vector<uint32> indices;
+    Vector<uint32> indices;
 
     indices.reserve(mesh.mNumFaces * 3);
     for (uint32 i = 0; i < mesh.mNumFaces; i++) {
@@ -161,6 +171,31 @@ vector<uint32> getIndices(const aiMesh& mesh)
     }
 
     return indices;
+}
+
+Vec3 getMeshSize(const aiMesh& mesh)
+{
+    if (mesh.mNumVertices == 0) {
+        return {};
+    }
+
+    aiVector3D* vertices = mesh.mVertices;
+    Vec3 minPoint = {vertices[0].x, vertices[0].y, vertices[0].z};
+    Vec3 maxPoint = minPoint;
+
+    for (uint32 i = 1; i < mesh.mNumVertices; ++i) {
+        const aiVector3D& v = vertices[i];
+
+        if (v.x < minPoint.x) minPoint.x = v.x;
+        if (v.y < minPoint.y) minPoint.y = v.y;
+        if (v.z < minPoint.z) minPoint.z = v.z;
+
+        if (v.x > maxPoint.x) maxPoint.x = v.x;
+        if (v.y > maxPoint.y) maxPoint.y = v.y;
+        if (v.z > maxPoint.z) maxPoint.z = v.z;
+    }
+
+    return maxPoint - minPoint;
 }
 
 uint32 getVertexStride(uint32 components)

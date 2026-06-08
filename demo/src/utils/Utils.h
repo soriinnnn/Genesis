@@ -189,6 +189,8 @@ namespace utils
 		return static_cast<uint32>(N);
 	}
 
+	// math
+
 	inline void clamp(float& value, float min, float max)
 	{
 		if (value > max) {
@@ -197,6 +199,42 @@ namespace utils
 		else if (value < min) {
 			value = min;
 		}
+	}
+	
+	static std::mt19937 rng(std::random_device{}());
+
+	inline float range(float min, float max)
+	{
+		return std::uniform_real_distribution(min, max)(rng);
+	}
+
+	inline int range(int min, int max)
+	{
+		return std::uniform_int_distribution(min, max)(rng);
+	}
+
+	inline Vec3 getRandomVector3(Vec3 bounds)
+	{
+		Vec3 half = bounds / 2.0f;
+		return Vec3{
+			range(-half.x, half.x),
+			range(-half.y, half.y),
+			range(-half.z, half.z)
+		};
+	}
+
+	inline Vec3 getRandomVector3(float radius)
+	{
+		Vec3 position;
+		do {
+			position = Vec3{
+				range(-radius, radius),
+				range(-radius, radius),
+				range(-radius, radius)
+			};
+		} 
+		while (Vec3::norm(position) > radius);
+		return position;
 	}
 }
 

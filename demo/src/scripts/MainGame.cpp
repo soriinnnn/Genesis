@@ -11,6 +11,7 @@
 #include <input/InputManager.h>
 #include <script/ScriptManager.h>
 #include <resources/ResourceManager.h>
+#include <resources/Mesh.h>
 #include <physics/PhysicsEngine.h>
 #include <entity/components/TransformComponent.h>
 #include <entity/components/MeshRendererComponent.h>
@@ -20,10 +21,15 @@
 using namespace constants;
 using namespace utils;
 
+#define ASTEROID_COUNT 256
+#define ASTEROID_SPAWN_RADIUS 2000.0f
+#define ASTEROID_MAX_SCALE 50.0f
+#define ASTEROID_MIN_SCALE 2.0f
+#define ASTEROID_MAX_SPIN 1.0f
+
 MainGame::MainGame(const ScriptDesc& desc): Script(desc) 
 {
 	m_spaceship = nullptr;
-	m_asteroid = nullptr;
 	m_wasMouseLocked = false;
 }
 
@@ -32,8 +38,8 @@ MainGame::~MainGame()
 	if (m_spaceship) {
 		m_context.entities.destroyEntity(m_spaceship->getId());
 	}
-	if (m_asteroid) {
-		m_context.entities.destroyEntity(m_asteroid->getId());
+	for (auto* asteroid : m_asteroids) {
+		m_context.entities.destroyEntity(asteroid->getId());
 	}
 	m_context.input.removeListener(this);
 	setUIVisibility(false, gameMenuElements, m_context.ui);
@@ -47,7 +53,6 @@ void MainGame::onStart()
 		GENESIS_LOG_THROW_ERROR("Invalid game state.");
 	}
 	m_context.input.addListener(this);
-
 	setupScene();
 	setupMenu();
 }
@@ -93,30 +98,38 @@ void MainGame::onMouseUp(MouseButton button, Point pos) {}
 
 void MainGame::setupScene()
 {
-	m_spaceship = m_context.entities.createEntity("main_game_spaceship");
+	m_spaceship = m_context.entities.createEntity();
 
 	TransformComponent* spaceshipTransform = m_spaceship->createComponent<TransformComponent>();
 	spaceshipTransform->setPosition({0.0f, 0.0f, 0.0f});
 	spaceshipTransform->setRotation({0.0f, 0.0f, 0.0f});
 
 	MeshRendererComponent* spaceshipMesh = m_spaceship->createComponent<MeshRendererComponent>();
+
 	spaceshipMesh->setMesh(m_context.resources.getMesh(ASSETS_MESH_SPACESHIP, GENESIS_VERTEX_PRESET_NORMAL_MAPPED));
 	spaceshipMesh->setMaterial(m_context.resources.getMaterial(ASSETS_MATERIAL_SPACESHIP));
 
+	SharedPtr<RigidBody> body = m_context.physics.createBox(
+		{0.0f, 0.0f, 0.0f},
+		m_context.resources.getMesh(ASSETS_MESH_SPACESHIP, GENESIS_VERTEX_PRESET_NORMAL_MAPPED)->getSize(),
+		MotionType::Kinematic
+	);
+
 	RigidBodyComponent* spaceshipBody = m_spaceship->createComponent<RigidBodyComponent>();
-	spaceshipBody->setBody(m_context.physics.createBox({0.0f, 0.0f, 0.0f}, {26.0f, 4.4f, 22.0f}, MotionType::Kinematic));
+	spaceshipBody->setBody(body);
 
 	ScriptComponent* spaceshipScripts = m_spaceship->createComponent<ScriptComponent>();
 	spaceshipScripts->addScript(m_manager.createScript<SpaceshipController>());
 
-	m_asteroid = m_context.entities.createEntity("main_game_asteroid1");
-
-	TransformComponent* asteroidTransform = m_asteroid->createComponent<TransformComponent>();
-	asteroidTransform->setPosition({0.0f, 0.0f, 5.0f});
-
-	MeshRendererComponent* asteroidMesh = m_asteroid->createComponent<MeshRendererComponent>();
-	asteroidMesh->setMesh(m_context.resources.getMesh(ASSETS_MESH_ASTEROID_1A, GENESIS_VERTEX_PRESET_NORMAL_MAPPED));
-	asteroidMesh->setMaterial(m_context.resources.getMaterial(ASSETS_MATERIAL_ASTEROID_1A));
+	for (int i = 0; i < ASTEROID_COUNT; i++) {
+		int asteroid = range(0, static_cast<int>(asteroidMeshes.size() - 1));
+		spawnAsteroid(
+			getRandomVector3(ASTEROID_SPAWN_RADIUS), 
+			range(ASTEROID_MIN_SCALE, ASTEROID_MAX_SCALE), 
+			asteroidMeshes[asteroid].c_str(),
+			asteroidMaterials[asteroid].c_str()
+		);
+	}
 }
 
 void MainGame::setupMenu()
@@ -141,3 +154,55 @@ void MainGame::setupMenu()
 		menuMain->setOnMouseUpCallback(nullptr);
 	});
 }
+
+void MainGame::spawnAsteroid(Vec3 position, float scale, const char* mesh, const char* material)
+{
+	Entity* asteroid = m_context.entities.createEntity();
+
+	TransformComponent* asteroidTransform = asteroid->createComponent<TransformComponent>();
+	asteroidTransform->setScale(Vec3{1.0f, 1.0f, 1.0f} * scale);
+
+	MeshRendererComponent* asteroidMesh = asteroid->createComponent<MeshRendererComponent>();
+	asteroidMesh->setMesh(m_context.resources.getMesh(mesh, GENESIS_VERTEX_PRESET_NORMAL_MAPPED));
+	asteroidMesh->setMaterial(m_context.resources.getMaterial(material));
+
+	SharedPtr<RigidBody> body = m_context.physics.createBox(
+		position,
+		m_context.resources.getMesh(mesh, GENESIS_VERTEX_PRESET_NORMAL_MAPPED)->getSize() * scale,
+		MotionType::Dynamic
+	);
+	body->setGravityFactor(0.0f);
+	body->setAngularVelocity(getRandomVector3({ASTEROID_MAX_SPIN, ASTEROID_MAX_SPIN, ASTEROID_MAX_SPIN}));
+
+	RigidBodyComponent* asteroidBody = asteroid->createComponent<RigidBodyComponent>();
+	asteroidBody->setBody(body);
+
+	m_asteroids.push_back(asteroid);
+}
+
+/*
+	body->setOnContactAddedCallback([body](const RigidBody::ContactAddedData& data) {
+		/*
+		if (data.other->isKinematic()) {
+			return;
+		}
+
+		Vec3 velocitySelf = body->getLinearVelocity();
+		Vec3 velocityOther = data.other->getLinearVelocity();
+		Vec3 relativeVelocity = velocitySelf - velocityOther;
+
+		float impactSpeed = Vec3::dot(relativeVelocity, data.contactNormal);
+		if (impactSpeed <= 0.0f) {
+			return;
+		}
+
+		Vec3 impulse = data.contactNormal * impactSpeed * IMPACT_MULTIPLIER;
+		data.other->addImpulse(impulse);
+
+		printf("impact speed: %f, impulse: %f\n", impactSpeed, Vec3::norm(impulse));
+
+		float impulseMagnitude = 10.0f;
+		Vec3 impulse = data.contactNormal * impulseMagnitude;
+		data.other->addImpulse(impulse);
+	});
+*/
