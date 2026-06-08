@@ -34,8 +34,8 @@ public:
 
 	void update(EntityManager& entities, float deltaTime);
 
-	SharedPtr<RigidBody> createBox(Vec3 position, Vec3 size, MotionType motionType);
-	SharedPtr<RigidBody> createCapsule(Vec3 position, float height, float radius, MotionType motionType);
+	SharedPtr<RigidBody> createBox(Vec3 position, Vec3 size, MotionType motionType, float mass = 1.0f);
+	SharedPtr<RigidBody> createCapsule(Vec3 position, float height, float radius, MotionType motionType, float mass = 1.0f);
 
 #ifdef _DEBUG
 	void drawDebug();

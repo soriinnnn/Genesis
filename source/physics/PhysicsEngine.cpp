@@ -109,7 +109,7 @@ void PhysicsEngine::update(EntityManager& entities, float deltaTime)
 	});
 }
 
-SharedPtr<RigidBody> PhysicsEngine::createBox(Vec3 position, Vec3 size, MotionType motionType)
+SharedPtr<RigidBody> PhysicsEngine::createBox(Vec3 position, Vec3 size, MotionType motionType, float mass)
 {
 	JPH::BoxShapeSettings settings{JPH::Vec3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f)};
 	JPH::ShapeSettings::ShapeResult result = settings.Create();
@@ -129,13 +129,19 @@ SharedPtr<RigidBody> PhysicsEngine::createBox(Vec3 position, Vec3 size, MotionTy
 		layer
 	);
 
+	JPH::MassProperties massProperties = bodySettings.GetMassProperties();
+	massProperties.mMass = mass;
+	
+	bodySettings.mMassPropertiesOverride = massProperties;
+	bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
+
 	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
 	JPH::BodyID body = bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);
 	
 	return make_shared<RigidBody>(RigidBodyDesc{m_logger, body, bodyInterface, motionType});
 }
 
-SharedPtr<RigidBody> PhysicsEngine::createCapsule(Vec3 position, float height, float radius, MotionType motionType)
+SharedPtr<RigidBody> PhysicsEngine::createCapsule(Vec3 position, float height, float radius, MotionType motionType, float mass)
 {
 	float halfHeightOfCylinder = (height / 2.0f) - radius;
 	JPH::CapsuleShapeSettings settings{halfHeightOfCylinder, radius};
@@ -155,6 +161,12 @@ SharedPtr<RigidBody> PhysicsEngine::createCapsule(Vec3 position, float height, f
 		type,
 		layer
 	);
+
+	JPH::MassProperties massProperties = bodySettings.GetMassProperties();
+	massProperties.mMass = mass;
+
+	bodySettings.mMassPropertiesOverride = massProperties;
+	bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
 
 	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
 	JPH::BodyID body = bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);

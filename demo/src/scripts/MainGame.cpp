@@ -21,11 +21,12 @@
 using namespace constants;
 using namespace utils;
 
-#define ASTEROID_COUNT 256
+#define ASTEROID_COUNT 512
+#define ASTEROID_BASE_MASS 2000.0f
 #define ASTEROID_SPAWN_RADIUS 2000.0f
 #define ASTEROID_MAX_SCALE 50.0f
 #define ASTEROID_MIN_SCALE 2.0f
-#define ASTEROID_MAX_SPIN 1.0f
+#define ASTEROID_MAX_SPIN 0.2f
 
 MainGame::MainGame(const ScriptDesc& desc): Script(desc) 
 {
@@ -112,7 +113,8 @@ void MainGame::setupScene()
 	SharedPtr<RigidBody> body = m_context.physics.createBox(
 		{0.0f, 0.0f, 0.0f},
 		m_context.resources.getMesh(ASSETS_MESH_SPACESHIP, GENESIS_VERTEX_PRESET_NORMAL_MAPPED)->getSize(),
-		MotionType::Kinematic
+		MotionType::Kinematic,
+		1.0f
 	);
 
 	RigidBodyComponent* spaceshipBody = m_spaceship->createComponent<RigidBodyComponent>();
@@ -169,7 +171,8 @@ void MainGame::spawnAsteroid(Vec3 position, float scale, const char* mesh, const
 	SharedPtr<RigidBody> body = m_context.physics.createBox(
 		position,
 		m_context.resources.getMesh(mesh, GENESIS_VERTEX_PRESET_NORMAL_MAPPED)->getSize() * scale,
-		MotionType::Dynamic
+		MotionType::Dynamic,
+		ASTEROID_BASE_MASS * scale
 	);
 	body->setGravityFactor(0.0f);
 	body->setAngularVelocity(getRandomVector3({ASTEROID_MAX_SPIN, ASTEROID_MAX_SPIN, ASTEROID_MAX_SPIN}));
@@ -179,30 +182,3 @@ void MainGame::spawnAsteroid(Vec3 position, float scale, const char* mesh, const
 
 	m_asteroids.push_back(asteroid);
 }
-
-/*
-	body->setOnContactAddedCallback([body](const RigidBody::ContactAddedData& data) {
-		/*
-		if (data.other->isKinematic()) {
-			return;
-		}
-
-		Vec3 velocitySelf = body->getLinearVelocity();
-		Vec3 velocityOther = data.other->getLinearVelocity();
-		Vec3 relativeVelocity = velocitySelf - velocityOther;
-
-		float impactSpeed = Vec3::dot(relativeVelocity, data.contactNormal);
-		if (impactSpeed <= 0.0f) {
-			return;
-		}
-
-		Vec3 impulse = data.contactNormal * impactSpeed * IMPACT_MULTIPLIER;
-		data.other->addImpulse(impulse);
-
-		printf("impact speed: %f, impulse: %f\n", impactSpeed, Vec3::norm(impulse));
-
-		float impulseMagnitude = 10.0f;
-		Vec3 impulse = data.contactNormal * impulseMagnitude;
-		data.other->addImpulse(impulse);
-	});
-*/
