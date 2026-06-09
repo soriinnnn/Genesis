@@ -21,7 +21,7 @@
 using namespace constants;
 using namespace utils;
 
-#define ASTEROID_COUNT 1023
+#define ASTEROID_COUNT 512
 #define ASTEROID_BASE_MASS 2000.0f
 #define ASTEROID_SPAWN_RADIUS 2000.0f
 #define ASTEROID_MAX_SCALE 50.0f

@@ -19,26 +19,23 @@
       "slot": 2
     },
     {
-      "path": "demo/assets/textures/spaceship/spaceship_ambient_occlusion.jpg",
+      "path": "demo/assets/textures/spaceship/spaceship_roughness.jpg",
       "slot": 3
     },
     {
-      "path": "demo/assets/textures/spaceship/spaceship_emissive.jpg",
+      "path": "demo/assets/textures/spaceship/spaceship_metallic.jpg",
       "slot": 4
     },
     {
-      "path": "demo/assets/textures/spaceship/spaceship_roughness.jpg",
+      "path": "demo/assets/textures/spaceship/spaceship_emissive.jpg",
       "slot": 5
     },
     {
-      "path": "demo/assets/textures/spaceship/spaceship_metallic.jpg",
+      "path": "demo/assets/textures/spaceship/spaceship_ambient_occlusion.jpg",
       "slot": 6
     }
   ],
   "properties": {
-    "ka": 1.0,
-    "kd": 0.5,
-    "ks": 1.0,
-    "shininess": 64.0
+    "ka": 1.0
   }
 }
