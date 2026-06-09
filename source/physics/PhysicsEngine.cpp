@@ -10,6 +10,7 @@
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <jolt/Physics/Collision/Shape/BoxShape.h>
 #include <jolt/Physics/Collision/Shape/CapsuleShape.h>
+#include <jolt/Physics/Collision/Shape/SphereShape.h>
 #include <iostream>
 #include <cstdarg>
 
@@ -109,69 +110,41 @@ void PhysicsEngine::update(EntityManager& entities, float deltaTime)
 	});
 }
 
-SharedPtr<RigidBody> PhysicsEngine::createBox(Vec3 position, Vec3 size, MotionType motionType, float mass)
+SharedPtr<RigidBody> PhysicsEngine::createBox(Vec3 size, BodySettings settings)
 {
-	JPH::BoxShapeSettings settings{JPH::Vec3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f)};
-	JPH::ShapeSettings::ShapeResult result = settings.Create();
+	JPH::BoxShapeSettings boxSettings{JPH::Vec3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f)};
+	JPH::ShapeSettings::ShapeResult result = boxSettings.Create();
 	if (result.HasError()) {
 		GENESIS_LOG_THROW_ERROR("Invalid box shape.\nDetails: {}", result.GetError().c_str());
 	}
 
-	JPH::ShapeRefC shape = result.Get();
-	JPH::EMotionType type = mapMotionTypeToJolt(motionType);
-	JPH::ObjectLayer layer = getObjectLayer(type);
-
-	JPH::BodyCreationSettings bodySettings(
-		shape,
-		JPH::Vec3(position.x, position.y, position.z),
-		JPH::Quat::sIdentity(),
-		type,
-		layer
-	);
-
-	JPH::MassProperties massProperties = bodySettings.GetMassProperties();
-	massProperties.mMass = mass;
-	
-	bodySettings.mMassPropertiesOverride = massProperties;
-	bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
-
-	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
-	JPH::BodyID body = bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);
-	
-	return make_shared<RigidBody>(RigidBodyDesc{m_logger, body, bodyInterface, motionType});
+	JPH::BodyID bodyId = createBody(result.Get(), settings);
+	return make_shared<RigidBody>(RigidBodyDesc{m_logger, bodyId, m_physicsSystem->GetBodyInterface(), settings.motionType});
 }
 
-SharedPtr<RigidBody> PhysicsEngine::createCapsule(Vec3 position, float height, float radius, MotionType motionType, float mass)
+SharedPtr<RigidBody> PhysicsEngine::createSphere(float radius, BodySettings settings)
+{
+	JPH::SphereShapeSettings sphereSettings{radius};
+	JPH::ShapeSettings::ShapeResult result = sphereSettings.Create();
+	if (result.HasError()) {
+		GENESIS_LOG_THROW_ERROR("Invalid sphere shape.\nDetails: {}", result.GetError().c_str());
+	}
+
+	JPH::BodyID body = createBody(result.Get(), settings);
+	return make_shared<RigidBody>(RigidBodyDesc{m_logger, body, m_physicsSystem->GetBodyInterface(), settings.motionType});
+}
+
+SharedPtr<RigidBody> PhysicsEngine::createCapsule(float height, float radius, BodySettings settings)
 {
 	float halfHeightOfCylinder = (height / 2.0f) - radius;
-	JPH::CapsuleShapeSettings settings{halfHeightOfCylinder, radius};
-	JPH::ShapeSettings::ShapeResult result = settings.Create();
+	JPH::CapsuleShapeSettings capsuleSettings{halfHeightOfCylinder, radius};
+	JPH::ShapeSettings::ShapeResult result = capsuleSettings.Create();
 	if (result.HasError()) {
 		GENESIS_LOG_THROW_ERROR("Invalid capsule shape.\nDetails: {}", result.GetError().c_str());
 	}
 
-	JPH::ShapeRefC shape = result.Get();
-	JPH::EMotionType type = mapMotionTypeToJolt(motionType);
-	JPH::ObjectLayer layer = getObjectLayer(type);
-
-	JPH::BodyCreationSettings bodySettings(
-		shape,
-		JPH::Vec3(position.x, position.y, position.z),
-		JPH::Quat::sIdentity(),
-		type,
-		layer
-	);
-
-	JPH::MassProperties massProperties = bodySettings.GetMassProperties();
-	massProperties.mMass = mass;
-
-	bodySettings.mMassPropertiesOverride = massProperties;
-	bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
-
-	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
-	JPH::BodyID body = bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);
-
-	return make_shared<RigidBody>(RigidBodyDesc{m_logger, body, bodyInterface, motionType});
+	JPH::BodyID body = createBody(result.Get(), settings);
+	return make_shared<RigidBody>(RigidBodyDesc{m_logger, body, m_physicsSystem->GetBodyInterface(), settings.motionType});
 }
 
 #ifdef _DEBUG
@@ -187,6 +160,29 @@ DebugRenderer& PhysicsEngine::getDebugRenderer()
 }
 
 #endif
+
+JPH::BodyID PhysicsEngine::createBody(JPH::ShapeRefC shape, BodySettings settings)
+{
+	JPH::EMotionType type = mapMotionTypeToJolt(settings.motionType);
+	JPH::ObjectLayer layer = getObjectLayer(type);
+
+	JPH::BodyCreationSettings bodySettings(
+		shape,
+		JPH::Vec3(settings.position.x, settings.position.y, settings.position.z),
+		JPH::Quat::sIdentity(),
+		type,
+		layer
+	);
+
+	JPH::MassProperties massProperties = bodySettings.GetMassProperties();
+	massProperties.mMass = settings.mass;
+
+	bodySettings.mMassPropertiesOverride = massProperties;
+	bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
+
+	JPH::BodyInterface& bodyInterface = m_physicsSystem->GetBodyInterface();
+	return bodyInterface.CreateAndAddBody(bodySettings, JPH::EActivation::Activate);
+}
 
 /* STATIC FUNCTIONS DEFINITIONS */
 

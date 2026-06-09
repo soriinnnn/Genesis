@@ -34,13 +34,17 @@ public:
 
 	void update(EntityManager& entities, float deltaTime);
 
-	SharedPtr<RigidBody> createBox(Vec3 position, Vec3 size, MotionType motionType, float mass = 1.0f);
-	SharedPtr<RigidBody> createCapsule(Vec3 position, float height, float radius, MotionType motionType, float mass = 1.0f);
+	SharedPtr<RigidBody> createBox(Vec3 size, BodySettings settings);
+	SharedPtr<RigidBody> createSphere(float radius, BodySettings settings);
+	SharedPtr<RigidBody> createCapsule(float height, float radius, BodySettings bodySettings);
 
 #ifdef _DEBUG
 	void drawDebug();
 	DebugRenderer& getDebugRenderer();
 #endif
+
+private:
+	JPH::BodyID createBody(JPH::ShapeRefC shape, BodySettings settings);
 
 private:
 	UniquePtr<JPH::TempAllocatorImpl> m_tempAllocator;

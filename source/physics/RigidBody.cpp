@@ -9,8 +9,11 @@ RigidBody::RigidBody(const RigidBodyDesc& desc): Base(desc.base), m_entity{nullp
 
 RigidBody::~RigidBody() 
 {
-	m_bodyInterface.RemoveBody(m_body);
-	m_bodyInterface.DestroyBody(m_body);
+	if (!m_body.IsInvalid())
+	{
+		m_bodyInterface.RemoveBody(m_body);
+		m_bodyInterface.DestroyBody(m_body);
+	}
 }
 
 Entity* RigidBody::getEntity() const

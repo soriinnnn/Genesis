@@ -21,7 +21,7 @@
 using namespace constants;
 using namespace utils;
 
-#define ASTEROID_COUNT 512
+#define ASTEROID_COUNT 1023
 #define ASTEROID_BASE_MASS 2000.0f
 #define ASTEROID_SPAWN_RADIUS 2000.0f
 #define ASTEROID_MAX_SCALE 50.0f
@@ -110,11 +110,10 @@ void MainGame::setupScene()
 	spaceshipMesh->setMesh(m_context.resources.getMesh(ASSETS_MESH_SPACESHIP, GENESIS_VERTEX_PRESET_NORMAL_MAPPED));
 	spaceshipMesh->setMaterial(m_context.resources.getMaterial(ASSETS_MATERIAL_SPACESHIP));
 
+	Vec3 size = m_context.resources.getMesh(ASSETS_MESH_SPACESHIP, GENESIS_VERTEX_PRESET_NORMAL_MAPPED)->getSize();
 	SharedPtr<RigidBody> body = m_context.physics.createBox(
-		{0.0f, 0.0f, 0.0f},
-		m_context.resources.getMesh(ASSETS_MESH_SPACESHIP, GENESIS_VERTEX_PRESET_NORMAL_MAPPED)->getSize(),
-		MotionType::Kinematic,
-		1.0f
+		size,
+		{Vec3{0.0f, 0.0f, 0.0f}, MotionType::Kinematic, 1.0f}
 	);
 
 	RigidBodyComponent* spaceshipBody = m_spaceship->createComponent<RigidBodyComponent>();
@@ -168,11 +167,10 @@ void MainGame::spawnAsteroid(Vec3 position, float scale, const char* mesh, const
 	asteroidMesh->setMesh(m_context.resources.getMesh(mesh, GENESIS_VERTEX_PRESET_NORMAL_MAPPED));
 	asteroidMesh->setMaterial(m_context.resources.getMaterial(material));
 
+	Vec3 size = m_context.resources.getMesh(mesh, GENESIS_VERTEX_PRESET_NORMAL_MAPPED)->getSize() * scale;
 	SharedPtr<RigidBody> body = m_context.physics.createBox(
-		position,
-		m_context.resources.getMesh(mesh, GENESIS_VERTEX_PRESET_NORMAL_MAPPED)->getSize() * scale,
-		MotionType::Dynamic,
-		ASTEROID_BASE_MASS * scale
+		size,
+		{position, MotionType::Dynamic, ASTEROID_BASE_MASS * scale}
 	);
 	body->setGravityFactor(0.0f);
 	body->setAngularVelocity(getRandomVector3({ASTEROID_MAX_SPIN, ASTEROID_MAX_SPIN, ASTEROID_MAX_SPIN}));
