@@ -7,19 +7,13 @@
 #include "src/utils/Utils.h"
 
 #include <entity/components/TransformComponent.h>
-#include <entity/components/MeshRendererComponent.h>
 #include <entity/components/CameraComponent.h>	
 #include <entity/components/LightComponent.h>
-#include <entity/components/RigidBodyComponent.h>
 #include <entity/components/ScriptComponent.h>
 #include <ui/elements/UILabel.h>
 #include <ui/elements/UIPanel.h>
 #include <ui/elements/UIButton.h>
 #include <ui/elements/UIImage.h>
-#include <physics/RigidBody.h>
-#include <resources/Mesh.h>
-#include <resources/Material.h>
-#include <resources/Font.h>
 
 using namespace genesis;
 using namespace constants;
