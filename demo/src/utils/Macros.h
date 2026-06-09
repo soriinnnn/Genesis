@@ -32,8 +32,6 @@
 #define ASSETS_MATERIAL_ASTEROID_2B "demo/assets/materials/asteroid2b.json"
 #define ASSETS_MATERIAL_ASTEROID_2C "demo/assets/materials/asteroid2c.json"
 
-#define ASSETS_POST_EFFECT_SPRINTING "demo/assets/effects/sprinting.json"
-
 #define ASSETS_MAIN_MENU_PANEL "demo/assets/textures/ui/main_menu.png"
 #define ASSETS_SETTINGS_MENU_PANEL "demo/assets/textures/ui/settings_menu.png"
 #define ASSETS_GAME_MENU_PANEL "demo/assets/textures/ui/game_menu.png"

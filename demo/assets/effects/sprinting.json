@@ -1,6 +1,0 @@
-{
-  "shader": {
-    "path": "demo/assets/shaders/sprinting/ps.hlsl",
-    "entry": "main"
-  }
-}
