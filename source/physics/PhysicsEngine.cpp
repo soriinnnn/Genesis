@@ -77,7 +77,7 @@ PhysicsEngine::~PhysicsEngine()
 
 void PhysicsEngine::update(EntityManager& entities, float deltaTime)
 {
-	entities.forEachComponent<RigidBodyComponent>([deltaTime](RigidBodyComponent& rigidBody) {
+	entities.forEachComponent<RigidBodyComponent>([&](RigidBodyComponent& rigidBody) {
 		auto* body = rigidBody.getBody();
 		if (!body || !body->isKinematic()) {
 			return;
