@@ -11,6 +11,7 @@ RigidBody::~RigidBody()
 {
 	if (!m_body.IsInvalid())
 	{
+		m_bodyInterface.SetUserData(m_body, 0);
 		m_bodyInterface.RemoveBody(m_body);
 		m_bodyInterface.DestroyBody(m_body);
 	}
