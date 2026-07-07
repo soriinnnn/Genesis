@@ -5,10 +5,7 @@
 using namespace genesis;
 using namespace std;
 
-ScriptManager::ScriptManager(const ScriptManagerDesc& desc): Base(desc.base), m_context{desc.context} 
-{
-	m_accumulator = 0.0f;
-}
+ScriptManager::ScriptManager(const ScriptManagerDesc& desc): Base(desc.base), m_context{desc.context} {}
 
 ScriptManager::~ScriptManager() {}
 

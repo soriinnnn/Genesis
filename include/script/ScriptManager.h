@@ -59,7 +59,6 @@ private:
 	Vector<ScriptInstance> m_inactiveScripts;
 	Vector<ScriptEvent> m_events;
 	ScriptContext m_context;
-	float m_accumulator;
 
 	friend class Script;
 };
