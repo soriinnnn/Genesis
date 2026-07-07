@@ -77,6 +77,7 @@ class ShaderSignature;
 class VertexBuffer;
 class IndexBuffer;
 class ConstantBuffer;
+class StructuredBuffer;
 class RasterizerState;
 class DepthStencilState;
 class GraphicsPipelineState;
@@ -85,7 +86,6 @@ class ImageTexture;
 class CubeTexture;
 class RenderTargetTexture;
 class DepthStencilTexture;
-class StructuredBuffer;
 class SpriteBatch;
 class FontAtlas;
 

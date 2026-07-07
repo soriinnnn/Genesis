@@ -28,7 +28,6 @@ class Game
 {
 GENESIS_DISABLE_COPY_AND_MOVE(Game)
 public:
-    explicit Game(const GameDesc& desc);
     virtual ~Game();
 
     Logger& getLogger() noexcept;
@@ -43,6 +42,8 @@ public:
     void quit();
 
 protected:
+    explicit Game(const GameDesc& desc);
+
     virtual void onCreate();
     virtual void onUpdate(float deltaTime);
 

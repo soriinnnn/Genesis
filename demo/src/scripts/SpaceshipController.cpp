@@ -20,7 +20,7 @@ using namespace utils;
 #define MOUSE_SENSITIVITY_Y 0.002f
 #define LERP_SPEED 5.0f
 
-constexpr float BASE_PITCH = 0.3f;
+constexpr float BASE_PITCH = 0.18f;
 constexpr float MAX_PITCH = 1.5f - BASE_PITCH;
 constexpr float MIN_PITCH = -1.5f;
 

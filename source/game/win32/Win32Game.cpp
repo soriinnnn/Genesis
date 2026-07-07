@@ -1,3 +1,4 @@
+#ifdef _WIN32
 #include <game/Game.h>
 #include <windows.h>
 
@@ -9,7 +10,6 @@ void Game::run()
     if (m_isRunning) {
         return;
     }
-
     MSG msg = {};
 
     onCreate();
@@ -32,3 +32,5 @@ void Game::run()
         onInternalUpdate();
     }
 }
+
+#endif
