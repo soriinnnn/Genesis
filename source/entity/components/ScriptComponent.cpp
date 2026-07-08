@@ -31,7 +31,6 @@ void ScriptComponent::addScript(Script* script)
 		return;
 	}
 	script->assignEntity(m_entity);
-	script->onAwake();
 	m_scripts.push_back(script);
 }
 

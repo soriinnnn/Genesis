@@ -59,6 +59,7 @@ void Script::assignEntity(Entity& entity)
 	GENESIS_ASSERT(m_started != true, "Cannot assign entity after script has started.");
 	m_entity = &entity;
 	m_manager.setActive(this);
+	onAwake();
 }
 
 void Script::unassignEntity()
