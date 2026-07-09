@@ -355,9 +355,9 @@
     <Import Project="packages\Assimp.3.0.0\build\native\Assimp.targets" Condition="Exists('packages\Assimp.3.0.0\build\native\Assimp.targets')" />
     <Import Project="packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets" Condition="Exists('packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" />
     <Import Project="packages\xxhash_cpp.1.0.1\build\native\xxhash_cpp.targets" Condition="Exists('packages\xxhash_cpp.1.0.1\build\native\xxhash_cpp.targets')" />
-    <Import Project="packages\directxtex_uwp.2026.4.1.1\build\native\directxtex_uwp.targets" Condition="Exists('packages\directxtex_uwp.2026.4.1.1\build\native\directxtex_uwp.targets')" />
-    <Import Project="packages\directxtk_uwp.2026.4.1.1\build\native\directxtk_uwp.targets" Condition="Exists('packages\directxtk_uwp.2026.4.1.1\build\native\directxtk_uwp.targets')" />
     <Import Project="packages\jolt_cpp.1.0.2\build\native\jolt_cpp.targets" Condition="Exists('packages\jolt_cpp.1.0.2\build\native\jolt_cpp.targets')" />
+    <Import Project="packages\directxtex_uwp.2026.5.8.1\build\native\directxtex_uwp.targets" Condition="Exists('packages\directxtex_uwp.2026.5.8.1\build\native\directxtex_uwp.targets')" />
+    <Import Project="packages\directxtk_uwp.2026.5.8.1\build\native\directxtk_uwp.targets" Condition="Exists('packages\directxtk_uwp.2026.5.8.1\build\native\directxtk_uwp.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -367,8 +367,8 @@
     <Error Condition="!Exists('packages\Assimp.3.0.0\build\native\Assimp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Assimp.3.0.0\build\native\Assimp.targets'))" />
     <Error Condition="!Exists('packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets'))" />
     <Error Condition="!Exists('packages\xxhash_cpp.1.0.1\build\native\xxhash_cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\xxhash_cpp.1.0.1\build\native\xxhash_cpp.targets'))" />
-    <Error Condition="!Exists('packages\directxtex_uwp.2026.4.1.1\build\native\directxtex_uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtex_uwp.2026.4.1.1\build\native\directxtex_uwp.targets'))" />
-    <Error Condition="!Exists('packages\directxtk_uwp.2026.4.1.1\build\native\directxtk_uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtk_uwp.2026.4.1.1\build\native\directxtk_uwp.targets'))" />
     <Error Condition="!Exists('packages\jolt_cpp.1.0.2\build\native\jolt_cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\jolt_cpp.1.0.2\build\native\jolt_cpp.targets'))" />
+    <Error Condition="!Exists('packages\directxtex_uwp.2026.5.8.1\build\native\directxtex_uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtex_uwp.2026.5.8.1\build\native\directxtex_uwp.targets'))" />
+    <Error Condition="!Exists('packages\directxtk_uwp.2026.5.8.1\build\native\directxtk_uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtk_uwp.2026.5.8.1\build\native\directxtk_uwp.targets'))" />
   </Target>
 </Project>

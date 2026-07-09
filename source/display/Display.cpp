@@ -125,9 +125,6 @@ void Display::setVSync(bool enable)
 
 void Display::setSyncResolution(bool enable)
 {
-	if (m_syncResolution == enable) {
-		return;
-	}
 	m_syncResolution = enable;
 	if (enable) {
 		m_swapChain->setSize(m_windowedSize);
