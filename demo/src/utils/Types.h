@@ -70,7 +70,7 @@ namespace types
 	{
 		Vec3 origin;
 		Vec3 target;
-		float duration;
+		float duration = 0.0f;
 		Easing easing = Easing::Linear;
 	};
 
