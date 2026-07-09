@@ -42,7 +42,6 @@ private:
 private:
 	HINSTANCE m_instance;
 	HCURSOR m_cursor;
-	HICON m_icon;
 };
 
 GENESIS_NAMESPACE_END

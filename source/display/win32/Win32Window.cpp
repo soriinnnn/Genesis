@@ -17,7 +17,7 @@ static WNDCLASSEX getWindowClass(HINSTANCE instance, LPCTSTR className, WNDPROC 
 static RECT createWindowRect(UINT width, UINT height, DWORD style);
 static DWORD getWindowStyle(WindowStyle style);
 
-Win32Window::Win32Window(const WindowDesc& desc): Window(desc), m_instance{GetModuleHandle(nullptr)}, m_cursor{LoadCursor(nullptr, IDC_ARROW)}, m_icon{nullptr}
+Win32Window::Win32Window(const WindowDesc& desc): Window(desc), m_instance{GetModuleHandle(nullptr)}, m_cursor{LoadCursor(nullptr, IDC_ARROW)}
 {
     WNDCLASSEX wndClass;
     if (!GetClassInfoEx(m_instance, WINDOW_CLASS_NAME, &wndClass)) {
@@ -122,28 +122,32 @@ void Win32Window::setIcon(const char* path)
         return;
     }
 
-    HICON icon = static_cast<HICON>(LoadImage(
+    HICON iconBig = static_cast<HICON>(LoadImage(
         nullptr,
         getAbsolutePath(path).c_str(),
         IMAGE_ICON,
-        0,
-        0,
-        LR_DEFAULTSIZE | LR_LOADFROMFILE
+        GetSystemMetrics(SM_CXICON),
+        GetSystemMetrics(SM_CYICON),
+        LR_LOADFROMFILE | LR_SHARED
     ));
 
-    if (!icon) {
-        GENESIS_LOG_ERROR("LoadIcon failed. Error: 0x{:08X}", GetLastError());
+    HICON iconSmall = static_cast<HICON>(LoadImage(
+        nullptr,
+        getAbsolutePath(path).c_str(),
+        IMAGE_ICON,
+        GetSystemMetrics(SM_CXSMICON),
+        GetSystemMetrics(SM_CYSMICON),
+        LR_LOADFROMFILE | LR_SHARED
+    ));
+
+    if (!iconBig || !iconSmall) {
+        GENESIS_LOG_ERROR("LoadImage failed. Error: 0x{:08X}", GetLastError());
         return;
     }
 
     HWND hwnd = static_cast<HWND>(m_handle);
-    SendMessage(hwnd, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(icon));
-    SendMessage(hwnd, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(icon));
-
-    if (m_icon) {
-        DestroyIcon(m_icon);
-    }
-    m_icon = icon;
+    SendMessage(hwnd, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(iconBig));
+    SendMessage(hwnd, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(iconSmall));
 }
 
 void Win32Window::show()
@@ -200,9 +204,6 @@ void Win32Window::close()
 {
     if (!m_handle) {
         return;
-    }
-    if (m_icon) {
-        DestroyIcon(m_icon);
     }
     if (!DestroyWindow(static_cast<HWND>(m_handle))) {
         GENESIS_LOG_THROW_ERROR("DestroyWindow failed.\nError code: 0x{:08X}", GetLastError());
