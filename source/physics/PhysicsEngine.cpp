@@ -67,7 +67,7 @@ PhysicsEngine::PhysicsEngine(const PhysicsEngineDesc& desc): Base(desc.base)
 	m_drawSettings.mDrawBoundingBox = false;
 #endif
 
-	GENESIS_LOG_INFO("PhysicsEngine initialized with a maximum of {} bodies.", MAX_BODIES);
+	GENESIS_LOG_INFO("Physics engine initialized with a maximum of {} bodies.", MAX_BODIES);
 }
 
 PhysicsEngine::~PhysicsEngine() 
