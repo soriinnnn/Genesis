@@ -1,10 +1,8 @@
 # Genesis
 
-Motor de videojocs 3D escrit en **C++20** com a projecte final de grau d'Enginyeria Informàtica a la Universitat de Girona.
+Motor de videojocs 3D escrit en C++20 com a PFG d'Enginyeria Informàtica a la Universitat de Girona.
 
-L'objectiu del projecte és reproduir, a escala reduïda, l'arquitectura interna d'un motor de videojocs modern, implementant des de zero els seus subsistemes principals: renderitzat, gestió d'entitats, recursos, física, entrada d'usuari, interfície gràfica i scripts.
-
----
+L'objectiu del projecte és reproduir, a escala reduïda, l'arquitectura interna d'un motor de videojocs modern, implementant des de zero els següents subsistemes: renderitzat, física, entitats, recursos, entrada d'usuari, interfície d'usuari i scripts.
 
 ## Característiques
 
@@ -23,15 +21,13 @@ L'objectiu del projecte és reproduir, a escala reduïda, l'arquitectura interna
   * Filtratge de textures
 * Demostració tècnica jugable desenvolupada amb el motor
 
----
-
 ## Entorn de desenvolupament
 
 ### Tecnologies utilitzades
 
 * C++20
 * Direct3D 11
-* Visual Studio
+* Visual Studio 2026
 
 ### Llibreries de tercers
 
@@ -42,11 +38,9 @@ L'objectiu del projecte és reproduir, a escala reduïda, l'arquitectura interna
 * nlohmann/json
 * xxHash
 
----
-
 ## Compilació
 
-### Requisits
+### Requisits previs
 
 * Windows
 * Visual Studio 2026
