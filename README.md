@@ -1,6 +1,6 @@
 # Genesis
 
-**Genesis** és un motor de videojocs 3D escrit en **C++20** com a projecte final de grau d'enginyeria informàtica a la universitat de girona.
+**Genesis** és un motor de videojocs 3D escrit en **C++20** com a projecte final de grau d'Enginyeria Informàtica a la Universitat de Girona.
 
 L'objectiu del projecte és reproduir, a escala reduïda, l'arquitectura interna d'un motor de videojocs modern, implementant des de zero els seus subsistemes principals: renderitzat, gestió d'entitats, recursos, física, entrada d'usuari, interfície gràfica i scripts.
 
@@ -9,7 +9,7 @@ L'objectiu del projecte és reproduir, a escala reduïda, l'arquitectura interna
 ## Característiques
 
 * Renderitzat 3D en temps real mitjançant **Direct3D 11**
-* Arquitectura basada en **entitats i components**
+* Arquitectura basada en entitats i components
 * Sistema de recursos amb càrrega i reutilització automàtica
 * Motor de física integrat amb **Jolt Physics**
 * Sistema de scripts per desacoblar la lògica del joc
